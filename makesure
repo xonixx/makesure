@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-exec awk -f - Buildtoolfile "$@" <<'AWKCODE'
+exec awk -f - Makesurefile "$@" <<'AWKCODE'
 
 BEGIN {
     current_goal_idx = -1
