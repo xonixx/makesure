@@ -1,0 +1,252 @@
+#!/usr/bin/env bash
+
+exec awk -f - Buildtoolfile "$@" <<'AWKCODE'
+
+BEGIN {
+    current_goal_idx = -1
+    goals[-1] = "" # prelude
+    prepare_args()
+}
+
+NR==1 && /^#!/      { next }
+"@define" == $1     { handle_define();      next }
+"@goal" == $1       { handle_goal();        next }
+"@depends_on" == $1 { handle_depends_on();  next }
+"@reached_if" == $1 { handle_reached_if();  next }
+                    { handle_code_line($0); next }
+
+END { if (!died) do_work() }
+
+function prepare_args(    i,arg) {
+    for (i in ARGV) {
+        arg = ARGV[i]
+        #print i " " arg;
+        if (i > 1) {
+            if (substr(arg,1,1)=="-")
+                args[arg] = 1
+            else
+                args_goals[arg_goals_cnt++] = arg
+            ARGV[i] = "" # https://unix.stackexchange.com/a/460375
+        }
+    }
+}
+
+function handle_define() {
+    check_prelude_only()
+
+    $1 = "export"
+    handle_code_line($0)
+}
+
+function handle_goal(    goal_name) {
+    goal_name = trim($2)
+    if (length(goal_name) == 0) {
+        die("Goal must have a name")
+    }
+    if (goal_name in goals_by_name) {
+        die("Goal " goal_name " is already defined")
+    }
+    current_goal_idx++
+    goals[current_goal_idx] = goal_name
+    goals_by_name[goal_name] = 1
+}
+
+function handle_depends_on(    goal_name,i) {
+    check_goal_only()
+
+    goal_name = current_goal_name()
+
+    for (i=2; i<=NF; i++) {
+        dependencies[goal_name, dependencies_cnt[goal_name]++] = $i
+    }
+}
+
+function handle_reached_if(    goal_name) {
+    check_goal_only()
+
+    goal_name = current_goal_name()
+
+    if (goal_name in reached_if) {
+        die("Multiple " $1 " not allowed for a goal")
+    }
+
+    $1 = ""
+    reached_if[goal_name] = trim($0)
+}
+
+function do_work(    i,j,mydir,goal_name,dep_cnt,dep,reached_if_condition,body,prelude_body) {
+    mydir = ENVIRON["PWD"]
+
+    issue_script_line("export MYDIR='" mydir "'")
+    issue_script_line("cd '" mydir "'")
+
+    for (i = -1; i <= current_goal_idx; i++) {
+        goal_name = goals[i]
+
+        body = trim(code[goal_name])
+
+        if (length(goal_name) != 0) {
+            issue_script_line("\n" goal_name "() {")
+
+            reached_if_condition = reached_if[goal_name]
+
+            # check valid dependencies
+            dep_cnt = dependencies_cnt[goal_name]
+            for (j=0; j < dep_cnt; j++) {
+                dep = dependencies[goal_name, j]
+                if (!(dep in goals_by_name))
+                    die_msg("Goal '" goal_name "' has unknown dependency '" dep "'") # TODO find a way to provide line reference
+                if (!(reached_if_condition ? check_condition_reached(prelude_body, reached_if_condition) : false)) {
+                    #print " [not reached] " goal_name " -> " dep
+                    topological_sort_add_connection(goal_name, dep)
+                } else {
+                    #print " [    reached] " goal_name " -> " dep
+                }
+            }
+
+            if (length(body) == 0) {
+                # in bash function can't have empty body - use nop
+                body = ":"
+            }
+
+            issue_script_line("\nbash -e <<'EOF'")
+            issue_script_line("  printf \"  goal '" goal_name "' \"")
+            issue_script_line("  if " (reached_if_condition ? reached_if_condition : "false") "; then")
+            issue_script_line("    echo \"[already satisfied].\"")
+            issue_script_line("    exit 0")
+            issue_script_line("  else")
+            issue_script_line("    echo \"" (body == ":" ? "[empty]." : "...") "\"")
+            issue_script_line("  fi")
+            issue_script_line("  " body)
+            issue_script_line("EOF\n")
+
+            issue_script_line("}")
+        } else { # prelude
+            prelude_body = body
+            issue_script_line(body)
+        }
+    }
+
+    issue_resolved_goals_to_run()
+
+    if (args["-h"] || args["--help"]) {
+        print "Available goals:"
+        for (i in goals) {
+            if (i >= 0)
+                print "  " goals[i]
+        }
+    } else if (args["-p"] || args["--print"])
+        print script
+    else {
+        print script | "bash -e"
+        close("bash -e")
+    }
+}
+
+function issue_resolved_goals_to_run(    i, g, result, loop) {
+    if (arg_goals_cnt == 0)
+        args_goals[arg_goals_cnt++] = "default"
+
+    for (i in args_goals) {
+        g = args_goals[i]
+        if (!(g in goals_by_name)) {
+            die_msg("Goal not found: " g) # TODO can we show line number here?
+        }
+        topological_sort_perform(g, result, loop)
+    }
+
+    if (loop[0] == 1) {
+        die_msg("There is a loop in goal dependencies via " loop[1] " -> " loop[2])
+    }
+
+    issue_script_line("# resolved goals to execute")
+
+    for (i = 1; i <= result[0]; i++) {
+        issue_script_line(result[i])
+    }
+}
+
+function issue_script_line(line) {
+    script = script line "\n";
+}
+
+function is_prelude() {
+    return current_goal_idx < 0
+}
+
+function check_prelude_only() {
+    if (!is_prelude()) {
+        die("Only use " $1 " in prelude")
+    }
+}
+
+function check_goal_only() {
+   if (is_prelude()) {
+       die("Only use " $1 " in goal")
+   }
+}
+
+function current_goal_name() {
+    return current_goal_idx == -1 ? "" : goals[current_goal_idx]
+}
+
+function die(msg) {
+    die_msg(msg ":\n" ARGV[1] ":" NR ": " $0)
+}
+
+function die_msg(msg) {
+    print msg
+    died = 1
+    exit 1
+}
+
+function check_condition_reached(prelude_body, condition_str,    script, res) {
+    script = "bash -e <<'EOF'"
+    script = script "\n" prelude_body # need this to initialize variables for check conditions
+    script = script "\n" condition_str
+    script = script "\nEOF"
+    #print script
+    res = system(script)
+    #print "res " res
+    return res == 0
+}
+
+function handle_code_line(line,    goal_name, current_code) {
+    goal_name = current_goal_name()
+    #print "Append line for '" goal_name "': " line
+    current_code = code[goal_name]
+    code[goal_name] = current_code ? current_code "\n" line : line
+}
+
+function topological_sort_add_connection(from, to) {
+    # slist - list of successors by node
+    # scnt - count of successors by node
+    slist[from, ++scnt[from]] = to # add 'to' to successors of 'from'
+}
+
+function topological_sort_perform(node, result, loop,    i, s) {
+    if (visited[node] == 2)
+        return
+
+    visited[node] = 1
+
+    for (i = 1; i <= scnt[node]; i++) {
+        if (visited[s = slist[node, i]] == 0)
+            topological_sort_perform(s, result, loop)
+        else if (visited[s] == 1) {
+            loop[0] = 1
+            loop[1] = s
+            loop[2] = node
+        }
+    }
+
+    visited[node] = 2
+
+    result[++result[0]] = node
+}
+
+function ltrim(s) { sub(/^[ \t\r\n]+/, "", s); return s }
+function rtrim(s) { sub(/[ \t\r\n]+$/, "", s); return s }
+function trim(s) { return rtrim(ltrim(s)); }
+
+AWKCODE
