@@ -35,8 +35,11 @@ function prepare_args(    i,arg,prev_is_file,file) {
             ARGV[i] = "" # https://unix.stackexchange.com/a/460375
         }
     }
-    if (file)
+    if (file) {
+      if (system("test -f \"" file "\"") != 0)
+        die_msg("makesure file not found: " file)
       ARGV[1] = file
+    }
 }
 
 function handle_define() {
