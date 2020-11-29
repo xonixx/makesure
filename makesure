@@ -90,11 +90,10 @@ function handle_reached_if(    goal_name) {
     reached_if[goal_name] = trim($0)
 }
 
-function do_work(    i,j,mydir,goal_name,dep_cnt,dep,reached_if_condition,body,prelude_body) {
-    mydir = ENVIRON["PWD"]
-
-    issue_script_line("export MYDIR='" mydir "'")
-    issue_script_line("cd '" mydir "'")
+function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude_body) {
+    issue_script_line(sprintf("MYDIR=$(cd \"$(dirname %s)\"; pwd)", FILENAME))
+    issue_script_line("export MYDIR")
+    issue_script_line("cd \"$MYDIR\"")
 
     for (i = -1; i <= current_goal_idx; i++) {
         goal_name = goals[i]
