@@ -12,6 +12,7 @@
   echo aaa
 
 @goal ccc
+@depends_on ddd
   echo ccc
 
 @goal ddd

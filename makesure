@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-exec awk -f - Makesurefile "$@" <<'AWKCODE'
+VERSION="0.9.0"
+
+exec awk -v "version=$VERSION" -f - Makesurefile "$@" <<'AWKCODE'
 
 BEGIN {
     current_goal_idx = -1
@@ -129,7 +131,10 @@ function do_work(    i,j,mydir,goal_name,dep_cnt,dep,reached_if_condition,body,p
 
     issue_resolved_goals_to_run()
 
-    if (args["-h"] || args["--help"]) {
+    if (args["-v"] || args["--version"]) {
+        print version
+        exit 0
+    } if (args["-h"] || args["--help"]) {
         print "Available goals:"
         for (i in goals) {
             if (i >= 0)

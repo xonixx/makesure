@@ -23,5 +23,6 @@
 17. [ ] show actual dependency loop path
 18. [x] mention each goal executed - now doesn't print if goal has empty body
 19. [ ] handle custom build file via `-f`
-20. [ ] `-v` flag to show version 
-21. [ ] `-d` flag to show resolved dependencies 
+20. [x] `-v` flag to show version 
+21. [ ] `-d` flag to show resolved dependencies
+22. [ ] introduce test suite via tush 
