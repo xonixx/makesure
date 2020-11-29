@@ -19,18 +19,24 @@ NR==1 && /^#!/      { next }
 
 END { if (!died) do_work() }
 
-function prepare_args(    i,arg) {
+function prepare_args(    i,arg,prev_is_file,file) {
     for (i in ARGV) {
         arg = ARGV[i]
         #print i " " arg;
         if (i > 1) {
-            if (substr(arg,1,1)=="-")
-                args[arg] = 1
-            else
-                args_goals[arg_goals_cnt++] = arg
+            if (substr(arg,1,1)=="-") {
+                if (prev_is_file = (arg == "-f" || arg == "--file"))
+                  file = ARGV[i+1]
+                else
+                  args[arg] = 1
+            } else
+                if (!prev_is_file)
+                    args_goals[arg_goals_cnt++] = arg
             ARGV[i] = "" # https://unix.stackexchange.com/a/460375
         }
     }
+    if (file)
+      ARGV[1] = file
 }
 
 function handle_define() {
