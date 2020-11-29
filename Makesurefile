@@ -1,21 +1,46 @@
 
+
+@goal soft_folder_created
+@reached_if [[ -d "soft" ]]
+  mkdir soft
+
+@goal tush_installed
+@depends_on soft_folder_created
+@reached_if [[ -f "soft/tush/bin/tush-check" ]]
+  echo
+  echo "Fetching tush..."
+  echo
+
+  cd "soft"
+
+  wget https://github.com/adolfopa/tush/archive/master.zip -O./tush.zip
+  unzip ./tush.zip
+  rm ./tush.zip
+  mv tush-master tush
+
+@goal soft_installed
+@depends_on tush_installed
+
+@goal cleaned
+
+@goal cleaned_soft
+@reached_if [[ ! -d "soft" ]]
+  rm -r "soft"
+
+@goal cleaned_all
+@depends_on cleaned cleaned_soft
+
+@goal tested
+@depends_on tests_executed
+
+@goal tests_executed
+@depends_on tush_installed
+  export PATH="$PATH:$MYDIR/soft/tush/bin"
+
+  tush-check tests.tush && echo 'TESTS PASSED' || (
+    echo '!!! TESTS FAILED !!!'
+    exit 1
+  )
+
 @goal default
-@depends_on aaa
-
-@goal aaa
-@depends_on bbb
-  echo aaa
-
-@goal bbb
-@reached_if true
-@depends_on ccc ddd
-  echo aaa
-
-@goal ccc
-@depends_on ddd
-  echo ccc
-
-@goal ddd
-  echo ddd
-
-
+@depends_on tested

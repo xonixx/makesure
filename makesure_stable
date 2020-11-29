@@ -40,11 +40,6 @@ function prepare_args(    i,arg,prev_is_file,file) {
         die_msg("makesure file not found: " file)
       ARGV[1] = file
     }
-    if (args["-v"] || args["--version"]) {
-        print version
-        died = 1
-        exit 0
-    }
 }
 
 function handle_define() {
@@ -145,7 +140,10 @@ function do_work(    i,j,mydir,goal_name,dep_cnt,dep,reached_if_condition,body,p
 
     issue_resolved_goals_to_run()
 
-    if (args["-l"] || args["--list"]) {
+    if (args["-v"] || args["--version"]) {
+        print version
+        exit 0
+    } if (args["-l"] || args["--list"]) {
         print "Available goals:"
         for (i in goals) {
             if (i >= 0)
