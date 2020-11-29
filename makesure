@@ -2,7 +2,7 @@
 
 VERSION="0.9.0"
 
-exec awk -v "version=$VERSION" -f - Makesurefile "$@" <<'AWKCODE'
+exec awk -v "version=$VERSION" -f - Makesurefile "$@" <<'MAKESURE'
 
 BEGIN {
     current_goal_idx = -1
@@ -254,4 +254,4 @@ function ltrim(s) { sub(/^[ \t\r\n]+/, "", s); return s }
 function rtrim(s) { sub(/[ \t\r\n]+$/, "", s); return s }
 function trim(s) { return rtrim(ltrim(s)); }
 
-AWKCODE
+MAKESURE

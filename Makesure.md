@@ -25,4 +25,5 @@
 19. [ ] handle custom build file via `-f`
 20. [x] `-v` flag to show version 
 21. [ ] `-d` flag to show resolved dependencies
-22. [ ] introduce test suite via tush 
+22. [ ] introduce test suite via tush
+23. [ ] timing for goals execution 
