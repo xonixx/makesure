@@ -143,7 +143,7 @@ function do_work(    i,j,mydir,goal_name,dep_cnt,dep,reached_if_condition,body,p
     if (args["-v"] || args["--version"]) {
         print version
         exit 0
-    } if (args["-h"] || args["--help"]) {
+    } if (args["-l"] || args["--list"]) {
         print "Available goals:"
         for (i in goals) {
             if (i >= 0)

@@ -13,7 +13,7 @@
 7.  [ ] make @shell configurable
 8.  [x] `-p` flag to print generated bash script 
 9.  [x] provide goals to run as argument
-10. [x] `-h` flag to show all goals
+10. [x] `-l` flag to show all goals
 11. [ ] per-goal documentation
 12. [x] Make makesure to use Makesurefile file by default 
 13. [x] Agree on single standard way to run the scenario
@@ -27,3 +27,4 @@
 21. [ ] `-d` flag to show resolved dependencies
 22. [ ] introduce test suite via tush
 23. [ ] timing for goals execution 
+24. [ ] `-h` flag for help 
