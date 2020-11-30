@@ -1,0 +1,14 @@
+
+$ cd "$MYDIR"; ./makesure -f tests/1.sh
+|   goal 'bbb' [already satisfied].
+|   goal 'aaa' ...
+| aaa
+|   goal 'default' [empty].
+
+$ cd "$MYDIR"; ./makesure -f tests/1.sh -l
+| Available goals:
+|   default
+|   ddd
+|   ccc
+|   bbb
+|   aaa

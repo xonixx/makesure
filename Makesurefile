@@ -37,10 +37,13 @@
 @depends_on tush_installed
   export PATH="$PATH:$MYDIR/soft/tush/bin"
 
-  tush-check tests.tush && echo 'TESTS PASSED' || (
-    echo '!!! TESTS FAILED !!!'
-    exit 1
-  )
+  for f in tests/*.tush
+  do
+    tush-check "$f" && echo "$f: TESTS PASSED" || (
+      echo "$f: !!! TESTS FAILED !!!"
+      exit 1
+    )
+  done
 
 @goal default
 @depends_on tested

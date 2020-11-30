@@ -1,21 +1,4 @@
 
-$ cd "$MYDIR"; ./makesure -v
-| 0.9.0
-
-$ cd "$MYDIR"; ./makesure -f tests/1.sh
-|   goal 'bbb' [already satisfied].
-|   goal 'aaa' ...
-| aaa
-|   goal 'default' [empty].
-
-$ cd "$MYDIR"; ./makesure -f tests/1.sh -l
-| Available goals:
-|   default
-|   ddd
-|   ccc
-|   bbb
-|   aaa
-
 $ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_1
 |   goal 'mydir_1' ...
 | mydir
