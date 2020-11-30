@@ -13,6 +13,7 @@ BEGIN {
 NR==1 && /^#!/      { next }
 "@define" == $1     { handle_define();      next }
 "@goal" == $1       { handle_goal();        next }
+"@doc" == $1        { handle_doc();         next }
 "@depends_on" == $1 { handle_depends_on();  next }
 "@reached_if" == $1 { handle_reached_if();  next }
                     { handle_code_line($0); next }
@@ -65,6 +66,15 @@ function handle_goal(    goal_name) {
     current_goal_idx++
     goals[current_goal_idx] = goal_name
     goals_by_name[goal_name] = 1
+}
+
+function handle_doc(    goal_name) {
+    check_goal_only()
+
+    goal_name = current_goal_name()
+
+    $1 = ""
+    doc[goal_name, doc_cnt[goal_name]++] = trim($0)
 }
 
 function handle_depends_on(    goal_name,i) {
@@ -147,8 +157,13 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
     if ("-l" in args || "--list" in args) {
         print "Available goals:"
         for (i in goals) {
-            if (i >= 0)
+            if (i >= 0) {
                 print "  " goals[i]
+                if (goals[i] in doc_cnt) {
+                  for (j=0; j<doc_cnt[goals[i]]; j++)
+                    print "    " doc[goals[i], j]
+                }
+            }
         }
     } else if ("-p" in args || "--print" in args)
         print script

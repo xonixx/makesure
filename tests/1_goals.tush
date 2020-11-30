@@ -11,4 +11,7 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -l
 |   ddd
 |   ccc
 |   bbb
+|     Documenatation for bbb line 1
+|     Documenatation for bbb line 2
 |   aaa
+|     Documenatation for aaa

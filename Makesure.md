@@ -14,7 +14,7 @@
 8.  [x] `-p` flag to print generated bash script 
 9.  [x] provide goals to run as argument
 10. [x] `-l` flag to show all goals
-11. [ ] per-goal documentation
+11. [x] per-goal documentation
 12. [x] Make makesure to use Makesurefile file by default 
 13. [x] Agree on single standard way to run the scenario
 14. [x] dependency validation - non-existent dep
