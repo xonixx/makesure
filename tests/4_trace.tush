@@ -1,0 +1,17 @@
+
+$ cd "$MYDIR"; ./makesure -f tests/4_trace.sh
+|   goal 'default' ...
+| A=aaa
+
+$ cd "$MYDIR"; bash -c "./makesure -f tests/4_trace.sh -x 2> >(sed 's#\/.*\/tests#tests#g' >&2)"
+|   goal 'default' ...
+| A=aaa
+@ + MYDIR=tests
+@ + export MYDIR
+@ + cd tests
+@ + export A=aaa
+@ + A=aaa
+@ + default
+@ + bash -e
+@ + echo A=aaa
+

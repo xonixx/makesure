@@ -29,4 +29,4 @@
 23. [ ] `-t` flag for timing for goals execution 
 24. [ ] `-h` flag for help
 25. [ ] (?) `-F` to force build despite the reached_if
-26. [ ] `-x` to enable tracing in bash 
+26. [x] `-x` to enable tracing in bash 
