@@ -16,6 +16,6 @@ $ cd "$MYDIR"; ./makesure -f tests/1.sh -l
 |   bbb
 |   aaa
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh
-|   goal 'default' ...
+$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_1
+|   goal 'mydir_1' ...
 | mydir
