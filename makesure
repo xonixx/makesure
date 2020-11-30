@@ -2,8 +2,7 @@
 
 VERSION="0.9.0"
 
-MYDIR="$(cd "$(dirname $0)"; pwd)"
-exec awk -v "version=$VERSION" -v "MYDIR=$MYDIR" -f - Makesurefile "$@" <<'MAKESURE'
+exec awk -v "version=$VERSION" -f - Makesurefile "$@" <<'MAKESURE'
 
 BEGIN {
     current_goal_idx = -1
@@ -107,7 +106,7 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
     if (tracing)
         issue_script_line("set -x")
 
-    issue_script_line("MYDIR=" MYDIR)
+    issue_script_line("MYDIR='" get_my_dir() "'")
     issue_script_line("export MYDIR")
     issue_script_line("cd \"$MYDIR\"")
 
@@ -257,7 +256,9 @@ function check_condition_reached(prelude_body, condition_str,    script, res) {
 }
 
 function get_my_dir(    script, res) {
-  script = sprintf("echo \"$(cd \"$(dirname %s)\"; pwd)\"", FILENAME)
+  script = "bash -e <<'EOF'"
+  script = script "\n" sprintf("echo \"$(cd \"$(dirname %s)\"; pwd)\"", FILENAME)
+  script = script "\nEOF"
   script | getline res
   close(script)
   return res
