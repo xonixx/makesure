@@ -1,3 +1,11 @@
 
 $ cd "$MYDIR"; ./makesure -v
 | 0.9.0
+
+$ cd "$MYDIR"; ./makesure -f non-existent-file
+@ makesure file not found: non-existent-file
+? 1
+
+$ cd "$MYDIR/tests/emptydir"; ../../makesure
+@ makesure file not found: Makesurefile
+? 1

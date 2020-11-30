@@ -39,8 +39,8 @@
 
   for f in tests/*.tush
   do
-    tush-check "$f" && echo "$f: TESTS PASSED" || (
-      echo "$f: !!! TESTS FAILED !!!"
+    tush-check "$f" && echo "TESTS PASSED : $f" || (
+      echo "!!! TESTS FAILED !!! : $f"
       exit 1
     )
   done

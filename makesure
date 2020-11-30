@@ -19,7 +19,7 @@ NR==1 && /^#!/      { next }
 
 END { if (!died) do_work() }
 
-function prepare_args(    i,arg,file) {
+function prepare_args(    i,arg) {
     for (i = 0; i < ARGC; i++) {
         arg = ARGV[i]
         #print i " " arg;
@@ -27,7 +27,7 @@ function prepare_args(    i,arg,file) {
             if (substr(arg,1,1) == "-") {
                 if (arg == "-f" || arg == "--file") {
                   delete ARGV[i]
-                  file = ARGV[++i]
+                  ARGV[1] = ARGV[++i]
                 } else
                   args[arg] = 1
             } else
@@ -35,11 +35,8 @@ function prepare_args(    i,arg,file) {
             delete ARGV[i] # https://unix.stackexchange.com/a/460375
         }
     }
-    if (file) {
-      if (system("test -f \"" file "\"") != 0)
-        die_msg("makesure file not found: " file) # TODO add test
-      ARGV[1] = file
-    }
+    if (system("test -f \"" ARGV[1] "\"") != 0)
+      die_msg("makesure file not found: " ARGV[1])
     if ("-v" in args || "--version" in args) {
         print version
         died = 1
@@ -212,8 +209,10 @@ function die(msg) {
     die_msg(msg ":\n" ARGV[1] ":" NR ": " $0)
 }
 
-function die_msg(msg) {
-    print msg
+function die_msg(msg,    out) {
+    out = "cat 1>&2" # trick to write from awk to stderr
+    print msg | out
+    close(out)
     died = 1
     exit 1
 }
