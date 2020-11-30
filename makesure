@@ -2,7 +2,8 @@
 
 VERSION="0.9.0"
 
-exec awk -v "version=$VERSION" -f - Makesurefile "$@" <<'MAKESURE'
+MYDIR="$(cd "$(dirname $0)"; pwd)"
+exec awk -v "version=$VERSION" -v "MYDIR=$MYDIR" -f - Makesurefile "$@" <<'MAKESURE'
 
 BEGIN {
     current_goal_idx = -1
@@ -43,6 +44,8 @@ function prepare_args(    i,arg) {
         died = 1
         exit 0
     }
+    if ("-x" in args)
+      tracing = 1
     #print "--- ARGV: "; for (i in ARGV) print i " : " ARGV[i]
     #print "--- args: "; for (i in args) print i " : " args[i]
     #print "--- args_goals: "; for (i in args_goals) print i " : " args_goals[i]
@@ -101,7 +104,10 @@ function handle_reached_if(    goal_name) {
 }
 
 function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude_body,resolved_goals) {
-    issue_script_line(sprintf("MYDIR=$(cd \"$(dirname %s)\"; pwd)", FILENAME))
+    if (tracing)
+        issue_script_line("set -x")
+
+    issue_script_line("MYDIR=" MYDIR)
     issue_script_line("export MYDIR")
     issue_script_line("cd \"$MYDIR\"")
 
@@ -142,6 +148,8 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
             issue_script_line("  else")
             issue_script_line("    echo \"" (body == ":" ? "[empty]." : "...") "\"")
             issue_script_line("  fi")
+            if (tracing)
+                issue_script_line("set -x")
             issue_script_line("  " body)
             issue_script_line("EOF\n")
 
@@ -246,6 +254,13 @@ function check_condition_reached(prelude_body, condition_str,    script, res) {
     res = system(script)
     #print "res " res
     return res == 0
+}
+
+function get_my_dir(    script, res) {
+  script = sprintf("echo \"$(cd \"$(dirname %s)\"; pwd)\"", FILENAME)
+  script | getline res
+  close(script)
+  return res
 }
 
 function handle_code_line(line,    goal_name, current_code) {
