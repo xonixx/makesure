@@ -7,7 +7,7 @@
     - [x] use @define to export variable for goals
         - [x] reuse export for MVP
 3.  [x] Goals topological sort
-4.  [ ] Profiles (?) a-la maven
+4.  [ ] (?) Profiles a-la maven
 5.  [ ] Find a way to share functions
 6.  [ ] Pre-check? Post-check?
 7.  [ ] make @shell configurable
@@ -24,7 +24,8 @@
 18. [x] mention each goal executed - now doesn't print if goal has empty body
 19. [x] handle custom build file via `-f`
 20. [x] `-v` flag to show version 
-21. [ ] `-d` flag to show resolved dependencies
+21. [x] `-d` flag to show resolved dependencies
 22. [x] introduce test suite via tush
 23. [ ] timing for goals execution 
-24. [ ] `-h` flag for help 
+24. [ ] `-h` flag for help
+25. [ ] (?) `-F` to force build despite the reached_if  

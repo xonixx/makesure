@@ -100,7 +100,7 @@ function handle_reached_if(    goal_name) {
     reached_if[goal_name] = trim($0)
 }
 
-function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude_body) {
+function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude_body,resolved_goals) {
     issue_script_line(sprintf("MYDIR=$(cd \"$(dirname %s)\"; pwd)", FILENAME))
     issue_script_line("export MYDIR")
     issue_script_line("cd \"$MYDIR\"")
@@ -152,9 +152,14 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
         }
     }
 
-    issue_resolved_goals_to_run()
+    issue_resolved_goals_to_run(resolved_goals)
 
-    if ("-l" in args || "--list" in args) {
+    if ("-d" in args || "--resolved" in args) {
+        printf("Resolved goals to reach for '%s':\n", join(args_goals, 0, arg_goals_cnt-1, " "))
+        for (i = 1; i <= resolved_goals[0]; i++) {
+           print "  " resolved_goals[i]
+        }
+    } else if ("-l" in args || "--list" in args) {
         print "Available goals:"
         for (i in goals) {
             if (i >= 0) {
@@ -173,7 +178,7 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
     }
 }
 
-function issue_resolved_goals_to_run(    i, g, result, loop) {
+function issue_resolved_goals_to_run(result,    i, g, loop) {
     if (arg_goals_cnt == 0)
         args_goals[arg_goals_cnt++] = "default"
 
@@ -275,6 +280,18 @@ function topological_sort_perform(node, result, loop,    i, s) {
     visited[node] = 2
 
     result[++result[0]] = node
+}
+
+function join(array, start, end, sep,    result, i)
+{
+    if (sep == "")
+       sep = " "
+    else if (sep == SUBSEP) # magic value
+       sep = ""
+    result = array[start]
+    for (i = start + 1; i <= end; i++)
+        result = result sep array[i]
+    return result
 }
 
 function ltrim(s) { sub(/^[ \t\r\n]+/, "", s); return s }

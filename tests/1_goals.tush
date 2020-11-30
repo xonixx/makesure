@@ -15,3 +15,23 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -l
 |     Documenatation for bbb line 2
 |   aaa
 |     Documenatation for aaa
+
+$ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -d
+| Resolved goals to reach for 'default':
+|   bbb
+|   aaa
+|   default
+
+$ cd "$MYDIR"; ./makesure -f tests/1.1_goals.sh -d
+| Resolved goals to reach for 'default':
+|   ddd
+|   ccc
+|   bbb
+|   aaa
+|   default
+
+$ cd "$MYDIR"; ./makesure -f tests/1.1_goals.sh --resolved bbb
+| Resolved goals to reach for 'bbb':
+|   ddd
+|   ccc
+|   bbb
