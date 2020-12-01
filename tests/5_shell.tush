@@ -1,0 +1,19 @@
+
+$ cd "$MYDIR"; ./makesure -f tests/5_shell_bash.sh
+|   goal 'default' ...
+| /bin/bash
+
+#$ cd "$MYDIR"; ./makesure -f tests/5_shell_sh.sh
+#|   goal 'default' ...
+#| /bin/sh
+
+$ cd "$MYDIR"; ./makesure -f tests/5_shell_not_supported.sh
+@ Shell 'not_supported' is not supported:
+@ tests/5_shell_not_supported.sh:1: @shell not_supported
+? 1
+
+$ cd "$MYDIR"; ./makesure -f tests/5_shell_in_goal.sh
+@ Only use @shell in prelude:
+@ tests/5_shell_in_goal.sh:3:   @shell sh
+? 1
+

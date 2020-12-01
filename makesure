@@ -7,11 +7,14 @@ exec awk -v "version=$VERSION" -f - Makesurefile "$@" <<'MAKESURE'
 BEGIN {
     current_goal_idx = -1
     goals[-1] = "" # prelude
+    SupportedShells["bash"]
+    SupportedShells["sh"]
     prepare_args()
 }
 
 NR==1 && /^#!/      { next }
 "@define" == $1     { handle_define();      next }
+"@shell" == $1      { handle_shell();       next }
 "@goal" == $1       { handle_goal();        next }
 "@doc" == $1        { handle_doc();         next }
 "@depends_on" == $1 { handle_depends_on();  next }
@@ -55,6 +58,16 @@ function handle_define() {
 
     $1 = "export"
     handle_code_line($0)
+}
+
+function handle_shell() {
+    check_prelude_only()
+
+    Shell=trim($2)
+
+    if (!(Shell in SupportedShells)) {
+      die("Shell '" Shell "' is not supported")
+    }
 }
 
 function handle_goal(    goal_name) {
