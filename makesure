@@ -6,7 +6,7 @@ exec awk -v "Version=$VERSION" -f - Makesurefile "$@" <<'MAKESURE'
 
 BEGIN {
     CurrentGoalIdx = -1
-    Goals[-1] = "" # prelude
+    GoalNames[-1] = "" # prelude
     Shell = "bash" # default shell
     SupportedShells["bash"]
     SupportedShells["sh"]
@@ -79,7 +79,7 @@ function handle_goal(    goal_name) {
         die("Goal " goal_name " is already defined")
     }
     CurrentGoalIdx++
-    Goals[CurrentGoalIdx] = goal_name
+    GoalNames[CurrentGoalIdx] = goal_name
     GoalsByName[goal_name] = 1
 }
 
@@ -124,7 +124,7 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
     issue_script_line("cd \"$MYDIR\"")
 
     for (i = -1; i <= CurrentGoalIdx; i++) {
-        goal_name = Goals[i]
+        goal_name = GoalNames[i]
 
         body = trim(code[goal_name])
 
@@ -181,12 +181,12 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
         }
     } else if ("-l" in Args || "--list" in Args) {
         print "Available goals:"
-        for (i in Goals) {
+        for (i in GoalNames) {
             if (i >= 0) {
-                print "  " Goals[i]
-                if (Goals[i] in DocCnt) {
-                  for (j=0; j<DocCnt[Goals[i]]; j++)
-                    print "    " Doc[Goals[i], j]
+                print "  " GoalNames[i]
+                if (GoalNames[i] in DocCnt) {
+                  for (j=0; j<DocCnt[GoalNames[i]]; j++)
+                    print "    " Doc[GoalNames[i], j]
                 }
             }
         }
@@ -242,7 +242,7 @@ function check_goal_only() {
 }
 
 function current_goal_name() {
-    return CurrentGoalIdx == -1 ? "" : Goals[CurrentGoalIdx]
+    return CurrentGoalIdx == -1 ? "" : GoalNames[CurrentGoalIdx]
 }
 
 function die(msg) {
