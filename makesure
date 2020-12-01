@@ -42,7 +42,7 @@ function prepare_args(    i,arg) {
     }
     if (system("test -f \"" ARGV[1] "\"") != 0)
       die_msg("makesure file not found: " ARGV[1])
-    if ("-v" in Args || "--Version" in Args) {
+    if ("-v" in Args || "--version" in Args) {
         print Version
         Died = 1
         exit 0
