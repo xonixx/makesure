@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-VERSION="0.9.0"
+VERSION="0.9.1"
 
 exec awk -v "version=$VERSION" -f - Makesurefile "$@" <<'MAKESURE'
 
