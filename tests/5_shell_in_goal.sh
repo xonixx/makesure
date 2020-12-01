@@ -1,4 +1,4 @@
 
 @goal default
   @shell sh
-  echo "$SHELL"
+  echo "$0"

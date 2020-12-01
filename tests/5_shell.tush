@@ -1,11 +1,16 @@
 
 $ cd "$MYDIR"; ./makesure -f tests/5_shell_bash.sh
 |   goal 'default' ...
-| /bin/bash
+| bash
 
-#$ cd "$MYDIR"; ./makesure -f tests/5_shell_sh.sh
-#|   goal 'default' ...
-#| /bin/sh
+$ cd "$MYDIR"; ./makesure -f tests/5_shell_sh.sh
+|   goal 'default' ...
+| sh
+
+$ cd "$MYDIR"; ./makesure -f tests/5_shell_sh.sh a
+|   goal 'b' [already satisfied].
+|   goal 'a' ...
+| should show
 
 $ cd "$MYDIR"; ./makesure -f tests/5_shell_not_supported.sh
 @ Shell 'not_supported' is not supported:

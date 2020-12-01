@@ -1,3 +1,3 @@
 
 @goal default
-  echo "$SHELL"
+  echo "$0"

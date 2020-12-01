@@ -7,6 +7,7 @@ exec awk -v "version=$VERSION" -f - Makesurefile "$@" <<'MAKESURE'
 BEGIN {
     current_goal_idx = -1
     goals[-1] = "" # prelude
+    Shell = "bash" # default shell
     SupportedShells["bash"]
     SupportedShells["sh"]
     prepare_args()
@@ -65,9 +66,8 @@ function handle_shell() {
 
     Shell=trim($2)
 
-    if (!(Shell in SupportedShells)) {
+    if (!(Shell in SupportedShells))
       die("Shell '" Shell "' is not supported")
-    }
 }
 
 function handle_goal(    goal_name) {
@@ -148,11 +148,11 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
             }
 
             if (length(body) == 0) {
-                # in bash function can't have empty body - use nop
+                # in shell function can't have empty body - use nop
                 body = ":"
             }
 
-            issue_script_line("\nbash -e <<'EOF'")
+            issue_script_line("\n" Shell " -e <<'EOF'")
             issue_script_line("  printf \"  goal '" goal_name "' \"")
             issue_script_line("  if " (reached_if_condition ? reached_if_condition : "false") "; then")
             issue_script_line("    echo \"[already satisfied].\"")
@@ -193,8 +193,8 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
     } else if ("-p" in args || "--print" in args)
         print script
     else {
-        print script | "bash -e"
-        close("bash -e")
+        print script | (Shell " -e")
+        close(Shell " -e")
     }
 }
 
@@ -258,7 +258,7 @@ function die_msg(msg,    out) {
 }
 
 function check_condition_reached(prelude_body, condition_str,    script, res) {
-    script = "bash -e <<'EOF'"
+    script = Shell " -e <<'EOF'"
     script = script "\n" prelude_body # need this to initialize variables for check conditions
     script = script "\n" condition_str
     script = script "\nEOF"
@@ -269,7 +269,7 @@ function check_condition_reached(prelude_body, condition_str,    script, res) {
 }
 
 function get_my_dir(    script, res) {
-  script = "bash -e <<'EOF'"
+  script = Shell " -e <<'EOF'"
   script = script "\n" sprintf("echo \"$(cd \"$(dirname %s)\"; pwd)\"", FILENAME)
   script = script "\nEOF"
   script | getline res
