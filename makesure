@@ -311,12 +311,7 @@ function topological_sort_perform(node, result, loop,    i, s) {
     result[++result[0]] = node
 }
 
-function join(array, start, end, sep,    result, i)
-{
-    if (sep == "")
-       sep = " "
-    else if (sep == SUBSEP) # magic value
-       sep = ""
+function join(array, start, end, sep,    result, i) {
     result = array[start]
     for (i = start + 1; i <= end; i++)
         result = result sep array[i]
