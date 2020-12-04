@@ -49,6 +49,8 @@ function prepare_args(    i,arg) {
     }
     if ("-x" in Args)
       Tracing = 1
+    if ("-t" in Args || "--timing" in Args)
+      Timing = 1
     #print "--- ARGV: "; for (i in ARGV) print i " : " ARGV[i]
     #print "--- Args: "; for (i in Args) print i " : " Args[i]
     #print "--- ArgsGoals: "; for (i in ArgsGoals) print i " : " ArgsGoals[i]

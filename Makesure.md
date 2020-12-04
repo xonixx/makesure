@@ -26,7 +26,9 @@
 20. [x] `-v` flag to show version 
 21. [x] `-d` flag to show resolved dependencies
 22. [x] introduce test suite via tush
-23. [ ] `-t` flag for timing for goals execution 
+23. [ ] `-t` flag for timing for goals execution
+    - [ ] is it possible to ms precision?
+    - [ ] measure each goal
 24. [ ] `-h` flag for help
 25. [ ] (?) `-F` to force build despite the reached_if
 26. [x] `-x` to enable tracing in bash
