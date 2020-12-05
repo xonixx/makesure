@@ -33,4 +33,7 @@
 25. [ ] (?) `-F` to force build despite the reached_if
 26. [x] `-x` to enable tracing in bash
 27. [ ] support @silent mode and flag `-s`
-28. [ ] allow override @define-s  
+28. [ ] allow override @define-s
+
+---
+Idea with stupid_flush is broken: TODO   

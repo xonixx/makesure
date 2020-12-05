@@ -14,13 +14,14 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -p | bash
 $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -l
 | Available goals:
 |   default
-|   ddd
-|   ccc
+|   aaa
+|     Documenatation for aaa
 |   bbb
 |     Documenatation for bbb line 1
 |     Documenatation for bbb line 2
-|   aaa
-|     Documenatation for aaa
+|   ccc
+|   ddd
+|   fail
 
 $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -d
 | Resolved goals to reach for 'default':

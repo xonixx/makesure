@@ -183,13 +183,11 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
         }
     } else if ("-l" in Args || "--list" in Args) {
         print "Available goals:"
-        for (i in GoalNames) {
-            if (i >= 0) {
-                print "  " GoalNames[i]
-                if (GoalNames[i] in DocCnt) {
-                  for (j = 0; j < DocCnt[GoalNames[i]]; j++)
-                    print "    " Doc[GoalNames[i], j]
-                }
+        for (i = 0; i <= CurrentGoalIdx; i++) {
+            print "  " GoalNames[i]
+            if (GoalNames[i] in DocCnt) {
+              for (j = 0; j < DocCnt[GoalNames[i]]; j++)
+                print "    " Doc[GoalNames[i], j]
             }
         }
     } else if ("-p" in Args || "--print" in Args) {
@@ -207,13 +205,14 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
 
         for (i = 1; i <= resolved_goals[0]; i++) {
 #           print "EXEC: " resolved_goals[i]
-           print resolved_goals[i] | cmd
-           stupid_flush(cmd)
-#           print "DONE: " resolved_goals[i]
+            print resolved_goals[i] | cmd
+#            stupid_flush(cmd)
+#            print "DONE: " resolved_goals[i]
         }
 
 #        print "BEFORE CLOSE"
-        close(cmd)
+        if (close(cmd) != 0)
+            exit 1
     }
 }
 

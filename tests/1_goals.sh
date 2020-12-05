@@ -21,4 +21,9 @@
 @goal ddd
   echo ddd
 
+@goal fail
+  echo stdout
+  echo >&2 stderr
+  exit 1
+
 
