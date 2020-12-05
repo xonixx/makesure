@@ -11,6 +11,7 @@ $ cd "$MYDIR"; bash -c "./makesure -f tests/4_trace.sh -x 2> >(sed 's#\/.*\/test
 @ + cd tests
 @ + export A=aaa
 @ + A=aaa
+@ + __resolved_goals
 @ + default
 @ + bash -e
 @ + echo A=aaa
