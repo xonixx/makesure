@@ -10,6 +10,18 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh
 | aaa
 |   goal 'default' [empty].
 
+$ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -s
+| ddd
+| ccc
+| bbb
+| aaa
+
+$ cd "$MYDIR"; ./makesure -f tests/1_goals.sh --silent
+| ddd
+| ccc
+| bbb
+| aaa
+
 $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -p | bash
 |   goal 'ddd' ...
 | ddd

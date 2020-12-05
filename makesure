@@ -50,7 +50,9 @@ function prepare_args(    i,arg) {
         Died = 1
         exit 0
     }
-    if ("-x" in Args)
+    if ("-s" in Args || "--silent" in Args)
+      Options["silent"]
+    if ("-x" in Args || "--tracing" in Args)
       Options["tracing"]
     if ("-t" in Args || "--timing" in Args)
       Options["timing"]
