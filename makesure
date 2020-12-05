@@ -192,9 +192,15 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
                 }
             }
         }
-    } else if ("-p" in Args || "--print" in Args)
+    } else if ("-p" in Args || "--print" in Args) {
         print Script
-    else {
+        print "__resolved_goals() {"
+        for (i = 1; i <= resolved_goals[0]; i++) {
+           print "  " resolved_goals[i]
+        }
+        print "}"
+        print "__resolved_goals"
+    } else {
         cmd = Shell " -e"
 
         print Script | cmd

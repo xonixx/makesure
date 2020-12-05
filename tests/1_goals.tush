@@ -5,6 +5,12 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh
 | aaa
 |   goal 'default' [empty].
 
+$ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -p | bash
+|   goal 'bbb' [already satisfied].
+|   goal 'aaa' ...
+| aaa
+|   goal 'default' [empty].
+
 $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -l
 | Available goals:
 |   default
