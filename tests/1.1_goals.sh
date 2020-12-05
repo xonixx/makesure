@@ -11,7 +11,7 @@
 @doc Documenatation for bbb line 1
 @doc Documenatation for bbb line 2
 @depends_on ccc ddd
-  echo aaa
+  echo bbb
 
 @goal ccc
 @depends_on ddd

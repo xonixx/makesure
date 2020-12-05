@@ -12,7 +12,7 @@
 @doc Documenatation for bbb line 2
 @reached_if true
 @depends_on ccc ddd
-  echo aaa
+  echo bbb
 
 @goal ccc
 @depends_on ddd

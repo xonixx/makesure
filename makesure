@@ -117,7 +117,7 @@ function handle_reached_if(    goal_name) {
     ReachedIf[goal_name] = trim($0)
 }
 
-function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude_body,resolved_goals) {
+function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude_body,resolved_goals,cmd) {
     if (Tracing)
         issue_script_line("set -x")
 
@@ -174,7 +174,7 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
         }
     }
 
-    issue_resolved_goals_to_run(resolved_goals)
+    resolve_goals_to_run(resolved_goals)
 
     if ("-d" in Args || "--resolved" in Args) {
         printf("Resolved goals to reach for '%s':\n", join(ArgsGoals, 0, ArgGoalsCnt-1, " "))
@@ -187,7 +187,7 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
             if (i >= 0) {
                 print "  " GoalNames[i]
                 if (GoalNames[i] in DocCnt) {
-                  for (j=0; j<DocCnt[GoalNames[i]]; j++)
+                  for (j = 0; j < DocCnt[GoalNames[i]]; j++)
                     print "    " Doc[GoalNames[i], j]
                 }
             }
@@ -195,12 +195,36 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
     } else if ("-p" in Args || "--print" in Args)
         print Script
     else {
-        print Script | (Shell " -e")
-        close(Shell " -e")
+        cmd = Shell " -e"
+
+        print Script | cmd
+
+        for (i = 1; i <= resolved_goals[0]; i++) {
+#           print "EXEC: " resolved_goals[i]
+           print resolved_goals[i] | cmd
+           stupid_flush(cmd)
+#           print "DONE: " resolved_goals[i]
+        }
+
+#        print "BEFORE CLOSE"
+        close(cmd)
     }
 }
 
-function issue_resolved_goals_to_run(result,    i, g, loop) {
+#
+# Write 65K spaces to pipe to make it pass through buffer
+# Can we actually do better?
+#
+function stupid_flush(cmd,    i) {
+  if (!LongString) {
+    LongString = " "
+    for (i=0; i<16; i++)
+      LongString = LongString LongString
+  }
+  print LongString | cmd
+}
+
+function resolve_goals_to_run(result,    i, g, loop) {
     if (ArgGoalsCnt == 0)
         ArgsGoals[ArgGoalsCnt++] = "default"
 
@@ -216,11 +240,11 @@ function issue_resolved_goals_to_run(result,    i, g, loop) {
         die_msg("There is a loop in goal dependencies via " loop[1] " -> " loop[2])
     }
 
-    issue_script_line("# resolved goals to execute")
-
-    for (i = 1; i <= result[0]; i++) {
-        issue_script_line(result[i])
-    }
+#    issue_script_line("# resolved goals to execute")
+#
+#    for (i = 1; i <= result[0]; i++) {
+#        issue_script_line(result[i])
+#    }
 }
 
 function issue_script_line(line) {
