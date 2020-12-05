@@ -30,19 +30,24 @@
 @goal cleaned_all
 @depends_on cleaned cleaned_soft
 
-@goal tested
-@depends_on tests_executed
+@goal debug
+  set -x
+  awk --version | head -n 1
+  bash --version| head -n 1
 
-@goal tests_executed
-@depends_on tush_installed
+@goal tested
+@depends_on tush_installed debug
   export PATH="$PATH:$MYDIR/soft/tush/bin"
 
   for f in tests/*.tush
   do
-    tush-check "$f" && echo "TESTS PASSED : $f" || (
-      echo "!!! TESTS FAILED !!! : $f"
+    if tush-check "$f"
+    then
+      echo "TESTS PASSED : $f"
+    else
+      echo >&2 "!!! TESTS FAILED !!! : $f"
       exit 1
-    )
+    fi
   done
 
 @goal default
