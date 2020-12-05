@@ -51,9 +51,9 @@ function prepare_args(    i,arg) {
         exit 0
     }
     if ("-x" in Args)
-      Tracing = 1
+      Options["tracing"]
     if ("-t" in Args || "--timing" in Args)
-      Timing = 1
+      Options["timing"]
     #print "--- ARGV: "; for (i in ARGV) print i " : " ARGV[i]
     #print "--- Args: "; for (i in Args) print i " : " Args[i]
     #print "--- ArgGoals: "; for (i in ArgGoals) print i " : " ArgGoals[i]
@@ -130,7 +130,7 @@ function handle_reached_if(    goal_name) {
 }
 
 function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude_body,resolved_goals,cmd) {
-    if (Tracing)
+    if ("tracing" in Options)
         issue_script_line("set -x")
 
     issue_script_line("MYDIR='" get_my_dir() "'")
@@ -178,7 +178,7 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
         issue_script_line("  else")
         issue_script_line("    echo \"" (body == ":" ? "[empty]." : "...") "\"")
         issue_script_line("  fi")
-        if (Tracing)
+        if ("tracing" in Options)
             issue_script_line("set -x")
         issue_script_line("  " body)
         issue_script_line("EOF\n")

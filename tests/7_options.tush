@@ -3,3 +3,15 @@ $ cd "$MYDIR"; ./makesure -f tests/7_options_invalid.sh
 @ Option invalid is not supported:
 @ tests/7_options_invalid.sh:2: @options invalid
 ? 1
+
+$ cd "$MYDIR"; bash -c "./makesure -f tests/7_options_tracing.sh -x 2> >(sed 's#\/.*\/tests#tests#g' >&2)"
+|   goal 'default' ...
+| test
+@ + MYDIR=tests
+@ + export MYDIR
+@ + cd tests
+@ + __resolved_goals
+@ + default
+@ + bash -e
+@ + echo test
+
