@@ -1,18 +1,22 @@
 
 $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh
-|   goal 'bbb' [already satisfied].
+|   goal 'ddd' ...
+| ddd
+|   goal 'ccc' ...
+| ccc
+|   goal 'bbb' ...
+| bbb
 |   goal 'aaa' ...
 | aaa
 |   goal 'default' [empty].
 
-$ cd "$MYDIR"; ./makesure -f tests/1_goals.sh fail
-|   goal 'fail' ...
-| stdout
-@ stderr
-? 1
-
 $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -p | bash
-|   goal 'bbb' [already satisfied].
+|   goal 'ddd' ...
+| ddd
+|   goal 'ccc' ...
+| ccc
+|   goal 'bbb' ...
+| bbb
 |   goal 'aaa' ...
 | aaa
 |   goal 'default' [empty].
@@ -31,20 +35,14 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -l
 
 $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -d
 | Resolved goals to reach for 'default':
-|   bbb
-|   aaa
-|   default
-
-$ cd "$MYDIR"; ./makesure -f tests/1.1_goals.sh -d
-| Resolved goals to reach for 'default':
 |   ddd
 |   ccc
 |   bbb
 |   aaa
 |   default
 
-$ cd "$MYDIR"; ./makesure -f tests/1.1_goals.sh --resolved bbb
-| Resolved goals to reach for 'bbb':
-|   ddd
-|   ccc
-|   bbb
+$ cd "$MYDIR"; ./makesure -f tests/1_goals.sh fail
+|   goal 'fail' ...
+| stdout
+@ stderr
+? 1
