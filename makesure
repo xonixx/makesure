@@ -178,7 +178,7 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
 
     if ("-d" in Args || "--resolved" in Args) {
         printf("Resolved goals to reach for '%s':\n", join(ArgsGoals, 0, ArgGoalsCnt-1, " "))
-        for (i = 1; i <= resolved_goals[0]; i++) {
+        for (i = 1; i <= array_len(resolved_goals); i++) {
            print "  " resolved_goals[i]
         }
     } else if ("-l" in Args || "--list" in Args) {
@@ -217,7 +217,7 @@ function issue_resolved_goals_to_run(result,    i, g, loop) {
     }
 
     issue_script_line("__resolved_goals() {")
-    for (i = 1; i <= result[0]; i++) {
+    for (i = 1; i <= array_len(result); i++) {
        issue_script_line("  " result[i])
     }
     issue_script_line("}")
@@ -311,7 +311,7 @@ function topological_sort_perform(node, result, loop,    i, s) {
 
     visited[node] = 2
 
-    result[++result[0]] = node
+    array_push(result, node)
 }
 
 function join(array, start, end, sep,    result, i) {
@@ -321,6 +321,8 @@ function join(array, start, end, sep,    result, i) {
     return result
 }
 
+function array_push(arr, elt) { arr[++arr[0]] = elt }
+function array_len(arr) { return arr[0] }
 function ltrim(s) { sub(/^[ \t\r\n]+/, "", s); return s }
 function rtrim(s) { sub(/[ \t\r\n]+$/, "", s); return s }
 function trim(s) { return rtrim(ltrim(s)); }
