@@ -20,4 +20,4 @@ jobs:
 
       - name: "run tests"
         run: |
-          ./makesure_stable tested
+          ./makesure_stable tested ; echo "exit code=$?"
