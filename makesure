@@ -36,7 +36,8 @@ function prepare_args(    i,arg) {
                 } else
                   Args[arg] = 1
             } else
-                ArgsGoals[ArgGoalsCnt++] = arg
+                arr_push(ArgGoals, arg)
+
             delete ARGV[i] # https://unix.stackexchange.com/a/460375
         }
     }
@@ -53,7 +54,7 @@ function prepare_args(    i,arg) {
       Timing = 1
     #print "--- ARGV: "; for (i in ARGV) print i " : " ARGV[i]
     #print "--- Args: "; for (i in Args) print i " : " Args[i]
-    #print "--- ArgsGoals: "; for (i in ArgsGoals) print i " : " ArgsGoals[i]
+    #print "--- ArgGoals: "; for (i in ArgGoals) print i " : " ArgGoals[i]
 }
 
 function handle_define() {
@@ -177,8 +178,8 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
     issue_resolved_goals_to_run(resolved_goals)
 
     if ("-d" in Args || "--resolved" in Args) {
-        printf("Resolved goals to reach for '%s':\n", join(ArgsGoals, 0, ArgGoalsCnt-1, " "))
-        for (i = 0; i < array_len(resolved_goals); i++) {
+        printf("Resolved goals to reach for '%s':\n", join(ArgGoals, 0, arr_len(ArgGoals), " "))
+        for (i = 0; i < arr_len(resolved_goals); i++) {
            print "  " resolved_goals[i]
         }
     } else if ("-l" in Args || "--list" in Args) {
@@ -201,11 +202,11 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
 }
 
 function issue_resolved_goals_to_run(result,    i, g, loop) {
-    if (ArgGoalsCnt == 0)
-        ArgsGoals[ArgGoalsCnt++] = "default"
-
-    for (i in ArgsGoals) {
-        g = ArgsGoals[i]
+    if (arr_len(ArgGoals) == 0) {
+        arr_push(ArgGoals, "default")
+                                   }
+    for (i = 0; i < arr_len(ArgGoals); i++) {
+        g = ArgGoals[i]
         if (!(g in GoalsByName)) {
             die_msg("Goal not found: " g) # TODO can we show line number here?
         }
@@ -217,7 +218,7 @@ function issue_resolved_goals_to_run(result,    i, g, loop) {
     }
 
     issue_script_line("__resolved_goals() {")
-    for (i = 0; i < array_len(result); i++) {
+    for (i = 0; i < arr_len(result); i++) {
        issue_script_line("  " result[i])
     }
     issue_script_line("}")
@@ -311,18 +312,17 @@ function topological_sort_perform(node, result, loop,    i, s) {
 
     visited[node] = 2
 
-    array_push(result, node)
+    arr_push(result, node)
 }
 
-function join(array, start, end, sep,    result, i) {
-    result = array[start]
-    for (i = start + 1; i <= end; i++)
-        result = result sep array[i]
+function join(arr, start_incl, end_excl, sep,    result, i) {
+    result = arr[start_incl]
+    for (i = start_incl + 1; i < end_excl; i++)
+        result = result sep arr[i]
     return result
 }
-
-function array_push(arr, elt) { arr[arr[-1]++] = elt }
-function array_len(arr) { return arr[-1] }
+function arr_push(arr, elt) { arr[arr[-1]++] = elt }
+function arr_len(arr) { return arr[-1] }
 function ltrim(s) { sub(/^[ \t\r\n]+/, "", s); return s }
 function rtrim(s) { sub(/[ \t\r\n]+$/, "", s); return s }
 function trim(s) { return rtrim(ltrim(s)); }
