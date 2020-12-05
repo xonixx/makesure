@@ -36,6 +36,10 @@
 26. [x] `-x` to enable tracing in bash
 27. [ ] support @silent mode and flag `-s`
 28. [ ] allow override @define-s
+29. [ ] support @options directive
+    - [ ] @options tracing
+    - [ ] @options silent
+    - [ ] @options timing
 
 ## Ideas proved not to work
  - Idea with stupid_flush (which just sends 65K spaces to shell pipe) is broken: 

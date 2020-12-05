@@ -8,10 +8,14 @@ BEGIN {
     Shell = "bash" # default shell
     SupportedShells["bash"]
     SupportedShells["sh"]
+    SupportedOptions["tracing"]
+    SupportedOptions["silent"]
+    SupportedOptions["timing"]
     prepare_args()
 }
 
 NR==1 && /^#!/      { next }
+"@options"    == $1 { handle_options();     next }
 "@define"     == $1 { handle_define();      next }
 "@shell"      == $1 { handle_shell();       next }
 "@goal"       == $1 { handle_goal();        next }
@@ -32,7 +36,7 @@ function prepare_args(    i,arg) {
                   delete ARGV[i]
                   ARGV[1] = ARGV[++i]
                 } else
-                  Args[arg] = 1
+                  Args[arg]
             } else
                 arr_push(ArgGoals, arg)
 
@@ -53,6 +57,16 @@ function prepare_args(    i,arg) {
     #print "--- ARGV: "; for (i in ARGV) print i " : " ARGV[i]
     #print "--- Args: "; for (i in Args) print i " : " Args[i]
     #print "--- ArgGoals: "; for (i in ArgGoals) print i " : " ArgGoals[i]
+}
+
+function handle_options() {
+    check_prelude_only()
+
+    for (i=2; i<=NF; i++) {
+        if (!($i in SupportedOptions))
+          die("Option " $i " is not supported")
+        Options[$i]
+    }
 }
 
 function handle_define() {

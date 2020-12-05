@@ -1,0 +1,5 @@
+
+$ cd "$MYDIR"; ./makesure -f tests/7_options_invalid.sh
+@ Option invalid is not supported:
+@ tests/7_options_invalid.sh:2: @options invalid
+? 1
