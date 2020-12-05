@@ -174,7 +174,7 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
         }
     }
 
-    resolve_goals_to_run(resolved_goals)
+    issue_resolved_goals_to_run(resolved_goals)
 
     if ("-d" in Args || "--resolved" in Args) {
         printf("Resolved goals to reach for '%s':\n", join(ArgsGoals, 0, ArgGoalsCnt-1, " "))
@@ -200,36 +200,13 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
         print "__resolved_goals"
     } else {
         cmd = Shell " -e"
-
         print Script | cmd
-
-        for (i = 1; i <= resolved_goals[0]; i++) {
-#           print "EXEC: " resolved_goals[i]
-            print resolved_goals[i] | cmd
-#            stupid_flush(cmd)
-#            print "DONE: " resolved_goals[i]
-        }
-
-#        print "BEFORE CLOSE"
         if (close(cmd) != 0)
             exit 1
     }
 }
 
-#
-# Write 65K spaces to pipe to make it pass through buffer
-# Can we actually do better?
-#
-function stupid_flush(cmd,    i) {
-  if (!LongString) {
-    LongString = " "
-    for (i=0; i<16; i++)
-      LongString = LongString LongString
-  }
-  print LongString | cmd
-}
-
-function resolve_goals_to_run(result,    i, g, loop) {
+function issue_resolved_goals_to_run(result,    i, g, loop) {
     if (ArgGoalsCnt == 0)
         ArgsGoals[ArgGoalsCnt++] = "default"
 
@@ -245,11 +222,11 @@ function resolve_goals_to_run(result,    i, g, loop) {
         die_msg("There is a loop in goal dependencies via " loop[1] " -> " loop[2])
     }
 
-#    issue_script_line("# resolved goals to execute")
-#
-#    for (i = 1; i <= result[0]; i++) {
-#        issue_script_line(result[i])
-#    }
+    issue_script_line("# resolved goals to execute")
+
+    for (i = 1; i <= result[0]; i++) {
+        issue_script_line(result[i])
+    }
 }
 
 function issue_script_line(line) {

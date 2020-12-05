@@ -2,11 +2,11 @@
 
 VERSION="0.9.1"
 
-exec awk -v "version=$VERSION" -f - Makesurefile "$@" <<'MAKESURE'
+exec awk -v "Version=$VERSION" -f - Makesurefile "$@" <<'MAKESURE'
 
 BEGIN {
-    current_goal_idx = -1
-    goals[-1] = "" # prelude
+    CurrentGoalIdx = -1
+    GoalNames[-1] = "" # prelude
     Shell = "bash" # default shell
     SupportedShells["bash"]
     SupportedShells["sh"]
@@ -14,15 +14,15 @@ BEGIN {
 }
 
 NR==1 && /^#!/      { next }
-"@define" == $1     { handle_define();      next }
-"@shell" == $1      { handle_shell();       next }
-"@goal" == $1       { handle_goal();        next }
-"@doc" == $1        { handle_doc();         next }
+"@define"     == $1 { handle_define();      next }
+"@shell"      == $1 { handle_shell();       next }
+"@goal"       == $1 { handle_goal();        next }
+"@doc"        == $1 { handle_doc();         next }
 "@depends_on" == $1 { handle_depends_on();  next }
 "@reached_if" == $1 { handle_reached_if();  next }
                     { handle_code_line($0); next }
 
-END { if (!died) do_work() }
+END { if (!Died) do_work() }
 
 function prepare_args(    i,arg) {
     for (i = 0; i < ARGC; i++) {
@@ -34,24 +34,26 @@ function prepare_args(    i,arg) {
                   delete ARGV[i]
                   ARGV[1] = ARGV[++i]
                 } else
-                  args[arg] = 1
+                  Args[arg] = 1
             } else
-                args_goals[arg_goals_cnt++] = arg
+                ArgsGoals[ArgGoalsCnt++] = arg
             delete ARGV[i] # https://unix.stackexchange.com/a/460375
         }
     }
     if (system("test -f \"" ARGV[1] "\"") != 0)
       die_msg("makesure file not found: " ARGV[1])
-    if ("-v" in args || "--version" in args) {
-        print version
-        died = 1
+    if ("-v" in Args || "--version" in Args) {
+        print Version
+        Died = 1
         exit 0
     }
-    if ("-x" in args)
-      tracing = 1
+    if ("-x" in Args)
+      Tracing = 1
+    if ("-t" in Args || "--timing" in Args)
+      Timing = 1
     #print "--- ARGV: "; for (i in ARGV) print i " : " ARGV[i]
-    #print "--- args: "; for (i in args) print i " : " args[i]
-    #print "--- args_goals: "; for (i in args_goals) print i " : " args_goals[i]
+    #print "--- Args: "; for (i in Args) print i " : " Args[i]
+    #print "--- ArgsGoals: "; for (i in ArgsGoals) print i " : " ArgsGoals[i]
 }
 
 function handle_define() {
@@ -64,7 +66,7 @@ function handle_define() {
 function handle_shell() {
     check_prelude_only()
 
-    Shell=trim($2)
+    Shell = trim($2)
 
     if (!(Shell in SupportedShells))
       die("Shell '" Shell "' is not supported")
@@ -75,12 +77,12 @@ function handle_goal(    goal_name) {
     if (length(goal_name) == 0) {
         die("Goal must have a name")
     }
-    if (goal_name in goals_by_name) {
+    if (goal_name in GoalsByName) {
         die("Goal " goal_name " is already defined")
     }
-    current_goal_idx++
-    goals[current_goal_idx] = goal_name
-    goals_by_name[goal_name] = 1
+    CurrentGoalIdx++
+    GoalNames[CurrentGoalIdx] = goal_name
+    GoalsByName[goal_name] = 1
 }
 
 function handle_doc(    goal_name) {
@@ -89,7 +91,7 @@ function handle_doc(    goal_name) {
     goal_name = current_goal_name()
 
     $1 = ""
-    doc[goal_name, doc_cnt[goal_name]++] = trim($0)
+    Doc[goal_name, DocCnt[goal_name]++] = trim($0)
 }
 
 function handle_depends_on(    goal_name,i) {
@@ -98,7 +100,7 @@ function handle_depends_on(    goal_name,i) {
     goal_name = current_goal_name()
 
     for (i=2; i<=NF; i++) {
-        dependencies[goal_name, dependencies_cnt[goal_name]++] = $i
+        Dependencies[goal_name, DependenciesCnt[goal_name]++] = $i
     }
 }
 
@@ -107,37 +109,37 @@ function handle_reached_if(    goal_name) {
 
     goal_name = current_goal_name()
 
-    if (goal_name in reached_if) {
+    if (goal_name in ReachedIf) {
         die("Multiple " $1 " not allowed for a goal")
     }
 
     $1 = ""
-    reached_if[goal_name] = trim($0)
+    ReachedIf[goal_name] = trim($0)
 }
 
-function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude_body,resolved_goals) {
-    if (tracing)
+function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude_body,resolved_goals,cmd) {
+    if (Tracing)
         issue_script_line("set -x")
 
     issue_script_line("MYDIR='" get_my_dir() "'")
     issue_script_line("export MYDIR")
     issue_script_line("cd \"$MYDIR\"")
 
-    for (i = -1; i <= current_goal_idx; i++) {
-        goal_name = goals[i]
+    for (i = -1; i <= CurrentGoalIdx; i++) {
+        goal_name = GoalNames[i]
 
         body = trim(code[goal_name])
 
         if (length(goal_name) != 0) {
             issue_script_line("\n" goal_name "() {")
 
-            reached_if_condition = reached_if[goal_name]
+            reached_if_condition = ReachedIf[goal_name]
 
             # check valid dependencies
-            dep_cnt = dependencies_cnt[goal_name]
+            dep_cnt = DependenciesCnt[goal_name]
             for (j=0; j < dep_cnt; j++) {
-                dep = dependencies[goal_name, j]
-                if (!(dep in goals_by_name))
+                dep = Dependencies[goal_name, j]
+                if (!(dep in GoalsByName))
                     die_msg("Goal '" goal_name "' has unknown dependency '" dep "'") # TODO find a way to provide line reference
                 if (!(reached_if_condition ? check_condition_reached(prelude_body, reached_if_condition) : false)) {
                     #print " [not reached] " goal_name " -> " dep
@@ -160,7 +162,7 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
             issue_script_line("  else")
             issue_script_line("    echo \"" (body == ":" ? "[empty]." : "...") "\"")
             issue_script_line("  fi")
-            if (tracing)
+            if (Tracing)
                 issue_script_line("set -x")
             issue_script_line("  " body)
             issue_script_line("EOF\n")
@@ -174,37 +176,43 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
 
     issue_resolved_goals_to_run(resolved_goals)
 
-    if ("-d" in args || "--resolved" in args) {
-        printf("Resolved goals to reach for '%s':\n", join(args_goals, 0, arg_goals_cnt-1, " "))
+    if ("-d" in Args || "--resolved" in Args) {
+        printf("Resolved goals to reach for '%s':\n", join(ArgsGoals, 0, ArgGoalsCnt-1, " "))
         for (i = 1; i <= resolved_goals[0]; i++) {
            print "  " resolved_goals[i]
         }
-    } else if ("-l" in args || "--list" in args) {
+    } else if ("-l" in Args || "--list" in Args) {
         print "Available goals:"
-        for (i in goals) {
-            if (i >= 0) {
-                print "  " goals[i]
-                if (goals[i] in doc_cnt) {
-                  for (j=0; j<doc_cnt[goals[i]]; j++)
-                    print "    " doc[goals[i], j]
-                }
+        for (i = 0; i <= CurrentGoalIdx; i++) {
+            print "  " GoalNames[i]
+            if (GoalNames[i] in DocCnt) {
+              for (j = 0; j < DocCnt[GoalNames[i]]; j++)
+                print "    " Doc[GoalNames[i], j]
             }
         }
-    } else if ("-p" in args || "--print" in args)
-        print script
-    else {
-        print script | (Shell " -e")
-        close(Shell " -e")
+    } else if ("-p" in Args || "--print" in Args) {
+        print Script
+        print "__resolved_goals() {"
+        for (i = 1; i <= resolved_goals[0]; i++) {
+           print "  " resolved_goals[i]
+        }
+        print "}"
+        print "__resolved_goals"
+    } else {
+        cmd = Shell " -e"
+        print Script | cmd
+        if (close(cmd) != 0)
+            exit 1
     }
 }
 
 function issue_resolved_goals_to_run(result,    i, g, loop) {
-    if (arg_goals_cnt == 0)
-        args_goals[arg_goals_cnt++] = "default"
+    if (ArgGoalsCnt == 0)
+        ArgsGoals[ArgGoalsCnt++] = "default"
 
-    for (i in args_goals) {
-        g = args_goals[i]
-        if (!(g in goals_by_name)) {
+    for (i in ArgsGoals) {
+        g = ArgsGoals[i]
+        if (!(g in GoalsByName)) {
             die_msg("Goal not found: " g) # TODO can we show line number here?
         }
         topological_sort_perform(g, result, loop)
@@ -222,11 +230,11 @@ function issue_resolved_goals_to_run(result,    i, g, loop) {
 }
 
 function issue_script_line(line) {
-    script = script line "\n";
+    Script = Script line "\n";
 }
 
 function is_prelude() {
-    return current_goal_idx < 0
+    return CurrentGoalIdx < 0
 }
 
 function check_prelude_only() {
@@ -242,7 +250,7 @@ function check_goal_only() {
 }
 
 function current_goal_name() {
-    return current_goal_idx == -1 ? "" : goals[current_goal_idx]
+    return CurrentGoalIdx == -1 ? "" : GoalNames[CurrentGoalIdx]
 }
 
 function die(msg) {
@@ -253,7 +261,7 @@ function die_msg(msg,    out) {
     out = "cat 1>&2" # trick to write from awk to stderr
     print msg | out
     close(out)
-    died = 1
+    Died = 1
     exit 1
 }
 
@@ -311,12 +319,7 @@ function topological_sort_perform(node, result, loop,    i, s) {
     result[++result[0]] = node
 }
 
-function join(array, start, end, sep,    result, i)
-{
-    if (sep == "")
-       sep = " "
-    else if (sep == SUBSEP) # magic value
-       sep = ""
+function join(array, start, end, sep,    result, i) {
     result = array[start]
     for (i = start + 1; i <= end; i++)
         result = result sep array[i]

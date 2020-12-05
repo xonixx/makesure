@@ -1,4 +1,6 @@
 
+## Plan
+
 1.  [x] Each goal execution should not create shared variables - this can introduce unwanted intent to rely on imperative execution model
 2.  prelude
     - [ ] prelude runs exactly 1 time
@@ -35,5 +37,6 @@
 27. [ ] support @silent mode and flag `-s`
 28. [ ] allow override @define-s
 
----
-Idea with stupid_flush is broken: TODO   
+## Ideas proved not to work
+ - Idea with stupid_flush (which just sends 65K spaces to shell pipe) is broken: 
+    - we can't handle correctly the situation when bash fails for wrong command, and we keep sending to broken pipe   
