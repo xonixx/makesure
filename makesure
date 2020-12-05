@@ -171,18 +171,27 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
         }
 
         issue_script_line("\n" Shell " -e <<'EOF'")
-        issue_script_line("  printf \"  goal '" goal_name "' \"")
+
+        if (!("silent" in Options)) {
+            issue_script_line("  printf \"  goal '" goal_name "' \"")
+        }
         issue_script_line("  if " (reached_if_condition ? reached_if_condition : "false") "; then")
-        issue_script_line("    echo \"[already satisfied].\"")
+        if (!("silent" in Options)) {
+            issue_script_line("    echo \"[already satisfied].\"")
+        }
         issue_script_line("    exit 0")
-        issue_script_line("  else")
-        issue_script_line("    echo \"" (body == ":" ? "[empty]." : "...") "\"")
+        if (!("silent" in Options)) {
+            issue_script_line("  else")
+            issue_script_line("    echo \"" (body == ":" ? "[empty]." : "...") "\"")
+        }
         issue_script_line("  fi")
+
         if ("tracing" in Options)
             issue_script_line("set -x")
-        issue_script_line("  " body)
-        issue_script_line("EOF\n")
 
+        issue_script_line("  " body)
+
+        issue_script_line("EOF\n")
         issue_script_line("}")
     }
 

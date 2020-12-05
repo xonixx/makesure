@@ -37,8 +37,8 @@
 27. [ ] support @silent mode and flag `-s`
 28. [ ] allow override @define-s
 29. [ ] support @options directive
-    - [ ] @options tracing
-    - [ ] @options silent
+    - [x] @options tracing
+    - [x] @options silent
     - [ ] @options timing
 
 ## Ideas proved not to work
