@@ -219,7 +219,9 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
     } else {
         cmd = Shell " -e"
         print Script | cmd
-        if (close(cmd) != 0)
+        exitCode = close(cmd)
+        print "exitCode : " exitCode
+        if (exitCode != 0)
             exit 1
     }
 }
