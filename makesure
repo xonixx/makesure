@@ -225,9 +225,9 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
 }
 
 function issue_resolved_goals_to_run(result,    i, g, loop) {
-    if (arr_len(ArgGoals) == 0) {
+    if (arr_len(ArgGoals) == 0)
         arr_push(ArgGoals, "default")
-                                   }
+
     for (i = 0; i < arr_len(ArgGoals); i++) {
         g = ArgGoals[i]
         if (!(g in GoalsByName)) {
