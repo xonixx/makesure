@@ -25,4 +25,9 @@
   echo >&2 stderr
   exit 1
 
+@goal fail123
+  echo stdout
+  echo >&2 stderr
+  exit 123
+
 

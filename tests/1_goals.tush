@@ -44,6 +44,7 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -l
 |   ccc
 |   ddd
 |   fail
+|   fail123
 
 $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -d
 | Resolved goals to reach for 'default':
@@ -58,3 +59,9 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh fail
 | stdout
 @ stderr
 ? 1
+
+$ cd "$MYDIR"; ./makesure -f tests/1_goals.sh fail123
+|   goal 'fail123' ...
+| stdout
+@ stderr
+? 123

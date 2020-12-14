@@ -1,19 +1,21 @@
 #!/usr/bin/env sh
 
-VERSION="0.9.2"
+VERSION="0.9.3"
 
 exec awk -v "Version=$VERSION" -f - Makesurefile "$@" <<'MAKESURE'
 
 BEGIN {
-    CurrentGoalIdx = -1
-    GoalNames[-1] = "" # prelude
     Shell = "bash" # default shell
     SupportedShells["bash"]
     SupportedShells["sh"]
+    SupportedOptions["tracing"]
+    SupportedOptions["silent"]
+    SupportedOptions["timing"]
     prepare_args()
 }
 
 NR==1 && /^#!/      { next }
+"@options"    == $1 { handle_options();     next }
 "@define"     == $1 { handle_define();      next }
 "@shell"      == $1 { handle_shell();       next }
 "@goal"       == $1 { handle_goal();        next }
@@ -34,9 +36,10 @@ function prepare_args(    i,arg) {
                   delete ARGV[i]
                   ARGV[1] = ARGV[++i]
                 } else
-                  Args[arg] = 1
+                  Args[arg]
             } else
-                ArgsGoals[ArgGoalsCnt++] = arg
+                arr_push(ArgGoals, arg)
+
             delete ARGV[i] # https://unix.stackexchange.com/a/460375
         }
     }
@@ -47,13 +50,25 @@ function prepare_args(    i,arg) {
         Died = 1
         exit 0
     }
-    if ("-x" in Args)
-      Tracing = 1
+    if ("-s" in Args || "--silent" in Args)
+      Options["silent"]
+    if ("-x" in Args || "--tracing" in Args)
+      Options["tracing"]
     if ("-t" in Args || "--timing" in Args)
-      Timing = 1
+      Options["timing"]
     #print "--- ARGV: "; for (i in ARGV) print i " : " ARGV[i]
     #print "--- Args: "; for (i in Args) print i " : " Args[i]
-    #print "--- ArgsGoals: "; for (i in ArgsGoals) print i " : " ArgsGoals[i]
+    #print "--- ArgGoals: "; for (i in ArgGoals) print i " : " ArgGoals[i]
+}
+
+function handle_options() {
+    check_prelude_only()
+
+    for (i=2; i<=NF; i++) {
+        if (!($i in SupportedOptions))
+          die("Option " $i " is not supported")
+        Options[$i]
+    }
 }
 
 function handle_define() {
@@ -80,9 +95,8 @@ function handle_goal(    goal_name) {
     if (goal_name in GoalsByName) {
         die("Goal " goal_name " is already defined")
     }
-    CurrentGoalIdx++
-    GoalNames[CurrentGoalIdx] = goal_name
-    GoalsByName[goal_name] = 1
+    arr_push(GoalNames, goal_name)
+    GoalsByName[goal_name]
 }
 
 function handle_doc(    goal_name) {
@@ -118,94 +132,100 @@ function handle_reached_if(    goal_name) {
 }
 
 function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude_body,resolved_goals,cmd) {
-    if (Tracing)
+    if ("tracing" in Options)
         issue_script_line("set -x")
 
     issue_script_line("MYDIR='" get_my_dir() "'")
     issue_script_line("export MYDIR")
     issue_script_line("cd \"$MYDIR\"")
 
-    for (i = -1; i <= CurrentGoalIdx; i++) {
+    # prelude
+    body = trim(code[""])
+    prelude_body = body
+    issue_script_line(body)
+
+    for (i = 0; i < arr_len(GoalNames); i++) {
         goal_name = GoalNames[i]
 
         body = trim(code[goal_name])
 
-        if (length(goal_name) != 0) {
-            issue_script_line("\n" goal_name "() {")
+        issue_script_line("\n" goal_name "() {")
 
-            reached_if_condition = ReachedIf[goal_name]
+        reached_if_condition = ReachedIf[goal_name]
 
-            # check valid dependencies
-            dep_cnt = DependenciesCnt[goal_name]
-            for (j=0; j < dep_cnt; j++) {
-                dep = Dependencies[goal_name, j]
-                if (!(dep in GoalsByName))
-                    die_msg("Goal '" goal_name "' has unknown dependency '" dep "'") # TODO find a way to provide line reference
-                if (!(reached_if_condition ? check_condition_reached(prelude_body, reached_if_condition) : false)) {
-                    #print " [not reached] " goal_name " -> " dep
-                    topological_sort_add_connection(goal_name, dep)
-                } else {
-                    #print " [    reached] " goal_name " -> " dep
-                }
+        # check valid dependencies
+        dep_cnt = DependenciesCnt[goal_name]
+        for (j=0; j < dep_cnt; j++) {
+            dep = Dependencies[goal_name, j]
+            if (!(dep in GoalsByName))
+                die_msg("Goal '" goal_name "' has unknown dependency '" dep "'") # TODO find a way to provide line reference
+            if (!(reached_if_condition ? check_condition_reached(prelude_body, reached_if_condition) : false)) {
+                #print " [not reached] " goal_name " -> " dep
+                topological_sort_add_connection(goal_name, dep)
+            } else {
+                #print " [    reached] " goal_name " -> " dep
             }
+        }
 
-            if (length(body) == 0) {
-                # in shell function can't have empty body - use nop
-                body = ":"
-            }
+        if (length(body) == 0) {
+            # in shell function can't have empty body - use nop
+            body = ":"
+        }
 
-            issue_script_line("\n" Shell " -e <<'EOF'")
+        issue_script_line("\n" Shell " -e <<'EOF'")
+
+        if (!("silent" in Options)) {
             issue_script_line("  printf \"  goal '" goal_name "' \"")
-            issue_script_line("  if " (reached_if_condition ? reached_if_condition : "false") "; then")
+        }
+        issue_script_line("  if " (reached_if_condition ? reached_if_condition : "false") "; then")
+        if (!("silent" in Options)) {
             issue_script_line("    echo \"[already satisfied].\"")
-            issue_script_line("    exit 0")
+        }
+        issue_script_line("    exit 0")
+        if (!("silent" in Options)) {
             issue_script_line("  else")
             issue_script_line("    echo \"" (body == ":" ? "[empty]." : "...") "\"")
-            issue_script_line("  fi")
-            if (Tracing)
-                issue_script_line("set -x")
-            issue_script_line("  " body)
-            issue_script_line("EOF\n")
-
-            issue_script_line("}")
-        } else { # prelude
-            prelude_body = body
-            issue_script_line(body)
         }
+        issue_script_line("  fi")
+
+        if ("tracing" in Options)
+            issue_script_line("set -x")
+
+        issue_script_line("  " body)
+
+        issue_script_line("EOF\n")
+        issue_script_line("}")
     }
 
     issue_resolved_goals_to_run(resolved_goals)
 
     if ("-d" in Args || "--resolved" in Args) {
-        printf("Resolved goals to reach for '%s':\n", join(ArgsGoals, 0, ArgGoalsCnt-1, " "))
-        for (i = 1; i <= resolved_goals[0]; i++) {
+        printf("Resolved goals to reach for '%s':\n", join(ArgGoals, 0, arr_len(ArgGoals), " "))
+        for (i = 0; i < arr_len(resolved_goals); i++) {
            print "  " resolved_goals[i]
         }
     } else if ("-l" in Args || "--list" in Args) {
         print "Available goals:"
-        for (i = 0; i <= CurrentGoalIdx; i++) {
-            print "  " GoalNames[i]
-            if (GoalNames[i] in DocCnt) {
-              for (j = 0; j < DocCnt[GoalNames[i]]; j++)
-                print "    " Doc[GoalNames[i], j]
+        for (i = 0; i < arr_len(GoalNames); i++) {
+            goal_name = GoalNames[i]
+            print "  " goal_name
+            if (goal_name in DocCnt) {
+              for (j = 0; j < DocCnt[goal_name]; j++)
+                print "    " Doc[goal_name, j]
             }
         }
     } else if ("-p" in Args || "--print" in Args) {
         print Script
-    } else {
-        cmd = Shell " -e"
-        print Script | cmd
-        if (close(cmd) != 0)
-            exit 1
-    }
+    } else
+        exit shell_exec(Script, "EOF_OUTER")
 }
 
 function issue_resolved_goals_to_run(result,    i, g, loop) {
-    if (ArgGoalsCnt == 0)
-        ArgsGoals[ArgGoalsCnt++] = "default"
+    if (arr_len(ArgGoals) == 0)
+        arr_push(ArgGoals, "default")
 
-    for (i in ArgsGoals) {
-        g = ArgsGoals[i]
+    for (i = 0; i < arr_len(ArgGoals); i++) {
+        g = ArgGoals[i]
         if (!(g in GoalsByName)) {
             die_msg("Goal not found: " g) # TODO can we show line number here?
         }
@@ -217,7 +237,7 @@ function issue_resolved_goals_to_run(result,    i, g, loop) {
     }
 
     issue_script_line("__resolved_goals() {")
-    for (i = 1; i <= result[0]; i++) {
+    for (i = 0; i < arr_len(result); i++) {
        issue_script_line("  " result[i])
     }
     issue_script_line("}")
@@ -229,7 +249,7 @@ function issue_script_line(line) {
 }
 
 function is_prelude() {
-    return CurrentGoalIdx < 0
+    return arr_len(GoalNames) == 0
 }
 
 function check_prelude_only() {
@@ -245,7 +265,7 @@ function check_goal_only() {
 }
 
 function current_goal_name() {
-    return CurrentGoalIdx == -1 ? "" : GoalNames[CurrentGoalIdx]
+    return is_prelude() ? "" : GoalNames[arr_len(GoalNames)-1] # TODO arr_index via slice
 }
 
 function die(msg) {
@@ -260,15 +280,23 @@ function die_msg(msg,    out) {
     exit 1
 }
 
-function check_condition_reached(prelude_body, condition_str,    script, res) {
-    script = Shell " -e <<'EOF'"
-    script = script "\n" prelude_body # need this to initialize variables for check conditions
+function check_condition_reached(prelude_body, condition_str,    script) {
+    script = prelude_body # need this to initialize variables for check conditions
     script = script "\n" condition_str
-    script = script "\nEOF"
-    #print script
-    res = system(script)
+    return shell_exec(script) == 0
+}
+
+function shell_exec(script, eof,    s, res) {
+    if (!eof)
+        eof = "EOF"
+
+    s = Shell " -e <<'" eof "'"
+    s = s "\n" script
+    s = s "\n" eof
+    #print s
+    res = system(s)
     #print "res " res
-    return res == 0
+    return res
 }
 
 function get_my_dir(    script, res) {
@@ -311,16 +339,17 @@ function topological_sort_perform(node, result, loop,    i, s) {
 
     visited[node] = 2
 
-    result[++result[0]] = node
+    arr_push(result, node)
 }
 
-function join(array, start, end, sep,    result, i) {
-    result = array[start]
-    for (i = start + 1; i <= end; i++)
-        result = result sep array[i]
+function join(arr, start_incl, end_excl, sep,    result, i) {
+    result = arr[start_incl]
+    for (i = start_incl + 1; i < end_excl; i++)
+        result = result sep arr[i]
     return result
 }
-
+function arr_push(arr, elt) { arr[arr[-7]++] = elt }
+function arr_len(arr) { return arr[-7] }
 function ltrim(s) { sub(/^[ \t\r\n]+/, "", s); return s }
 function rtrim(s) { sub(/[ \t\r\n]+$/, "", s); return s }
 function trim(s) { return rtrim(ltrim(s)); }
