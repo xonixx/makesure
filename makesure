@@ -139,10 +139,8 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
     issue_script_line("export MYDIR")
     issue_script_line("cd \"$MYDIR\"")
 
-    # prelude
-    body = trim(code[""])
-    prelude_body = body
-    issue_script_line(body)
+    prelude_body = trim(code[""])
+    issue_script_line(prelude_body)
 
     for (i = 0; i < arr_len(GoalNames); i++) {
         goal_name = GoalNames[i]
