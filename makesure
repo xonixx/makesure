@@ -12,6 +12,7 @@ BEGIN {
     SupportedOptions["silent"]
     SupportedOptions["timing"]
     prepare_args()
+    print current_time_millis()
 }
 
 NR==1 && /^#!/      { next }
@@ -342,6 +343,13 @@ function topological_sort_perform(node, result, loop,    i, s) {
     arr_push(result, node)
 }
 
+function current_time_millis(    script, res) {
+  script = "date +%s%3N"
+  script | getline res
+  close(script)
+  sub(/%3N/, "000", res) # if date doesn't support %N (macos?) just use second-precision
+  return res + 0
+}
 function join(arr, start_incl, end_excl, sep,    result, i) {
     result = arr[start_incl]
     for (i = start_incl + 1; i < end_excl; i++)
