@@ -12,7 +12,19 @@ BEGIN {
     SupportedOptions["silent"]
     SupportedOptions["timing"]
     prepare_args()
-    print current_time_millis()
+    print render_duration(0)
+    print render_duration(100)
+    print render_duration(1000)
+    print render_duration(1001)
+    print render_duration(10000)
+    print render_duration(10001)
+    print render_duration(60000)
+    print render_duration(60001)
+    print render_duration(120000)
+    print render_duration(120001)
+    print render_duration(10000000)
+    print render_duration(50000000)
+    print render_duration(100000000)
 }
 
 NR==1 && /^#!/      { next }
@@ -349,6 +361,48 @@ function current_time_millis(    script, res) {
   close(script)
   sub(/%3N/, "000", res) # if date doesn't support %N (macos?) just use second-precision
   return res + 0
+}
+function render_duration(deltaMillis,
+#
+deltaSec, deltaMin,deltaHr,deltaDay,
+dayS,hrS,minS,secS,secSI,
+res) {
+  deltaSec = deltaMillis / 1000
+  deltaMin = 0
+  deltaHr = 0
+  deltaDay = 0
+
+  if (deltaSec >= 60) {
+    deltaMin = int(deltaSec / 60)
+    deltaSec = deltaSec - deltaMin * 60
+  }
+
+  if (deltaMin >= 60) {
+    deltaHr = int(deltaMin / 60)
+    deltaMin = deltaMin - deltaHr * 60
+  }
+
+  if (deltaHr >= 24) {
+    deltaDay = int(deltaHr / 24)
+    deltaHr = deltaHr - deltaDay * 24
+  }
+
+  dayS = deltaDay > 0 ? deltaDay " d" : ""
+  hrS = deltaHr > 0 ? deltaHr " h" : ""
+  minS = deltaMin > 0 ? deltaMin " m" : ""
+  secS = deltaSec > 0 ? deltaSec " s" : ""
+  secSI = deltaSec > 0 ? int(deltaSec) " s" : ""
+
+  if (dayS != "")
+    res = dayS " " (hrS == "" ? "0 h" : hrS)
+  else if (deltaHr > 0)
+    res = hrS " " (minS == "" ? "0 m" : minS)
+  else if (deltaMin > 0)
+    res = minS " " (secSI == "" ? "0 s" : secSI)
+  else
+    res = deltaSec > 0 ? secS : "0 s"
+
+  return res
 }
 function join(arr, start_incl, end_excl, sep,    result, i) {
     result = arr[start_incl]
