@@ -131,25 +131,27 @@ function handle_reached_if(    goal_name) {
     ReachedIf[goal_name] = trim($0)
 }
 
-function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude_body,goal_body,resolved_goals,cmd) {
+function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,body,prelude_body,goal_body,resolved_goals,cmd) {
+    script = ""
+    
     if ("tracing" in Options)
-        issue_script_line("set -x")
+        script = issue_line(script, "set -x")
 
-    issue_script_line("MYDIR='" get_my_dir() "'")
-    issue_script_line("export MYDIR")
-    issue_script_line("cd \"$MYDIR\"")
+    script = issue_line(script, "MYDIR='" get_my_dir() "'")
+    script = issue_line(script, "export MYDIR")
+    script = issue_line(script, "cd \"$MYDIR\"")
 
     # prelude
     body = trim(code[""])
     prelude_body = body
-    issue_script_line(body)
+    script = issue_line(script, body)
 
     for (i = 0; i < arr_len(GoalNames); i++) {
         goal_name = GoalNames[i]
 
         body = trim(code[goal_name])
 
-        issue_script_line("\n" goal_name "() {")
+        script = issue_line(script, "\n" goal_name "() {")
 
         reached_if_condition = ReachedIf[goal_name]
 
@@ -172,33 +174,33 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
             body = ":"
         }
 
-        issue_script_line("\n" Shell " -e <<'EOF'")
+        script = issue_line(script, "\n" Shell " -e <<'EOF'")
 
         goal_body = ""
         if (!("silent" in Options)) {
-            goal_body = issue_script_line_ret(goal_body, "  printf \"  goal '" goal_name "' \"")
+            goal_body = issue_line( goal_body, "  printf \"  goal '" goal_name "' \"")
         }
-        goal_body = issue_script_line_ret(goal_body, "  if " (reached_if_condition ? reached_if_condition : "false") "; then")
+        goal_body = issue_line( goal_body, "  if " (reached_if_condition ? reached_if_condition : "false") "; then")
         if (!("silent" in Options)) {
-            goal_body = issue_script_line_ret(goal_body, "    echo \"[already satisfied].\"")
+            goal_body = issue_line( goal_body, "    echo \"[already satisfied].\"")
         }
-        goal_body = issue_script_line_ret(goal_body, "    exit 0")
+        goal_body = issue_line( goal_body, "    exit 0")
         if (!("silent" in Options)) {
-            goal_body = issue_script_line_ret(goal_body, "  else")
-            goal_body = issue_script_line_ret(goal_body, "    echo \"" (body == ":" ? "[empty]." : "...") "\"")
+            goal_body = issue_line( goal_body, "  else")
+            goal_body = issue_line( goal_body, "    echo \"" (body == ":" ? "[empty]." : "...") "\"")
         }
-        goal_body = issue_script_line_ret(goal_body, "  fi")
+        goal_body = issue_line( goal_body, "  fi")
 
         if ("tracing" in Options)
-            goal_body = issue_script_line_ret(goal_body, "set -x")
+            goal_body = issue_line( goal_body, "set -x")
 
-        goal_body = issue_script_line_ret(goal_body, "  " body)
+        goal_body = issue_line( goal_body, "  " body)
 
-        issue_script_line(goal_body "EOF\n")
-        issue_script_line("}")
+        script = issue_line(script, goal_body "EOF\n")
+        script = issue_line(script, "}")
     }
 
-    issue_resolved_goals_to_run(resolved_goals)
+    script = issue_resolved_goals_to_run(script, resolved_goals)
 
     if ("-d" in Args || "--resolved" in Args) {
         printf("Resolved goals to reach for '%s':\n", join(ArgGoals, 0, arr_len(ArgGoals), " "))
@@ -216,12 +218,12 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
             }
         }
     } else if ("-p" in Args || "--print" in Args) {
-        print Script
+        print script
     } else
-        exit shell_exec(Script, "EOF_OUTER")
+        exit shell_exec(script, "EOF_OUTER")
 }
 
-function issue_resolved_goals_to_run(result,    i, goal_name, loop) {
+function issue_resolved_goals_to_run(script, result,    i, goal_name, loop) {
     if (arr_len(ArgGoals) == 0)
         arr_push(ArgGoals, "default")
 
@@ -237,18 +239,16 @@ function issue_resolved_goals_to_run(result,    i, goal_name, loop) {
         die_msg("There is a loop in goal dependencies via " loop[1] " -> " loop[2])
     }
 
-    issue_script_line("__resolved_goals() {")
+    script = issue_line(script, "__resolved_goals() {")
     for (i = 0; i < arr_len(result); i++) {
-       issue_script_line("  " result[i])
+       script = issue_line(script, "  " result[i])
     }
-    issue_script_line("}")
-    issue_script_line("__resolved_goals")
+    script = issue_line(script, "}")
+    script = issue_line(script, "__resolved_goals")
+    return script
 }
 
-function issue_script_line(line) {
-    Script = issue_script_line_ret(Script, line)
-}
-function issue_script_line_ret(script, line) {
+function issue_line(script, line) {
     return script line "\n"
 }
 
