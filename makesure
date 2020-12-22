@@ -220,16 +220,16 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,body,prelude
         exit shell_exec(Script, "EOF_OUTER")
 }
 
-function issue_resolved_goals_to_run(result,    i, g, loop) {
+function issue_resolved_goals_to_run(result,    i, goal_name, loop) {
     if (arr_len(ArgGoals) == 0)
         arr_push(ArgGoals, "default")
 
     for (i = 0; i < arr_len(ArgGoals); i++) {
-        g = ArgGoals[i]
-        if (!(g in GoalsByName)) {
-            die_msg("Goal not found: " g) # TODO can we show line number here?
+        goal_name = ArgGoals[i]
+        if (!(goal_name in GoalsByName)) {
+            die_msg("Goal not found: " goal_name) # TODO can we show line number here?
         }
-        topological_sort_perform(g, result, loop)
+        topological_sort_perform(goal_name, result, loop)
     }
 
     if (loop[0] == 1) {
