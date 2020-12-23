@@ -134,8 +134,8 @@ function handle_reached_if(    goal_name) {
 function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_dir,body,prelude_body,goal_body,goal_bodies,resolved_goals,cmd,exit_code) {
     script = ""
     
-    if ("tracing" in Options)
-        script = issue_line(script, "set -x")
+#    if ("tracing" in Options)
+#        script = issue_line(script, "set -x")
 
     my_dir = ""
     my_dir = issue_line(my_dir, "MYDIR='" get_my_dir() "'")
