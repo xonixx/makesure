@@ -131,7 +131,7 @@ function handle_reached_if(    goal_name) {
     ReachedIf[goal_name] = trim($0)
 }
 
-function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,body,prelude_body,goal_body,resolved_goals,cmd) {
+function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,body,prelude_body,goal_body,goal_bodies,resolved_goals,cmd,exit_code) {
     script = ""
     
     if ("tracing" in Options)
@@ -178,23 +178,24 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,body,
 
         goal_body = ""
         if (!("silent" in Options)) {
-            goal_body = issue_line( goal_body, "  printf \"  goal '" goal_name "' \"")
+            goal_body = issue_line(goal_body, "  printf \"  goal '" goal_name "' \"")
         }
-        goal_body = issue_line( goal_body, "  if " (reached_if_condition ? reached_if_condition : "false") "; then")
+        goal_body = issue_line(goal_body, "  if " (reached_if_condition ? reached_if_condition : "false") "; then")
         if (!("silent" in Options)) {
-            goal_body = issue_line( goal_body, "    echo \"[already satisfied].\"")
+            goal_body = issue_line(goal_body, "    echo \"[already satisfied].\"")
         }
-        goal_body = issue_line( goal_body, "    exit 0")
+        goal_body = issue_line(goal_body, "    exit 0")
         if (!("silent" in Options)) {
-            goal_body = issue_line( goal_body, "  else")
-            goal_body = issue_line( goal_body, "    echo \"" (body == ":" ? "[empty]." : "...") "\"")
+            goal_body = issue_line(goal_body, "  else")
+            goal_body = issue_line(goal_body, "    echo \"" (body == ":" ? "[empty]." : "...") "\"")
         }
-        goal_body = issue_line( goal_body, "  fi")
+        goal_body = issue_line(goal_body, "  fi")
 
         if ("tracing" in Options)
-            goal_body = issue_line( goal_body, "set -x")
+            goal_body = issue_line(goal_body, "set -x")
 
-        goal_body = issue_line( goal_body, "  " body)
+        goal_body = issue_line(goal_body, "  " body)
+        goal_bodies[goal_name] = goal_body
 
         script = issue_line(script, goal_body "EOF\n")
         script = issue_line(script, "}")
@@ -219,8 +220,16 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,body,
         }
     } else if ("-p" in Args || "--print" in Args) {
         print script
-    } else
-        exit shell_exec(script, "EOF_OUTER")
+    } else {
+        # exit shell_exec(script, "EOF_OUTER")
+        for (i = 0; i < arr_len(resolved_goals); i++) {
+          goal_name = resolved_goals[i]
+          goal_body = goal_bodies[goal_name]
+          exit_code = shell_exec(prelude_body "\n" goal_body)
+          if (exit_code != 0)
+            exit exit_code
+        }
+    }
 }
 
 function issue_resolved_goals_to_run(script, result,    i, goal_name, loop) {
