@@ -131,7 +131,10 @@ function handle_reached_if(    goal_name) {
     ReachedIf[goal_name] = trim($0)
 }
 
-function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_dir,body,prelude_body,goal_body,goal_bodies,resolved_goals,cmd,exit_code) {
+function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_dir,
+body,prelude_body,goal_body,goal_bodies,
+resolved_goals,cmd,exit_code,
+t0,t1,t2) {
     script = ""
     
 #    if ("tracing" in Options)
@@ -223,10 +226,18 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_di
         print script
     } else {
         # exit shell_exec(script, "EOF_OUTER")
+        if ("timing" in Options)
+          t0 = current_time_millis()
         for (i = 0; i < arr_len(resolved_goals); i++) {
+          if ("timing" in Options)
+            t1 = current_time_millis()
           goal_name = resolved_goals[i]
           goal_body = goal_bodies[goal_name]
           exit_code = shell_exec(my_dir prelude_body "\n" goal_body)
+          if ("timing" in Options) {
+            t2 = current_time_millis()
+            print "  goal '" goal_name "' took " render_duration(t2 - t1)
+          }
           if (exit_code != 0)
             exit exit_code
         }

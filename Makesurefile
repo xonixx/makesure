@@ -1,4 +1,5 @@
 
+@options timing
 
 @goal soft_folder_created
 @reached_if [[ -d "soft" ]]
