@@ -131,20 +131,21 @@ function handle_reached_if(    goal_name) {
     ReachedIf[goal_name] = trim($0)
 }
 
-function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,body,prelude_body,goal_body,goal_bodies,resolved_goals,cmd,exit_code) {
+function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_dir,body,prelude_body,goal_body,goal_bodies,resolved_goals,cmd,exit_code) {
     script = ""
     
     if ("tracing" in Options)
         script = issue_line(script, "set -x")
 
-    script = issue_line(script, "MYDIR='" get_my_dir() "'")
-    script = issue_line(script, "export MYDIR")
-    script = issue_line(script, "cd \"$MYDIR\"")
+    my_dir = ""
+    my_dir = issue_line(my_dir, "MYDIR='" get_my_dir() "'")
+    my_dir = issue_line(my_dir, "export MYDIR")
+    my_dir = issue_line(my_dir, "cd \"$MYDIR\"")
 
     # prelude
     body = trim(code[""])
     prelude_body = body
-    script = issue_line(script, body)
+    script = issue_line(script, my_dir prelude_body)
 
     for (i = 0; i < arr_len(GoalNames); i++) {
         goal_name = GoalNames[i]
@@ -225,7 +226,7 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,body,
         for (i = 0; i < arr_len(resolved_goals); i++) {
           goal_name = resolved_goals[i]
           goal_body = goal_bodies[goal_name]
-          exit_code = shell_exec(prelude_body "\n" goal_body)
+          exit_code = shell_exec(my_dir prelude_body "\n" goal_body)
           if (exit_code != 0)
             exit exit_code
         }
