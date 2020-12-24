@@ -9,6 +9,13 @@ $ cd "$MYDIR"; ./makesure -f tests/7_options_invalid.sh
 @ tests/7_options_invalid.sh:2: @options invalid
 ? 1
 
+$ cd "$MYDIR"; ./makesure -f tests/7_options_timing.sh | sed -r 's#took .+$#took X#g ; s#total time .+$#total time X#g'
+|   goal 'default' ...
+| test
+|   goal 'default' took X
+|   total time X
+
+
 $ cd "$MYDIR"; bash -c "./makesure -f tests/7_options_tracing.sh -x 2> >(sed 's#\/.*\/tests#tests#g' >&2)"
 |   goal 'default' ...
 | test
