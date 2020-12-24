@@ -87,7 +87,15 @@ function handle_shell() {
       die("Shell '" Shell "' is not supported")
 }
 
+function adjust_options() {
+  if ("silent" in Options)
+    delete Options["timing"]
+}
+
 function handle_goal(    goal_name) {
+    if (is_prelude()) # 1st goal
+      adjust_options()
+
     goal_name = trim($2)
     if (length(goal_name) == 0) {
         die("Goal must have a name")
