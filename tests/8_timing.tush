@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; ./makesure -f tests/8_options_timing.sh | sed -r 's#took .+$#took X#g ; s#total time .+$#total time X#g'
+$ cd "$MYDIR"; ./makesure -f tests/8_options_timing.sh | sed 's#took .*$#took X#g ; s#total time .*$#total time X#g'
 |   goal 'default' ...
 | test
 |   goal 'default' took X
