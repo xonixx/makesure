@@ -1,7 +1,7 @@
 
 $ cd "$MYDIR"; ./makesure -v; ./makesure --version
-| 0.9.3
-| 0.9.3
+| 0.9.4
+| 0.9.4
 
 $ cd "$MYDIR"; ./makesure -f non-existent-file
 @ makesure file not found: non-existent-file

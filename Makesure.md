@@ -39,7 +39,7 @@
 29. [ ] support @options directive
     - [x] @options tracing
     - [x] @options silent
-    - [ ] @options timing
+    - [x] @options timing
 30. [ ] find a way to enable tracing for the prelude - this correlates with "prelude runs exactly 1 time"
 
 ## Ideas proved not to work

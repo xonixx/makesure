@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-VERSION="0.9.3"
+VERSION="0.9.4"
 
 exec awk -v "Version=$VERSION" -f - Makesurefile "$@" <<'MAKESURE'
 
@@ -132,13 +132,15 @@ function handle_reached_if(    goal_name) {
 }
 
 function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_dir,
-body,prelude_body,goal_body,goal_bodies,
-resolved_goals,cmd,exit_code,
-t0,t1,t2) {
+  body,prelude_body,goal_body,goal_bodies,
+  resolved_goals,cmd,exit_code,
+  t0,t1,t2) {
     script = ""
     
 #    if ("tracing" in Options)
 #        script = issue_line(script, "set -x")
+    if ("timing" in Options)
+      t0 = current_time_millis()
 
     my_dir = ""
     my_dir = issue_line(my_dir, "MYDIR='" get_my_dir() "'")
@@ -226,8 +228,6 @@ t0,t1,t2) {
         print script
     } else {
         # exit shell_exec(script, "EOF_OUTER")
-        if ("timing" in Options)
-          t0 = current_time_millis()
         for (i = 0; i < arr_len(resolved_goals); i++) {
           if ("timing" in Options)
             t1 = current_time_millis()
@@ -239,8 +239,12 @@ t0,t1,t2) {
             print "  goal '" goal_name "' took " render_duration(t2 - t1)
           }
           if (exit_code != 0)
-            exit exit_code
+            break
         }
+        if ("timing" in Options)
+          print "  total time " render_duration(t2 - t0)
+        if (exit_code != 0)
+          exit exit_code
     }
 }
 
