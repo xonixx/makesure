@@ -3,17 +3,17 @@ $ cd "$MYDIR"; ./makesure -f tests/4_trace.sh
 |   goal 'default' ...
 | A=aaa
 
-$ cd "$MYDIR"; bash -c "./makesure -f tests/4_trace.sh -x 2> >(sed 's#\/.*\/tests#tests#g' >&2)"
+$ cd "$MYDIR"; ./makesure -f tests/4_trace.sh -x
 |   goal 'default' ...
 | A=aaa
 @ + echo A=aaa
 
-$ cd "$MYDIR"; bash -c "./makesure -f tests/4_trace.sh -x -p | bash 2> >(sed 's#\/.*\/tests#tests#g' >&2)"
+$ cd "$MYDIR"; ./makesure -f tests/4_trace.sh -x -p | bash
 |   goal 'default' ...
 | A=aaa
 @ + echo A=aaa
 
-$ cd "$MYDIR"; bash -c "./makesure -f tests/4_trace.sh --tracing 2> >(sed 's#\/.*\/tests#tests#g' >&2)"
+$ cd "$MYDIR"; ./makesure -f tests/4_trace.sh --tracing
 |   goal 'default' ...
 | A=aaa
 @ + echo A=aaa
