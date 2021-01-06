@@ -8,7 +8,7 @@ The simplest way to think of this tool is to have a way to have "shortcuts" (aka
 
 Example `Makesurefile`:
 
-```bash
+```
 @goal downloaded
 @reached_if [[ -f code.tar.gz ]]
   wget http://domain/code.tar.gz
@@ -34,3 +34,5 @@ Now to run the whole build you just issue `makesure` command in a folder with `M
 You can as well call single goal explicitly, example `makesure built`. 
 
 Also pay attention to `@reached_if` directive. This one allows skipping goal if it's already satisfied. This allows to speedup subsequent calls.
+
+By default, all scripts inside goals are executed with `bash`. If you want to use `sh` just add `@shell sh` directive at start of the `Makesurefile`.  
