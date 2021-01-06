@@ -23,6 +23,7 @@ Example `Makesurefile`:
   npm run build
 
 @goal deployed
+@depends_on built
   scp -C -r build/* user@domain:~/www
 
 @goal default
