@@ -12,6 +12,7 @@ BEGIN {
     SupportedOptions["silent"]
     SupportedOptions["timing"]
     prepare_args()
+    DefinesFile = execute_get_line("mktemp") # TODO close it
 }
 
 NR==1 && /^#!/      { next }
@@ -65,10 +66,11 @@ function prepare_args(    i,arg) {
 }
 
 function parse_define_arg(arg,    n,k,v) {
-  n = index(arg, "=")
-  k = substr(arg,1,n-1)
-  v = substr(arg,n+1)
-  Defines[k]=v
+#  n = index(arg, "=")
+#  k = substr(arg,1,n-1)
+#  v = substr(arg,n+1)
+#  Defines[k]=v
+   DefineOverrides = issue_line(DefineOverrides, arg)
 }
 
 function handle_options() {
@@ -84,8 +86,9 @@ function handle_options() {
 function handle_define() {
     check_prelude_only()
 
-    $1 = "export"
+    $1 = ""
     handle_code_line($0)
+    handle_code_line("echo" $0 " >> " DefinesFile)
 }
 
 function handle_shell() {
@@ -165,6 +168,8 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_di
     my_dir = issue_line(my_dir, "export MYDIR")
     my_dir = issue_line(my_dir, "cd \"$MYDIR\"")
 
+    defines_line = my_dir "\n. " DefinesFile "\n" DefineOverrides "\n"
+
     # prelude
     body = trim(code[""])
     prelude_body = body
@@ -185,11 +190,12 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_di
             dep = Dependencies[goal_name, j]
             if (!(dep in GoalsByName))
                 die_msg("Goal '" goal_name "' has unknown dependency '" dep "'") # TODO find a way to provide line reference
-            if (!(reached_if_condition ? check_condition_reached(prelude_body, reached_if_condition) : false)) {
-                #print " [not reached] " goal_name " -> " dep
+            if (!(reached_if_condition ? check_condition_reached(defines_line, reached_if_condition) : false)) {
+                # we only add a dependency to this goal if it's not reached
+#                print " [not reached] " goal_name " -> " dep
                 topological_sort_add_connection(goal_name, dep)
             } else {
-                #print " [    reached] " goal_name " -> " dep
+#                print " [    reached] " goal_name " -> " dep
             }
         }
 
@@ -204,6 +210,7 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_di
         if (!("silent" in Options)) {
             goal_body = issue_line(goal_body, "  printf \"  goal '" goal_name "' \"")
         }
+        goal_body = issue_line(goal_body, "  " defines_line)
         goal_body = issue_line(goal_body, "  if " (reached_if_condition ? reached_if_condition : "false") "; then")
         if (!("silent" in Options)) {
             goal_body = issue_line(goal_body, "    echo \"[already satisfied].\"")
@@ -245,13 +252,15 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_di
     } else if ("-p" in Args || "--print" in Args) {
         print script
     } else {
-        # exit shell_exec(script, "EOF_OUTER")
+        exit_code = shell_exec(my_dir prelude_body)
+        if (exit_code != 0)
+          exit exit_code
         for (i = 0; i < arr_len(resolved_goals); i++) {
           if ("timing" in Options)
             t1 = current_time_millis()
           goal_name = resolved_goals[i]
           goal_body = goal_bodies[goal_name]
-          exit_code = shell_exec(my_dir prelude_body "\n" goal_body)
+          exit_code = shell_exec(goal_body)
           if ("timing" in Options) {
             t2 = current_time_millis()
             print "  goal '" goal_name "' took " render_duration(t2 - t1)
@@ -330,6 +339,7 @@ function die_msg(msg,    out) {
 function check_condition_reached(prelude_body, condition_str,    script) {
     script = prelude_body # need this to initialize variables for check conditions
     script = script "\n" condition_str
+    #print "script: " script
     return shell_exec(script) == 0
 }
 
