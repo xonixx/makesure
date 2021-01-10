@@ -54,7 +54,7 @@
     do
       if [[ "$f1" != "/tmp/makesure.*" ]]
       then
-        echo >&2 "!!! tmp file not deleted !!! : $f1"
+        echo >&2 "!!! $f1 not deleted !!!"
         exit 1
       fi
     done
