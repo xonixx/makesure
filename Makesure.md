@@ -36,7 +36,7 @@
 26. [x] `-x` to enable tracing in bash
 27. [x] support `@options silent` mode and flag `-s`
 28. [ ] allow override @define-s
-    - [ ] `-d "var=val"` / `--define "var=val"`
+    - [ ] `-D "var=val"` / `--define "var=val"`
 29. [x] support @options directive
     - [x] @options tracing
     - [x] @options silent
