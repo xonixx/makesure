@@ -192,10 +192,10 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_di
                 die_msg("Goal '" goal_name "' has unknown dependency '" dep "'") # TODO find a way to provide line reference
             if (!(reached_if_condition ? check_condition_reached(defines_line, reached_if_condition) : false)) {
                 # we only add a dependency to this goal if it's not reached
-#                print " [not reached] " goal_name " -> " dep
+                #print " [not reached] " goal_name " -> " dep
                 topological_sort_add_connection(goal_name, dep)
             } else {
-#                print " [    reached] " goal_name " -> " dep
+                #print " [    reached] " goal_name " -> " dep
             }
         }
 
@@ -336,8 +336,8 @@ function die_msg(msg,    out) {
     exit 1
 }
 
-function check_condition_reached(prelude_body, condition_str,    script) {
-    script = prelude_body # need this to initialize variables for check conditions
+function check_condition_reached(defines_line, condition_str,    script) {
+    script = defines_line # need this to initialize variables for check conditions
     script = script "\n" condition_str
     #print "script: " script
     return shell_exec(script) == 0
