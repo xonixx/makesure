@@ -37,6 +37,8 @@
 
 @goal tested
 @depends_on tush_installed debug
+  rm -f /tmp/makesure.*
+
   export PATH="$PATH:$MYDIR/soft/tush/bin"
 
   for f in tests/*.tush
@@ -48,6 +50,14 @@
       echo >&2 "!!! TESTS FAILED !!! : $f"
       exit 1
     fi
+    for f1 in /tmp/makesure.*
+    do
+      if [[ "$f1" != "/tmp/makesure.*" ]]
+      then
+        echo >&2 "!!! tmp file not deleted !!! : $f1"
+        exit 1
+      fi
+    done
   done
 
 @goal default

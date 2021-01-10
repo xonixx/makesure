@@ -12,7 +12,6 @@ BEGIN {
     SupportedOptions["silent"]
     SupportedOptions["timing"]
     prepare_args()
-    DefinesFile = execute_get_line("mktemp /tmp/makesure.XXXXXXXXXX")
 }
 
 NR==1 && /^#!/      { next }
@@ -85,6 +84,9 @@ function handle_options() {
 
 function handle_define() {
     check_prelude_only()
+
+    if (!DefinesFile)
+        DefinesFile = execute_get_line("mktemp /tmp/makesure.XXXXXXXXXX")
 
     $1 = ""
     handle_code_line($0)
@@ -163,12 +165,14 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_di
     if ("timing" in Options)
       t0 = current_time_millis()
 
-    my_dir = ""
-    my_dir = issue_line(my_dir, "MYDIR='" get_my_dir() "'")
+    my_dir = issue_line("MYDIR='" get_my_dir() "'")
     my_dir = issue_line(my_dir, "export MYDIR")
     my_dir = issue_line(my_dir, "cd \"$MYDIR\"")
 
-    defines_line = my_dir "\n. " DefinesFile "\n" DefineOverrides "\n"
+    defines_line = issue_line(my_dir)
+    if (DefinesFile)
+      defines_line = issue_line(defines_line, ". " DefinesFile)
+    defines_line = issue_line(defines_line, DefineOverrides)
 
     # prelude
     body = trim(code[""])
@@ -234,7 +238,8 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_di
 
     script = issue_resolved_goals_to_run(script, resolved_goals)
     # cleanup
-    script = issue_line(script, "rm " DefinesFile)
+    if (DefinesFile)
+      script = issue_line(script, "rm " DefinesFile)
 
     if ("-d" in Args || "--resolved" in Args) {
         printf("Resolved goals to reach for '%s':\n", join(ArgGoals, 0, arr_len(ArgGoals), " "))
@@ -270,7 +275,8 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_di
           if (exit_code != 0)
             break
         }
-        system("rm " DefinesFile)
+        if (DefinesFile)
+          system("rm " DefinesFile)
         if ("timing" in Options)
           print "  total time " render_duration(t2 - t0)
         if (exit_code != 0)
