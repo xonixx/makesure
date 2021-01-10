@@ -3,8 +3,7 @@
 
 1.  [x] Each goal execution should not create shared variables - this can introduce unwanted intent to rely on imperative execution model
 2.  prelude
-    - [ ] prelude runs exactly 1 time
-        - this is not possible due to topology sort should include reached_if thus should execute prelude multiple times
+    - [x] prelude runs exactly 1 time
     - [x] goal is to initialize variables
     - [x] use @define to export variable for goals
         - [x] reuse export for MVP
