@@ -12,7 +12,7 @@ BEGIN {
     SupportedOptions["silent"]
     SupportedOptions["timing"]
     prepare_args()
-    DefinesFile = execute_get_line("mktemp") # TODO close it
+    DefinesFile = execute_get_line("mktemp /tmp/makesure.XXXXXXXXXX")
 }
 
 NR==1 && /^#!/      { next }
@@ -233,6 +233,8 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_di
     }
 
     script = issue_resolved_goals_to_run(script, resolved_goals)
+    # cleanup
+    script = issue_line(script, "rm " DefinesFile)
 
     if ("-d" in Args || "--resolved" in Args) {
         printf("Resolved goals to reach for '%s':\n", join(ArgGoals, 0, arr_len(ArgGoals), " "))
@@ -268,6 +270,7 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_di
           if (exit_code != 0)
             break
         }
+        system("rm " DefinesFile)
         if ("timing" in Options)
           print "  total time " render_duration(t2 - t0)
         if (exit_code != 0)
