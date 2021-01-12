@@ -37,7 +37,7 @@ function prepare_args(    i,arg) {
                   ARGV[1] = ARGV[++i]
                 } else if (arg == "-D" || arg == "--define") {
                   delete ARGV[i]
-                  parse_define_arg(ARGV[++i])
+                  DefineOverrides = issue_line(DefineOverrides, ARGV[++i])
                 } else
                   Args[arg]
             } else
@@ -62,14 +62,6 @@ function prepare_args(    i,arg) {
     #print "--- ARGV: "; for (i in ARGV) print i " : " ARGV[i]
     #print "--- Args: "; for (i in Args) print i " : " Args[i]
     #print "--- ArgGoals: "; for (i in ArgGoals) print i " : " ArgGoals[i]
-}
-
-function parse_define_arg(arg,    n,k,v) {
-#  n = index(arg, "=")
-#  k = substr(arg,1,n-1)
-#  v = substr(arg,n+1)
-#  Defines[k]=v
-   DefineOverrides = issue_line(DefineOverrides, arg)
 }
 
 function handle_options() {
