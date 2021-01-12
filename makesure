@@ -149,7 +149,7 @@ function handleReachedIf(    goal_name) {
 }
 
 function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,not_reached,my_dir,
-  body,prelude_body,goal_body,goal_bodies,
+  body,goal_body,goal_bodies,
   resolved_goals,cmd,exit_code,
   t0,t1,t2) {
     if ("timing" in Options)
@@ -163,10 +163,6 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,not_reached,my_dir,
     if (DefinesFile)
       addLine(defines_line, ". " DefinesFile)
     addLine(defines_line, DefineOverrides[0])
-
-    # prelude
-    body = trim(code[""])
-    prelude_body = body
 
     for (i = 0; i < arrLen(GoalNames); i++) {
         goal_name = GoalNames[i]
@@ -237,7 +233,7 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,not_reached,my_dir,
             }
         }
     } else {
-        exit_code = shellExec(my_dir[0] prelude_body)
+        exit_code = shellExec(my_dir[0] trim(code[""])) # prelude
         if (exit_code != 0)
           exit exit_code
         for (i = 0; i < arrLen(resolved_goals); i++) {
