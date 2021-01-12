@@ -9,8 +9,8 @@
         - [x] reuse export for MVP
 3.  [x] Goals topological sort
 4.  [ ] (?) Profiles a-la maven
-5.  [ ] Find a way to share functions
-6.  [ ] Pre-check? Post-check?
+5.  [ ] (?) Find a way to share functions
+6.  [ ] (?) Pre-check? Post-check?
 7.  [x] make @shell configurable
 8.  [ ] \[REJECT] `-p` flag to print generated bash script 
 9.  [x] provide goals to run as argument
