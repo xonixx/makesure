@@ -148,7 +148,7 @@ function handleReachedIf(    goal_name) {
     ReachedIf[goal_name] = trim($0)
 }
 
-function doWork(    i,j,goal_name,dep_cnt,dep,reached_if_condition,my_dir,
+function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,not_reached,my_dir,
   body,prelude_body,goal_body,goal_bodies,
   resolved_goals,cmd,exit_code,
   t0,t1,t2) {
@@ -173,7 +173,8 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if_condition,my_dir,
 
         body = trim(code[goal_name])
 
-        reached_if_condition = ReachedIf[goal_name]
+        reached_if = ReachedIf[goal_name]
+        not_reached = reached_if ? !checkConditionReached(defines_line[0], reached_if) : 1
 
         # check valid dependencies
         dep_cnt = DependenciesCnt[goal_name]
@@ -181,7 +182,7 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if_condition,my_dir,
             dep = Dependencies[goal_name, j]
             if (!(dep in GoalsByName))
                 dieMsg("Goal '" goal_name "' has unknown dependency '" dep "'") # TODO find a way to provide line reference
-            if (!(reached_if_condition ? checkConditionReached(defines_line[0], reached_if_condition) : false)) {
+            if (not_reached) {
                 # we only add a dependency to this goal if it's not reached
                 #print " [not reached] " goal_name " -> " dep
                 topologicalSortAddConnection(goal_name, dep)
@@ -200,7 +201,7 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if_condition,my_dir,
             addLine(goal_body, "  printf \"  goal '" goal_name "' \"")
         }
         addLine(goal_body, "  " defines_line[0])
-        addLine(goal_body, "  if " (reached_if_condition ? reached_if_condition : "false") "; then")
+        addLine(goal_body, "  if " (reached_if ? reached_if : "false") "; then")
         if (!("silent" in Options)) {
             addLine(goal_body, "    echo \"[already satisfied].\"")
         }
