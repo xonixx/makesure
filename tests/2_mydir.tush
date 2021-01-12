@@ -11,25 +11,25 @@ $ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_3
 |   goal 'mydir_3' ...
 | mydir
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_required_if_1
-|   goal 'mydir_in_required_if_1' [already satisfied].
+$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_reached_if_1
+|   goal 'mydir_in_reached_if_1' [already satisfied].
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_required_if_2
-|   goal 'mydir_in_required_if_2' [already satisfied].
+$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_reached_if_2
+|   goal 'mydir_in_reached_if_2' [already satisfied].
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_required_if_3
-|   goal 'mydir_in_required_if_3' [already satisfied].
+$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_reached_if_3
+|   goal 'mydir_in_reached_if_3' [already satisfied].
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_required_if_4
-|   goal 'mydir_in_required_if_4' ...
+$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_reached_if_4
+|   goal 'mydir_in_reached_if_4' ...
 | should show
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_required_if_5
-|   goal 'mydir_in_required_if_5' ...
+$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_reached_if_5
+|   goal 'mydir_in_reached_if_5' ...
 | should show
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_required_if_6
-|   goal 'mydir_in_required_if_6' ...
+$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_reached_if_6
+|   goal 'mydir_in_reached_if_6' ...
 | should show
 
 $ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_reached_if_of_dep_1

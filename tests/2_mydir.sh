@@ -9,27 +9,27 @@
 @goal mydir_3
   cat "$MYDIR/2_mydir.txt"
 
-@goal mydir_in_required_if_1
+@goal mydir_in_reached_if_1
 @reached_if [[ -f 2_mydir.txt ]]
   echo "should not show"
 
-@goal mydir_in_required_if_2
+@goal mydir_in_reached_if_2
 @reached_if [[ -f ./2_mydir.txt ]]
   echo "should not show"
 
-@goal mydir_in_required_if_3
+@goal mydir_in_reached_if_3
 @reached_if [[ -f "$MYDIR/2_mydir.txt" ]]
   echo "should not show"
 
-@goal mydir_in_required_if_4
+@goal mydir_in_reached_if_4
 @reached_if [[ ! -f 2_mydir.txt ]]
   echo "should show"
 
-@goal mydir_in_required_if_5
+@goal mydir_in_reached_if_5
 @reached_if [[ ! -f ./2_mydir.txt ]]
   echo "should show"
 
-@goal mydir_in_required_if_6
+@goal mydir_in_reached_if_6
 @reached_if [[ ! -f "$MYDIR/2_mydir.txt" ]]
   echo "should show"
 
