@@ -8,11 +8,6 @@ $ cd "$MYDIR"; ./makesure -f tests/4_trace.sh -x
 | A=aaa
 @ + echo A=aaa
 
-$ cd "$MYDIR"; ./makesure -f tests/4_trace.sh -x -p | bash
-|   goal 'default' ...
-| A=aaa
-@ + echo A=aaa
-
 $ cd "$MYDIR"; ./makesure -f tests/4_trace.sh --tracing
 |   goal 'default' ...
 | A=aaa

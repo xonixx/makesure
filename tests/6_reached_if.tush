@@ -5,12 +5,6 @@ $ cd "$MYDIR"; ./makesure -f tests/6_reached_if.sh
 | aaa
 |   goal 'default' [empty].
 
-$ cd "$MYDIR"; ./makesure -f tests/6_reached_if.sh -p | bash
-|   goal 'bbb' [already satisfied].
-|   goal 'aaa' ...
-| aaa
-|   goal 'default' [empty].
-
 $ cd "$MYDIR"; ./makesure -f tests/6_reached_if.sh -d
 | Resolved goals to reach for 'default':
 |   bbb

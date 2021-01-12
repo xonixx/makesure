@@ -12,7 +12,7 @@
 5.  [ ] Find a way to share functions
 6.  [ ] Pre-check? Post-check?
 7.  [x] make @shell configurable
-8.  [x] `-p` flag to print generated bash script 
+8.  [ ] \[REJECT] `-p` flag to print generated bash script 
 9.  [x] provide goals to run as argument
 10. [x] `-l` flag to show all goals
 11. [x] per-goal documentation

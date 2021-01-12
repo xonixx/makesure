@@ -146,14 +146,10 @@ function handle_reached_if(    goal_name) {
     ReachedIf[goal_name] = trim($0)
 }
 
-function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_dir,
+function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,my_dir,
   body,prelude_body,goal_body,goal_bodies,
   resolved_goals,cmd,exit_code,
   t0,t1,t2) {
-    script = ""
-    
-#    if ("tracing" in Options)
-#        script = issue_line(script, "set -x")
     if ("timing" in Options)
       t0 = current_time_millis()
 
@@ -169,14 +165,11 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_di
     # prelude
     body = trim(code[""])
     prelude_body = body
-    script = issue_line(script, my_dir prelude_body)
 
     for (i = 0; i < arr_len(GoalNames); i++) {
         goal_name = GoalNames[i]
 
         body = trim(code[goal_name])
-
-        script = issue_line(script, "\n" goal_name "() {")
 
         reached_if_condition = ReachedIf[goal_name]
 
@@ -200,8 +193,6 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_di
             body = ":"
         }
 
-        script = issue_line(script, "\n" Shell " -e <<'EOF'")
-
         goal_body = ""
         if (!("silent" in Options)) {
             goal_body = issue_line(goal_body, "  printf \"  goal '" goal_name "' \"")
@@ -223,15 +214,9 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_di
 
         goal_body = issue_line(goal_body, "  " body)
         goal_bodies[goal_name] = goal_body
-
-        script = issue_line(script, goal_body "EOF\n")
-        script = issue_line(script, "}")
     }
 
-    script = issue_resolved_goals_to_run(script, resolved_goals)
-    # cleanup
-    if (DefinesFile)
-      script = issue_line(script, "rm " DefinesFile)
+    resolve_goals_to_run(resolved_goals)
 
     if ("-d" in Args || "--resolved" in Args) {
         printf("Resolved goals to reach for '%s':\n", join(ArgGoals, 0, arr_len(ArgGoals), " "))
@@ -248,8 +233,6 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_di
                 print "    " Doc[goal_name, j]
             }
         }
-    } else if ("-p" in Args || "--print" in Args) {
-        print script
     } else {
         exit_code = shell_exec(my_dir prelude_body)
         if (exit_code != 0)
@@ -276,7 +259,7 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,script,my_di
     }
 }
 
-function issue_resolved_goals_to_run(script, result,    i, goal_name, loop) {
+function resolve_goals_to_run(result,    i, goal_name, loop) {
     if (arr_len(ArgGoals) == 0)
         arr_push(ArgGoals, "default")
 
@@ -291,14 +274,6 @@ function issue_resolved_goals_to_run(script, result,    i, goal_name, loop) {
     if (loop[0] == 1) {
         die_msg("There is a loop in goal dependencies via " loop[1] " -> " loop[2])
     }
-
-    script = issue_line(script, "__resolved_goals() {")
-    for (i = 0; i < arr_len(result); i++) {
-       script = issue_line(script, "  " result[i])
-    }
-    script = issue_line(script, "}")
-    script = issue_line(script, "__resolved_goals")
-    return script
 }
 
 function issue_line(script, line) {

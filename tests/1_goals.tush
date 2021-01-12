@@ -22,17 +22,6 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh --silent
 | bbb
 | aaa
 
-$ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -p | bash
-|   goal 'ddd' ...
-| ddd
-|   goal 'ccc' ...
-| ccc
-|   goal 'bbb' ...
-| bbb
-|   goal 'aaa' ...
-| aaa
-|   goal 'default' [empty].
-
 $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -l
 | Available goals:
 |   default
