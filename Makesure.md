@@ -34,8 +34,8 @@
 25. [ ] (?) `-F` to force build despite the reached_if
 26. [x] `-x` to enable tracing in bash
 27. [x] support `@options silent` mode and flag `-s`
-28. [ ] allow override @define-s
-    - [ ] `-D "var=val"` / `--define "var=val"`
+28. [x] allow override @define-s
+    - [x] `-D "var=val"` / `--define "var=val"`
 29. [x] support @options directive
     - [x] @options tracing
     - [x] @options silent

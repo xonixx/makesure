@@ -1,0 +1,35 @@
+
+$ cd "$MYDIR"; ./makesure -f tests/10_define.sh testA
+|   goal 'testA' ...
+| A=aaa
+
+$ cd "$MYDIR"; ./makesure -f tests/10_define.sh testB
+|   goal 'testB' ...
+| B=aaabbb
+
+$ cd "$MYDIR"; ./makesure -f tests/10_define.sh -D B=xxx testB
+|   goal 'testB' ...
+| B=xxx
+
+$ cd "$MYDIR"; ./makesure -f tests/10_define.sh testC
+|   goal 'testC' ...
+| C=
+
+$ cd "$MYDIR"; ./makesure -f tests/10_define.sh testABC
+|   goal 'testA' ...
+| A=aaa
+|   goal 'testB' ...
+| B=aaabbb
+|   goal 'testC' ...
+| C=
+|   goal 'testABC' [empty].
+
+$ cd "$MYDIR"; ./makesure -f tests/10_define.sh testABC --define A=111 -D "B=222" --define 'C=333'
+|   goal 'testA' ...
+| A=111
+|   goal 'testB' ...
+| B=222
+|   goal 'testC' ...
+| C=333
+|   goal 'testABC' [empty].
+
