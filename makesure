@@ -187,18 +187,16 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,
             }
         }
 
-        if (length(body) == 0) {
-            # in shell function can't have empty body - use nop
-            body = ":"
-        }
-
         goal_body[0] = ""
         if (!("silent" in Options)) {
             addStr(goal_body, "echo \"  goal '" goal_name "' ")
             if (reached)
-              addLine(goal_body, "[already satisfied].\"")
+              addStr(goal_body, "[already satisfied].")
+            else if (length(body) == 0)
+              addStr(goal_body, "[empty].")
             else
-              addLine(goal_body, (body == ":" ? "[empty]." : "...") "\"")
+              addStr(goal_body, "...")
+            addLine(goal_body, "\"")
         }
         if (reached)
             addLine(goal_body, "exit 0")
