@@ -194,11 +194,11 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,
 
         goal_body[0] = ""
         if (!("silent" in Options)) {
-            addLine(goal_body, "printf \"  goal '" goal_name "' \"")
+            addStr(goal_body, "echo \"  goal '" goal_name "' ")
             if (reached)
-              addLine(goal_body, "echo \"[already satisfied].\"")
+              addLine(goal_body, "[already satisfied].\"")
             else
-              addLine(goal_body, "echo \"" (body == ":" ? "[empty]." : "...") "\"")
+              addLine(goal_body, (body == ":" ? "[empty]." : "...") "\"")
         }
         if (reached)
             addLine(goal_body, "exit 0")
@@ -269,10 +269,6 @@ function resolveGoalsToRun(result,    i, goal_name, loop) {
     if (loop[0] == 1) {
         dieMsg("There is a loop in goal dependencies via " loop[1] " -> " loop[2])
     }
-}
-
-function addLine(target, line) {
-    target[0] = target[0] line "\n"
 }
 
 function isPrelude() {
@@ -428,6 +424,8 @@ function join(arr, start_incl, end_excl, sep,    result, i) {
         result = result sep arr[i]
     return result
 }
+function addStr(target, str) { target[0] = target[0] str }
+function addLine(target, line) { addStr(target, line "\n") }
 function arrPush(arr, elt) { arr[arr[-7]++] = elt }
 function arrLen(arr) { return arr[-7] }
 function ltrim(s) { sub(/^[ \t\r\n]+/, "", s); return s }
