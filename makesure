@@ -148,7 +148,7 @@ function handleReachedIf(    goal_name) {
     ReachedIf[goal_name] = trim($0)
 }
 
-function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,not_reached,my_dir,
+function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,
   body,goal_body,goal_bodies,
   resolved_goals,cmd,exit_code,
   t0,t1,t2) {
@@ -170,7 +170,7 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,not_reached,my_dir,
         body = trim(code[goal_name])
 
         reached_if = ReachedIf[goal_name]
-        not_reached = reached_if ? !checkConditionReached(defines_line[0], reached_if) : 1
+        reached = reached_if ? checkConditionReached(defines_line[0], reached_if) : 0
 
         # check valid dependencies
         dep_cnt = DependenciesCnt[goal_name]
@@ -178,7 +178,7 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,not_reached,my_dir,
             dep = Dependencies[goal_name, j]
             if (!(dep in GoalsByName))
                 dieMsg("Goal '" goal_name "' has unknown dependency '" dep "'") # TODO find a way to provide line reference
-            if (not_reached) {
+            if (!reached) {
                 # we only add a dependency to this goal if it's not reached
                 #print " [not reached] " goal_name " -> " dep
                 topologicalSortAddConnection(goal_name, dep)
@@ -194,24 +194,21 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,not_reached,my_dir,
 
         goal_body[0] = ""
         if (!("silent" in Options)) {
-            addLine(goal_body, "  printf \"  goal '" goal_name "' \"")
+            addLine(goal_body, "printf \"  goal '" goal_name "' \"")
+            if (reached)
+              addLine(goal_body, "echo \"[already satisfied].\"")
+            else
+              addLine(goal_body, "echo \"" (body == ":" ? "[empty]." : "...") "\"")
         }
-        addLine(goal_body, "  " defines_line[0])
-        addLine(goal_body, "  if " (reached_if ? reached_if : "false") "; then")
-        if (!("silent" in Options)) {
-            addLine(goal_body, "    echo \"[already satisfied].\"")
-        }
-        addLine(goal_body, "    exit 0")
-        if (!("silent" in Options)) {
-            addLine(goal_body, "  else")
-            addLine(goal_body, "    echo \"" (body == ":" ? "[empty]." : "...") "\"")
-        }
-        addLine(goal_body, "  fi")
+        if (reached)
+            addLine(goal_body, "exit 0")
+
+        addLine(goal_body, defines_line[0])
 
         if ("tracing" in Options)
             addLine(goal_body, "set -x")
 
-        addLine(goal_body, "  " body)
+        addLine(goal_body, body)
         goal_bodies[goal_name] = goal_body[0]
     }
 
