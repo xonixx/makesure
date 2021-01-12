@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-VERSION="0.9.4"
+VERSION="0.9.5"
 
 exec awk -v "Version=$VERSION" -f - Makesurefile "$@" <<'MAKESURE'
 
@@ -20,9 +20,9 @@ NR==1 && /^#!/      { next }
 "@shell"      == $1 { handleShell();       next }
 "@goal"       == $1 { handleGoal();        next }
 "@doc"        == $1 { handleDoc();         next }
-"@depends_on" == $1 { handleDependsOn();  next }
-"@reached_if" == $1 { handleReachedIf();  next }
-                    { handleCodeLine($0); next }
+"@depends_on" == $1 { handleDependsOn();   next }
+"@reached_if" == $1 { handleReachedIf();   next }
+                    { handleCodeLine($0);  next }
 
 END { if (!Died) doWork() }
 
