@@ -37,7 +37,7 @@ function prepare_args(    i,arg) {
                   ARGV[1] = ARGV[++i]
                 } else if (arg == "-D" || arg == "--define") {
                   delete ARGV[i]
-                  DefineOverrides = issue_line(DefineOverrides, ARGV[++i])
+                  addLine(DefineOverrides, ARGV[++i])
                 } else
                   Args[arg]
             } else
@@ -59,10 +59,12 @@ function prepare_args(    i,arg) {
       Options["tracing"]
     if ("-t" in Args || "--timing" in Args)
       Options["timing"]
-    #print "--- ARGV: "; for (i in ARGV) print i " : " ARGV[i]
-    #print "--- Args: "; for (i in Args) print i " : " Args[i]
-    #print "--- ArgGoals: "; for (i in ArgGoals) print i " : " ArgGoals[i]
+    #dbg_a("ARGV", ARGV)
+    #dbg_a("Args", Args)
+    #dbg_a("ArgGoals", ArgGoals)
 }
+
+function dbg_a(name, arr,    i) { print "--- " name ": "; for (i in arr) print i " : " arr[i] }
 
 function handle_options() {
     check_prelude_only()
@@ -153,14 +155,14 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,my_dir,
     if ("timing" in Options)
       t0 = current_time_millis()
 
-    my_dir = issue_line("MYDIR='" get_my_dir() "'")
-    my_dir = issue_line(my_dir, "export MYDIR")
-    my_dir = issue_line(my_dir, "cd \"$MYDIR\"")
+    addLine(my_dir, "MYDIR='" get_my_dir() "'")
+    addLine(my_dir, "export MYDIR")
+    addLine(my_dir, "cd \"$MYDIR\"")
 
-    defines_line = issue_line(my_dir)
+    addLine(defines_line, my_dir[0])
     if (DefinesFile)
-      defines_line = issue_line(defines_line, ". " DefinesFile)
-    defines_line = issue_line(defines_line, DefineOverrides)
+      addLine(defines_line, ". " DefinesFile)
+    addLine(defines_line, DefineOverrides[0])
 
     # prelude
     body = trim(code[""])
@@ -179,7 +181,7 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,my_dir,
             dep = Dependencies[goal_name, j]
             if (!(dep in GoalsByName))
                 die_msg("Goal '" goal_name "' has unknown dependency '" dep "'") # TODO find a way to provide line reference
-            if (!(reached_if_condition ? check_condition_reached(defines_line, reached_if_condition) : false)) {
+            if (!(reached_if_condition ? check_condition_reached(defines_line[0], reached_if_condition) : false)) {
                 # we only add a dependency to this goal if it's not reached
                 #print " [not reached] " goal_name " -> " dep
                 topological_sort_add_connection(goal_name, dep)
@@ -193,27 +195,27 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,my_dir,
             body = ":"
         }
 
-        goal_body = ""
+        goal_body[0] = ""
         if (!("silent" in Options)) {
-            goal_body = issue_line(goal_body, "  printf \"  goal '" goal_name "' \"")
+            addLine(goal_body, "  printf \"  goal '" goal_name "' \"")
         }
-        goal_body = issue_line(goal_body, "  " defines_line)
-        goal_body = issue_line(goal_body, "  if " (reached_if_condition ? reached_if_condition : "false") "; then")
+        addLine(goal_body, "  " defines_line[0])
+        addLine(goal_body, "  if " (reached_if_condition ? reached_if_condition : "false") "; then")
         if (!("silent" in Options)) {
-            goal_body = issue_line(goal_body, "    echo \"[already satisfied].\"")
+            addLine(goal_body, "    echo \"[already satisfied].\"")
         }
-        goal_body = issue_line(goal_body, "    exit 0")
+        addLine(goal_body, "    exit 0")
         if (!("silent" in Options)) {
-            goal_body = issue_line(goal_body, "  else")
-            goal_body = issue_line(goal_body, "    echo \"" (body == ":" ? "[empty]." : "...") "\"")
+            addLine(goal_body, "  else")
+            addLine(goal_body, "    echo \"" (body == ":" ? "[empty]." : "...") "\"")
         }
-        goal_body = issue_line(goal_body, "  fi")
+        addLine(goal_body, "  fi")
 
         if ("tracing" in Options)
-            goal_body = issue_line(goal_body, "set -x")
+            addLine(goal_body, "set -x")
 
-        goal_body = issue_line(goal_body, "  " body)
-        goal_bodies[goal_name] = goal_body
+        addLine(goal_body, "  " body)
+        goal_bodies[goal_name] = goal_body[0]
     }
 
     resolve_goals_to_run(resolved_goals)
@@ -234,15 +236,14 @@ function do_work(    i,j,goal_name,dep_cnt,dep,reached_if_condition,my_dir,
             }
         }
     } else {
-        exit_code = shell_exec(my_dir prelude_body)
+        exit_code = shell_exec(my_dir[0] prelude_body)
         if (exit_code != 0)
           exit exit_code
         for (i = 0; i < arr_len(resolved_goals); i++) {
           if ("timing" in Options)
             t1 = current_time_millis()
           goal_name = resolved_goals[i]
-          goal_body = goal_bodies[goal_name]
-          exit_code = shell_exec(goal_body)
+          exit_code = shell_exec(goal_bodies[goal_name])
           if ("timing" in Options) {
             t2 = current_time_millis()
             print "  goal '" goal_name "' took " render_duration(t2 - t1)
@@ -276,8 +277,8 @@ function resolve_goals_to_run(result,    i, goal_name, loop) {
     }
 }
 
-function issue_line(script, line) {
-    return script line "\n"
+function addLine(target, line) {
+    target[0] = target[0] line "\n"
 }
 
 function is_prelude() {
