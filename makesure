@@ -37,7 +37,7 @@ function prepare_args(    i,arg) {
                   ARGV[1] = ARGV[++i]
                 } else if (arg == "-D" || arg == "--define") {
                   delete ARGV[i]
-                  addLine(DefineOverrides, ARGV[++i])
+                  handleOptionDefineOverride(ARGV[++i])
                 } else
                   Args[arg]
             } else
@@ -66,6 +66,17 @@ function prepare_args(    i,arg) {
 
 function dbg_a(name, arr,    i) { print "--- " name ": "; for (i in arr) print i " : " arr[i] }
 
+function splitKV(arg, kv,    n) {
+  n = index(arg, "=")
+  kv[0] = substr(arg,1,n-1)
+  kv[1] = substr(arg,n+1)
+}
+function handleOptionDefineOverride(arg,    kv) {
+  splitKV(arg, kv)
+  DefineOverrides[kv[0]] = kv[1]
+  #addLine(DefineOverrides, arg)
+}
+
 function handleOptions() {
     checkPreludeOnly()
 
@@ -76,15 +87,19 @@ function handleOptions() {
     }
 }
 
-function handleDefine() {
+function handleDefine(    line,kv) {
     checkPreludeOnly()
 
     if (!DefinesFile)
         DefinesFile = executeGetLine("mktemp /tmp/makesure.XXXXXXXXXX")
 
     $1 = ""
-    handleCodeLine($0)
-    handleCodeLine("echo" $0 " >> " DefinesFile)
+    line = $0
+    splitKV(line, kv)
+    if (kv[0] in DefineOverrides)
+      line = kv[0] "=" DefineOverrides[kv[0]]
+    handleCodeLine(line)
+    handleCodeLine("echo" line " >> " DefinesFile)
 }
 
 function handleShell() {

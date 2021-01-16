@@ -11,6 +11,10 @@ $ cd "$MYDIR"; ./makesure -f tests/10_define.sh -D B=xxx testB
 |   goal 'testB' ...
 | B=xxx
 
+$ cd "$MYDIR"; ./makesure -f tests/10_define.sh -D A=yyy testB
+|   goal 'testB' ...
+| B=yyybbb
+
 $ cd "$MYDIR"; ./makesure -f tests/10_define.sh testC
 |   goal 'testC' ...
 | C=
