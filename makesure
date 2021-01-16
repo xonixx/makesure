@@ -72,10 +72,9 @@ function splitKV(arg, kv,    n) {
   kv[1] = trim(substr(arg,n+1))
 }
 function handleOptionDefineOverride(arg,    kv) {
+  handleDefineLine(arg)
   splitKV(arg, kv)
-  #print "kvO " kv[0] kv[1]
   DefineOverrides[kv[0]] = kv[1]
-  #addLine(DefineOverrides, arg)
 }
 
 function handleOptions() {
@@ -89,20 +88,21 @@ function handleOptions() {
 }
 
 function handleDefine(    line,kv) {
+    $1 = ""
+    handleDefineLine($0)
+}
+function handleDefineLine(line,    kv) {
     checkPreludeOnly()
 
     if (!DefinesFile)
         DefinesFile = executeGetLine("mktemp /tmp/makesure.XXXXXXXXXX")
 
-    $1 = ""
-    splitKV($0, kv)
-    #print "kvD " kv[0] " " kv[1] " :" DefineOverrides[kv[0]]
-    if (kv[0] in DefineOverrides)
-      line = kv[0] "=" DefineOverrides[kv[0]]
-    else
-      line = $0
-    handleCodeLine(line)
-    handleCodeLine("echo " line " >> " DefinesFile)
+    splitKV(line, kv)
+
+    if (!(kv[0] in DefineOverrides)) {
+      handleCodeLine(line)
+      handleCodeLine("echo " line " >> " DefinesFile)
+    }
 }
 
 function handleShell() {
@@ -178,7 +178,6 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,defines_
     addLine(defines_line, my_dir[0])
     if (DefinesFile) {
       addLine(defines_line, ". " DefinesFile)
-      #system("echo 111111; cat " DefinesFile "; echo 222222")
     }
 
     for (i = 0; i < arrLen(GoalNames); i++) {
