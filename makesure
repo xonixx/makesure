@@ -27,24 +27,22 @@ NR==1 && /^#!/      { next }
 END { if (!Died) doWork() }
 
 function prepare_args(    i,arg) {
-    for (i = 0; i < ARGC; i++) {
+    for (i = 2; i < ARGC; i++) {
         arg = ARGV[i]
         #print i " " arg
-        if (i > 1) {
-            if (substr(arg,1,1) == "-") {
-                if (arg == "-f" || arg == "--file") {
-                  delete ARGV[i]
-                  ARGV[1] = ARGV[++i]
-                } else if (arg == "-D" || arg == "--define") {
-                  delete ARGV[i]
-                  handleOptionDefineOverride(ARGV[++i])
-                } else
-                  Args[arg]
+        if (substr(arg,1,1) == "-") {
+            if (arg == "-f" || arg == "--file") {
+              delete ARGV[i]
+              ARGV[1] = ARGV[++i]
+            } else if (arg == "-D" || arg == "--define") {
+              delete ARGV[i]
+              handleOptionDefineOverride(ARGV[++i])
             } else
-                arrPush(ArgGoals, arg)
+              Args[arg]
+        } else
+            arrPush(ArgGoals, arg)
 
-            delete ARGV[i] # https://unix.stackexchange.com/a/460375
-        }
+        delete ARGV[i] # https://unix.stackexchange.com/a/460375
     }
     if (system("test -f \"" ARGV[1] "\"") != 0)
       dieMsg("makesure file not found: " ARGV[1])
