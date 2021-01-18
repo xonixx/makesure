@@ -40,7 +40,7 @@
     - [x] @options tracing
     - [x] @options silent
     - [x] @options timing
-30. [ ] find a way to enable tracing for the prelude - this correlates with "prelude runs exactly 1 time"
+30. [x] find a way to enable tracing for the prelude - this correlates with "prelude runs exactly 1 time"
 
 ## Ideas proved not to work
  - Idea with stupid_flush (which just sends 65K spaces to shell pipe) is broken: 

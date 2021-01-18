@@ -244,7 +244,11 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,defines_
             }
         }
     } else {
-        exit_code = shellExec(my_dir[0] trim(code[""])) # prelude
+        goal_body[0] = my_dir[0] # prelude
+        if ("tracing" in Options)
+            addLine(goal_body, "set -x")
+        addLine(goal_body, trim(code[""]))
+        exit_code = shellExec(goal_body[0])
         if (exit_code != 0)
           exit exit_code
         for (i = 0; i < arrLen(resolved_goals); i++) {

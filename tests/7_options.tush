@@ -10,7 +10,10 @@ $ cd "$MYDIR"; ./makesure -f tests/7_options_invalid.sh
 ? 1
 
 $ cd "$MYDIR"; ./makesure -f tests/7_options_tracing.sh -x
+| prelude 123
 |   goal 'default' ...
 | test
+@ + A=123
+@ + echo 'prelude 123'
 @ + echo test
 
