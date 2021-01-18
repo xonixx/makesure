@@ -3,6 +3,9 @@ $ cd "$MYDIR"; ./makesure -v; ./makesure --version
 | 0.9.5
 | 0.9.5
 
+$ cd "$MYDIR/tests/emptydir"; ../../makesure -v
+| 0.9.5
+
 $ cd "$MYDIR"; ./makesure -f non-existent-file
 @ makesure file not found: non-existent-file
 ? 1

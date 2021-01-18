@@ -44,16 +44,16 @@ function prepare_args(    i,arg) {
 
         delete ARGV[i] # https://unix.stackexchange.com/a/460375
     }
+    if ("-v" in Args || "--version" in Args) {
+        print Version
+        Died = 1
+        exit 0
+    }
     if (system("test -f \"" ARGV[1] "\"") != 0) {
       if (system("test -d \"" ARGV[1] "\" -a -f \"" ARGV[1] "/Makesurefile\"") == 0)
         ARGV[1] = ARGV[1] "/Makesurefile"
       else
         dieMsg("makesure file not found: " ARGV[1])
-    }
-    if ("-v" in Args || "--version" in Args) {
-        print Version
-        Died = 1
-        exit 0
     }
     if ("-s" in Args || "--silent" in Args)
       Options["silent"]
