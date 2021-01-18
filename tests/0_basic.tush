@@ -10,3 +10,7 @@ $ cd "$MYDIR"; ./makesure -f non-existent-file
 $ cd "$MYDIR/tests/emptydir"; ../../makesure
 @ makesure file not found: Makesurefile
 ? 1
+
+$ cd "$MYDIR"; ./makesure -f tests/dir
+|   goal 'default' ...
+| test
