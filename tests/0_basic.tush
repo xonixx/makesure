@@ -6,6 +6,21 @@ $ cd "$MYDIR"; ./makesure -v; ./makesure --version
 $ cd "$MYDIR/tests/emptydir"; ../../makesure -v
 | 0.9.5
 
+$ cd "$MYDIR/tests/emptydir"; ../../makesure -h
+| makesure ver. 0.9.5
+| Usage: makesure [options...] [-f buildfile] [goals...]
+|  -f,--file buildfile
+|                  set buildfile to use (default Makesurefile)
+|  -l,--list       list all available goals
+|  -d,--resolved   list resolved dependencies to reach given goals
+|  -D "var=val",--define "var=val"
+|                  override @define values
+|  -s,--silent     silent mode - only output what goals output
+|  -t,--timing     display execution times for goals and total
+|  -x,--tracing    enable tracing in bash/sh via `set -x`
+|  -v,--version    print version and exit
+|  -h,--help       print help and exit
+
 $ cd "$MYDIR"; ./makesure -f non-existent-file
 @ makesure file not found: non-existent-file
 ? 1
