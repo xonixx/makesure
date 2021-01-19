@@ -14,9 +14,9 @@
 
   cd "soft"
 
-  wget https://github.com/adolfopa/tush/archive/master.zip -O./tush.zip
-  unzip ./tush.zip
-  rm ./tush.zip
+  wget https://github.com/adolfopa/tush/archive/master.tar.gz -O./tush.tar.gz
+  tar xzvf ./tush.tar.gz
+  rm ./tush.tar.gz
   mv tush-master tush
 
 @goal soft_installed
