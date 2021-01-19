@@ -49,8 +49,8 @@ function prepare_args(    i,arg) {
         Died = 1
         exit 0
     }
-    if (system("test -f \"" ARGV[1] "\"") != 0) {
-      if (system("test -d \"" ARGV[1] "\" -a -f \"" ARGV[1] "/Makesurefile\"") == 0)
+    if (!isFile(ARGV[1])) {
+      if (isFile(ARGV[1] "/Makesurefile"))
         ARGV[1] = ARGV[1] "/Makesurefile"
       else
         dieMsg("makesure file not found: " ARGV[1])
@@ -448,6 +448,7 @@ function addStr(target, str) { target[0] = target[0] str }
 function addLine(target, line) { addStr(target, line "\n") }
 function arrPush(arr, elt) { arr[arr[-7]++] = elt }
 function arrLen(arr) { return arr[-7] }
+function isFile(path) { return system("test -f \"" path "\"") == 0 }
 function ltrim(s) { sub(/^[ \t\r\n]+/, "", s); return s }
 function rtrim(s) { sub(/[ \t\r\n]+$/, "", s); return s }
 function trim(s) { return rtrim(ltrim(s)); }
