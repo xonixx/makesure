@@ -44,10 +44,25 @@ function prepare_args(    i,arg) {
 
         delete ARGV[i] # https://unix.stackexchange.com/a/460375
     }
-    if ("-v" in Args || "--version" in Args) {
-        print Version
-        Died = 1
-        exit 0
+    if ("-h" in Args || "--help" in Args) {
+      print "makesure ver. " Version
+      print "Usage: makesure [options...] [-f buildfile] [goals...]"
+      print " -f,--file buildfile"
+      print "                 set buildfile to use [default Makesurefile]"
+      print " -h,--help       print help and exit"
+      print " -v,--version    print version and exit"
+      print " -x,--tracing    enable tracing in bash/sh via `set -x`"
+      print " -l,--list       list all available goals"
+      print " -d,--resolved   list resolved dependencies to reach given goals"
+      print " -s,--silent     silent mode - only output what goals output"
+      print " -t,--timing     display execution times for goals and total"
+      print " -D \"var=val\",--define \"var=val\""
+      print "                 override @define values"
+      realExit(0)
+    }
+    else if ("-v" in Args || "--version" in Args) {
+      print Version
+      realExit(0)
     }
     if (!isFile(ARGV[1])) {
       if (isFile(ARGV[1] "/Makesurefile"))
@@ -315,12 +330,15 @@ function die(msg) {
     dieMsg(msg ":\n" ARGV[1] ":" NR ": " $0)
 }
 
+function realExit(code) {
+    Died = 1
+    exit code
+}
 function dieMsg(msg,    out) {
     out = "cat 1>&2" # trick to write from awk to stderr
     print msg | out
     close(out)
-    Died = 1
-    exit 1
+    realExit(1)
 }
 
 function checkConditionReached(defines_line, condition_str,    script) {

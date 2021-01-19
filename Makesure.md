@@ -31,7 +31,7 @@
 23. [x] `-t` flag for timing for goals execution
     - [x] is it possible to ms precision?
     - [x] measure each goal
-24. [ ] `-h` flag for help
+24. [x] `-h` flag for help
 25. [ ] (?) `-F` to force build despite the reached_if
 26. [x] `-x` to enable tracing in bash
 27. [x] support `@options silent` mode and flag `-s`
