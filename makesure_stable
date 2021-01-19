@@ -27,31 +27,47 @@ NR==1 && /^#!/      { next }
 END { if (!Died) doWork() }
 
 function prepare_args(    i,arg) {
-    for (i = 0; i < ARGC; i++) {
+    for (i = 2; i < ARGC; i++) {
         arg = ARGV[i]
         #print i " " arg
-        if (i > 1) {
-            if (substr(arg,1,1) == "-") {
-                if (arg == "-f" || arg == "--file") {
-                  delete ARGV[i]
-                  ARGV[1] = ARGV[++i]
-                } else if (arg == "-D" || arg == "--define") {
-                  delete ARGV[i]
-                  addLine(DefineOverrides, ARGV[++i])
-                } else
-                  Args[arg]
+        if (substr(arg,1,1) == "-") {
+            if (arg == "-f" || arg == "--file") {
+              delete ARGV[i]
+              ARGV[1] = ARGV[++i]
+            } else if (arg == "-D" || arg == "--define") {
+              delete ARGV[i]
+              handleOptionDefineOverride(ARGV[++i])
             } else
-                arrPush(ArgGoals, arg)
+              Args[arg]
+        } else
+            arrPush(ArgGoals, arg)
 
-            delete ARGV[i] # https://unix.stackexchange.com/a/460375
-        }
+        delete ARGV[i] # https://unix.stackexchange.com/a/460375
     }
-    if (system("test -f \"" ARGV[1] "\"") != 0)
-      dieMsg("makesure file not found: " ARGV[1])
-    if ("-v" in Args || "--version" in Args) {
-        print Version
-        Died = 1
-        exit 0
+    if ("-h" in Args || "--help" in Args) {
+      print "makesure ver. " Version
+      print "Usage: makesure [options...] [-f buildfile] [goals...]"
+      print " -f,--file buildfile"
+      print "                 set buildfile to use (default Makesurefile)"
+      print " -l,--list       list all available goals"
+      print " -d,--resolved   list resolved dependencies to reach given goals"
+      print " -D \"var=val\",--define \"var=val\""
+      print "                 override @define values"
+      print " -s,--silent     silent mode - only output what goals output"
+      print " -t,--timing     display execution times for goals and total"
+      print " -x,--tracing    enable tracing in bash/sh via `set -x`"
+      print " -v,--version    print version and exit"
+      print " -h,--help       print help and exit"
+      realExit(0)
+    } else if ("-v" in Args || "--version" in Args) {
+      print Version
+      realExit(0)
+    }
+    if (!isFile(ARGV[1])) {
+      if (isFile(ARGV[1] "/Makesurefile"))
+        ARGV[1] = ARGV[1] "/Makesurefile"
+      else
+        dieMsg("makesure file not found: " ARGV[1])
     }
     if ("-s" in Args || "--silent" in Args)
       Options["silent"]
@@ -66,6 +82,17 @@ function prepare_args(    i,arg) {
 
 function dbg_a(name, arr,    i) { print "--- " name ": "; for (i in arr) print i " : " arr[i] }
 
+function splitKV(arg, kv,    n) {
+  n = index(arg, "=")
+  kv[0] = trim(substr(arg,1,n-1))
+  kv[1] = trim(substr(arg,n+1))
+}
+function handleOptionDefineOverride(arg,    kv) {
+  handleDefineLine(arg)
+  splitKV(arg, kv)
+  DefineOverrides[kv[0]] = kv[1]
+}
+
 function handleOptions() {
     checkPreludeOnly()
 
@@ -76,15 +103,22 @@ function handleOptions() {
     }
 }
 
-function handleDefine() {
+function handleDefine(    line,kv) {
+    $1 = ""
+    handleDefineLine($0)
+}
+function handleDefineLine(line,    kv) {
     checkPreludeOnly()
 
     if (!DefinesFile)
         DefinesFile = executeGetLine("mktemp /tmp/makesure.XXXXXXXXXX")
 
-    $1 = ""
-    handleCodeLine($0)
-    handleCodeLine("echo" $0 " >> " DefinesFile)
+    splitKV(line, kv)
+
+    if (!(kv[0] in DefineOverrides)) {
+      handleCodeLine(line)
+      handleCodeLine("echo " line " >> " DefinesFile)
+    }
 }
 
 function handleShell() {
@@ -158,9 +192,9 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,defines_
     addLine(my_dir, "cd \"$MYDIR\"")
 
     addLine(defines_line, my_dir[0])
-    if (DefinesFile)
+    if (DefinesFile) {
       addLine(defines_line, ". " DefinesFile)
-    addLine(defines_line, DefineOverrides[0])
+    }
 
     for (i = 0; i < arrLen(GoalNames); i++) {
         goal_name = GoalNames[i]
@@ -226,7 +260,11 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,defines_
             }
         }
     } else {
-        exit_code = shellExec(my_dir[0] trim(code[""])) # prelude
+        goal_body[0] = my_dir[0] # prelude
+        if ("tracing" in Options)
+            addLine(goal_body, "set -x")
+        addLine(goal_body, trim(code[""]))
+        exit_code = shellExec(goal_body[0])
         if (exit_code != 0)
           exit exit_code
         for (i = 0; i < arrLen(resolved_goals); i++) {
@@ -291,12 +329,15 @@ function die(msg) {
     dieMsg(msg ":\n" ARGV[1] ":" NR ": " $0)
 }
 
+function realExit(code) {
+    Died = 1
+    exit code
+}
 function dieMsg(msg,    out) {
     out = "cat 1>&2" # trick to write from awk to stderr
     print msg | out
     close(out)
-    Died = 1
-    exit 1
+    realExit(1)
 }
 
 function checkConditionReached(defines_line, condition_str,    script) {
@@ -334,28 +375,28 @@ function handleCodeLine(line,    goal_name, current_code) {
 }
 
 function topologicalSortAddConnection(from, to) {
-    # slist - list of successors by node
-    # scnt - count of successors by node
-    slist[from, ++scnt[from]] = to # add 'to' to successors of 'from'
+    # Slist - list of successors by node
+    # Scnt - count of successors by node
+    Slist[from, ++Scnt[from]] = to # add 'to' to successors of 'from'
 }
 
 function topologicalSortPerform(node, result, loop,    i, s) {
-    if (visited[node] == 2)
+    if (Visited[node] == 2)
         return
 
-    visited[node] = 1
+    Visited[node] = 1
 
-    for (i = 1; i <= scnt[node]; i++) {
-        if (visited[s = slist[node, i]] == 0)
+    for (i = 1; i <= Scnt[node]; i++) {
+        if (Visited[s = Slist[node, i]] == 0)
             topologicalSortPerform(s, result, loop)
-        else if (visited[s] == 1) {
+        else if (Visited[s] == 1) {
             loop[0] = 1
             loop[1] = s
             loop[2] = node
         }
     }
 
-    visited[node] = 2
+    Visited[node] = 2
 
     arrPush(result, node)
 }
@@ -424,6 +465,7 @@ function addStr(target, str) { target[0] = target[0] str }
 function addLine(target, line) { addStr(target, line "\n") }
 function arrPush(arr, elt) { arr[arr[-7]++] = elt }
 function arrLen(arr) { return arr[-7] }
+function isFile(path) { return system("test -f \"" path "\"") == 0 }
 function ltrim(s) { sub(/^[ \t\r\n]+/, "", s); return s }
 function rtrim(s) { sub(/[ \t\r\n]+$/, "", s); return s }
 function trim(s) { return rtrim(ltrim(s)); }
