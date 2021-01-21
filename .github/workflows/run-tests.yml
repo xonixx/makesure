@@ -38,4 +38,4 @@ jobs:
 
       - name: "run tests"
         run: |
-          echo $Env:Path
+          where.exe bash ; echo $Env:Path
