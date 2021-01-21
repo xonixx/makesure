@@ -38,4 +38,4 @@ jobs:
 
       - name: "run tests"
         run: |
-          where bash
+          echo %PATH%
