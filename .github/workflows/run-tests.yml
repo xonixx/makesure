@@ -38,4 +38,4 @@ jobs:
 
       - name: "run tests"
         run: |
-          where bash ; wsl -e 'uname -a ; ls /usr/bin ; ./makesure_stable tested ; echo "exit code=$?"'
+          where bash
