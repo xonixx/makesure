@@ -38,4 +38,4 @@ jobs:
 
       - name: "run tests"
         run: |
-          where.exe bash ; echo $Env:Path
+          C:\Program Files\Git\bin\bash.exe --version ; C:\Windows\System32\bash.exe --version ; where.exe bash ; echo $Env:Path
