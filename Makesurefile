@@ -44,7 +44,7 @@
 
 @goal tested
 @depends_on tush_installed debug
-  rm -f /tmp/makesure.*
+  before_count=$(ls -1 /tmp/makesure.* | wc -l)
 
   export PATH="$PATH:$MYDIR/soft/tush/bin"
 
@@ -57,14 +57,12 @@
       echo >&2 "!!! TESTS FAILED !!! : $f"
       exit 1
     fi
-    for f1 in /tmp/makesure.*
-    do
-      if [[ "$f1" != "/tmp/makesure.*" ]]
-      then
-        echo >&2 "!!! $f1 not deleted !!!"
-        exit 1
-      fi
-    done
+    after_count=$(ls -1 /tmp/makesure.* | wc -l)
+    if (( before_count != after_count ))
+    then
+      echo >&2 "!!! temp file not deleted !!!"
+      exit 1
+    fi
   done
 
 @goal default

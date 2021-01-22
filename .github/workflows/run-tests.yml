@@ -20,7 +20,7 @@ jobs:
 #
 #      - name: "run tests"
 #        run: |
-#          ./makesure_stable tested ; echo "exit code=$?"
+#          ./makesure_stable ; echo "exit code=$?"
   win:
     name: "Run tests Win"
     runs-on: ${{ matrix.os }}
