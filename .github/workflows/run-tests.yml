@@ -38,4 +38,4 @@ jobs:
 
       - name: "run tests"
         run: |
-          & bash -c './makesure_stable ; echo "exit code=$?"' ; echo $LASTEXITCODE
+          & sh -c './makesure_stable ; echo "exit code=$?"' ; echo $LASTEXITCODE
