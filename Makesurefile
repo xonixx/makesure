@@ -15,16 +15,16 @@
 
   cd "soft"
 
-  if which wget >/dev/null
-  then
+#  if which wget >/dev/null
+#  then
     wget $TUSH_REPO/archive/master.tar.gz -O./tush.tar.gz
     tar xzvf ./tush.tar.gz
     rm ./tush.tar.gz
     mv tush-master tush
-  else
-    git clone --depth 1 $TUSH_REPO.git
-    rm -r tush/.git
-  fi
+#  else
+#    git clone --depth 1 $TUSH_REPO.git
+#    rm -r tush/.git
+#  fi
 
 @goal soft_installed
 @depends_on tush_installed
