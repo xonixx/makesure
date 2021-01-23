@@ -34,7 +34,7 @@ jobs:
         id: cache-tush
         with:
           path: soft/tush
-          key: ${{ runner.os }}-tush-2
+          key: ${{ runner.os }}-tush-3
 
       - name: "run tests"
         run: |
