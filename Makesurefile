@@ -9,6 +9,11 @@
 @goal tush_installed
 @depends_on soft_folder_created
 @reached_if [[ -f "soft/tush/bin/tush-check" ]]
+  set -x
+  ls -l soft
+  ls -l soft/tush
+  ls -l soft/tush/bin
+  ls -l soft/tush/bin/tush-check
   echo
   echo "Fetching tush..."
   echo
