@@ -38,4 +38,7 @@ jobs:
 
       - name: "run tests"
         run: |
-          & "C:\Program Files\Git\bin\bash.exe" -c './makesure_stable ; echo "exit code=$?"' ; echo $LASTEXITCODE
+          & "C:\Program Files\Git\bin\bash.exe" -c 'echo 123; exit 111' ; echo $LASTEXITCODE
+          & "C:\Program Files\Git\bin\bash.exe" -c 'echo 123; exit 0' ; echo $LASTEXITCODE
+          & "C:\Program Files\Git\bin\sh.exe" -c 'echo 123; exit 111' ; echo $LASTEXITCODE
+          & "C:\Program Files\Git\bin\sh.exe" -c 'echo 123; exit 0' ; echo $LASTEXITCODE
