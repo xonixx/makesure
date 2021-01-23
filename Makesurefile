@@ -10,10 +10,9 @@
 @depends_on soft_folder_created
 @reached_if [[ -f "soft/tush/bin/tush-check" ]]
   set -x
-  ls -l soft
-  ls -l soft/tush
-  ls -l soft/tush/bin
-  ls -l soft/tush/bin/tush-check
+  ls -l soft/tush || true
+  ls -l soft/tush/bin || true
+  ls -l soft/tush/bin/tush-check || true
   echo
   echo "Fetching tush..."
   echo
