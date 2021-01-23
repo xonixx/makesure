@@ -38,7 +38,10 @@ jobs:
 
       - name: "run tests"
         run: |
-          & "C:\Program Files\Git\bin\bash.exe" -c 'echo 123; exit 111' ; echo $LASTEXITCODE
-          & "C:\Program Files\Git\bin\bash.exe" -c 'echo 123; exit 0' ; echo $LASTEXITCODE
-          & "C:\Program Files\Git\bin\sh.exe" -c 'echo 123; exit 111' ; echo $LASTEXITCODE
-          & "C:\Program Files\Git\bin\sh.exe" -c 'echo 123; exit 0' ; echo $LASTEXITCODE
+          & "C:\Program Files\Git\bin\bash.exe" -c 'echo git bash 111; exit 111' ; echo $LASTEXITCODE
+          & "C:\Program Files\Git\bin\bash.exe" -c 'echo git bash 0; exit 0' ; echo $LASTEXITCODE
+          & "C:\Program Files\Git\bin\sh.exe" -c 'echo git sh 111; exit 111' ; echo $LASTEXITCODE
+          & "C:\Program Files\Git\bin\sh.exe" -c 'echo git sh 0; exit 0' ; echo $LASTEXITCODE
+          & bash -c 'echo bash 111; exit 111' ; echo $LASTEXITCODE
+          & bash -c 'echo bash 0; exit 0' ; echo $LASTEXITCODE
+          & where.exe bash
