@@ -182,7 +182,7 @@ function handleReachedIf(    goal_name) {
     ReachedIf[goal_name] = trim($0)
 }
 
-function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,defines_line,
+function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,my_dir,defines_line,
   body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2) {
 
   if ("-l" in Args || "--list" in Args) {
@@ -223,7 +223,8 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,defines_
         body = trim(code[goal_name])
 
         reached_if = ReachedIf[goal_name]
-        reached = reached_if ? checkConditionReached(defines_line[0], reached_if) : 0
+        reached_goals[goal_name] = reached_if ? checkConditionReached(defines_line[0], reached_if) : 0
+        empty_goals[goal_name] = length(body) == 0
 
         # check valid dependencies
         dep_cnt = DependenciesCnt[goal_name]
@@ -231,7 +232,7 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,defines_
             dep = Dependencies[goal_name, j]
             if (!(dep in GoalsByName))
                 dieMsg("Goal '" goal_name "' has unknown dependency '" dep "'") # TODO find a way to provide line reference
-            if (!reached) {
+            if (!reached_goals[goal_name]) {
                 # we only add a dependency to this goal if it's not reached
                 #print " [not reached] " goal_name " -> " dep
                 topologicalSortAddConnection(goal_name, dep)
@@ -243,15 +244,15 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,defines_
         goal_body[0] = ""
         if (!("silent" in Options)) {
             addStr(goal_body, "echo \"  goal '" goal_name "' ")
-            if (reached)
+            if (reached_goals[goal_name])
               addStr(goal_body, "[already satisfied].")
-            else if (length(body) == 0)
+            else if (empty_goals[goal_name])
               addStr(goal_body, "[empty].")
             else
               addStr(goal_body, "...")
             addLine(goal_body, "\"")
         }
-        if (reached)
+        if (reached_goals[goal_name])
             addLine(goal_body, "exit 0")
 
         addLine(goal_body, defines_line[0])
