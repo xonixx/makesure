@@ -183,7 +183,7 @@ function handleReachedIf(    goal_name) {
 }
 
 function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,my_dir,defines_line,
-  body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2) {
+  body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
 
   if ("-l" in Args || "--list" in Args) {
       print "Available goals:"
@@ -273,11 +273,12 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goa
       }
     } else {
       for (i = 0; i < arrLen(resolved_goals); i++) {
-        if ("timing" in Options)
-          t1 = currentTimeMillis()
         goal_name = resolved_goals[i]
+        goal_timed = "timing" in Options && !reached_goals[goal_name] && !empty_goals[goal_name]
+        if (goal_timed)
+          t1 = currentTimeMillis()
         exit_code = shellExec(goal_bodies[goal_name])
-        if ("timing" in Options) {
+        if (goal_timed) {
           t2 = currentTimeMillis()
           print "  goal '" goal_name "' took " renderDuration(t2 - t1)
         }
@@ -285,7 +286,7 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goa
           break
       }
       if ("timing" in Options)
-        print "  total time " renderDuration(t2 - t0)
+        print "  total time " renderDuration(currentTimeMillis() - t0)
       if (exit_code != 0)
         realExit(exit_code)
     }
