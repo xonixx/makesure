@@ -276,7 +276,7 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goa
         goal_name = resolved_goals[i]
         goal_timed = "timing" in Options && !reached_goals[goal_name] && !empty_goals[goal_name]
         if (goal_timed)
-          t1 = currentTimeMillis()
+          t1 = t2 ? t2 : currentTimeMillis()
         exit_code = shellExec(goal_bodies[goal_name])
         if (goal_timed) {
           t2 = currentTimeMillis()
@@ -286,7 +286,7 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goa
           break
       }
       if ("timing" in Options)
-        print "  total time " renderDuration(currentTimeMillis() - t0)
+        print "  total time " renderDuration((t2 ? t2 : currentTimeMillis()) - t0)
       if (exit_code != 0)
         realExit(exit_code)
     }
