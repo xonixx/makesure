@@ -5,6 +5,19 @@ $ cd "$MYDIR"; ./makesure -f tests/8_options_timing.sh | sed 's#took .*$#took X#
 |   goal 'default' took X
 |   total time X
 
+$ cd "$MYDIR"; ./makesure -f tests/8_options_timing.sh empty_goal | sed 's#took .*$#took X#g ; s#total time .*$#total time X#g'
+|   goal 'reached_goal' [already satisfied].
+|   goal 'reached_goal' took X
+|   goal 'not_reached_goal_1' ...
+| should show 1
+|   goal 'not_reached_goal_1' took X
+|   goal 'not_reached_goal_2' ...
+| should show 2
+|   goal 'not_reached_goal_2' took X
+|   goal 'empty_goal' [empty].
+|   goal 'empty_goal' took X
+|   total time X
+
 $ cd "$MYDIR"; ./makesure -f tests/8_options_timing_silent.sh
 | test
 
