@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-VERSION="0.9.5"
+VERSION="0.9.6"
 
 exec awk -v "Version=$VERSION" -f - Makesurefile "$@" <<'MAKESURE'
 
@@ -184,12 +184,33 @@ function handleReachedIf(    goal_name) {
 
 function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,defines_line,
   body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2) {
+
+  if ("-l" in Args || "--list" in Args) {
+      print "Available goals:"
+      for (i = 0; i < arrLen(GoalNames); i++) {
+          goal_name = GoalNames[i]
+          print "  " goal_name
+          if (goal_name in DocCnt) {
+            for (j = 0; j < DocCnt[goal_name]; j++)
+              print "    " Doc[goal_name, j]
+          }
+      }
+  } else {
     if ("timing" in Options)
       t0 = currentTimeMillis()
 
     addLine(my_dir, "MYDIR='" getMyDir() "'")
     addLine(my_dir, "export MYDIR")
     addLine(my_dir, "cd \"$MYDIR\"")
+
+    # run prelude first to process all @defines
+    goal_body[0] = my_dir[0]
+    if ("tracing" in Options)
+        addLine(goal_body, "set -x")
+    addLine(goal_body, trim(code[""]))
+    exit_code = shellExec(goal_body[0])
+    if (exit_code != 0)
+      realExit(exit_code)
 
     addLine(defines_line, my_dir[0])
     if (DefinesFile) {
@@ -245,47 +266,31 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,defines_
     resolveGoalsToRun(resolved_goals)
 
     if ("-d" in Args || "--resolved" in Args) {
-        printf("Resolved goals to reach for '%s':\n", join(ArgGoals, 0, arrLen(ArgGoals), " "))
-        for (i = 0; i < arrLen(resolved_goals); i++) {
-           print "  " resolved_goals[i]
-        }
-    } else if ("-l" in Args || "--list" in Args) {
-        print "Available goals:"
-        for (i = 0; i < arrLen(GoalNames); i++) {
-            goal_name = GoalNames[i]
-            print "  " goal_name
-            if (goal_name in DocCnt) {
-              for (j = 0; j < DocCnt[goal_name]; j++)
-                print "    " Doc[goal_name, j]
-            }
-        }
+      printf("Resolved goals to reach for '%s':\n", join(ArgGoals, 0, arrLen(ArgGoals), " "))
+      for (i = 0; i < arrLen(resolved_goals); i++) {
+         print "  " resolved_goals[i]
+      }
     } else {
-        goal_body[0] = my_dir[0] # prelude
-        if ("tracing" in Options)
-            addLine(goal_body, "set -x")
-        addLine(goal_body, trim(code[""]))
-        exit_code = shellExec(goal_body[0])
-        if (exit_code != 0)
-          exit exit_code
-        for (i = 0; i < arrLen(resolved_goals); i++) {
-          if ("timing" in Options)
-            t1 = currentTimeMillis()
-          goal_name = resolved_goals[i]
-          exit_code = shellExec(goal_bodies[goal_name])
-          if ("timing" in Options) {
-            t2 = currentTimeMillis()
-            print "  goal '" goal_name "' took " renderDuration(t2 - t1)
-          }
-          if (exit_code != 0)
-            break
-        }
-        if (DefinesFile)
-          system("rm " DefinesFile)
+      for (i = 0; i < arrLen(resolved_goals); i++) {
         if ("timing" in Options)
-          print "  total time " renderDuration(t2 - t0)
+          t1 = currentTimeMillis()
+        goal_name = resolved_goals[i]
+        exit_code = shellExec(goal_bodies[goal_name])
+        if ("timing" in Options) {
+          t2 = currentTimeMillis()
+          print "  goal '" goal_name "' took " renderDuration(t2 - t1)
+        }
         if (exit_code != 0)
-          exit exit_code
+          break
+      }
+      if ("timing" in Options)
+        print "  total time " renderDuration(t2 - t0)
+      if (exit_code != 0)
+        realExit(exit_code)
     }
+
+    realExit(0)
+  }
 }
 
 function resolveGoalsToRun(result,    i, goal_name, loop) {
@@ -331,6 +336,8 @@ function die(msg) {
 
 function realExit(code) {
     Died = 1
+    if (DefinesFile)
+      system("rm " DefinesFile)
     exit code
 }
 function dieMsg(msg,    out) {
