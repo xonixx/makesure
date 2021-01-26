@@ -182,8 +182,8 @@ function handleReachedIf(    goal_name) {
     ReachedIf[goal_name] = trim($0)
 }
 
-function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,defines_line,
-  body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2) {
+function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,my_dir,defines_line,
+  body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
 
   if ("-l" in Args || "--list" in Args) {
       print "Available goals:"
@@ -223,7 +223,8 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,defines_
         body = trim(code[goal_name])
 
         reached_if = ReachedIf[goal_name]
-        reached = reached_if ? checkConditionReached(defines_line[0], reached_if) : 0
+        reached_goals[goal_name] = reached_if ? checkConditionReached(defines_line[0], reached_if) : 0
+        empty_goals[goal_name] = length(body) == 0
 
         # check valid dependencies
         dep_cnt = DependenciesCnt[goal_name]
@@ -231,7 +232,7 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,defines_
             dep = Dependencies[goal_name, j]
             if (!(dep in GoalsByName))
                 dieMsg("Goal '" goal_name "' has unknown dependency '" dep "'") # TODO find a way to provide line reference
-            if (!reached) {
+            if (!reached_goals[goal_name]) {
                 # we only add a dependency to this goal if it's not reached
                 #print " [not reached] " goal_name " -> " dep
                 topologicalSortAddConnection(goal_name, dep)
@@ -243,15 +244,15 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,defines_
         goal_body[0] = ""
         if (!("silent" in Options)) {
             addStr(goal_body, "echo \"  goal '" goal_name "' ")
-            if (reached)
+            if (reached_goals[goal_name])
               addStr(goal_body, "[already satisfied].")
-            else if (length(body) == 0)
+            else if (empty_goals[goal_name])
               addStr(goal_body, "[empty].")
             else
               addStr(goal_body, "...")
             addLine(goal_body, "\"")
         }
-        if (reached)
+        if (reached_goals[goal_name])
             addLine(goal_body, "exit 0")
 
         addLine(goal_body, defines_line[0])
@@ -272,11 +273,12 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,defines_
       }
     } else {
       for (i = 0; i < arrLen(resolved_goals); i++) {
-        if ("timing" in Options)
-          t1 = currentTimeMillis()
         goal_name = resolved_goals[i]
+        goal_timed = "timing" in Options && !reached_goals[goal_name] && !empty_goals[goal_name]
+        if (goal_timed)
+          t1 = t2 ? t2 : currentTimeMillis()
         exit_code = shellExec(goal_bodies[goal_name])
-        if ("timing" in Options) {
+        if (goal_timed) {
           t2 = currentTimeMillis()
           print "  goal '" goal_name "' took " renderDuration(t2 - t1)
         }
@@ -284,7 +286,7 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached,my_dir,defines_
           break
       }
       if ("timing" in Options)
-        print "  total time " renderDuration(t2 - t0)
+        print "  total time " renderDuration((t2 ? t2 : currentTimeMillis()) - t0)
       if (exit_code != 0)
         realExit(exit_code)
     }
