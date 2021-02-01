@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-VERSION="0.9.6"
+VERSION="0.9.6.1"
 
 exec awk -v "Version=$VERSION" "$(cat <<'MAKESURE'
 
