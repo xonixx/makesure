@@ -1,6 +1,8 @@
 
-@options timing
+@define NEXT_VERSION="0.9.6.2"
 @define TUSH_REPO=https://github.com/adolfopa/tush
+
+@options timing
 
 @goal soft_folder_created
 @reached_if [[ -d "soft" ]]
@@ -64,6 +66,21 @@
       exit 1
     fi
   done
+
+@goal stable
+@depends_on tested
+  OUT=makesure_stable
+
+  echo >$OUT  '#!/usr/bin/env sh'
+  echo >>$OUT
+  echo >>$OUT "VERSION=\"$NEXT_VERSION\""
+  echo >>$OUT
+  echo >>$OUT "exec awk -v \"Version=\$VERSION\" \"\$(cat <<'MAKESURE'"
+  echo >>$OUT
+  cat >>$OUT makesure.awk
+  echo >>$OUT
+  echo >>$OUT 'MAKESURE'
+  echo >>$OUT ')" Makesurefile "$@"'
 
 @goal default
 @depends_on tested

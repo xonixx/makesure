@@ -1,9 +1,3 @@
-#!/usr/bin/env sh
-
-VERSION="0.9.6.2"
-
-exec awk -v "Version=$VERSION" "$(cat <<'MAKESURE'
-
 BEGIN {
     Shell = "bash" # default shell
     SupportedShells["bash"]
@@ -475,6 +469,3 @@ function isFile(path) { return system("test -f \"" path "\"") == 0 }
 function ltrim(s) { sub(/^[ \t\r\n]+/, "", s); return s }
 function rtrim(s) { sub(/[ \t\r\n]+$/, "", s); return s }
 function trim(s) { return rtrim(ltrim(s)); }
-
-MAKESURE
-)" Makesurefile "$@"
