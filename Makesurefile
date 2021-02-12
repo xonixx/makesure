@@ -71,16 +71,18 @@
 @depends_on tested
   OUT=makesure_stable
 
-  echo >$OUT  '#!/usr/bin/env sh'
-  echo >>$OUT
-  echo >>$OUT "VERSION=\"$NEXT_VERSION\""
-  echo >>$OUT
-  echo >>$OUT "exec awk -v \"Version=\$VERSION\" \"\$(cat <<'MAKESURE'"
-  echo >>$OUT
-  cat >>$OUT makesure.awk
-  echo >>$OUT
-  echo >>$OUT 'MAKESURE'
-  echo >>$OUT ')" Makesurefile "$@"'
+  {
+    echo '#!/usr/bin/env sh'
+    echo
+    echo "VERSION=\"$NEXT_VERSION\""
+    echo
+    echo "exec awk -v \"Version=\$VERSION\" \"\$(cat <<'MAKESURE'"
+    echo
+    cat  makesure.awk
+    echo
+    echo 'MAKESURE'
+    echo ')" Makesurefile "$@"'
+  } > $OUT
 
 @goal default
 @depends_on tested
