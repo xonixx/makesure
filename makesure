@@ -11,7 +11,7 @@ BEGIN {
     SupportedOptions["tracing"]
     SupportedOptions["silent"]
     SupportedOptions["timing"]
-    prepare_args()
+    prepareArgs()
 }
 
 NR==1 && /^#!/      { next }
@@ -26,7 +26,7 @@ NR==1 && /^#!/      { next }
 
 END { if (!Died) doWork() }
 
-function prepare_args(    i,arg) {
+function prepareArgs(    i,arg) {
     for (i = 2; i < ARGC; i++) {
         arg = ARGV[i]
         #print i " " arg
@@ -75,12 +75,12 @@ function prepare_args(    i,arg) {
       Options["tracing"]
     if ("-t" in Args || "--timing" in Args)
       Options["timing"]
-    #dbg_a("ARGV", ARGV)
-    #dbg_a("Args", Args)
-    #dbg_a("ArgGoals", ArgGoals)
+    #dbgA("ARGV", ARGV)
+    #dbgA("Args", Args)
+    #dbgA("ArgGoals", ArgGoals)
 }
 
-function dbg_a(name, arr,    i) { print "--- " name ": "; for (i in arr) print i " : " arr[i] }
+function dbgA(name, arr,    i) { print "--- " name ": "; for (i in arr) print i " : " arr[i] }
 
 function splitKV(arg, kv,    n) {
   n = index(arg, "=")
