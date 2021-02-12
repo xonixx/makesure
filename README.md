@@ -37,3 +37,9 @@ You can as well call single goal explicitly, example `makesure built`.
 Also pay attention to `@reached_if` directive. This one allows skipping goal if it's already satisfied. This allows to speedup subsequent executions.
 
 By default, all scripts inside goals are executed with `bash`. If you want to use `sh` just add `@shell sh` directive at start of the `Makesurefile`.  
+
+## Installation
+
+```shell
+wget https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable -Omakesure
+```
