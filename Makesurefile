@@ -49,6 +49,7 @@
   before_count=$(ls -1 /tmp/makesure.* | wc -l)
 
   export PATH="$PATH:$MYDIR/soft/tush/bin"
+  export NEXT_VERSION="NEXT_VERSION"
 
   for f in tests/*.tush
   do

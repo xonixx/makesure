@@ -1,10 +1,8 @@
 #!/usr/bin/env sh
 
-VERSION="0.9.6.1"
-
 mydir=$(
   cd "$(dirname "$0")"
   pwd
 )
 
-exec awk -v "Version=$VERSION" -f "$mydir/makesure.awk" Makesurefile "$@"
+exec awk -v "Version=$NEXT_VERSION" -f "$mydir/makesure.awk" Makesurefile "$@"
