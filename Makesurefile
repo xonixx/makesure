@@ -1,5 +1,5 @@
 
-@define NEXT_VERSION="0.9.6.2"
+@define NEXT_VERSION="0.9.7"
 @define TUSH_REPO=https://github.com/adolfopa/tush
 
 @options timing

@@ -8,7 +8,6 @@ BEGIN {
     prepareArgs()
 }
 
-NR==1 && /^#!/      { next }
 "@options"    == $1 { handleOptions();     next }
 "@define"     == $1 { handleDefine();      next }
 "@shell"      == $1 { handleShell();       next }
