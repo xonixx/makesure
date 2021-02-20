@@ -42,4 +42,5 @@ By default, all scripts inside goals are executed with `bash`. If you want to us
 
 ```shell
 wget https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable -Omakesure
+chmod +x makesure
 ```
