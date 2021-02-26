@@ -38,9 +38,37 @@ Also pay attention to `@reached_if` directive. This one allows skipping goal if 
 
 By default, all scripts inside goals are executed with `bash`. If you want to use `sh` just add `@shell sh` directive at start of the `Makesurefile`.  
 
+## Usage
+
+```
+$ ./makesure -h
+makesure ver. 0.9.7
+Usage: makesure [options...] [-f buildfile] [goals...]
+ -f,--file buildfile
+                 set buildfile to use (default Makesurefile)
+ -l,--list       list all available goals
+ -d,--resolved   list resolved dependencies to reach given goals
+ -D "var=val",--define "var=val"
+                 override @define values
+ -s,--silent     silent mode - only output what goals output
+ -t,--timing     display execution times for goals and total
+ -x,--tracing    enable tracing in bash/sh via `set -x`
+ -v,--version    print version and exit
+ -h,--help       print help and exit
+ -U,--selfupdate update makesure to latest version
+```
+
 ## Installation
 
 ```shell
 wget "https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable?$(date +%s)" -Omakesure && \
 chmod +x makesure && echo "makesure $(./makesure -v) installed"
+```
+
+### Update
+
+Updates makesure executable to latest available version in-place:
+
+```shell
+./makesure -U
 ```
