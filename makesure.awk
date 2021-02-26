@@ -417,8 +417,10 @@ function selfUpdate(    url, tmp, err, newVer) {
     if (!err && 0 != system("chmod +x " tmp)) err = "can't chmod +x " tmp
     if (!err) {
         newVer = executeGetLine(tmp " -v")
-        if (Version != newVer && 0 != system("cp " tmp " \"" Prog "\""))
-            err = "can't overwrite " Prog
+        if (Version != newVer) {
+            if (0 != system("cp " tmp " \"" Prog "\""))
+                err = "can't overwrite " Prog
+        } else print "you have latest version " Version " installed"
     }
     system("rm " tmp)
     if (err) dieMsg(err);
@@ -473,11 +475,13 @@ function executeGetLine(script,    res) {
 }
 function commandExists(cmd) { return system("which " cmd " >/dev/null 2>/dev/null") == 0 }
 function dl(url, dest) {
-    if (commandExists("wget") && 0 != system("wget \"" url "\" -O\"" dest "\""))
-        return "error with wget"
-    if (commandExists("curl") && 0 != system("curl \"" url "\" -o \"" dest "\""))
-        return "error with curl"
-    return "wget/curl no found"
+    if (commandExists("wget")) {
+        if (0 != system("wget \"" url "\" -O\"" dest "\""))
+            return "error with wget"
+    } else if (commandExists("curl")) {
+        if (0 != system("curl \"" url "\" -o \"" dest "\""))
+            return "error with curl"
+    } else return "wget/curl no found"
 }
 function join(arr, start_incl, end_excl, sep,    result, i) {
     result = arr[start_incl]
