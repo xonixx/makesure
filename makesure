@@ -5,4 +5,4 @@ mydir=$(
   pwd
 )
 
-exec awk -v "Version=$NEXT_VERSION" -f "$mydir/makesure.awk" Makesurefile "$@"
+exec awk -v "Version=$NEXT_VERSION" -v "Prog=$0" -f "$mydir/makesure.awk" Makesurefile "$@"

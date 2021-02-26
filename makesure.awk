@@ -51,9 +51,13 @@ function prepareArgs(    i,arg) {
       print " -x,--tracing    enable tracing in bash/sh via `set -x`"
       print " -v,--version    print version and exit"
       print " -h,--help       print help and exit"
+      print " -U,--selfupdate update makesure to latest version"
       realExit(0)
     } else if ("-v" in Args || "--version" in Args) {
       print Version
+      realExit(0)
+    } else if ("-U" in Args || "--selfupdate" in Args) {
+      selfUpdate()
       realExit(0)
     }
     if (!isFile(ARGV[1])) {
@@ -406,10 +410,18 @@ function currentTimeMillis(    script, res) {
   return res + 0
 }
 
-function executeGetLine(script,    res) {
-  script | getline res
-  close(script)
-  return res
+function selfUpdate(    url, tmp, err, newVer) {
+    url = "https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable"
+    tmp = executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX")
+    err = dl(url, tmp)
+    if (!err && 0 != system("chmod +x " tmp)) err = "can't chmod +x " tmp
+    if (!err) {
+        newVer = executeGetLine(tmp " -v")
+        if (Version != newVer && 0 != system("cp " tmp " \"" Prog "\""))
+            err = "can't overwrite " Prog
+    }
+    system("rm " tmp)
+    if (err) dieMsg(err);
 }
 
 function renderDuration(deltaMillis,
@@ -453,6 +465,19 @@ res) {
     res = deltaSec > 0 ? secS : "0 s"
 
   return res
+}
+function executeGetLine(script,    res) {
+  script | getline res
+  close(script)
+  return res
+}
+function commandExists(cmd) { return system("which " cmd " >/dev/null 2>/dev/null") == 0 }
+function dl(url, dest) {
+    if (commandExists("wget") && 0 != system("wget \"" url "\" -O\"" dest "\""))
+        return "error with wget"
+    if (commandExists("curl") && 0 != system("curl \"" url "\" -o \"" dest "\""))
+        return "error with curl"
+    return "wget/curl no found"
 }
 function join(arr, start_incl, end_excl, sep,    result, i) {
     result = arr[start_incl]

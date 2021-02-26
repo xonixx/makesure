@@ -20,6 +20,7 @@ $ cd "$MYDIR/tests/emptydir"; ../../makesure -h
 |  -x,--tracing    enable tracing in bash/sh via `set -x`
 |  -v,--version    print version and exit
 |  -h,--help       print help and exit
+|  -U,--selfupdate update makesure to latest version
 
 $ cd "$MYDIR"; ./makesure -f non-existent-file
 @ makesure file not found: non-existent-file

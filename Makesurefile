@@ -77,7 +77,7 @@
     echo
     echo "VERSION=\"$NEXT_VERSION\""
     echo
-    echo "exec awk -v \"Version=\$VERSION\" \"\$(cat <<'MAKESURE'"
+    echo "exec awk -v \"Version=\$VERSION\" -v \"Prog=\$0\" \"\$(cat <<'MAKESURE'"
     echo
     cat  makesure.awk
     echo
