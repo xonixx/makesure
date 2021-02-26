@@ -474,12 +474,13 @@ function executeGetLine(script,    res) {
   return res
 }
 function commandExists(cmd) { return system("which " cmd " >/dev/null 2>/dev/null") == 0 }
-function dl(url, dest) {
+function dl(url, dest,    verbose) {
+    verbose = "VERBOSE" in ENVIRON
     if (commandExists("wget")) {
-        if (0 != system("wget \"" url "\" -O\"" dest "\""))
+        if (0 != system("wget " (verbose ? "" : "-q") " \"" url "\" -O\"" dest "\""))
             return "error with wget"
     } else if (commandExists("curl")) {
-        if (0 != system("curl \"" url "\" -o \"" dest "\""))
+        if (0 != system("curl " (verbose ? "" : "-s") " \"" url "\" -o \"" dest "\""))
             return "error with curl"
     } else return "wget/curl no found"
 }
