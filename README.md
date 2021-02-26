@@ -41,6 +41,6 @@ By default, all scripts inside goals are executed with `bash`. If you want to us
 ## Installation
 
 ```shell
-wget https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable -Omakesure
-chmod +x makesure
+wget "https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable?$(date +%s)" -Omakesure && \
+chmod +x makesure && echo "makesure $(./makesure -v) installed"
 ```
