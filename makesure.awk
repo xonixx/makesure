@@ -420,6 +420,7 @@ function selfUpdate(    url, tmp, err, newVer) {
         if (Version != newVer) {
             if (0 != system("cp " tmp " \"" Prog "\""))
                 err = "can't overwrite " Prog
+            else print "updated " Version " -> " newVer
         } else print "you have latest version " Version " installed"
     }
     system("rm " tmp)
