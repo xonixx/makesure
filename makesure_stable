@@ -282,6 +282,8 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goa
         if (goal_timed)
           t1 = t2 ? t2 : currentTimeMillis()
         exit_code = shellExec(goal_bodies[goal_name])
+        if (exit_code != 0)
+          print "  goal '" goal_name "' failed"
         if (goal_timed) {
           t2 = currentTimeMillis()
           print "  goal '" goal_name "' took " renderDuration(t2 - t1)
