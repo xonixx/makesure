@@ -109,7 +109,7 @@ function handleDefineLine(line,    kv) {
     checkPreludeOnly()
 
     if (!DefinesFile)
-        DefinesFile = executeGetLine("mktemp /tmp/makesure.XXXXXXXXXX")
+        DefinesFile = executeGetLine("mktemp " (isDir("/dev/shm") ? "/dev/shm" : "/tmp") "/makesure.XXXXXXXXXX")
 
     splitKV(line, kv)
 
@@ -499,6 +499,5 @@ function addLine(target, line) { addStr(target, line "\n") }
 function arrPush(arr, elt) { arr[arr[-7]++] = elt }
 function arrLen(arr) { return 0 + arr[-7] }
 function isFile(path) { return system("test -f \"" path "\"") == 0 }
-function ltrim(s) { sub(/^[ \t\r\n]+/, "", s); return s }
-function rtrim(s) { sub(/[ \t\r\n]+$/, "", s); return s }
-function trim(s) { return rtrim(ltrim(s)); }
+function isDir(path) { return system("test -d \"" path "\"") == 0 }
+function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s; }
