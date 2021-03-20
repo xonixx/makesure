@@ -495,7 +495,7 @@ function join(arr, start_incl, end_excl, sep,    result, i) {
 function addStr(target, str) { target[0] = target[0] str }
 function addLine(target, line) { addStr(target, line "\n") }
 function arrPush(arr, elt) { arr[arr[-7]++] = elt }
-function arrLen(arr) { return arr[-7] }
+function arrLen(arr) { return 0 + arr[-7] }
 function isFile(path) { return system("test -f \"" path "\"") == 0 }
 function ltrim(s) { sub(/^[ \t\r\n]+/, "", s); return s }
 function rtrim(s) { sub(/[ \t\r\n]+$/, "", s); return s }
