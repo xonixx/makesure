@@ -8,11 +8,11 @@
     - [x] use @define to export variable for goals
         - [x] reuse export for MVP
 3.  [x] Goals topological sort
-4.  [ ] (?) Profiles a-la maven
-5.  [ ] (?) Find a way to share functions
-6.  [ ] (?) Pre-check? Post-check?
+4.  [ ] \[DECIDE] Profiles a-la maven
+5.  [ ] \[DECIDE] Find a way to share functions
+6.  [ ] \[DECIDE] Pre-check? Post-check?
 7.  [x] make @shell configurable
-8.  [ ] \[REJECT] `-p` flag to print generated bash script 
+8.  [x] \[REJECT] `-p` flag to print generated bash script 
 9.  [x] provide goals to run as argument
 10. [x] `-l` flag to show all goals
 11. [x] per-goal documentation
@@ -32,7 +32,7 @@
     - [x] is it possible to ms precision?
     - [x] measure each goal
 24. [x] `-h` flag for help
-25. [ ] (?) `-F` to force build despite the reached_if
+25. [ ] \[DECIDE] `-F` to force build despite the reached_if
 26. [x] `-x` to enable tracing in bash
 27. [x] support `@options silent` mode and flag `-s`
 28. [x] allow override @define-s

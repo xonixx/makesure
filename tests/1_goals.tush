@@ -46,11 +46,13 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -d
 $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh fail
 |   goal 'fail' ...
 | stdout
+|   goal 'fail' failed
 @ stderr
 ? 1
 
 $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh fail123
 |   goal 'fail123' ...
 | stdout
+|   goal 'fail123' failed
 @ stderr
 ? 123
