@@ -5,18 +5,33 @@ BEGIN {
     SupportedOptions["tracing"]
     SupportedOptions["silent"]
     SupportedOptions["timing"]
+    split("",Args) # parsed CLI args
+    split("",ArgGoals) # invoked goals
+    split("",Options)
+    split("",GoalNames)
+    split("",GoalsByName) # name -> ""
+    split("",DefineOverrides) # k -> v
+    DefinesFile=""
+    split("",Dependencies)    # name,i -> dep goal
+    split("",DependenciesCnt) # name   -> dep cnd
+    split("",Doc)    # name,i -> doc str
+    split("",DocCnt) # name   -> doc lines cnt
+    split("",Code)      # name -> body
+    split("",ReachedIf) # name -> condition line
     srand()
     prepareArgs()
 }
 
-"@options"    == $1 { handleOptions();     next }
-"@define"     == $1 { handleDefine();      next }
-"@shell"      == $1 { handleShell();       next }
-"@goal"       == $1 { handleGoal();        next }
-"@doc"        == $1 { handleDoc();         next }
-"@depends_on" == $1 { handleDependsOn();   next }
-"@reached_if" == $1 { handleReachedIf();   next }
-                    { handleCodeLine($0);  next }
+"@options"    == $1 { handleOptions();    next }
+"@define"     == $1 { handleDefine();     next }
+"@shell"      == $1 { handleShell();      next }
+"@goal"       == $1 { handleGoal();       next }
+"@doc"        == $1 { handleDoc();        next }
+"@depends_on" == $1 { handleDependsOn();  next }
+"@reached_if" == $1 { handleReachedIf();  next }
+"@script"     == $1 { handleScript();     next }
+"@call"       == $1 { handleCall();       next }
+                    { handleCodeLine($0); next }
 
 END { if (!Died) doWork() }
 
@@ -180,6 +195,13 @@ function handleReachedIf(    goal_name) {
     ReachedIf[goal_name] = trim($0)
 }
 
+function handleScript() {
+    Script($1)
+}
+
+function handleCall() {
+}
+
 function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,my_dir,defines_line,
   body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
 
@@ -205,7 +227,7 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goa
     goal_body[0] = my_dir[0]
     if ("tracing" in Options)
         addLine(goal_body, "set -x")
-    addLine(goal_body, trim(code[""]))
+    addLine(goal_body, trim(Code[""]))
     exit_code = shellExec(goal_body[0])
     if (exit_code != 0)
       realExit(exit_code)
@@ -218,7 +240,7 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goa
     for (i = 0; i < arrLen(GoalNames); i++) {
         goal_name = GoalNames[i]
 
-        body = trim(code[goal_name])
+        body = trim(Code[goal_name])
 
         reached_if = ReachedIf[goal_name]
         reached_goals[goal_name] = reached_if ? checkConditionReached(defines_line[0], reached_if) : 0
@@ -376,8 +398,8 @@ function getMyDir(    script) {
 function handleCodeLine(line,    goal_name, current_code) {
     goal_name = currentGoalName()
     #print "Append line for '" goal_name "': " line
-    current_code = code[goal_name]
-    code[goal_name] = current_code ? current_code "\n" line : line
+    current_code = Code[goal_name]
+    Code[goal_name] = current_code ? current_code "\n" line : line
 }
 
 function topologicalSortAddConnection(from, to) {
