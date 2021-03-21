@@ -18,6 +18,8 @@ BEGIN {
     split("",DocCnt) # name   -> doc lines cnt
     split("",Code)      # name -> body
     split("",ReachedIf) # name -> condition line
+    split("",Script) # script name -> body
+    Mode = "prelude" # prelude/goal/script
     srand()
     prepareArgs()
 }
@@ -143,14 +145,16 @@ function handleShell() {
       die("Shell '" Shell "' is not supported")
 }
 
-function adjust_options() {
+function adjustOptions() {
   if ("silent" in Options)
     delete Options["timing"]
 }
 
 function handleGoal(    goal_name) {
     if (isPrelude()) # 1st goal
-      adjust_options()
+      adjustOptions()
+
+    Mode = "goal"
 
     goal_name = trim($2)
     if (length(goal_name) == 0) {
@@ -196,7 +200,7 @@ function handleReachedIf(    goal_name) {
 }
 
 function handleScript() {
-    Script($1)
+    Script[$1]
 }
 
 function handleCall() {
@@ -334,28 +338,12 @@ function resolveGoalsToRun(result,    i, goal_name, loop) {
     }
 }
 
-function isPrelude() {
-    return arrLen(GoalNames) == 0
-}
-
-function checkPreludeOnly() {
-    if (!isPrelude()) {
-        die("Only use " $1 " in prelude")
-    }
-}
-
-function checkGoalOnly() {
-   if (isPrelude()) {
-       die("Only use " $1 " in goal")
-   }
-}
+function isPrelude() { return "prelude"==Mode }
+function checkPreludeOnly() { if (!isPrelude()) die("Only use " $1 " in prelude") }
+function checkGoalOnly() { if ("goal" != Mode) die("Only use " $1 " in goal") }
 
 function currentGoalName() {
-    return isPrelude() ? "" : GoalNames[arrLen(GoalNames)-1] # TODO arr_index via slice
-}
-
-function die(msg) {
-    dieMsg(msg ":\n" ARGV[1] ":" NR ": " $0)
+    return isPrelude() ? "" : GoalNames[arrLen(GoalNames)-1]
 }
 
 function realExit(code) {
@@ -364,6 +352,7 @@ function realExit(code) {
       system("rm " DefinesFile)
     exit code
 }
+function die(msg) { dieMsg(msg ":\n" ARGV[1] ":" NR ": " $0) }
 function dieMsg(msg,    out) {
     out = "cat 1>&2" # trick to write from awk to stderr
     print msg | out
