@@ -1,0 +1,3 @@
+
+$ cd "$MYDIR"; ./makesure -f tests/11_call.sh
+|

@@ -23,6 +23,7 @@ BEGIN {
     split("",ScriptsByName) # name -> ""
     split("",Script)     # name -> body
     split("",ScriptFile) # name -> file
+    split("",GoalToCall) # name -> call script
     Mode = "prelude" # prelude/goal/script
     srand()
     prepareArgs()
@@ -223,7 +224,25 @@ function handleReachedIf(    goal_name) {
     ReachedIf[goal_name] = trim($0)
 }
 
-function handleCall() {
+function handleCall(   script_name) {
+    checkGoalOnly()
+
+    goal_name = currentGoalName()
+
+    $1 = ""
+
+    if (trim(Code[goal_name]))
+        die("You can't have a goal body when using @call")
+    if (goal_name in GoalToCall)
+        die("You can only use one @call in a @goal")
+
+    script_name = $2
+    if (!(script_name in ScriptsByName))
+        die("Script not found: " script_name)
+
+    $2 = ""
+
+    GoalToCall[goal_name] = Shell " -e " ScriptFile[script_name] " " trim($0)
 }
 
 function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,my_dir,defines_line,
