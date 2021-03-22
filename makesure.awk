@@ -6,6 +6,7 @@ BEGIN {
     SupportedOptions["silent"]
     SupportedOptions["timing"]
     Tmp = isDir("/dev/shm") ? "/dev/shm" : "/tmp"
+    split("",Lines)
     split("",Args) # parsed CLI args
     split("",ArgGoals) # invoked goals
     split("",Options)
@@ -25,11 +26,12 @@ BEGIN {
     split("",ScriptFile) # name -> file
     split("",GoalToCallScript) # name -> script name
     split("",GoalToCallArgs)   # name -> rest args
+    split("",GoalToCallLine)   # name -> line no
     Mode = "prelude" # prelude/goal/script
     srand()
     prepareArgs()
 }
-
+                    { Lines[NR]=$0             }
 "@options"    == $1 { handleOptions();    next }
 "@define"     == $1 { handleDefine();     next }
 "@shell"      == $1 { handleShell();      next }
@@ -235,7 +237,7 @@ function handleCall(   script_name) {
     $1 = ""
 
     if (trim(Code[goal_name]))
-        die("You can't have a goal body when using @call")
+        die("You can't have a goal body when using @call") # TODO redo & test
     if (goal_name in GoalToCallScript)
         die("You can only use one @call in a @goal")
 
@@ -244,6 +246,7 @@ function handleCall(   script_name) {
 
     GoalToCallScript[goal_name] = script_name
     GoalToCallArgs[goal_name] = trim($0)
+    GoalToCallLine[goal_name] = NR
 }
 
 function resolveCalls(   i, goal_name, script_name) {
@@ -253,7 +256,7 @@ function resolveCalls(   i, goal_name, script_name) {
             script_name = GoalToCallScript[goal_name]
 
             if (!(script_name in ScriptsByName))
-                dieMsg("Script not found: " script_name) # TODO line number
+                die("Script not found: " script_name, GoalToCallLine[goal_name])
 
             Code[goal_name] = Shell " -e " ScriptFile[script_name] " " GoalToCallArgs[goal_name]
         }
@@ -409,7 +412,7 @@ function realExit(code,   i) {
         system("rm " ScriptFile[i])
     exit code
 }
-function die(msg) { dieMsg(msg ":\n" ARGV[1] ":" NR ": " $0) }
+function die(msg, n) { if (!n) n=NR; dieMsg(msg ":\n" ARGV[1] ":" n ": " Lines[n]) }
 function dieMsg(msg,    out) {
     out = "cat 1>&2" # trick to write from awk to stderr
     print msg | out

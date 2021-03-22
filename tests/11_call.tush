@@ -4,7 +4,8 @@ $ cd "$MYDIR"; ./makesure -f tests/11_call_good.sh a
 | Hello world
 
 $ cd "$MYDIR"; ./makesure -f tests/11_call_wrong_script.sh a
-@ Script not found: script_wrong
+@ Script not found: script_wrong:
+@ tests/11_call_wrong_script.sh:4: @call script_wrong world
 ? 1
 
 $ cd "$MYDIR"; ./makesure -f tests/11_call_script_already_defined.sh a
