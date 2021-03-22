@@ -20,7 +20,8 @@ BEGIN {
     split("",ReachedIf) # name -> condition line
     split("",ScriptNames)   # list
     split("",ScriptsByName) # name -> ""
-    split("",Script) # script name -> body
+    split("",Script)     # name -> body
+    split("",ScriptFile) # name -> file
     Mode = "prelude" # prelude/goal/script
     srand()
     prepareArgs()
@@ -152,12 +153,14 @@ function adjustOptions() {
     delete Options["timing"]
 }
 
-function handlePreludeEnd() { if (isPrelude()) adjustOptions() }
+function started(mode) {
+    if (isPrelude()) adjustOptions()
+    if ("script" == Mode) createScriptFile()
+    Mode = mode
+}
 
 function handleGoal(    goal_name) {
-    handlePreludeEnd()
-
-    Mode = "goal"
+    started("goal")
 
     goal_name = trim($2)
     if (length(goal_name) == 0) {
@@ -171,9 +174,7 @@ function handleGoal(    goal_name) {
 }
 
 function handleScript(    script_name) {
-    handlePreludeEnd()
-
-    Mode = "script"
+    started("script")
 
     script_name = trim($2)
     if (length(script_name) == 0) {
