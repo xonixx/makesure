@@ -5,6 +5,7 @@ BEGIN {
     SupportedOptions["tracing"]
     SupportedOptions["silent"]
     SupportedOptions["timing"]
+    Tmp = isDir("/dev/shm") ? "/dev/shm" : "/tmp"
     split("",Args) # parsed CLI args
     split("",ArgGoals) # invoked goals
     split("",Options)
@@ -129,7 +130,7 @@ function handleDefineLine(line,    kv) {
     checkPreludeOnly()
 
     if (!DefinesFile)
-        DefinesFile = executeGetLine("mktemp " (isDir("/dev/shm") ? "/dev/shm" : "/tmp") "/makesure.XXXXXXXXXX")
+        DefinesFile = executeGetLine("mktemp " Tmp "/makesure.XXXXXXXXXX")
 
     splitKV(line, kv)
 
@@ -153,6 +154,9 @@ function adjustOptions() {
     delete Options["timing"]
 }
 
+function createScriptFile() {
+    ScriptFile[currentScriptName()] = executeGetLine("mktemp " Tmp "/makesure.script.XXXXXXXXXX")
+}
 function started(mode) {
     if (isPrelude()) adjustOptions()
     if ("script" == Mode) createScriptFile()
@@ -225,6 +229,7 @@ function handleCall() {
 function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,my_dir,defines_line,
   body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
 
+  started("end") # end last script
   if ("-l" in Args || "--list" in Args) {
       print "Available goals:"
       for (i = 0; i < arrLen(GoalNames); i++) {
@@ -358,11 +363,14 @@ function isPrelude() { return "prelude"==Mode }
 function checkPreludeOnly() { if (!isPrelude()) die("Only use " $1 " in prelude") }
 function checkGoalOnly() { if ("goal" != Mode) die("Only use " $1 " in goal") }
 function currentGoalName() { return isPrelude() ? "" : arrLast(GoalNames) }
+function currentScriptName() { return arrLast(ScriptNames) }
 
-function realExit(code) {
+function realExit(code,   i) {
     Died = 1
     if (DefinesFile)
-      system("rm " DefinesFile)
+        system("rm " DefinesFile)
+    for (i in ScriptFile)
+        system("rm " ScriptFile[i])
     exit code
 }
 function die(msg) { dieMsg(msg ":\n" ARGV[1] ":" NR ": " $0) }
@@ -399,7 +407,7 @@ function getMyDir(    script) {
 
 function handleCodeLine(line,    name) {
     if ("script" == Mode) {
-        name = arrLast(ScriptNames)
+        name = currentScriptName()
         #print "Append line for '" name "': " line
         Script[name] = addL(Script[name], line)
     } else {
