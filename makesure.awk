@@ -396,17 +396,15 @@ function getMyDir(    script) {
   return executeGetLine(script)
 }
 
-function handleCodeLine(line,    name, s) {
+function handleCodeLine(line,    name) {
     if ("script" == Mode) {
         name = arrLast(ScriptNames)
         #print "Append line for '" name "': " line
-        s = Script[name]
-        Script[name] = s ? s "\n" line : line
+        Script[name] = addL(Script[name], line)
     } else {
         name = currentGoalName()
         #print "Append line for '" name "': " line
-        s = Code[name]
-        Code[name] = s ? s "\n" line : line
+        Code[name] = addL(Code[name], line)
     }
 }
 
@@ -526,6 +524,7 @@ function join(arr, start_incl, end_excl, sep,    result, i) {
 }
 function addStr(target, str) { target[0] = target[0] str }
 function addLine(target, line) { addStr(target, line "\n") }
+function addL(s, l) { return s ? s "\n" l : l }
 function arrPush(arr, elt) { arr[arr[-7]++] = elt }
 function arrLen(arr) { return 0 + arr[-7] }
 function arrLast(arr) { return arr[arrLen(arr)-1] }
