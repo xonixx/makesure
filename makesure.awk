@@ -23,7 +23,8 @@ BEGIN {
     split("",ScriptsByName) # name -> ""
     split("",Script)     # name -> body
     split("",ScriptFile) # name -> file
-    split("",GoalToCall) # name -> call script
+    split("",GoalToCallScript) # name -> script name
+    split("",GoalToCallArgs)   # name -> rest args
     Mode = "prelude" # prelude/goal/script
     srand()
     prepareArgs()
@@ -155,8 +156,10 @@ function adjustOptions() {
     delete Options["timing"]
 }
 
-function createScriptFile() {
-    ScriptFile[currentScriptName()] = executeGetLine("mktemp " Tmp "/makesure.script.XXXXXXXXXX")
+function createScriptFile(   f, n) {
+    f = ScriptFile[n = currentScriptName()] = executeGetLine("mktemp " Tmp "/makesure.script.XXXXXXXXXX")
+    print Script[n] > f
+    close(f)
 }
 function started(mode) {
     if (isPrelude()) adjustOptions()
@@ -233,22 +236,36 @@ function handleCall(   script_name) {
 
     if (trim(Code[goal_name]))
         die("You can't have a goal body when using @call")
-    if (goal_name in GoalToCall)
+    if (goal_name in GoalToCallScript)
         die("You can only use one @call in a @goal")
 
     script_name = $2
-    if (!(script_name in ScriptsByName))
-        die("Script not found: " script_name)
-
     $2 = ""
 
-    GoalToCall[goal_name] = Shell " -e " ScriptFile[script_name] " " trim($0)
+    GoalToCallScript[goal_name] = script_name
+    GoalToCallArgs[goal_name] = trim($0)
+}
+
+function resolveCalls(   i, goal_name, script_name) {
+    for (i=0; i<arrLen(GoalNames); i++) {
+        goal_name = GoalNames[i]
+        if (goal_name in GoalToCallScript) {
+            script_name = GoalToCallScript[goal_name]
+
+            if (!(script_name in ScriptsByName))
+                dieMsg("Script not found: " script_name) # TODO line number
+
+            Code[goal_name] = Shell " -e " ScriptFile[script_name] " " GoalToCallArgs[goal_name]
+        }
+    }
 }
 
 function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,my_dir,defines_line,
   body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
 
   started("end") # end last script
+  resolveCalls()
+
   if ("-l" in Args || "--list" in Args) {
       print "Available goals:"
       for (i = 0; i < arrLen(GoalNames); i++) {

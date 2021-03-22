@@ -1,3 +1,4 @@
 
-$ cd "$MYDIR"; ./makesure -f tests/11_call.sh
-|
+$ cd "$MYDIR"; ./makesure -f tests/11_call.sh a
+|   goal 'a' ...
+| Hello
