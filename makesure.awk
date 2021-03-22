@@ -45,7 +45,7 @@ BEGIN {
 
 END { if (!Died) doWork() }
 
-function prepareArgs(    i,arg) {
+function prepareArgs(   i,arg) {
     for (i = 2; i < ARGC; i++) {
         arg = ARGV[i]
         #print i " " arg
@@ -103,14 +103,14 @@ function prepareArgs(    i,arg) {
     #dbgA("ArgGoals", ArgGoals)
 }
 
-function dbgA(name, arr,    i) { print "--- " name ": "; for (i in arr) print i " : " arr[i] }
+function dbgA(name, arr,   i) { print "--- " name ": "; for (i in arr) print i " : " arr[i] }
 
-function splitKV(arg, kv,    n) {
+function splitKV(arg, kv,   n) {
   n = index(arg, "=")
   kv[0] = trim(substr(arg,1,n-1))
   kv[1] = trim(substr(arg,n+1))
 }
-function handleOptionDefineOverride(arg,    kv) {
+function handleOptionDefineOverride(arg,   kv) {
   handleDefineLine(arg)
   splitKV(arg, kv)
   DefineOverrides[kv[0]] = kv[1]
@@ -126,11 +126,11 @@ function handleOptions() {
     }
 }
 
-function handleDefine(    line,kv) {
+function handleDefine(   line,kv) {
     $1 = ""
     handleDefineLine($0)
 }
-function handleDefineLine(line,    kv) {
+function handleDefineLine(line,   kv) {
     checkPreludeOnly()
 
     if (!DefinesFile)
@@ -169,7 +169,7 @@ function started(mode) {
     Mode = mode
 }
 
-function handleGoal(    goal_name) {
+function handleGoal(   goal_name) {
     started("goal")
 
     goal_name = trim($2)
@@ -183,7 +183,7 @@ function handleGoal(    goal_name) {
     GoalsByName[goal_name]
 }
 
-function handleScript(    script_name) {
+function handleScript(   script_name) {
     started("script")
 
     script_name = trim($2)
@@ -197,7 +197,7 @@ function handleScript(    script_name) {
     ScriptsByName[script_name]
 }
 
-function handleDoc(    goal_name) {
+function handleDoc(   goal_name) {
     checkGoalOnly()
 
     goal_name = currentGoalName()
@@ -206,7 +206,7 @@ function handleDoc(    goal_name) {
     Doc[goal_name, DocCnt[goal_name]++] = trim($0)
 }
 
-function handleDependsOn(    goal_name,i) {
+function handleDependsOn(   goal_name,i) {
     checkGoalOnly()
 
     goal_name = currentGoalName()
@@ -216,7 +216,7 @@ function handleDependsOn(    goal_name,i) {
     }
 }
 
-function handleReachedIf(    goal_name) {
+function handleReachedIf(   goal_name) {
     checkGoalOnly()
 
     goal_name = currentGoalName()
@@ -262,7 +262,8 @@ function resolveCalls(   i, goal_name, script_name) {
     }
 }
 
-function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,my_dir,defines_line,
+function doWork(\
+  i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,my_dir,defines_line,
   body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
 
   started("end") # end last script
@@ -380,7 +381,7 @@ function doWork(    i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goa
   }
 }
 
-function resolveGoalsToRun(result,    i, goal_name, loop) {
+function resolveGoalsToRun(result,   i, goal_name, loop) {
     if (arrLen(ArgGoals) == 0)
         arrPush(ArgGoals, "default")
 
@@ -426,7 +427,7 @@ function checkConditionReached(defines_line, condition_str,    script) {
     return shellExec(script) == 0
 }
 
-function shellExec(script,    s, res) {
+function shellExec(script,   s, res) {
     s = Shell " -e -c \"$(cat <<'MAKESURE_EOF'"
     s = s "\n" script
     s = s "\nMAKESURE_EOF\n)\""
@@ -436,14 +437,14 @@ function shellExec(script,    s, res) {
     return res
 }
 
-function getMyDir(    script) {
+function getMyDir(   script) {
   script = Shell " -e <<'MAKESURE_EOF'"
   script = script "\n" sprintf("echo \"$(cd \"$(dirname %s)\"; pwd)\"", FILENAME)
   script = script "\nMAKESURE_EOF"
   return executeGetLine(script)
 }
 
-function handleCodeLine(line,    name) {
+function handleCodeLine(line,   name) {
     if ("script" == Mode) {
         name = currentScriptName()
         #print "Append line for '" name "': " line
@@ -461,7 +462,7 @@ function topologicalSortAddConnection(from, to) {
     Slist[from, ++Scnt[from]] = to # add 'to' to successors of 'from'
 }
 
-function topologicalSortPerform(node, result, loop,    i, s) {
+function topologicalSortPerform(node, result, loop,   i, s) {
     if (Visited[node] == 2)
         return
 
@@ -482,13 +483,13 @@ function topologicalSortPerform(node, result, loop,    i, s) {
     arrPush(result, node)
 }
 
-function currentTimeMillis(    script, res) {
+function currentTimeMillis(   script, res) {
   res = executeGetLine("date +%s%3N")
   sub(/%3N/, "000", res) # if date doesn't support %N (macos?) just use second-precision
   return res + 0
 }
 
-function selfUpdate(    url, tmp, err, newVer) {
+function selfUpdate(   url, tmp, err, newVer) {
     url = "https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable?" rand()
     tmp = executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX")
     err = dl(url, tmp)
@@ -505,11 +506,9 @@ function selfUpdate(    url, tmp, err, newVer) {
     if (err) dieMsg(err);
 }
 
-function renderDuration(deltaMillis,
-#
-deltaSec,deltaMin,deltaHr,deltaDay,
-dayS,hrS,minS,secS,secSI,
-res) {
+function renderDuration(deltaMillis,\
+  deltaSec,deltaMin,deltaHr,deltaDay,dayS,hrS,minS,secS,secSI,res) {
+
   deltaSec = deltaMillis / 1000
   deltaMin = 0
   deltaHr = 0
@@ -547,7 +546,7 @@ res) {
 
   return res
 }
-function executeGetLine(script,    res) {
+function executeGetLine(script,   res) {
   script | getline res
   close(script)
   return res
@@ -563,7 +562,7 @@ function dl(url, dest,    verbose) {
             return "error with curl"
     } else return "wget/curl no found"
 }
-function join(arr, start_incl, end_excl, sep,    result, i) {
+function join(arr, start_incl, end_excl, sep,   result, i) {
     result = arr[start_incl]
     for (i = start_incl + 1; i < end_excl; i++)
         result = result sep arr[i]
