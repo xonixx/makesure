@@ -3,6 +3,11 @@ $ cd "$MYDIR"; ./makesure -f tests/11_call_good.sh a
 |   goal 'a' ...
 | Hello world
 
+$ cd "$MYDIR"; ./makesure -f tests/11_call_has_goal_body.sh a
+@ You can't have a goal body when using @call:
+@ tests/11_call_has_goal_body.sh:4: @call script1 world
+? 1
+
 $ cd "$MYDIR"; ./makesure -f tests/11_call_wrong_script.sh a
 @ Script not found: script_wrong:
 @ tests/11_call_wrong_script.sh:4: @call script_wrong world

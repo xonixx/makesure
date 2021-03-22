@@ -236,8 +236,6 @@ function handleCall(   script_name) {
 
     $1 = ""
 
-    if (trim(Code[goal_name]))
-        die("You can't have a goal body when using @call") # TODO redo & test
     if (goal_name in GoalToCallScript)
         die("You can only use one @call in a @goal")
 
@@ -257,7 +255,8 @@ function resolveCalls(   i, goal_name, script_name) {
 
             if (!(script_name in ScriptsByName))
                 die("Script not found: " script_name, GoalToCallLine[goal_name])
-
+            if (trim(Code[goal_name]))
+                die("You can't have a goal body when using @call", GoalToCallLine[goal_name])
             Code[goal_name] = Shell " -e " ScriptFile[script_name] " " GoalToCallArgs[goal_name]
         }
     }
