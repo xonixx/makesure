@@ -356,10 +356,7 @@ function resolveGoalsToRun(result,    i, goal_name, loop) {
 function isPrelude() { return "prelude"==Mode }
 function checkPreludeOnly() { if (!isPrelude()) die("Only use " $1 " in prelude") }
 function checkGoalOnly() { if ("goal" != Mode) die("Only use " $1 " in goal") }
-
-function currentGoalName() {
-    return isPrelude() ? "" : GoalNames[arrLen(GoalNames)-1]
-}
+function currentGoalName() { return isPrelude() ? "" : arrLast(GoalNames) }
 
 function realExit(code) {
     Died = 1
@@ -399,11 +396,18 @@ function getMyDir(    script) {
   return executeGetLine(script)
 }
 
-function handleCodeLine(line,    goal_name, current_code) {
-    goal_name = currentGoalName()
-    #print "Append line for '" goal_name "': " line
-    current_code = Code[goal_name]
-    Code[goal_name] = current_code ? current_code "\n" line : line
+function handleCodeLine(line,    name, s) {
+    if ("script" == Mode) {
+        name = arrLast(ScriptNames)
+        #print "Append line for '" name "': " line
+        s = Script[name]
+        Script[name] = s ? s "\n" line : line
+    } else {
+        name = currentGoalName()
+        #print "Append line for '" name "': " line
+        s = Code[name]
+        Code[name] = s ? s "\n" line : line
+    }
 }
 
 function topologicalSortAddConnection(from, to) {
@@ -524,6 +528,7 @@ function addStr(target, str) { target[0] = target[0] str }
 function addLine(target, line) { addStr(target, line "\n") }
 function arrPush(arr, elt) { arr[arr[-7]++] = elt }
 function arrLen(arr) { return 0 + arr[-7] }
+function arrLast(arr) { return arr[arrLen(arr)-1] }
 function isFile(path) { return system("test -f \"" path "\"") == 0 }
 function isDir(path) { return system("test -d \"" path "\"") == 0 }
 function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s; }
