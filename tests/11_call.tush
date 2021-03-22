@@ -1,4 +1,18 @@
 
-$ cd "$MYDIR"; ./makesure -f tests/11_call.sh a
+$ cd "$MYDIR"; ./makesure -f tests/11_call_good.sh a
 |   goal 'a' ...
-| Hello
+| Hello world
+
+$ cd "$MYDIR"; ./makesure -f tests/11_call_wrong_script.sh a
+@ Script not found: script_wrong
+? 1
+
+$ cd "$MYDIR"; ./makesure -f tests/11_call_script_already_defined.sh a
+@ Script script1 is already defined:
+@ tests/11_call_script_already_defined.sh:9: @script script1
+? 1
+
+$ cd "$MYDIR"; ./makesure -f tests/11_call_script_must_have_name.sh a
+@ Script must have a name:
+@ tests/11_call_script_must_have_name.sh:9: @script
+? 1
