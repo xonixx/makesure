@@ -1,0 +1,32 @@
+
+$ cd "$MYDIR"; ./makesure -f tests/11_call_good.sh a
+|   goal 'a' ...
+| Hello world
+
+$ cd "$MYDIR"; ./makesure -f tests/11_call_good.sh b
+|   goal 'b' ...
+| Hello 123
+
+$ cd "$MYDIR"; ./makesure -f tests/11_call_good.sh c
+|   goal 'c' ...
+| mydir
+
+$ cd "$MYDIR"; ./makesure -f tests/11_call_has_goal_body.sh a
+@ You can't have a goal body when using @call:
+@ tests/11_call_has_goal_body.sh:4: @call script1 world
+? 1
+
+$ cd "$MYDIR"; ./makesure -f tests/11_call_wrong_script.sh a
+@ Script not found: script_wrong:
+@ tests/11_call_wrong_script.sh:4: @call script_wrong world
+? 1
+
+$ cd "$MYDIR"; ./makesure -f tests/11_call_script_already_defined.sh a
+@ Script script1 is already defined:
+@ tests/11_call_script_already_defined.sh:9: @script script1
+? 1
+
+$ cd "$MYDIR"; ./makesure -f tests/11_call_script_must_have_name.sh a
+@ Script must have a name:
+@ tests/11_call_script_must_have_name.sh:9: @script
+? 1
