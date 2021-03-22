@@ -8,16 +8,18 @@ BEGIN {
     split("",Args) # parsed CLI args
     split("",ArgGoals) # invoked goals
     split("",Options)
-    split("",GoalNames)
+    split("",GoalNames)   # list
     split("",GoalsByName) # name -> ""
+    split("",Code)        # name -> body
     split("",DefineOverrides) # k -> v
     DefinesFile=""
     split("",Dependencies)    # name,i -> dep goal
     split("",DependenciesCnt) # name   -> dep cnd
     split("",Doc)    # name,i -> doc str
     split("",DocCnt) # name   -> doc lines cnt
-    split("",Code)      # name -> body
     split("",ReachedIf) # name -> condition line
+    split("",ScriptNames)   # list
+    split("",ScriptsByName) # name -> ""
     split("",Script) # script name -> body
     Mode = "prelude" # prelude/goal/script
     srand()
@@ -150,9 +152,10 @@ function adjustOptions() {
     delete Options["timing"]
 }
 
+function handlePreludeEnd() { if (isPrelude()) adjustOptions() }
+
 function handleGoal(    goal_name) {
-    if (isPrelude()) # 1st goal
-      adjustOptions()
+    handlePreludeEnd()
 
     Mode = "goal"
 
@@ -165,6 +168,22 @@ function handleGoal(    goal_name) {
     }
     arrPush(GoalNames, goal_name)
     GoalsByName[goal_name]
+}
+
+function handleScript(    script_name) {
+    handlePreludeEnd()
+
+    Mode = "script"
+
+    script_name = trim($2)
+    if (length(script_name) == 0) {
+        die("Script must have a name")
+    }
+    if (script_name in ScriptsByName) {
+        die("Script " script_name " is already defined")
+    }
+    arrPush(ScriptNames, script_name)
+    ScriptsByName[script_name]
 }
 
 function handleDoc(    goal_name) {
@@ -197,10 +216,6 @@ function handleReachedIf(    goal_name) {
 
     $1 = ""
     ReachedIf[goal_name] = trim($0)
-}
-
-function handleScript() {
-    Script[$1]
 }
 
 function handleCall() {
