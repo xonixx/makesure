@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 mydir=$(
   cd "$(dirname "$0")"

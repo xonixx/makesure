@@ -148,7 +148,7 @@
   OUT=makesure_stable
 
   {
-    echo '#!/usr/bin/env sh'
+    echo '#!/bin/sh'
     echo
     echo "VERSION=\"$NEXT_VERSION\""
     echo
