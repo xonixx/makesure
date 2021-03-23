@@ -144,6 +144,17 @@
 @depends_on tests/11_call.tush
 
 @goal stable
+@depends_on makesure_stable README.md
+
+@goal README.md
+@depends_on makesure_stable
+  awk '
+    /^\$ \.\/makesure -h$/ { print; stop=1; system("./makesure_stable -h") }
+    /^```$/ { stop=0 }
+    !stop' README.md > README.md.1
+  mv README.md.1 README.md
+
+@goal makesure_stable
 @depends_on tested
   OUT=makesure_stable
 
