@@ -428,20 +428,18 @@ function checkConditionReached(defines_line, condition_str,    script) {
 }
 
 function shellExec(script,   s, res) {
-    s = Shell " -e -c \"$(cat <<'MAKESURE_EOF'"
-    s = s "\n" script
-    s = s "\nMAKESURE_EOF\n)\""
+    s = "{ while IFS= read -r l; do VAR=\"$VAR$l\"'\n'; done; } <<'MAKESURE_EOF'\n" \
+        script \
+        "\nMAKESURE_EOF\n" Shell " -e -c \"$VAR\""
+
     #print s
     res = system(s)
     #print "res " res
     return res
 }
 
-function getMyDir(   script) {
-  script = Shell " -e <<'MAKESURE_EOF'"
-  script = script "\n" sprintf("echo \"$(cd \"$(dirname %s)\"; pwd)\"", FILENAME)
-  script = script "\nMAKESURE_EOF"
-  return executeGetLine(script)
+function getMyDir() {
+  return executeGetLine(sprintf("echo \"$(cd \"$(dirname %s)\"; pwd)\"", FILENAME))
 }
 
 function handleCodeLine(line,   name) {
