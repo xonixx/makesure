@@ -432,13 +432,12 @@ function checkConditionReached(defines_line, condition_str,    script) {
     return shellExec(script) == 0
 }
 
-function shellExec(script,   s, res) {
-    s = "{ while IFS= read -r l; do VAR=\"$VAR$l\"'\''\n'\''; done; } <<'\''MAKESURE_EOF'\''\n" \
-        script \
-        "\nMAKESURE_EOF\n" Shell " -e -c \"$VAR\""
+function shellExec(script,   res) {
+    gsub("'\''", "'\''\\'\'''\''", script)
+    script = Shell " -e -c '\''" script "'\''"
 
-    #print s
-    res = system(s)
+    #print script
+    res = system(script)
     #print "res " res
     return res
 }
