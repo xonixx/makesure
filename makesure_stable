@@ -2,8 +2,7 @@
 
 VERSION="0.9.7"
 
-exec awk -v "Version=$VERSION" -v "Prog=$0" "$(cat <<'MAKESURE'
-
+exec awk -v "Version=$VERSION" -v "Prog=$0" '
 BEGIN {
     Shell = "bash" # default shell
     SupportedShells["bash"]
@@ -156,7 +155,7 @@ function handleShell() {
     Shell = trim($2)
 
     if (!(Shell in SupportedShells))
-      die("Shell '" Shell "' is not supported")
+      die("Shell '\''" Shell "'\'' is not supported")
 }
 
 function adjustOptions() {
@@ -262,7 +261,7 @@ function resolveCalls(   i, goal_name, script_name) {
             if (!(script_name in ScriptsByName))
                 die("Script not found: " script_name, GoalToCallLine[goal_name])
             if (trim(Code[goal_name]))
-                die("You can't have a goal body when using @call", GoalToCallLine[goal_name])
+                die("You can'\''t have a goal body when using @call", GoalToCallLine[goal_name])
             Code[goal_name] = Shell " -e " ScriptFile[script_name] " " GoalToCallArgs[goal_name]
         }
     }
@@ -289,7 +288,7 @@ function doWork(\
     if ("timing" in Options)
       t0 = currentTimeMillis()
 
-    addLine(my_dir, "MYDIR='" getMyDir() "'")
+    addLine(my_dir, "MYDIR='\''" getMyDir() "'\''")
     addLine(my_dir, "export MYDIR")
     addLine(my_dir, "cd \"$MYDIR\"")
 
@@ -321,9 +320,9 @@ function doWork(\
         for (j=0; j < dep_cnt; j++) {
             dep = Dependencies[goal_name, j]
             if (!(dep in GoalsByName))
-                dieMsg("Goal '" goal_name "' has unknown dependency '" dep "'") # TODO find a way to provide line reference
+                dieMsg("Goal '\''" goal_name "'\'' has unknown dependency '\''" dep "'\''") # TODO find a way to provide line reference
             if (!reached_goals[goal_name]) {
-                # we only add a dependency to this goal if it's not reached
+                # we only add a dependency to this goal if it'\''s not reached
                 #print " [not reached] " goal_name " -> " dep
                 topologicalSortAddConnection(goal_name, dep)
             } else {
@@ -333,7 +332,7 @@ function doWork(\
 
         goal_body[0] = ""
         if (!("silent" in Options)) {
-            addStr(goal_body, "echo \"  goal '" goal_name "' ")
+            addStr(goal_body, "echo \"  goal '\''" goal_name "'\'' ")
             if (reached_goals[goal_name])
               addStr(goal_body, "[already satisfied].")
             else if (empty_goals[goal_name])
@@ -357,7 +356,7 @@ function doWork(\
     resolveGoalsToRun(resolved_goals)
 
     if ("-d" in Args || "--resolved" in Args) {
-      printf("Resolved goals to reach for '%s':\n", join(ArgGoals, 0, arrLen(ArgGoals), " "))
+      printf("Resolved goals to reach for '\''%s'\'':\n", join(ArgGoals, 0, arrLen(ArgGoals), " "))
       for (i = 0; i < arrLen(resolved_goals); i++) {
          print "  " resolved_goals[i]
       }
@@ -369,10 +368,10 @@ function doWork(\
           t1 = t2 ? t2 : currentTimeMillis()
         exit_code = shellExec(goal_bodies[goal_name])
         if (exit_code != 0)
-          print "  goal '" goal_name "' failed"
+          print "  goal '\''" goal_name "'\'' failed"
         if (goal_timed) {
           t2 = currentTimeMillis()
-          print "  goal '" goal_name "' took " renderDuration(t2 - t1)
+          print "  goal '\''" goal_name "'\'' took " renderDuration(t2 - t1)
         }
         if (exit_code != 0)
           break
@@ -434,7 +433,7 @@ function checkConditionReached(defines_line, condition_str,    script) {
 }
 
 function shellExec(script,   s, res) {
-    s = "{ while IFS= read -r l; do VAR=\"$VAR$l\"'\n'; done; } <<'MAKESURE_EOF'\n" \
+    s = "{ while IFS= read -r l; do VAR=\"$VAR$l\"'\''\n'\''; done; } <<'\''MAKESURE_EOF'\''\n" \
         script \
         "\nMAKESURE_EOF\n" Shell " -e -c \"$VAR\""
 
@@ -451,11 +450,11 @@ function getMyDir() {
 function handleCodeLine(line,   name) {
     if ("script" == Mode) {
         name = currentScriptName()
-        #print "Append line for '" name "': " line
+        #print "Append line for '\''" name "'\'': " line
         Script[name] = addL(Script[name], line)
     } else {
         name = currentGoalName()
-        #print "Append line for '" name "': " line
+        #print "Append line for '\''" name "'\'': " line
         Code[name] = addL(Code[name], line)
     }
 }
@@ -463,7 +462,7 @@ function handleCodeLine(line,   name) {
 function topologicalSortAddConnection(from, to) {
     # Slist - list of successors by node
     # Scnt - count of successors by node
-    Slist[from, ++Scnt[from]] = to # add 'to' to successors of 'from'
+    Slist[from, ++Scnt[from]] = to # add '\''to'\'' to successors of '\''from'\''
 }
 
 function topologicalSortPerform(node, result, loop,   i, s) {
@@ -489,7 +488,7 @@ function topologicalSortPerform(node, result, loop,   i, s) {
 
 function currentTimeMillis(   script, res) {
   res = executeGetLine("date +%s%3N")
-  sub(/%3N/, "000", res) # if date doesn't support %N (macos?) just use second-precision
+  sub(/%3N/, "000", res) # if date doesn'\''t support %N (macos?) just use second-precision
   return res + 0
 }
 
@@ -497,12 +496,12 @@ function selfUpdate(   url, tmp, err, newVer) {
     url = "https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable?" rand()
     tmp = executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX")
     err = dl(url, tmp)
-    if (!err && 0 != system("chmod +x " tmp)) err = "can't chmod +x " tmp
+    if (!err && 0 != system("chmod +x " tmp)) err = "can'\''t chmod +x " tmp
     if (!err) {
         newVer = executeGetLine(tmp " -v")
         if (Version != newVer) {
             if (0 != system("cp " tmp " \"" Prog "\""))
-                err = "can't overwrite " Prog
+                err = "can'\''t overwrite " Prog
             else print "updated " Version " -> " newVer
         } else print "you have latest version " Version " installed"
     }
@@ -581,6 +580,4 @@ function arrLast(arr) { return arr[arrLen(arr)-1] }
 function isFile(path) { return system("test -f \"" path "\"") == 0 }
 function isDir(path) { return system("test -d \"" path "\"") == 0 }
 function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s; }
-
-MAKESURE
-)" Makesurefile "$@"
+' Makesurefile "$@"

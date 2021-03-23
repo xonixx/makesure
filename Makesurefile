@@ -152,12 +152,9 @@
     echo
     echo "VERSION=\"$NEXT_VERSION\""
     echo
-    echo "exec awk -v \"Version=\$VERSION\" -v \"Prog=\$0\" \"\$(cat <<'MAKESURE'"
-    echo
-    cat  makesure.awk
-    echo
-    echo 'MAKESURE'
-    echo ')" Makesurefile "$@"'
+    echo "exec awk -v \"Version=\$VERSION\" -v \"Prog=\$0\" '"
+    awk "{ gsub(\"'\",\"'\\\\''\"); print}" makesure.awk
+    echo \'' Makesurefile "$@"'
   } > $OUT
 
 @goal default
