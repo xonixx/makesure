@@ -437,7 +437,7 @@ function shellExec(script,   res) {
 }
 
 function getMyDir() {
-  return executeGetLine("echo \"$(cd \"$(dirname " quoteArg(FILENAME) ")\"; pwd)\"")
+  return executeGetLine("cd \"$(dirname " quoteArg(FILENAME) ")\"; pwd")
 }
 
 function handleCodeLine(line,   name) {
