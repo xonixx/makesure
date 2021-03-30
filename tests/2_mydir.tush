@@ -11,6 +11,14 @@ $ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_3
 |   goal 'mydir_3' ...
 | mydir
 
+$ cd "$MYDIR"; ./makesure -f tests/dir\ with\ spaces/2_mydir.sh
+|   goal 'default' ...
+| mydir
+
+$ cd "$MYDIR/tests/dir with spaces"; ../../makesure -f 2_mydir.sh
+|   goal 'default' ...
+| mydir
+
 $ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_reached_if_1
 |   goal 'mydir_in_reached_if_1' [already satisfied].
 
