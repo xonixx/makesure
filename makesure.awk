@@ -283,7 +283,7 @@ function doWork(\
     if ("timing" in Options)
       t0 = currentTimeMillis()
 
-    addLine(my_dir, "MYDIR='" getMyDir() "'")
+    addLine(my_dir, "MYDIR=" quoteArg(getMyDir()))
     addLine(my_dir, "export MYDIR")
     addLine(my_dir, "cd \"$MYDIR\"")
 
@@ -428,8 +428,7 @@ function checkConditionReached(defines_line, condition_str,    script) {
 }
 
 function shellExec(script,   res) {
-    gsub("'", "'\\''", script)
-    script = Shell " -e -c '" script "'"
+    script = Shell " -e -c " quoteArg(script)
 
     #print script
     res = system(script)
@@ -571,6 +570,7 @@ function addL(s, l) { return s ? s "\n" l : l }
 function arrPush(arr, elt) { arr[arr[-7]++] = elt }
 function arrLen(arr) { return 0 + arr[-7] }
 function arrLast(arr) { return arr[arrLen(arr)-1] }
-function isFile(path) { return system("test -f \"" path "\"") == 0 }
-function isDir(path) { return system("test -d \"" path "\"") == 0 }
+function isFile(path) { return system("test -f " quoteArg(path)) == 0 }
+function isDir(path) { return system("test -d " quoteArg(path)) == 0 }
+function quoteArg(a) { gsub("'", "'\\''", a); return "'" a "'" }
 function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s; }
