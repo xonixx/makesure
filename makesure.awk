@@ -229,7 +229,7 @@ function handleReachedIf(   goal_name) {
     ReachedIf[goal_name] = trim($0)
 }
 
-function handleCall(   script_name) {
+function handleCall(   goal_name,script_name) {
     checkGoalOnly()
 
     goal_name = currentGoalName()
