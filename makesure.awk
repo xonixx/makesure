@@ -20,7 +20,8 @@ BEGIN {
   split("",Doc)    # name,i -> doc str
   split("",DocCnt) # name   -> doc lines cnt
   split("",ReachedIf) # name -> condition line
-  Mode = "prelude" # prelude/goal/script
+  split("",GlobFiles) # list
+  Mode = "prelude" # prelude/goal/goal_glob
   srand()
   prepareArgs()
 }
@@ -29,6 +30,7 @@ BEGIN {
 "@define"     == $1 { handleDefine();     next }
 "@shell"      == $1 { handleShell();      next }
 "@goal"       == $1 { handleGoal();       next }
+"@goal_glob"  == $1 { handleGoalGlob();   next }
 "@doc"        == $1 { handleDoc();        next }
 "@depends_on" == $1 { handleDependsOn();  next }
 "@reached_if" == $1 { handleReachedIf();  next }
@@ -154,10 +156,13 @@ function started(mode) {
   Mode = mode
 }
 
-function handleGoal(   goal_name) {
+function handleGoal() {
   started("goal")
+  registerGoal($2)
+}
 
-  goal_name = trim($2)
+function registerGoal(goal_name) {
+  goal_name = trim(goal_name)
   if (length(goal_name) == 0) {
     die("Goal must have a name")
   }
@@ -168,43 +173,89 @@ function handleGoal(   goal_name) {
   GoalsByName[goal_name]
 }
 
-function handleDoc(   goal_name) {
+function calcGlob(pattern,   script, file) {
+  script = "for f in ./" pattern " ; do echo $f ; done"
+  while (script | getline file) {
+    file = substr(file, 3)
+    arrPush(GlobFiles,file)
+  }
+  close(script)
+}
+
+function handleGoalGlob(   goal_name,i) {
+  started("goal_glob")
+  split("",GlobFiles)
+  calcGlob(trim($2))
+  for (i=0; i<arrLen(GlobFiles); i++){
+    registerGoal(GlobFiles[i])
+  }
+}
+
+function handleDoc(   i) {
   checkGoalOnly()
 
-  goal_name = currentGoalName()
+  if ("glob" == Mode)
+    registerDoc(currentGoalName())
+  else {
+    for (i=0; i<arrLen(GlobFiles); i++){
+      registerDoc(GlobFiles[i])
+    }
+  }
+}
 
+function registerDoc(goal_name) {
   $1 = ""
   Doc[goal_name, DocCnt[goal_name]++] = trim($0)
 }
 
-function handleDependsOn(   goal_name,i) {
+function handleDependsOn(   i) {
   checkGoalOnly()
 
-  goal_name = currentGoalName()
+  if ("glob" == Mode)
+    registerDependsOn(currentGoalName())
+  else {
+    for (i=0; i<arrLen(GlobFiles); i++){
+      registerDependsOn(GlobFiles[i])
+    }
+  }
+}
 
+function registerDependsOn(goal_name,   i) {
   for (i=2; i<=NF; i++) {
     Dependencies[goal_name, DependenciesCnt[goal_name]++] = $i
   }
 }
 
-function handleReachedIf(   goal_name) {
+function handleReachedIf(   i) {
   checkGoalOnly()
 
-  goal_name = currentGoalName()
+  if ("glob" == Mode)
+    registerReachedIf(currentGoalName())
+  else {
+    for (i=0; i<arrLen(GlobFiles); i++){
+      registerReachedIf(GlobFiles[i], makeGlobVarsCode(i))
+    }
+  }
+}
 
+function makeGlobVarsCode(i) {
+  return "ITEM=" quoteArg(GlobFiles[i]) "; INDEX=" i "; TOTAL=" arrLen(GlobFiles) "; "
+}
+
+function registerReachedIf(goal_name, pre_script) {
   if (goal_name in ReachedIf) {
     die("Multiple " $1 " not allowed for a goal")
   }
 
   $1 = ""
-  ReachedIf[goal_name] = trim($0)
+  ReachedIf[goal_name] = pre_script trim($0)
 }
 
 function doWork(\
   i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,my_dir,defines_line,
 body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
 
-  started("end") # end last script
+  started("end") # end last directive
 
   if ("-l" in Args || "--list" in Args) {
     print "Available goals:"
@@ -337,7 +388,7 @@ function resolveGoalsToRun(result,   i, goal_name, loop) {
 
 function isPrelude() { return "prelude"==Mode }
 function checkPreludeOnly() { if (!isPrelude()) die("Only use " $1 " in prelude") }
-function checkGoalOnly() { if ("goal" != Mode) die("Only use " $1 " in goal") }
+function checkGoalOnly() { if ("goal" != Mode && "goal_glob" != Mode) die("Only use " $1 " in goal/goal_glob") }
 function currentGoalName() { return isPrelude() ? "" : arrLast(GoalNames) }
 
 function realExit(code,   i) {
@@ -374,8 +425,17 @@ function getMyDir() {
   return executeGetLine("cd \"$(dirname " quoteArg(FILENAME) ")\"; pwd")
 }
 
-function handleCodeLine(line,   name) {
-  name = currentGoalName()
+function handleCodeLine(line) {
+  # TODO makeGlobVarsCode(i)
+  if ("goal_glob" == Mode) {
+    for (i=0; i<arrLen(GlobFiles); i++){
+      addCodeLine(GlobFiles[i], line)
+    }
+  } else
+    addCodeLine(currentGoalName(), line)
+}
+
+function addCodeLine(name, line) {
   #print "Append line for '" name "': " line
   Code[name] = addL(Code[name], line)
 }
