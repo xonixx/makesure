@@ -20,13 +20,6 @@ BEGIN {
   split("",Doc)    # name,i -> doc str
   split("",DocCnt) # name   -> doc lines cnt
   split("",ReachedIf) # name -> condition line
-  split("",ScriptNames)   # list
-  split("",ScriptsByName) # name -> ""
-  split("",Script)     # name -> body
-  split("",ScriptFile) # name -> file
-  split("",GoalToCallScript) # name -> script name
-  split("",GoalToCallArgs)   # name -> rest args
-  split("",GoalToCallLine)   # name -> line no
   Mode = "prelude" # prelude/goal/script
   srand()
   prepareArgs()
@@ -39,8 +32,6 @@ BEGIN {
 "@doc"        == $1 { handleDoc();        next }
 "@depends_on" == $1 { handleDependsOn();  next }
 "@reached_if" == $1 { handleReachedIf();  next }
-"@script"     == $1 { handleScript();     next }
-"@call"       == $1 { handleCall();       next }
                     { handleCodeLine($0); next }
 
 END { if (!Died) doWork() }
@@ -158,14 +149,8 @@ function adjustOptions() {
     delete Options["timing"]
 }
 
-function createScriptFile(   f, n) {
-  f = ScriptFile[n = currentScriptName()] = executeGetLine("mktemp " Tmp "/makesure.script.XXXXXXXXXX")
-  print Script[n] > f
-  close(f)
-}
 function started(mode) {
   if (isPrelude()) adjustOptions()
-  if ("script" == Mode) createScriptFile()
   Mode = mode
 }
 
@@ -181,20 +166,6 @@ function handleGoal(   goal_name) {
   }
   arrPush(GoalNames, goal_name)
   GoalsByName[goal_name]
-}
-
-function handleScript(   script_name) {
-  started("script")
-
-  script_name = trim($2)
-  if (length(script_name) == 0) {
-    die("Script must have a name")
-  }
-  if (script_name in ScriptsByName) {
-    die("Script " script_name " is already defined")
-  }
-  arrPush(ScriptNames, script_name)
-  ScriptsByName[script_name]
 }
 
 function handleDoc(   goal_name) {
@@ -229,45 +200,11 @@ function handleReachedIf(   goal_name) {
   ReachedIf[goal_name] = trim($0)
 }
 
-function handleCall(   goal_name,script_name) {
-  checkGoalOnly()
-
-  goal_name = currentGoalName()
-
-  $1 = ""
-
-  if (goal_name in GoalToCallScript)
-    die("You can only use one @call in a @goal")
-
-  script_name = $2
-  $2 = ""
-
-  GoalToCallScript[goal_name] = script_name
-  GoalToCallArgs[goal_name] = trim($0)
-  GoalToCallLine[goal_name] = NR
-}
-
-function resolveCalls(   i, goal_name, script_name) {
-  for (i=0; i<arrLen(GoalNames); i++) {
-    goal_name = GoalNames[i]
-    if (goal_name in GoalToCallScript) {
-      script_name = GoalToCallScript[goal_name]
-
-      if (!(script_name in ScriptsByName))
-        die("Script not found: " script_name, GoalToCallLine[goal_name])
-      if (trim(Code[goal_name]))
-        die("You can't have a goal body when using @call", GoalToCallLine[goal_name])
-      Code[goal_name] = Shell " -e " ScriptFile[script_name] " " GoalToCallArgs[goal_name]
-    }
-  }
-}
-
 function doWork(\
   i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,my_dir,defines_line,
 body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
 
   started("end") # end last script
-  resolveCalls()
 
   if ("-l" in Args || "--list" in Args) {
     print "Available goals:"
@@ -402,14 +339,11 @@ function isPrelude() { return "prelude"==Mode }
 function checkPreludeOnly() { if (!isPrelude()) die("Only use " $1 " in prelude") }
 function checkGoalOnly() { if ("goal" != Mode) die("Only use " $1 " in goal") }
 function currentGoalName() { return isPrelude() ? "" : arrLast(GoalNames) }
-function currentScriptName() { return arrLast(ScriptNames) }
 
 function realExit(code,   i) {
   Died = 1
   if (DefinesFile)
     system("rm " DefinesFile)
-  for (i in ScriptFile)
-    system("rm " ScriptFile[i])
   exit code
 }
 function die(msg, n) { if (!n) n=NR; dieMsg(msg ":\n" ARGV[1] ":" n ": " Lines[n]) }
@@ -441,15 +375,9 @@ function getMyDir() {
 }
 
 function handleCodeLine(line,   name) {
-  if ("script" == Mode) {
-    name = currentScriptName()
-    #print "Append line for '" name "': " line
-    Script[name] = addL(Script[name], line)
-  } else {
-    name = currentGoalName()
-    #print "Append line for '" name "': " line
-    Code[name] = addL(Code[name], line)
-  }
+  name = currentGoalName()
+  #print "Append line for '" name "': " line
+  Code[name] = addL(Code[name], line)
 }
 
 function topologicalSortAddConnection(from, to) {
