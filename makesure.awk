@@ -194,7 +194,7 @@ function handleGoalGlob(   goal_name,i) {
 function handleDoc(   i) {
   checkGoalOnly()
 
-  if ("glob" == Mode)
+  if ("goal" == Mode)
     registerDoc(currentGoalName())
   else {
     for (i=0; i<arrLen(GlobFiles); i++){
@@ -211,7 +211,7 @@ function registerDoc(goal_name) {
 function handleDependsOn(   i) {
   checkGoalOnly()
 
-  if ("glob" == Mode)
+  if ("goal" == Mode)
     registerDependsOn(currentGoalName())
   else {
     for (i=0; i<arrLen(GlobFiles); i++){
@@ -229,7 +229,7 @@ function registerDependsOn(goal_name,   i) {
 function handleReachedIf(   i) {
   checkGoalOnly()
 
-  if ("glob" == Mode)
+  if ("goal" == Mode)
     registerReachedIf(currentGoalName())
   else {
     for (i=0; i<arrLen(GlobFiles); i++){
