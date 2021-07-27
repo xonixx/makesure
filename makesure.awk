@@ -425,11 +425,12 @@ function getMyDir() {
   return executeGetLine("cd \"$(dirname " quoteArg(FILENAME) ")\"; pwd")
 }
 
-function handleCodeLine(line) {
-  # TODO makeGlobVarsCode(i)
+function handleCodeLine(line,   goal_name) {
   if ("goal_glob" == Mode) {
     for (i=0; i<arrLen(GlobFiles); i++){
-      addCodeLine(GlobFiles[i], line)
+      if (!Code[goal_name = GlobFiles[i]])
+        addCodeLine(goal_name, makeGlobVarsCode(i))
+      addCodeLine(goal_name, line)
     }
   } else
     addCodeLine(currentGoalName(), line)
