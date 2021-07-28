@@ -24,6 +24,7 @@ BEGIN {
   Mode = "prelude" # prelude/goal/goal_glob
   srand()
   prepareArgs()
+  MyDirScript = "MYDIR=" quoteArg(getMyDir(ARGV[1])) "; export MYDIR; cd \"$MYDIR\""
 }
                     { Lines[NR]=$0             }
 "@options"    == $1 { handleOptions();    next }
@@ -174,7 +175,8 @@ function registerGoal(goal_name) {
 }
 
 function calcGlob(pattern,   script, file) {
-  script = "for f in ./" pattern " ; do echo $f ; done"
+  split("",GlobFiles)
+  script = MyDirScript "; for f in ./" pattern " ; do echo $f ; done"
   while (script | getline file) {
     file = substr(file, 3)
     arrPush(GlobFiles,file)
@@ -184,8 +186,8 @@ function calcGlob(pattern,   script, file) {
 
 function handleGoalGlob(   goal_name,i) {
   started("goal_glob")
-  split("",GlobFiles)
-  calcGlob(trim($2))
+  $1 = ""
+  calcGlob(trim($0))
   for (i=0; i<arrLen(GlobFiles); i++){
     registerGoal(GlobFiles[i])
   }
@@ -252,7 +254,7 @@ function registerReachedIf(goal_name, pre_script) {
 }
 
 function doWork(\
-  i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,my_dir,defines_line,
+  i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,defines_line,
 body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
 
   started("end") # end last directive
@@ -271,12 +273,8 @@ body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
     if ("timing" in Options)
       t0 = currentTimeMillis()
 
-    addLine(my_dir, "MYDIR=" quoteArg(getMyDir()))
-    addLine(my_dir, "export MYDIR")
-    addLine(my_dir, "cd \"$MYDIR\"")
-
     # run prelude first to process all @defines
-    goal_body[0] = my_dir[0]
+    goal_body[0] = MyDirScript
     if ("tracing" in Options)
       addLine(goal_body, "set -x")
     addLine(goal_body, trim(Code[""]))
@@ -284,7 +282,7 @@ body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
     if (exit_code != 0)
       realExit(exit_code)
 
-    addLine(defines_line, my_dir[0])
+    addLine(defines_line, MyDirScript)
     if (DefinesFile) {
       addLine(defines_line, ". " DefinesFile)
     }
@@ -322,7 +320,7 @@ body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
           addStr(goal_body, "[empty].")
         else
           addStr(goal_body, "...")
-        addLine(goal_body, "\"")
+        addStr(goal_body, "\"")
       }
       if (reached_goals[goal_name])
         addLine(goal_body, "exit 0")
@@ -421,8 +419,8 @@ function shellExec(script,   res) {
   return res
 }
 
-function getMyDir() {
-  return executeGetLine("cd \"$(dirname " quoteArg(FILENAME) ")\"; pwd")
+function getMyDir(makesurefilePath) {
+  return executeGetLine("cd \"$(dirname " quoteArg(makesurefilePath) ")\"; pwd")
 }
 
 function handleCodeLine(line,   goal_name) {
@@ -554,7 +552,7 @@ function join(arr, start_incl, end_excl, sep,   result, i) {
   return result
 }
 function addStr(target, str) { target[0] = target[0] str }
-function addLine(target, line) { addStr(target, line "\n") }
+function addLine(target, line) { target[0] = addL(target[0], line) }
 function addL(s, l) { return s ? s "\n" l : l }
 function arrPush(arr, elt) { arr[arr[-7]++] = elt }
 function arrLen(arr) { return 0 + arr[-7] }

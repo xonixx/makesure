@@ -125,9 +125,9 @@
 @depends_on prepared4tests
 @call run_test 10_define.tush
 
-@goal tests/11_call.tush
+@goal tests/11_goal_glob.tush
 @depends_on prepared4tests
-@call run_test 11_call.tush
+@call run_test 11_goal_glob.tush
 
 @goal tested
 @depends_on tests/0_basic.tush
@@ -141,6 +141,7 @@
 @depends_on tests/8_timing.tush
 @depends_on tests/9_prelude.tush
 @depends_on tests/10_define.tush
+@depends_on tests/11_goal_glob.tush
 
 @goal stable
 @depends_on makesure_stable README.md
