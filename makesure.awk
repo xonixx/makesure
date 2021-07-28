@@ -92,9 +92,6 @@ function prepareArgs(   i,arg) {
     Options["tracing"]
   if ("-t" in Args || "--timing" in Args)
     Options["timing"]
-    #dbgA("ARGV", ARGV)
-    #dbgA("Args", Args)
-    #dbgA("ArgGoals", ArgGoals)
 }
 
 function dbgA(name, arr,   i) { print "--- " name ": "; for (i in arr) print i " : " arr[i] }
@@ -176,7 +173,7 @@ function registerGoal(goal_name) {
 
 function calcGlob(pattern,   script, file) {
   split("",GlobFiles)
-  script = MyDirScript "; for f in ./" pattern " ; do echo $f ; done"
+  script = MyDirScript "; for f in ./" pattern " ; do test -e \"$f\" && echo \"$f\" ; done"
   while (script | getline file) {
     file = substr(file, 3)
     arrPush(GlobFiles,file)
