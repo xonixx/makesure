@@ -20,27 +20,21 @@ BEGIN {
   split("",Doc)    # name,i -> doc str
   split("",DocCnt) # name   -> doc lines cnt
   split("",ReachedIf) # name -> condition line
-  split("",ScriptNames)   # list
-  split("",ScriptsByName) # name -> ""
-  split("",Script)     # name -> body
-  split("",ScriptFile) # name -> file
-  split("",GoalToCallScript) # name -> script name
-  split("",GoalToCallArgs)   # name -> rest args
-  split("",GoalToCallLine)   # name -> line no
-  Mode = "prelude" # prelude/goal/script
+  split("",GlobFiles) # list
+  Mode = "prelude" # prelude/goal/goal_glob
   srand()
   prepareArgs()
+  MyDirScript = "MYDIR=" quoteArg(getMyDir(ARGV[1])) "; export MYDIR; cd \"$MYDIR\""
 }
                     { Lines[NR]=$0             }
 "@options"    == $1 { handleOptions();    next }
 "@define"     == $1 { handleDefine();     next }
 "@shell"      == $1 { handleShell();      next }
 "@goal"       == $1 { handleGoal();       next }
+"@goal_glob"  == $1 { handleGoalGlob();   next }
 "@doc"        == $1 { handleDoc();        next }
 "@depends_on" == $1 { handleDependsOn();  next }
 "@reached_if" == $1 { handleReachedIf();  next }
-"@script"     == $1 { handleScript();     next }
-"@call"       == $1 { handleCall();       next }
                     { handleCodeLine($0); next }
 
 END { if (!Died) doWork() }
@@ -98,9 +92,6 @@ function prepareArgs(   i,arg) {
     Options["tracing"]
   if ("-t" in Args || "--timing" in Args)
     Options["timing"]
-    #dbgA("ARGV", ARGV)
-    #dbgA("Args", Args)
-    #dbgA("ArgGoals", ArgGoals)
 }
 
 function dbgA(name, arr,   i) { print "--- " name ": "; for (i in arr) print i " : " arr[i] }
@@ -158,21 +149,18 @@ function adjustOptions() {
     delete Options["timing"]
 }
 
-function createScriptFile(   f, n) {
-  f = ScriptFile[n = currentScriptName()] = executeGetLine("mktemp " Tmp "/makesure.script.XXXXXXXXXX")
-  print Script[n] > f
-  close(f)
-}
 function started(mode) {
   if (isPrelude()) adjustOptions()
-  if ("script" == Mode) createScriptFile()
   Mode = mode
 }
 
-function handleGoal(   goal_name) {
+function handleGoal() {
   started("goal")
+  registerGoal($2)
+}
 
-  goal_name = trim($2)
+function registerGoal(goal_name) {
+  goal_name = trim(goal_name)
   if (length(goal_name) == 0) {
     die("Goal must have a name")
   }
@@ -183,91 +171,90 @@ function handleGoal(   goal_name) {
   GoalsByName[goal_name]
 }
 
-function handleScript(   script_name) {
-  started("script")
-
-  script_name = trim($2)
-  if (length(script_name) == 0) {
-    die("Script must have a name")
+function calcGlob(pattern,   script, file) {
+  split("",GlobFiles)
+  script = MyDirScript "; for f in ./" pattern " ; do test -e \"$f\" && echo \"$f\" ; done"
+  while (script | getline file) {
+    file = substr(file, 3)
+    arrPush(GlobFiles,file)
   }
-  if (script_name in ScriptsByName) {
-    die("Script " script_name " is already defined")
-  }
-  arrPush(ScriptNames, script_name)
-  ScriptsByName[script_name]
+  close(script)
 }
 
-function handleDoc(   goal_name) {
+function handleGoalGlob(   goal_name,i) {
+  started("goal_glob")
+  $1 = ""
+  calcGlob(trim($0))
+  for (i=0; i<arrLen(GlobFiles); i++){
+    registerGoal(GlobFiles[i])
+  }
+}
+
+function handleDoc(   i) {
   checkGoalOnly()
 
-  goal_name = currentGoalName()
+  if ("goal" == Mode)
+    registerDoc(currentGoalName())
+  else {
+    for (i=0; i<arrLen(GlobFiles); i++){
+      registerDoc(GlobFiles[i])
+    }
+  }
+}
 
+function registerDoc(goal_name) {
   $1 = ""
   Doc[goal_name, DocCnt[goal_name]++] = trim($0)
 }
 
-function handleDependsOn(   goal_name,i) {
+function handleDependsOn(   i) {
   checkGoalOnly()
 
-  goal_name = currentGoalName()
+  if ("goal" == Mode)
+    registerDependsOn(currentGoalName())
+  else {
+    for (i=0; i<arrLen(GlobFiles); i++){
+      registerDependsOn(GlobFiles[i])
+    }
+  }
+}
 
+function registerDependsOn(goal_name,   i) {
   for (i=2; i<=NF; i++) {
     Dependencies[goal_name, DependenciesCnt[goal_name]++] = $i
   }
 }
 
-function handleReachedIf(   goal_name) {
+function handleReachedIf(   i) {
   checkGoalOnly()
 
-  goal_name = currentGoalName()
+  if ("goal" == Mode)
+    registerReachedIf(currentGoalName())
+  else {
+    for (i=0; i<arrLen(GlobFiles); i++){
+      registerReachedIf(GlobFiles[i], makeGlobVarsCode(i))
+    }
+  }
+}
 
+function makeGlobVarsCode(i) {
+  return "ITEM=" quoteArg(GlobFiles[i]) "; INDEX=" i "; TOTAL=" arrLen(GlobFiles) "; "
+}
+
+function registerReachedIf(goal_name, pre_script) {
   if (goal_name in ReachedIf) {
     die("Multiple " $1 " not allowed for a goal")
   }
 
   $1 = ""
-  ReachedIf[goal_name] = trim($0)
-}
-
-function handleCall(   goal_name,script_name) {
-  checkGoalOnly()
-
-  goal_name = currentGoalName()
-
-  $1 = ""
-
-  if (goal_name in GoalToCallScript)
-    die("You can only use one @call in a @goal")
-
-  script_name = $2
-  $2 = ""
-
-  GoalToCallScript[goal_name] = script_name
-  GoalToCallArgs[goal_name] = trim($0)
-  GoalToCallLine[goal_name] = NR
-}
-
-function resolveCalls(   i, goal_name, script_name) {
-  for (i=0; i<arrLen(GoalNames); i++) {
-    goal_name = GoalNames[i]
-    if (goal_name in GoalToCallScript) {
-      script_name = GoalToCallScript[goal_name]
-
-      if (!(script_name in ScriptsByName))
-        die("Script not found: " script_name, GoalToCallLine[goal_name])
-      if (trim(Code[goal_name]))
-        die("You can't have a goal body when using @call", GoalToCallLine[goal_name])
-      Code[goal_name] = Shell " -e " ScriptFile[script_name] " " GoalToCallArgs[goal_name]
-    }
-  }
+  ReachedIf[goal_name] = pre_script trim($0)
 }
 
 function doWork(\
-  i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,my_dir,defines_line,
+  i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,defines_line,
 body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
 
-  started("end") # end last script
-  resolveCalls()
+  started("end") # end last directive
 
   if ("-l" in Args || "--list" in Args) {
     print "Available goals:"
@@ -283,12 +270,8 @@ body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
     if ("timing" in Options)
       t0 = currentTimeMillis()
 
-    addLine(my_dir, "MYDIR=" quoteArg(getMyDir()))
-    addLine(my_dir, "export MYDIR")
-    addLine(my_dir, "cd \"$MYDIR\"")
-
     # run prelude first to process all @defines
-    goal_body[0] = my_dir[0]
+    goal_body[0] = MyDirScript
     if ("tracing" in Options)
       addLine(goal_body, "set -x")
     addLine(goal_body, trim(Code[""]))
@@ -296,7 +279,7 @@ body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
     if (exit_code != 0)
       realExit(exit_code)
 
-    addLine(defines_line, my_dir[0])
+    addLine(defines_line, MyDirScript)
     if (DefinesFile) {
       addLine(defines_line, ". " DefinesFile)
     }
@@ -334,7 +317,7 @@ body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
           addStr(goal_body, "[empty].")
         else
           addStr(goal_body, "...")
-        addLine(goal_body, "\"")
+        addStr(goal_body, "\"")
       }
       if (reached_goals[goal_name])
         addLine(goal_body, "exit 0")
@@ -400,16 +383,13 @@ function resolveGoalsToRun(result,   i, goal_name, loop) {
 
 function isPrelude() { return "prelude"==Mode }
 function checkPreludeOnly() { if (!isPrelude()) die("Only use " $1 " in prelude") }
-function checkGoalOnly() { if ("goal" != Mode) die("Only use " $1 " in goal") }
+function checkGoalOnly() { if ("goal" != Mode && "goal_glob" != Mode) die("Only use " $1 " in goal/goal_glob") }
 function currentGoalName() { return isPrelude() ? "" : arrLast(GoalNames) }
-function currentScriptName() { return arrLast(ScriptNames) }
 
 function realExit(code,   i) {
   Died = 1
   if (DefinesFile)
     system("rm " DefinesFile)
-  for (i in ScriptFile)
-    system("rm " ScriptFile[i])
   exit code
 }
 function die(msg, n) { if (!n) n=NR; dieMsg(msg ":\n" ARGV[1] ":" n ": " Lines[n]) }
@@ -436,20 +416,24 @@ function shellExec(script,   res) {
   return res
 }
 
-function getMyDir() {
-  return executeGetLine("cd \"$(dirname " quoteArg(FILENAME) ")\"; pwd")
+function getMyDir(makesurefilePath) {
+  return executeGetLine("cd \"$(dirname " quoteArg(makesurefilePath) ")\"; pwd")
 }
 
-function handleCodeLine(line,   name) {
-  if ("script" == Mode) {
-    name = currentScriptName()
-    #print "Append line for '" name "': " line
-    Script[name] = addL(Script[name], line)
-  } else {
-    name = currentGoalName()
-    #print "Append line for '" name "': " line
-    Code[name] = addL(Code[name], line)
-  }
+function handleCodeLine(line,   goal_name) {
+  if ("goal_glob" == Mode) {
+    for (i=0; i<arrLen(GlobFiles); i++){
+      if (!Code[goal_name = GlobFiles[i]])
+        addCodeLine(goal_name, makeGlobVarsCode(i))
+      addCodeLine(goal_name, line)
+    }
+  } else
+    addCodeLine(currentGoalName(), line)
+}
+
+function addCodeLine(name, line) {
+  #print "Append line for '" name "': " line
+  Code[name] = addL(Code[name], line)
 }
 
 function topologicalSortAddConnection(from, to) {
@@ -565,7 +549,7 @@ function join(arr, start_incl, end_excl, sep,   result, i) {
   return result
 }
 function addStr(target, str) { target[0] = target[0] str }
-function addLine(target, line) { addStr(target, line "\n") }
+function addLine(target, line) { target[0] = addL(target[0], line) }
 function addL(s, l) { return s ? s "\n" l : l }
 function arrPush(arr, elt) { arr[arr[-7]++] = elt }
 function arrLen(arr) { return 0 + arr[-7] }

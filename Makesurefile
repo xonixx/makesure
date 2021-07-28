@@ -47,8 +47,9 @@
 @goal prepared4tests
 @depends_on tush_installed debug
 
-@script run_test
-  f="tests/$1"
+@goal_glob tests/*.tush
+@depends_on prepared4tests
+  f="$ITEM"
 
   function calc_temp_files {
     local tmp_count=$(find /tmp -maxdepth 1 -type f -name 'makesure.*' | wc -l)
@@ -81,54 +82,6 @@
     exit 1
   fi
 
-@goal tests/0_basic.tush
-@depends_on prepared4tests
-@call run_test 0_basic.tush
-
-@goal tests/1_goals.tush
-@depends_on prepared4tests
-@call run_test 1_goals.tush
-
-@goal tests/2_mydir.tush
-@depends_on prepared4tests
-@call run_test 2_mydir.tush
-
-@goal tests/3_loop.tush
-@depends_on prepared4tests
-@call run_test 3_loop.tush
-
-@goal tests/4_trace.tush
-@depends_on prepared4tests
-@call run_test 4_trace.tush
-
-@goal tests/5_shell.tush
-@depends_on prepared4tests
-@call run_test 5_shell.tush
-
-@goal tests/6_reached_if.tush
-@depends_on prepared4tests
-@call run_test 6_reached_if.tush
-
-@goal tests/7_options.tush
-@depends_on prepared4tests
-@call run_test 7_options.tush
-
-@goal tests/8_timing.tush
-@depends_on prepared4tests
-@call run_test 8_timing.tush
-
-@goal tests/9_prelude.tush
-@depends_on prepared4tests
-@call run_test 9_prelude.tush
-
-@goal tests/10_define.tush
-@depends_on prepared4tests
-@call run_test 10_define.tush
-
-@goal tests/11_call.tush
-@depends_on prepared4tests
-@call run_test 11_call.tush
-
 @goal tested
 @depends_on tests/0_basic.tush
 @depends_on tests/1_goals.tush
@@ -141,7 +94,7 @@
 @depends_on tests/8_timing.tush
 @depends_on tests/9_prelude.tush
 @depends_on tests/10_define.tush
-@depends_on tests/11_call.tush
+@depends_on tests/11_goal_glob.tush
 
 @goal stable
 @depends_on makesure_stable README.md
