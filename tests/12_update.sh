@@ -1,12 +1,10 @@
 
-#@define D='/tmp/dir with spaces'
+#@define D='/tmp/dirXXX with spaces'
 @define D='/tmp/dirXXX'
 
-@goal test_dir_recreated
+@goal makesure_prepared
   [[ -d "$D" ]] && rm -r "$D"
   mkdir "$D"
-
-@goal makesure_prepared
   cp ../makesure ../makesure.awk "$D"
   for cmd in which awk mktemp rm cp dirname cat chmod
   do
@@ -22,18 +20,15 @@
   rm -r "$D"
 
 @goal test_err
-  @depends_on test_dir_recreated
   @depends_on makesure_prepared
   @depends_on run_selfupdate
 
 @goal test_wget
-  @depends_on test_dir_recreated
   @depends_on makesure_prepared
   @depends_on wget_prepared
   @depends_on run_selfupdate
 
 @goal test_curl
-  @depends_on test_dir_recreated
   @depends_on makesure_prepared
   @depends_on curl_prepared
   @depends_on run_selfupdate
