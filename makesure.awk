@@ -473,11 +473,11 @@ function selfUpdate(   url, tmp, err, newVer) {
   url = "https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable?" rand()
   tmp = executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX")
   err = dl(url, tmp)
-  if (!err && 0 != system("chmod +x " tmp)) err = "can't chmod +x " tmp
+  if (!err && !ok("chmod +x " tmp)) err = "can't chmod +x " tmp
   if (!err) {
     newVer = executeGetLine(tmp " -v")
     if (Version != newVer) {
-      if (0 != system("cp " tmp " \"" Prog "\""))
+      if (!ok("cp " tmp " " quoteArg(Prog)))
         err = "can't overwrite " Prog
       else print "updated " Version " -> " newVer
     } else print "you have latest version " Version " installed"
@@ -531,14 +531,13 @@ function executeGetLine(script,   res) {
   close(script)
   return res
 }
-function commandExists(cmd) { return system("which " cmd " 2>&1 >/dev/null") == 0 }
 function dl(url, dest,    verbose) {
   verbose = "VERBOSE" in ENVIRON
   if (commandExists("wget")) {
-    if (0 != system("wget " (verbose ? "" : "-q") " " quoteArg(url) " -O" quoteArg(dest)))
+    if (!ok("wget " (verbose ? "" : "-q") " " quoteArg(url) " -O" quoteArg(dest)))
       return "error with wget"
   } else if (commandExists("curl")) {
-    if (0 != system("curl " (verbose ? "" : "-s") " " quoteArg(url) " -o " quoteArg(dest)))
+    if (!ok("curl " (verbose ? "" : "-s") " " quoteArg(url) " -o " quoteArg(dest)))
       return "error with curl"
   } else return "wget/curl no found"
 }
@@ -554,7 +553,9 @@ function addL(s, l) { return s ? s "\n" l : l }
 function arrPush(arr, elt) { arr[arr[-7]++] = elt }
 function arrLen(arr) { return 0 + arr[-7] }
 function arrLast(arr) { return arr[arrLen(arr)-1] }
-function isFile(path) { return system("test -f " quoteArg(path)) == 0 }
-function isDir(path) { return system("test -d " quoteArg(path)) == 0 }
+function commandExists(cmd) { return ok("which " cmd " 2>&1 >/dev/null") }
+function ok(cmd) { return system(cmd) == 0 }
+function isFile(path) { return ok("test -f " quoteArg(path)) }
+function isDir(path) { return ok("test -d " quoteArg(path)) }
 function quoteArg(a) { gsub("'", "'\\''", a); return "'" a "'" }
 function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s; }
