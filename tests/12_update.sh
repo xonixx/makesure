@@ -1,6 +1,6 @@
 
-#@define D='/tmp/dirXXX with spaces'
-@define D='/tmp/dirXXX'
+@define D='/tmp/dirXXX with spaces'
+#@define D='/tmp/dirXXX'
 
 @goal makesure_prepared
   [[ -d "$D" ]] && rm -r "$D"

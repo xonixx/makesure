@@ -131,7 +131,7 @@ function handleDefineLine(line,   kv) {
 
   if (!(kv[0] in DefineOverrides)) {
     handleCodeLine(line)
-    handleCodeLine("echo " line " >> " DefinesFile)
+    handleCodeLine("echo " quoteArg(line) " >> " DefinesFile)
   }
 }
 
