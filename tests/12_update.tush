@@ -13,6 +13,7 @@ $ cd "$MYDIR"; ./makesure -f tests/12_update.sh test_wget
 |   goal 'run_selfupdate' ...
 | XXX
 | updated XXX -> 0.9.7.1
+| you have latest version 0.9.7.1 installed
 | 0.9.7.1
 |   goal 'test_wget' [empty].
 
@@ -22,5 +23,6 @@ $ cd "$MYDIR"; ./makesure -f tests/12_update.sh test_curl
 |   goal 'run_selfupdate' ...
 | XXX
 | updated XXX -> 0.9.7.1
+| you have latest version 0.9.7.1 installed
 | 0.9.7.1
 |   goal 'test_curl' [empty].
