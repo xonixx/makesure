@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION="0.9.7"
+VERSION="0.9.7.1"
 
 exec awk -v "Version=$VERSION" -v "Prog=$0" '
 BEGIN {
