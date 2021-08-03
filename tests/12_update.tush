@@ -12,8 +12,8 @@ $ cd "$MYDIR"; ./makesure -f tests/12_update.sh test_wget
 |   goal 'wget_prepared' ...
 |   goal 'run_selfupdate' ...
 | XXX
-| updated XXX -> 0.9.7
-| 0.9.7
+| updated XXX -> 0.9.7.1
+| 0.9.7.1
 |   goal 'test_wget' [empty].
 
 $ cd "$MYDIR"; ./makesure -f tests/12_update.sh test_curl
@@ -21,6 +21,6 @@ $ cd "$MYDIR"; ./makesure -f tests/12_update.sh test_curl
 |   goal 'curl_prepared' ...
 |   goal 'run_selfupdate' ...
 | XXX
-| updated XXX -> 0.9.7
-| 0.9.7
+| updated XXX -> 0.9.7.1
+| 0.9.7.1
 |   goal 'test_curl' [empty].
