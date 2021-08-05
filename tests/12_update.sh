@@ -45,8 +45,17 @@
   cmd="wget"
   cmd1=`which $cmd`
   (
-    echo "#!/bin/sh"
-    echo "exec $cmd1 \"\$@\""
+    echo "#!/bin/bash"
+    echo 'echo "running wget"'
+    if [[ -z $cmd1 ]]
+    then
+      # fake wget with curl
+#      echo "set -x"
+#      echo 'echo "1=$1 2=$2 3=$3"'
+      echo "exec $(which curl) \"\${1/-q/-s}\" \"\$2\" \"\${3/-O/-o}\""
+    else
+      echo "exec $cmd1 \"\$@\""
+    fi
   ) > "$D/$cmd"
   chmod +x "$D/$cmd"
 
@@ -55,6 +64,7 @@
   cmd1=`which $cmd`
   (
     echo "#!/bin/sh"
+    echo 'echo "running curl"'
     echo "exec $cmd1 \"\$@\""
   ) > "$D/$cmd"
   chmod +x "$D/$cmd"
