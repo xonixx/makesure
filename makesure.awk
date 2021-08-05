@@ -553,7 +553,7 @@ function addL(s, l) { return s ? s "\n" l : l }
 function arrPush(arr, elt) { arr[arr[-7]++] = elt }
 function arrLen(arr) { return 0 + arr[-7] }
 function arrLast(arr) { return arr[arrLen(arr)-1] }
-function commandExists(cmd) { return ok("which " cmd " 2>/dev/null") }
+function commandExists(cmd) { return ok("which " cmd " 2>&1 1>/dev/null") }
 function ok(cmd) { return system(cmd) == 0 }
 function isFile(path) { return ok("test -f " quoteArg(path)) }
 function isDir(path) { return ok("test -d " quoteArg(path)) }
