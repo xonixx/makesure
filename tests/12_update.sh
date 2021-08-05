@@ -43,7 +43,7 @@
 
 @goal wget_prepared
   cmd="wget"
-  cmd1=`which $cmd`
+  cmd1=`which $cmd 2>/dev/null`
   (
     echo "#!/bin/bash"
     echo 'echo "running wget"'
