@@ -38,4 +38,4 @@ jobs:
 
       - name: "run tests"
         run: |
-          & bash -e -c "which wget ; which curl ; ./makesure_stable -D windows=1"
+          & bash -e -c "(which wget || which curl) ; ./makesure_stable -D windows=1"
