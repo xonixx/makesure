@@ -8,7 +8,12 @@
   cp ../makesure ../makesure.awk "$D"
   for cmd in which awk mktemp rm cp dirname cat chmod
   do
-    ln -s `which $cmd` "$D/$cmd"
+    cmd1=`which $cmd`
+    (
+      echo "#!/bin/sh"
+      echo "exec $cmd1 \"\$@\""
+    ) > "$D/$cmd"
+    chmod +x "$D/$cmd"
   done
 
 @goal run_selfupdate
