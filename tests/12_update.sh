@@ -8,9 +8,9 @@
   [[ -d "$D" ]] && rm -r "$D"
   mkdir "$D"
   cp ../makesure ../makesure.awk "$D"
-  for cmd in which awk mktemp rm cp dirname cat chmod
+  for cmd in awk mktemp rm cp dirname cat chmod
   do
-    cmd1=`which $cmd`
+    cmd1=`command -v $cmd`
     (
       echo "#!/bin/sh"
       echo "exec $cmd1 \"\$@\""
@@ -43,7 +43,7 @@
 
 @goal wget_prepared
   cmd="wget"
-  cmd1=`which $cmd 2>/dev/null`
+  cmd1=`command -v $cmd 2>/dev/null`
   (
     echo "#!/bin/bash"
     echo 'echo "running wget"'
@@ -52,7 +52,7 @@
       # fake wget with curl
 #      echo "set -x"
 #      echo 'echo "1=$1 2=$2 3=$3"'
-      echo "exec $(which curl) \"\${1/-q/-s}\" \"\$2\" \"\${3/-O/-o}\""
+      echo "exec $(command -v curl) \"\${1/-q/-s}\" \"\$2\" \"\${3/-O/-o}\""
     else
       echo "exec $cmd1 \"\$@\""
     fi
@@ -61,7 +61,7 @@
 
 @goal curl_prepared
   cmd="curl"
-  cmd1=`which $cmd`
+  cmd1=`command -v $cmd`
   (
     echo "#!/bin/sh"
     echo 'echo "running curl"'
