@@ -1,5 +1,5 @@
 
-@define NEXT_VERSION="0.9.7"
+@define NEXT_VERSION="0.9.7.1"
 @define TUSH_REPO=https://github.com/adolfopa/tush
 
 @options timing
@@ -102,6 +102,7 @@
 @depends_on nix_only_tests
 
 @goal stable
+@doc Prepare for release
 @depends_on makesure_stable README.md
 
 @goal README.md

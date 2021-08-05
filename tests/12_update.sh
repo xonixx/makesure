@@ -21,6 +21,7 @@
   export NEXT_VERSION=XXX
   "$D/makesure" --version
   "$D/makesure" --selfupdate
+  "$D/makesure" --selfupdate
   "$D/makesure" --version
   rm -r "$D"
 
