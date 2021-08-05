@@ -1,4 +1,6 @@
 
+#@options tracing
+
 @define D='/tmp/dirXXX with spaces'
 #@define D='/tmp/dirXXX'
 
@@ -40,7 +42,19 @@
   @depends_on run_selfupdate
 
 @goal wget_prepared
-  ln -s `which wget` "$D/wget"
+  cmd="wget"
+  cmd1=`which $cmd`
+  (
+    echo "#!/bin/sh"
+    echo "exec $cmd1 \"\$@\""
+  ) > "$D/$cmd"
+  chmod +x "$D/$cmd"
 
 @goal curl_prepared
-  ln -s `which curl` "$D/curl"
+  cmd="curl"
+  cmd1=`which $cmd`
+  (
+    echo "#!/bin/sh"
+    echo "exec $cmd1 \"\$@\""
+  ) > "$D/$cmd"
+  chmod +x "$D/$cmd"
