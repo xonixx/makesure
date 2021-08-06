@@ -41,7 +41,7 @@
 @depends_on cleaned cleaned_soft
 
 @goal debug
-  awk --version | head -n 1
+  "${AWK:-awk}" --version | head -n 1
   bash --version| head -n 1
 
 @goal prepared4tests
