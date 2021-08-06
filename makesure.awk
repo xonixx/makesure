@@ -470,8 +470,7 @@ function currentTimeMillis(   script, res) {
 }
 
 function selfUpdate(   url, tmp, err, newVer) {
-#  url = "https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable?" rand()
-  url = "https://raw.githubusercontent.com/xonixx/makesure/win/makesure_stable?" rand()
+  url = "https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable?" rand()
   tmp = executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX")
   err = dl(url, tmp)
   if (!err && !ok("chmod +x " tmp)) err = "can't chmod +x " tmp
