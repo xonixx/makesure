@@ -41,7 +41,13 @@
 @depends_on cleaned cleaned_soft
 
 @goal debug
-  "${AWK:-awk}" --version | head -n 1
+  AWK="${AWK:-awk}"
+  case "$AWK" in
+    *mawk*) "$AWK" -W version 2>&1 | head -n 1
+            ;;
+         *) "$AWK" --version | head -n 1
+            ;;
+  esac
   bash --version| head -n 1
 
 @goal prepared4tests
