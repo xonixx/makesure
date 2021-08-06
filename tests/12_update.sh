@@ -42,19 +42,15 @@
   @depends_on run_selfupdate
 
 @goal wget_prepared
-#  set -x
   cmd="wget"
-#  echo "$cmd1 :: $?"
   (
     echo "#!/bin/bash"
     echo 'echo "running wget"'
-    if cmd1=`command -v $cmd 2>/dev/null`
+    if cmd1=`command -v $cmd`
     then
       echo "exec $cmd1 \"\$@\""
     else
       # fake wget with curl
-#      echo "set -x"
-#      echo 'echo "1=$1 2=$2 3=$3"'
       echo "exec $(command -v curl) \"\${1/-q/-s}\" \"\$2\" \"\${3/-O/-o}\""
     fi
   ) > "$D/$cmd"
