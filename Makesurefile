@@ -127,9 +127,13 @@
 @depends_on tested
 
 @goal tested_bwk
+@depends_on installed_bwk
   AWK="$(pwd)/soft/bwk" ./makesure tested
+
 @goal tested_gawk51
+@depends_on installed_gawk51
   AWK="$(pwd)/soft/gawk51" ./makesure tested
+
 @goal tested_mawk
   AWK="/usr/bin/mawk" ./makesure tested
 
