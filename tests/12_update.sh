@@ -10,7 +10,12 @@
   cp ../makesure ../makesure.awk "$D"
   for cmd in awk mktemp rm cp dirname cat chmod
   do
-    cmd1=`command -v $cmd`
+    if [[ $cmd == 'awk' && $AWK != 'awk' ]]
+    then
+      cmd1=$AWK
+    else
+      cmd1=`command -v $cmd`
+    fi
     (
       echo "#!/bin/sh"
       echo "exec $cmd1 \"\$@\""
