@@ -1,4 +1,6 @@
 
+#@options tracing
+
 @define D='/tmp/dirXXX with spaces'
 #@define D='/tmp/dirXXX'
 
@@ -6,9 +8,14 @@
   [[ -d "$D" ]] && rm -r "$D"
   mkdir "$D"
   cp ../makesure ../makesure.awk "$D"
-  for cmd in which awk mktemp rm cp dirname cat chmod
+  for cmd in awk mktemp rm cp dirname cat chmod
   do
-    ln -s `which $cmd` "$D/$cmd"
+    cmd1=`command -v $cmd`
+    (
+      echo "#!/bin/sh"
+      echo "exec $cmd1 \"\$@\""
+    ) > "$D/$cmd"
+    chmod +x "$D/$cmd"
   done
 
 @goal run_selfupdate
@@ -35,7 +42,26 @@
   @depends_on run_selfupdate
 
 @goal wget_prepared
-  ln -s `which wget` "$D/wget"
+  cmd="wget"
+  (
+    echo "#!/bin/bash"
+    echo 'echo "running wget"'
+    if cmd1=`command -v $cmd`
+    then
+      echo "exec $cmd1 \"\$@\""
+    else
+      # fake wget with curl
+      echo "exec $(command -v curl) \"\${1/-q/-s}\" \"\$2\" \"\${3/-O/-o}\""
+    fi
+  ) > "$D/$cmd"
+  chmod +x "$D/$cmd"
 
 @goal curl_prepared
-  ln -s `which curl` "$D/curl"
+  cmd="curl"
+  cmd1=`command -v $cmd`
+  (
+    echo "#!/bin/sh"
+    echo 'echo "running curl"'
+    echo "exec $cmd1 \"\$@\""
+  ) > "$D/$cmd"
+  chmod +x "$D/$cmd"

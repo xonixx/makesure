@@ -82,10 +82,6 @@
     exit 1
   fi
 
-@goal nix_only_tests
-@reached_if [[ windows -eq 1 ]]
-@depends_on tests/12_update.tush
-
 @goal tested
 @depends_on tests/0_basic.tush
 @depends_on tests/1_goals.tush
@@ -99,7 +95,7 @@
 @depends_on tests/9_prelude.tush
 @depends_on tests/10_define.tush
 @depends_on tests/11_goal_glob.tush
-@depends_on nix_only_tests
+@depends_on tests/12_update.tush
 
 @goal stable
 @doc Prepare for release
