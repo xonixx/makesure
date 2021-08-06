@@ -126,6 +126,12 @@
 @goal default
 @depends_on tested
 
+@goal tested_awks
+@depends_on tested
+@depends_on tested_bwk
+@depends_on tested_mawk
+@depends_on tested_gawk51
+
 @goal tested_bwk
 @depends_on installed_bwk
   AWK="$(pwd)/soft/bwk" ./makesure tested
