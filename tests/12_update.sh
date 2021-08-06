@@ -42,8 +42,10 @@
   @depends_on run_selfupdate
 
 @goal wget_prepared
+  set -x
   cmd="wget"
   cmd1=`command -v $cmd 2>/dev/null`
+  echo "$cmd1 :: $?"
   (
     echo "#!/bin/bash"
     echo 'echo "running wget"'
