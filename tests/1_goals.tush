@@ -58,5 +58,6 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh fail123
 ? 123
 
 $ cd "$MYDIR"; ./makesure -f tests/1_goals_unknown.sh
-@ Goal 'a' has unknown dependency 'unknown'
+@ Goal 'a' has unknown dependency 'unknown':
+@ tests/1_goals_unknown.sh:3:   @depends_on unknown
 ? 1

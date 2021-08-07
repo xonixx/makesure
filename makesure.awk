@@ -15,7 +15,8 @@ BEGIN {
   split("",Code)        # name -> body
   split("",DefineOverrides) # k -> v
   DefinesFile=""
-  split("",Dependencies)    # name,i -> dep goal
+  split("",Dependencies)       # name,i -> dep goal
+  split("",DependenciesLineNo) # name,i -> line no.
   split("",DependenciesCnt) # name   -> dep cnd
   split("",Doc)    # name,i -> doc str
   split("",DocCnt) # name   -> doc lines cnt
@@ -222,6 +223,7 @@ function handleDependsOn(   i) {
 function registerDependsOn(goal_name,   i) {
   for (i=2; i<=NF; i++) {
     Dependencies[goal_name, DependenciesCnt[goal_name]++] = $i
+    DependenciesLineNo[goal_name, DependenciesCnt[goal_name]] = NR
   }
 }
 
@@ -298,7 +300,7 @@ body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
       for (j=0; j < dep_cnt; j++) {
         dep = Dependencies[goal_name, j]
         if (!(dep in GoalsByName))
-          dieMsg("Goal '" goal_name "' has unknown dependency '" dep "'") # TODO find a way to provide line reference
+          die("Goal '" goal_name "' has unknown dependency '" dep "'", DependenciesLineNo[goal_name, j])
         if (!reached_goals[goal_name]) {
           # we only add a dependency to this goal if it's not reached
           #print " [not reached] " goal_name " -> " dep
