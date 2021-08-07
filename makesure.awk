@@ -373,7 +373,7 @@ function resolveGoalsToRun(result,   i, goal_name, loop) {
   for (i = 0; i < arrLen(ArgGoals); i++) {
     goal_name = ArgGoals[i]
     if (!(goal_name in GoalsByName)) {
-      dieMsg("Goal not found: " goal_name) # TODO can we show line number here?
+      dieMsg("Goal not found: " goal_name)
     }
     topologicalSortPerform(goal_name, result, loop)
   }
