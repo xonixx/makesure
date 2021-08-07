@@ -70,3 +70,8 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals_already_defined.sh
 @ Goal 'a' is already defined:
 @ tests/1_goals_already_defined.sh:5: @goal a
 ? 1
+
+$ cd "$MYDIR"; ./makesure -f tests/1_goals_no_name.sh
+@ Goal must have a name:
+@ tests/1_goals_no_name.sh:5: @goal
+? 1
