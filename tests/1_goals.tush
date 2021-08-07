@@ -56,3 +56,7 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh fail123
 |   goal 'fail123' failed
 @ stderr
 ? 123
+
+$ cd "$MYDIR"; ./makesure -f tests/1_goals_unknown.sh
+@ Goal 'a' has unknown dependency 'unknown'
+? 1
