@@ -75,3 +75,8 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals_no_name.sh
 @ Goal must have a name:
 @ tests/1_goals_no_name.sh:5: @goal
 ? 1
+
+$ cd "$MYDIR"; ./makesure -f tests/1_goals_multi_reached_if.sh
+@ Multiple @reached_if not allowed for a goal:
+@ tests/1_goals_multi_reached_if.sh:4: @reached_if false
+? 1
