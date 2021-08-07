@@ -63,7 +63,7 @@ Usage: makesure [options...] [-f buildfile] [goals...]
 Since `makesure` is a tiny utility represented by a single file, the recommended installation strategy is to keep it local to a project where it's used. Not only this eliminates the need for repetitive installation for every programmer but also allows using separate `makesure` version per project and update only as needed.
 
 ```shell
-wget "https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable?$(date +%s)" -Omakesure && \
+wget "https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable?token=$(date +%s)" -Omakesure && \
 chmod +x makesure && echo "makesure $(./makesure -v) installed"
 ```
 
