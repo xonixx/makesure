@@ -65,3 +65,8 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals_unknown.sh
 $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh zzz
 @ Goal not found: zzz
 ? 1
+
+$ cd "$MYDIR"; ./makesure -f tests/1_goals_already_defined.sh
+@ Goal 'a' is already defined:
+@ tests/1_goals_already_defined.sh:5: @goal a
+? 1

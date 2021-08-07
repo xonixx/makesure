@@ -166,7 +166,7 @@ function registerGoal(goal_name) {
     die("Goal must have a name")
   }
   if (goal_name in GoalsByName) {
-    die("Goal " goal_name " is already defined")
+    die("Goal '" goal_name "' is already defined")
   }
   arrPush(GoalNames, goal_name)
   GoalsByName[goal_name]
