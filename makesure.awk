@@ -119,12 +119,11 @@ function handleOptions() {
 }
 
 function handleDefine(   line,kv) {
+  checkPreludeOnly()
   $1 = ""
   handleDefineLine($0)
 }
 function handleDefineLine(line,   kv) {
-  checkPreludeOnly()
-
   if (!DefinesFile)
     DefinesFile = executeGetLine("mktemp " Tmp "/makesure.XXXXXXXXXX")
 
