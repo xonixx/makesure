@@ -384,7 +384,7 @@ function resolveGoalsToRun(result,   i, goal_name, loop) {
 
 function isPrelude() { return "prelude"==Mode }
 function checkPreludeOnly() { if (!isPrelude()) die("Only use " $1 " in prelude") }
-function checkGoalOnly() { if ("goal" != Mode && "goal_glob" != Mode) die("Only use " $1 " in goal/goal_glob") }
+function checkGoalOnly() { if ("goal" != Mode && "goal_glob" != Mode) die("Only use " $1 " in @goal/@goal_glob") }
 function currentGoalName() { return isPrelude() ? "" : arrLast(GoalNames) }
 
 function realExit(code,   i) {

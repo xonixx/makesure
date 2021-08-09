@@ -9,3 +9,7 @@ $ cd "$MYDIR"; ./makesure -f tests/9_prelude.sh a
 |   goal 'a' ...
 | a
 
+$ cd "$MYDIR"; ./makesure -f tests/9_prelude_doc.sh
+@ Only use @doc in @goal/@goal_glob:
+@ tests/9_prelude_doc.sh:2: @doc Doc in prelude
+? 1
