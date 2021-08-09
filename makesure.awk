@@ -240,7 +240,7 @@ function handleReachedIf(   i) {
 }
 
 function makeGlobVarsCode(i) {
-  return "ITEM=" quoteArg(GlobFiles[i]) "; INDEX=" i "; TOTAL=" arrLen(GlobFiles) "; "
+  return "ITEM=" quoteArg(GlobFiles[i]) ";INDEX=" i ";TOTAL=" arrLen(GlobFiles) ";"
 }
 
 function registerReachedIf(goal_name, pre_script) {
