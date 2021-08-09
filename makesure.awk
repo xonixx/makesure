@@ -25,7 +25,7 @@ BEGIN {
   Mode = "prelude" # prelude/goal/goal_glob
   srand()
   prepareArgs()
-  MyDirScript = "MYDIR=" quoteArg(getMyDir(ARGV[1])) "; export MYDIR; cd \"$MYDIR\""
+  MyDirScript = "MYDIR=" quoteArg(getMyDir(ARGV[1])) ";export MYDIR;cd \"$MYDIR\""
 }
                     { Lines[NR]=$0             }
 "@options"    == $1 { handleOptions();    next }
@@ -174,7 +174,7 @@ function registerGoal(goal_name) {
 
 function calcGlob(pattern,   script, file) {
   split("",GlobFiles)
-  script = MyDirScript "; for f in ./" pattern " ; do test -e \"$f\" && echo \"$f\" ; done"
+  script = MyDirScript ";for f in ./" pattern ";do test -e \"$f\" && echo \"$f\";done"
   while (script | getline file) {
     file = substr(file, 3)
     arrPush(GlobFiles,file)
@@ -419,7 +419,7 @@ function shellExec(script,   res) {
 }
 
 function getMyDir(makesurefilePath) {
-  return executeGetLine("cd \"$(dirname " quoteArg(makesurefilePath) ")\"; pwd")
+  return executeGetLine("cd \"$(dirname " quoteArg(makesurefilePath) ")\";pwd")
 }
 
 function handleCodeLine(line,   goal_name) {
