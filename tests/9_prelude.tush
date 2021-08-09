@@ -18,3 +18,8 @@ $ cd "$MYDIR"; ./makesure -f tests/9_prelude_depend_on.sh
 @ Only use @depends_on in @goal/@goal_glob:
 @ tests/9_prelude_depend_on.sh:2: @depends_on g1
 ? 1
+
+$ cd "$MYDIR"; ./makesure -f tests/9_prelude_reached_if.sh
+@ Only use @reached_if in @goal/@goal_glob:
+@ tests/9_prelude_reached_if.sh:2: @reached_if aaa
+? 1
