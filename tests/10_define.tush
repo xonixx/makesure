@@ -66,3 +66,9 @@ $ cd "$MYDIR"; ./makesure -f tests/10_define.sh children_reached_or_not -d
 |   is_not_reached
 |   children_reached_or_not
 
+$ cd "$MYDIR"; ./makesure -f tests/10_define_in_goal.sh
+@ Only use @define in prelude:
+@ tests/10_define_in_goal.sh:3: @define A=1
+? 1
+
+
