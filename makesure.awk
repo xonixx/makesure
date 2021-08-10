@@ -394,7 +394,7 @@ function currentGoalName() { return isPrelude() ? "" : arrLast(GoalNames) }
 function realExit(code,   i) {
   Died = 1
   if (DefinesFile)
-    system("rm " DefinesFile)
+    rm(DefinesFile)
   exit code
 }
 function addError(err) { Error=addL(Error, err ":\n" ARGV[1] ":" NR ": " $0) }
@@ -488,7 +488,7 @@ function selfUpdate(   url, tmp, err, newVer) {
       else print "updated " Version " -> " newVer
     } else print "you have latest version " Version " installed"
   }
-  system("rm " tmp)
+  rm(tmp)
   if (err) dieMsg(err);
 }
 
@@ -563,5 +563,6 @@ function commandExists(cmd) { return ok("command -v " cmd " >/dev/null") }
 function ok(cmd) { return system(cmd) == 0 }
 function isFile(path) { return ok("test -f " quoteArg(path)) }
 function isDir(path) { return ok("test -d " quoteArg(path)) }
+function rm(f) { system("rm " quoteArg(f)) }
 function quoteArg(a) { gsub("'", "'\\''", a); return "'" a "'" }
 function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s; }
