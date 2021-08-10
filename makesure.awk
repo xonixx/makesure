@@ -26,6 +26,7 @@ BEGIN {
   srand()
   prepareArgs()
   MyDirScript = "MYDIR=" quoteArg(getMyDir(ARGV[1])) ";export MYDIR;cd \"$MYDIR\""
+  Error=""
 }
                     { Lines[NR]=$0             }
 "@options"    == $1 { handleOptions();    next }
@@ -113,7 +114,7 @@ function handleOptions() {
 
   for (i=2; i<=NF; i++) {
     if (!($i in SupportedOptions))
-      die("Option " $i " is not supported")
+      addError("Option " $i " is not supported")
     Options[$i]
   }
 }
@@ -141,7 +142,7 @@ function handleShell() {
   Shell = trim($2)
 
   if (!(Shell in SupportedShells))
-    die("Shell '" Shell "' is not supported")
+    addError("Shell '" Shell "' is not supported")
 }
 
 function adjustOptions() {
@@ -162,10 +163,10 @@ function handleGoal() {
 function registerGoal(goal_name) {
   goal_name = trim(goal_name)
   if (length(goal_name) == 0) {
-    die("Goal must have a name")
+    addError("Goal must have a name")
   }
   if (goal_name in GoalsByName) {
-    die("Goal '" goal_name "' is already defined")
+    addError("Goal '" goal_name "' is already defined")
   }
   arrPush(GoalNames, goal_name)
   GoalsByName[goal_name]
@@ -244,7 +245,7 @@ function makeGlobVarsCode(i) {
 
 function registerReachedIf(goal_name, pre_script) {
   if (goal_name in ReachedIf) {
-    die("Multiple " $1 " not allowed for a goal")
+    addError("Multiple " $1 " not allowed for a goal")
   }
 
   $1 = ""
@@ -256,6 +257,9 @@ function doWork(\
 body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
 
   started("end") # end last directive
+
+  if (Error)
+    dieMsg(Error)
 
   if ("-l" in Args || "--list" in Args) {
     print "Available goals:"
@@ -383,8 +387,8 @@ function resolveGoalsToRun(result,   i, goal_name, loop) {
 }
 
 function isPrelude() { return "prelude"==Mode }
-function checkPreludeOnly() { if (!isPrelude()) die("Only use " $1 " in prelude") }
-function checkGoalOnly() { if ("goal" != Mode && "goal_glob" != Mode) die("Only use " $1 " in @goal/@goal_glob") }
+function checkPreludeOnly() { if (!isPrelude()) addError("Only use " $1 " in prelude") }
+function checkGoalOnly() { if ("goal" != Mode && "goal_glob" != Mode) addError("Only use " $1 " in @goal/@goal_glob") }
 function currentGoalName() { return isPrelude() ? "" : arrLast(GoalNames) }
 
 function realExit(code,   i) {
@@ -393,6 +397,7 @@ function realExit(code,   i) {
     system("rm " DefinesFile)
   exit code
 }
+function addError(err) { Error=addL(Error, err ":\n" ARGV[1] ":" NR ": " $0) }
 function die(msg, n) { if (!n) n=NR; dieMsg(msg ":\n" ARGV[1] ":" n ": " Lines[n]) }
 function dieMsg(msg,    out) {
   out = "cat 1>&2" # trick to write from awk to stderr
