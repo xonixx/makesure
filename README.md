@@ -74,3 +74,16 @@ Updates `makesure` executable to latest available version in-place:
 ```shell
 ./makesure -U
 ```
+
+### Similar tools
+
+- **just** https://github.com/casey/just
+  - just is a handy way to save and run project-specific commands
+- **Task** https://github.com/go-task/task
+  - Task is a task runner / build tool that aims to be simpler and easier to use than, for example, GNU Make.
+- **gup** https://github.com/timbertson/gup
+  - Gup is a general purpose, recursive, top down software build system.
+- **redo** https://github.com/apenwarr/redo
+  - redo - a recursive build system. Smaller, easier, more powerful, and more reliable than make.
+- **Tup** https://github.com/gittup/tup
+  - Tup is a file-based build system for Linux, OSX, and Windows.
