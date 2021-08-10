@@ -162,12 +162,10 @@ function handleGoal() {
 
 function registerGoal(goal_name) {
   goal_name = trim(goal_name)
-  if (length(goal_name) == 0) {
+  if (length(goal_name) == 0)
     addError("Goal must have a name")
-  }
-  if (goal_name in GoalsByName) {
+  if (goal_name in GoalsByName)
     addError("Goal '" goal_name "' is already defined")
-  }
   arrPush(GoalNames, goal_name)
   GoalsByName[goal_name]
 }
@@ -175,7 +173,7 @@ function registerGoal(goal_name) {
 function calcGlob(pattern,   script, file) {
   split("",GlobFiles)
   script = MyDirScript ";for f in ./" pattern ";do test -e \"$f\" && echo \"$f\";done"
-  while (script | getline file) {
+  while ((script | getline file)>0) {
     file = substr(file, 3)
     arrPush(GlobFiles,file)
   }
@@ -244,9 +242,8 @@ function makeGlobVarsCode(i) {
 }
 
 function registerReachedIf(goal_name, pre_script) {
-  if (goal_name in ReachedIf) {
+  if (goal_name in ReachedIf)
     addError("Multiple " $1 " not allowed for a goal")
-  }
 
   $1 = ""
   ReachedIf[goal_name] = pre_script trim($0)
@@ -285,9 +282,8 @@ body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
       realExit(exit_code)
 
     addLine(defines_line, MyDirScript)
-    if (DefinesFile) {
+    if (DefinesFile)
       addLine(defines_line, ". " DefinesFile)
-    }
 
     for (i = 0; i < arrLen(GoalNames); i++) {
       goal_name = GoalNames[i]
