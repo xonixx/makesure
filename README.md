@@ -81,8 +81,9 @@ Updates `makesure` executable to latest available version in-place:
 - Minimalistic. Bare minimum of features that compose good with each other.
 - There should be one way to do the thing.
 - Overall [Zen of Python](https://www.python.org/dev/peps/pep-0020/#the-zen-of-python). 
-- Think hard before adding new feature. Think of a damage it could cause used improperly. Only add a feature generic enough to cover lots of useful cases instead of just some corner cases. Let's better have a list of recipes for the latter.
+- Think hard before adding new feature. Think of a damage it could cause used improperly. Think of cognitive complexity it introduces. Only add a feature generic enough to cover lots of useful cases instead of just some corner cases. Let's better have a list of recipes for the latter.
 - Do not introduce unjustified complexity. User should not be forced to learn a whole new programming language to work with a tool. Instead, the tool is based on limited set of simple concepts, like goals + dependencies + @reached_if + familiar shell language (bash/sh).
+- Tests coverage is a must.
 
 ## Documentation
 
