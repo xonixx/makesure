@@ -102,6 +102,7 @@
 @depends_on tests/10_define.tush
 @depends_on tests/11_goal_glob.tush
 @depends_on tests/12_update.tush
+@depends_on tests/13_errors.tush
 
 @goal stable
 @doc Prepare for release

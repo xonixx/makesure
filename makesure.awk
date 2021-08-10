@@ -114,7 +114,7 @@ function handleOptions() {
 
   for (i=2; i<=NF; i++) {
     if (!($i in SupportedOptions))
-      addError("Option " $i " is not supported")
+      addError("Option '" $i "' is not supported")
     Options[$i]
   }
 }

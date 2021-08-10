@@ -1,0 +1,23 @@
+
+$ cd "$MYDIR"; ./makesure -f tests/13_errors.sh
+@ Only use @reached_if in @goal/@goal_glob:
+@ tests/13_errors.sh:2: @reached_if true
+@ Only use @doc in @goal/@goal_glob:
+@ tests/13_errors.sh:4: @doc Doc in prelude
+@ Option 'usupported' is not supported:
+@ tests/13_errors.sh:5: @options usupported
+@ Shell 'usupported' is not supported:
+@ tests/13_errors.sh:6: @shell usupported
+@ Goal must have a name:
+@ tests/13_errors.sh:8: @goal
+@ Goal 'g1' is already defined:
+@ tests/13_errors.sh:14: @goal g1
+@ Multiple @reached_if not allowed for a goal:
+@ tests/13_errors.sh:16: @reached_if false
+@ Only use @shell in prelude:
+@ tests/13_errors.sh:20: @shell sh
+@ Only use @define in prelude:
+@ tests/13_errors.sh:21: @define A=1
+@ Only use @options in prelude:
+@ tests/13_errors.sh:24: @options timing
+? 1
