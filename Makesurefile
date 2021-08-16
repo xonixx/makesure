@@ -41,6 +41,7 @@
 @depends_on cleaned cleaned_soft
 
 @goal debug
+@doc shows software versions
   AWK="${AWK:-awk}"
   case "$AWK" in
     *mawk*) "$AWK" -W version 2>&1 | head -n 1
@@ -89,6 +90,7 @@
   fi
 
 @goal tested
+@doc runs all tests with default awk
 @depends_on tests/0_basic.tush
 @depends_on tests/1_goals.tush
 @depends_on tests/2_mydir.tush
@@ -106,10 +108,11 @@
 @depends_on tests/14_doc.tush
 
 @goal stable
-@doc Prepare for release
+@doc prepares for release
 @depends_on makesure_stable README.md
 
 @goal README.md
+@doc updates README with actual makesure help output
 @depends_on makesure_stable
   awk '
     /^\$ \.\/makesure -h$/ { print; stop=1; system("./makesure_stable -h") }
@@ -118,6 +121,7 @@
   mv README.md.1 README.md
 
 @goal makesure_stable
+@doc compiles makesure_stable
 @depends_on tested
   OUT=makesure_stable
 
@@ -132,9 +136,11 @@
   } > $OUT
 
 @goal default
+@doc by default just runs tests
 @depends_on tested
 
 @goal tested_awks
+@doc tests with all awks
 @depends_on tested
 @depends_on tested_bwk
 @depends_on tested_mawk
@@ -157,6 +163,7 @@
   AWK="/usr/bin/mawk" ./makesure tested
 
 @goal installed_awks
+@doc installs all awks
 @depends_on installed_bwk
 @depends_on installed_gawk51
 @depends_on installed_mawk134
