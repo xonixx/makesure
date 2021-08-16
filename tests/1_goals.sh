@@ -8,8 +8,7 @@
   echo aaa
 
 @goal bbb
-@doc Documenatation for bbb line 1
-@doc Documenatation for bbb line 2
+@doc Documenatation for bbb
 @depends_on ccc ddd
   echo bbb
 

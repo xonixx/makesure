@@ -18,8 +18,7 @@ BEGIN {
   split("",Dependencies)       # name,i -> dep goal
   split("",DependenciesLineNo) # name,i -> line no.
   split("",DependenciesCnt) # name   -> dep cnd
-  split("",Doc)    # name,i -> doc str
-  split("",DocCnt) # name   -> doc lines cnt
+  split("",Doc)    # name -> doc str
   split("",ReachedIf) # name -> condition line
   split("",GlobFiles) # list
   Mode = "prelude" # prelude/goal/goal_glob
@@ -202,8 +201,10 @@ function handleDoc(   i) {
 }
 
 function registerDoc(goal_name) {
+  if (goal_name in Doc)
+    addError("Multiple " $1 " not allowed for a goal")
   $1 = ""
-  Doc[goal_name, DocCnt[goal_name]++] = trim($0)
+  Doc[goal_name] = trim($0)
 }
 
 function handleDependsOn(   i) {
@@ -262,11 +263,11 @@ body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
     print "Available goals:"
     for (i = 0; i < arrLen(GoalNames); i++) {
       goal_name = GoalNames[i]
-      print "  " goal_name
-      if (goal_name in DocCnt) {
-        for (j = 0; j < DocCnt[goal_name]; j++)
-          print "    " Doc[goal_name, j]
-      }
+      printf "  "
+      if (goal_name in Doc)
+        printf "%s - %s\n", goal_name, Doc[goal_name]
+      else
+        print goal_name
     }
   } else {
     if ("timing" in Options)
