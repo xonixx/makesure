@@ -104,3 +104,5 @@ TODO
   - redo - a recursive build system. Smaller, easier, more powerful, and more reliable than make.
 - **Tup** https://github.com/gittup/tup
   - Tup is a file-based build system for Linux, OSX, and Windows.
+- **Please** https://github.com/thought-machine/please
+  - Please is a cross-language build system with an emphasis on high performance, extensibility and reproducibility.
