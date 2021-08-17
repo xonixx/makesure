@@ -5,6 +5,6 @@ mydir=$(
   pwd
 )
 
-export AWK=${AWK:-awk}
+export AWK="${AWK:-awk}"
 
-exec "$AWK" -v "Version=$NEXT_VERSION" -v "Prog=$0" -f "$mydir/makesure.awk" Makesurefile "$@"
+exec $AWK -v "Version=$NEXT_VERSION" -v "Prog=$0" -f "$mydir/makesure.awk" Makesurefile "$@"

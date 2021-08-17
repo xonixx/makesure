@@ -162,6 +162,9 @@
 @goal tested_mawk
   AWK="/usr/bin/mawk" ./makesure tested
 
+#@goal tested_busybox
+#  AWK="busybox awk" ./makesure tested
+
 @goal installed_awks
 @doc installs all awks
 @depends_on installed_bwk
