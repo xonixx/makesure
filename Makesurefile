@@ -4,11 +4,11 @@
 
 @options timing
 
-@goal soft_folder_created
+@goal soft_folder_created @private
 @reached_if [[ -d "soft" ]]
   mkdir soft
 
-@goal tush_installed
+@goal tush_installed @private
 @depends_on soft_folder_created
 @reached_if [[ -f "soft/tush/bin/tush-check" ]]
   echo
@@ -28,19 +28,19 @@
     rm -r tush/.git
   fi
 
-@goal soft_installed
+@goal soft_installed @private
 @depends_on tush_installed
 
-@goal cleaned
+@goal cleaned @private
 
-@goal cleaned_soft
+@goal cleaned_soft @private
 @reached_if [[ ! -d "soft" ]]
   rm -r "soft"
 
-@goal cleaned_all
+@goal cleaned_all @private
 @depends_on cleaned cleaned_soft
 
-@goal debug
+@goal debug @private
 @doc shows software versions
   AWK="${AWK:-awk}"
   case "$AWK" in
@@ -51,10 +51,10 @@
   esac
   bash --version| head -n 1
 
-@goal prepared4tests
+@goal prepared4tests @private
 @depends_on tush_installed debug
 
-@goal_glob tests/*.tush
+@goal_glob tests/*.tush @private
 @depends_on prepared4tests
   f="$ITEM"
 
@@ -148,19 +148,19 @@
 @depends_on tested_mawk134
 @depends_on tested_gawk51
 
-@goal tested_bwk
+@goal tested_bwk @private
 @depends_on installed_bwk
   AWK="$(pwd)/soft/bwk" ./makesure tested
 
-@goal tested_mawk134
+@goal tested_mawk134 @private
 @depends_on installed_mawk134
   AWK="$(pwd)/soft/mawk134" ./makesure tested
 
-@goal tested_gawk51
+@goal tested_gawk51 @private
 @depends_on installed_gawk51
   AWK="$(pwd)/soft/gawk51" ./makesure tested
 
-@goal tested_mawk
+@goal tested_mawk @private
   AWK="/usr/bin/mawk" ./makesure tested
 
 #@goal tested_busybox
@@ -172,7 +172,7 @@
 @depends_on installed_gawk51
 @depends_on installed_mawk134
 
-@goal installed_bwk
+@goal installed_bwk @private
 @reached_if [[ -f soft/bwk ]]
 @depends_on soft_folder_created
   echo
@@ -199,7 +199,7 @@
   ./bwk --version
   rm -r awk-master
 
-@goal installed_gawk51
+@goal installed_gawk51 @private
 @reached_if [[ -f soft/gawk51 ]]
 @depends_on soft_folder_created
   echo
@@ -227,7 +227,7 @@
   ./gawk51 --version
   rm -r "gawk-5.1.0"
 
-@goal installed_mawk134
+@goal installed_mawk134 @private
 @reached_if [[ -f soft/mawk134 ]]
 @depends_on soft_folder_created
   echo
