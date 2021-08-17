@@ -109,11 +109,7 @@
 @depends_on tests/15_private.tush
 
 @goal stable
-@doc prepares for release
-@depends_on makesure_stable README.md
-
-@goal README.md
-@doc updates README with actual makesure help output
+@doc rebuilds makesure_stable & README.md for release
 @depends_on makesure_stable
   awk '
     /^\$ \.\/makesure -h$/ { print; stop=1; system("./makesure_stable -h") }
@@ -121,7 +117,7 @@
     !stop' README.md > README.md.1
   mv README.md.1 README.md
 
-@goal makesure_stable
+@goal makesure_stable @private
 @doc compiles makesure_stable
 @depends_on tested
   OUT=makesure_stable
@@ -137,7 +133,7 @@
   } > $OUT
 
 @goal default
-@doc by default just runs tests
+@doc calls tested goal
 @depends_on tested
 
 @goal tested_awks
