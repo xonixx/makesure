@@ -21,4 +21,6 @@
 @define A=1
 
 @goal g3
+@doc doc1
+@doc doc2
 @options timing

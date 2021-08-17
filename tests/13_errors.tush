@@ -18,6 +18,8 @@ $ cd "$MYDIR"; ./makesure -f tests/13_errors.sh
 @ tests/13_errors.sh:20: @shell sh
 @ Only use @define in prelude:
 @ tests/13_errors.sh:21: @define A=1
+@ Multiple @doc not allowed for a goal:
+@ tests/13_errors.sh:25: @doc doc2
 @ Only use @options in prelude:
-@ tests/13_errors.sh:24: @options timing
+@ tests/13_errors.sh:26: @options timing
 ? 1
