@@ -75,6 +75,29 @@ Updates `makesure` executable to latest available version in-place:
 ./makesure -U
 ```
 
+## Prerequisites
+
+### OS    
+
+`makesure` will run on any environment with Posix shell available. [Tested](https://github.com/xonixx/makesure/actions) and officially supported are:
+ 
+- Linux
+- MacOS
+- Windows (via Git Bash)
+      
+### AWK
+
+The core of this tool is implemented in [AWK](https://en.wikipedia.org/wiki/AWK).
+Almost all major implementations of AWK will work. Tested and officially supported are:
+
+- [Gawk](https://www.gnu.org/software/gawk/)
+- [BWK](https://github.com/onetrueawk/awk)
+- [mawk](https://invisible-island.net/mawk/)
+
+This means that the default AWK implementation in your OS will work.
+
+The tool will **not** work with Busybox awk.
+
 ## Design principles
 
 - Convention over configuration.
