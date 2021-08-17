@@ -5,3 +5,11 @@ $ cd "$MYDIR"; ./makesure -f tests/15_private.sh -l
 |   a
 |   15_private.sh
 
+$ cd "$MYDIR"; ./makesure -f tests/15_private.sh --list-all
+| Available goals:
+|   a
+|   b
+|   15_private.sh
+|   15_private.tush
+
+

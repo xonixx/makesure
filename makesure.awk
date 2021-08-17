@@ -63,7 +63,8 @@ function prepareArgs(   i,arg) {
     print "Usage: makesure [options...] [-f buildfile] [goals...]"
     print " -f,--file buildfile"
     print "                 set buildfile to use (default Makesurefile)"
-    print " -l,--list       list all available goals"
+    print " -l,--list       list non-@private available goals"
+    print " -la,--list-all  list all available goals"
     print " -d,--resolved   list resolved dependencies to reach given goals"
     print " -D \"var=val\",--define \"var=val\""
     print "                 override @define values"
@@ -262,18 +263,19 @@ function registerReachedIf(goal_name, pre_script) {
 
 function doWork(\
   i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,defines_line,
-body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
+body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed, list) {
 
   started("end") # end last directive
 
   if (Error)
     dieMsg(Error)
 
-  if ("-l" in Args || "--list" in Args) {
+  list="-l" in Args || "--list" in Args
+  if (list || "-la" in Args || "--list-all" in Args) {
     print "Available goals:"
     for (i = 0; i < arrLen(GoalNames); i++) {
       goal_name = GoalNames[i]
-      if (GoalsByName[goal_name]) # private
+      if (list && GoalsByName[goal_name]) # private
         continue
       printf "  "
       if (goal_name in Doc)
