@@ -11,7 +11,7 @@ BEGIN {
   split("",ArgGoals) # invoked goals
   split("",Options)
   split("",GoalNames)   # list
-  split("",GoalsByName) # name -> ""
+  split("",GoalsByName) # name -> private
   split("",Code)        # name -> body
   split("",DefineOverrides) # k -> v
   DefinesFile=""
@@ -167,7 +167,7 @@ function registerGoal(goal_name, priv) {
   if (goal_name in GoalsByName)
     addError("Goal '" goal_name "' is already defined")
   arrPush(GoalNames, goal_name)
-  GoalsByName[goal_name]
+  GoalsByName[goal_name] = priv
 }
 
 function calcGlob(pattern,   script, file) {
@@ -273,6 +273,8 @@ body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
     print "Available goals:"
     for (i = 0; i < arrLen(GoalNames); i++) {
       goal_name = GoalNames[i]
+      if (GoalsByName[goal_name]) # private
+        continue
       printf "  "
       if (goal_name in Doc)
         printf "%s - %s\n", goal_name, Doc[goal_name]

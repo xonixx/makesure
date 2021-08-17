@@ -106,6 +106,7 @@
 @depends_on tests/12_update.tush
 @depends_on tests/13_errors.tush
 @depends_on tests/14_doc.tush
+@depends_on tests/15_private.tush
 
 @goal stable
 @doc prepares for release
