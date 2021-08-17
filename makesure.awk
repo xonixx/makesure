@@ -11,7 +11,7 @@ BEGIN {
   split("",ArgGoals) # invoked goals
   split("",Options)
   split("",GoalNames)   # list
-  split("",GoalsByName) # name -> ""
+  split("",GoalsByName) # name -> private
   split("",Code)        # name -> body
   split("",DefineOverrides) # k -> v
   DefinesFile=""
@@ -63,7 +63,8 @@ function prepareArgs(   i,arg) {
     print "Usage: makesure [options...] [-f buildfile] [goals...]"
     print " -f,--file buildfile"
     print "                 set buildfile to use (default Makesurefile)"
-    print " -l,--list       list all available goals"
+    print " -l,--list       list non-@private available goals"
+    print " -la,--list-all  list all available goals"
     print " -d,--resolved   list resolved dependencies to reach given goals"
     print " -D \"var=val\",--define \"var=val\""
     print "                 override @define values"
@@ -154,19 +155,20 @@ function started(mode) {
   Mode = mode
 }
 
-function handleGoal() {
+function handleGoal(   priv) {
   started("goal")
-  registerGoal($2)
+  priv = parseGoalLine()
+  registerGoal($0, priv)
 }
 
-function registerGoal(goal_name) {
+function registerGoal(goal_name, priv) {
   goal_name = trim(goal_name)
   if (length(goal_name) == 0)
     addError("Goal must have a name")
   if (goal_name in GoalsByName)
     addError("Goal '" goal_name "' is already defined")
   arrPush(GoalNames, goal_name)
-  GoalsByName[goal_name]
+  GoalsByName[goal_name] = priv
 }
 
 function calcGlob(pattern,   script, file) {
@@ -179,12 +181,21 @@ function calcGlob(pattern,   script, file) {
   close(script)
 }
 
-function handleGoalGlob(   goal_name,i) {
-  started("goal_glob")
+function parseGoalLine(   priv) {
+  if ($NF == "@private") {
+    priv=1
+    NF--
+  }
   $1 = ""
+  return priv
+}
+
+function handleGoalGlob(   goal_name,priv,i) {
+  started("goal_glob")
+  priv = parseGoalLine()
   calcGlob(trim($0))
   for (i=0; i<arrLen(GlobFiles); i++){
-    registerGoal(GlobFiles[i])
+    registerGoal(GlobFiles[i], priv)
   }
 }
 
@@ -252,17 +263,20 @@ function registerReachedIf(goal_name, pre_script) {
 
 function doWork(\
   i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,defines_line,
-body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed) {
+body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed, list) {
 
   started("end") # end last directive
 
   if (Error)
     dieMsg(Error)
 
-  if ("-l" in Args || "--list" in Args) {
+  list="-l" in Args || "--list" in Args
+  if (list || "-la" in Args || "--list-all" in Args) {
     print "Available goals:"
     for (i = 0; i < arrLen(GoalNames); i++) {
       goal_name = GoalNames[i]
+      if (list && GoalsByName[goal_name]) # private
+        continue
       printf "  "
       if (goal_name in Doc)
         printf "%s - %s\n", goal_name, Doc[goal_name]
@@ -394,7 +408,7 @@ function realExit(code,   i) {
     rm(DefinesFile)
   exit code
 }
-function addError(err) { Error=addL(Error, err ":\n" ARGV[1] ":" NR ": " $0) }
+function addError(err) { Error=addL(Error, err ":\n" ARGV[1] ":" NR ": " Lines[NR]) }
 function die(msg, n) { if (!n) n=NR; dieMsg(msg ":\n" ARGV[1] ":" n ": " Lines[n]) }
 function dieMsg(msg,    out) {
   out = "cat 1>&2" # trick to write from awk to stderr
