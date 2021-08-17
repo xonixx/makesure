@@ -154,12 +154,13 @@ function started(mode) {
   Mode = mode
 }
 
-function handleGoal() {
+function handleGoal(   priv) {
   started("goal")
-  registerGoal($2)
+  priv = parseGoalLine()
+  registerGoal($0, priv)
 }
 
-function registerGoal(goal_name) {
+function registerGoal(goal_name, priv) {
   goal_name = trim(goal_name)
   if (length(goal_name) == 0)
     addError("Goal must have a name")
@@ -179,12 +180,21 @@ function calcGlob(pattern,   script, file) {
   close(script)
 }
 
-function handleGoalGlob(   goal_name,i) {
-  started("goal_glob")
+function parseGoalLine(   priv) {
+  if ($NF == "@private") {
+    priv=1
+    NF--
+  }
   $1 = ""
+  return priv
+}
+
+function handleGoalGlob(   goal_name,priv,i) {
+  started("goal_glob")
+  priv = parseGoalLine()
   calcGlob(trim($0))
   for (i=0; i<arrLen(GlobFiles); i++){
-    registerGoal(GlobFiles[i])
+    registerGoal(GlobFiles[i], priv)
   }
 }
 
@@ -394,7 +404,7 @@ function realExit(code,   i) {
     rm(DefinesFile)
   exit code
 }
-function addError(err) { Error=addL(Error, err ":\n" ARGV[1] ":" NR ": " $0) }
+function addError(err) { Error=addL(Error, err ":\n" ARGV[1] ":" NR ": " Lines[NR]) }
 function die(msg, n) { if (!n) n=NR; dieMsg(msg ":\n" ARGV[1] ":" n ": " Lines[n]) }
 function dieMsg(msg,    out) {
   out = "cat 1>&2" # trick to write from awk to stderr
