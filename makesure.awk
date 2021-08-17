@@ -486,7 +486,7 @@ function selfUpdate(   url, tmp, err, newVer) {
     } else print "you have latest version " Version " installed"
   }
   rm(tmp)
-  if (err) dieMsg(err);
+  if (err) dieMsg(err)
 }
 
 function renderDuration(deltaMillis,\
@@ -562,4 +562,4 @@ function isFile(path) { return ok("test -f " quoteArg(path)) }
 function isDir(path) { return ok("test -d " quoteArg(path)) }
 function rm(f) { system("rm " quoteArg(f)) }
 function quoteArg(a) { gsub("'", "'\\''", a); return "'" a "'" }
-function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s; }
+function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s }
