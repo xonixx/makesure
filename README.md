@@ -46,7 +46,7 @@ makesure ver. 0.9.7.1
 Usage: makesure [options...] [-f buildfile] [goals...]
  -f,--file buildfile
                  set buildfile to use (default Makesurefile)
- -l,--list       list non-@private available goals
+ -l,--list       list all available non-@private goals
  -la,--list-all  list all available goals
  -d,--resolved   list resolved dependencies to reach given goals
  -D "var=val",--define "var=val"

@@ -63,7 +63,7 @@ function prepareArgs(   i,arg) {
     print "Usage: makesure [options...] [-f buildfile] [goals...]"
     print " -f,--file buildfile"
     print "                 set buildfile to use (default Makesurefile)"
-    print " -l,--list       list non-@private available goals"
+    print " -l,--list       list all available non-@private goals"
     print " -la,--list-all  list all available goals"
     print " -d,--resolved   list resolved dependencies to reach given goals"
     print " -D \"var=val\",--define \"var=val\""
