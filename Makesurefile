@@ -2,6 +2,9 @@
 @define NEXT_VERSION="0.9.7.1"
 @define TUSH_REPO=https://github.com/adolfopa/tush
 
+@define GOAWK_VERSION=1.8.1
+@define GOAWK=goawk$GOAWK_VERSION
+
 @options timing
 
 @goal soft_folder_created @private
@@ -156,6 +159,10 @@
 @depends_on installed_gawk51
   AWK="$(pwd)/soft/gawk51" ./makesure tested
 
+@goal tested_goawk @private
+@depends_on installed_goawk
+  AWK="$(pwd)/soft/$GOAWK" ./makesure tested
+
 @goal tested_mawk @private
   AWK="/usr/bin/mawk" ./makesure tested
 
@@ -167,6 +174,7 @@
 @depends_on installed_bwk
 @depends_on installed_gawk51
 @depends_on installed_mawk134
+@depends_on installed_goawk
 
 @goal installed_bwk @private
 @reached_if [[ -f soft/bwk ]]
@@ -250,3 +258,22 @@
   cd ..
   ./mawk134 -W version
   rm -r mawk-1.3.4-*
+
+@goal installed_goawk @private
+@reached_if [[ -f soft/$GOAWK ]]
+@depends_on soft_folder_created
+  echo
+  echo "Fetching GoAWK $GOAWK_VERSION ..."
+  echo
+
+  cd "soft"
+
+  F=goawk_v${GOAWK_VERSION}_linux_amd64.tar.gz
+  wget "https://github.com/benhoyt/goawk/releases/download/v$GOAWK_VERSION/$F"
+  tar xzvf "$F" goawk
+  rm "$F"
+
+  mv goawk $GOAWK
+  "./$GOAWK" --version
+
+
