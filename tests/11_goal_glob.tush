@@ -5,6 +5,9 @@ $ cd "$MYDIR"; ./makesure -f tests/11_goal_glob.sh test1 -l
 |   11_goal_glob_2.txt - test goal_glob
 |   11_goal_glob_3.txt - test goal_glob
 |   test1
+|   goal_name@11_goal_glob_1.txt
+|   goal_name@11_goal_glob_2.txt
+|   goal_name@11_goal_glob_3.txt
 
 $ cd "$MYDIR"; ./makesure -f tests/11_goal_glob.sh test1
 |   goal '11_goal_glob_1.txt' ...

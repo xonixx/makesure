@@ -198,7 +198,7 @@ function handleGoalGlob(   goal_name,priv,i) {
   } else $3 = ""
   calcGlob(trim($0))
   for (i=0; i<arrLen(GlobFiles); i++){
-    registerGoal(GlobFiles[i], priv)
+    registerGoal((goal_name ? goal_name "@" : "") GlobFiles[i], priv)
   }
 }
 
