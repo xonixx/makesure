@@ -1,11 +1,11 @@
 
-@goal_glob 11_goal_glob*.txt
+@goal @glob 11_goal_glob*.txt
 @reached_if [[ $INDEX -eq 1 ]]
 @doc test goal_glob
   echo "$ITEM :: $INDEX :: $TOTAL"
   cat $ITEM
 
-@goal_glob non-existent-glob*
+@goal @glob non-existent-glob*
   echo "wtf"
 
 @goal test1
