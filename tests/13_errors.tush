@@ -1,8 +1,8 @@
 
 $ cd "$MYDIR"; ./makesure -f tests/13_errors.sh
-@ Only use @reached_if in @goal/@goal_glob:
+@ Only use @reached_if in @goal:
 @ tests/13_errors.sh:2: @reached_if true
-@ Only use @doc in @goal/@goal_glob:
+@ Only use @doc in @goal:
 @ tests/13_errors.sh:4: @doc Doc in prelude
 @ Option 'usupported' is not supported:
 @ tests/13_errors.sh:5: @options usupported
