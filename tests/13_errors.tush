@@ -2,6 +2,8 @@
 $ cd "$MYDIR"; ./makesure -f tests/13_errors.sh
 @ Only use @reached_if in @goal:
 @ tests/13_errors.sh:2: @reached_if true
+@ Only use @depends_on in @goal:
+@ tests/13_errors.sh:3: @depends_on g1
 @ Only use @doc in @goal:
 @ tests/13_errors.sh:4: @doc Doc in prelude
 @ Option 'usupported' is not supported:
@@ -22,4 +24,6 @@ $ cd "$MYDIR"; ./makesure -f tests/13_errors.sh
 @ tests/13_errors.sh:25: @doc doc2
 @ Only use @options in prelude:
 @ tests/13_errors.sh:26: @options timing
+@ Unknown directive: @unknown_directive:
+@ tests/13_errors.sh:27: @unknown_directive arg
 ? 1

@@ -1,6 +1,6 @@
 
 @reached_if true
-@depend_on g1
+@depends_on g1
 @doc Doc in prelude
 @options usupported
 @shell usupported
@@ -9,7 +9,7 @@
   echo Goal without name
 
 @goal g1
-@depend_on unknown
+@depends_on unknown
 
 @goal g1
 @reached_if false
@@ -24,3 +24,4 @@
 @doc doc1
 @doc doc2
 @options timing
+@unknown_directive arg

@@ -36,6 +36,7 @@ BEGIN {
 "@doc"        == $1 { handleDoc();        next }
 "@depends_on" == $1 { handleDependsOn();  next }
 "@reached_if" == $1 { handleReachedIf();  next }
+$1 ~ /^@/           { addError("Unknown directive: " $1); next }
                     { handleCodeLine($0); next }
 
 END { if (!Died) doWork() }
