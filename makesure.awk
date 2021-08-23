@@ -20,6 +20,7 @@ BEGIN {
   split("",DependenciesCnt) # name   -> dep cnd
   split("",Doc)    # name -> doc str
   split("",ReachedIf) # name -> condition line
+  split("",GlobFiles) # list
   split("",GlobGoals) # list
   Mode = "prelude" # prelude/goal/goal_glob
   srand()
@@ -172,9 +173,11 @@ function registerGoal(goal_name, priv) {
 
 function calcGlob(goal_name, pattern,   script, file) {
   split("",GlobGoals)
+  split("",GlobFiles)
   script = MyDirScript ";for f in ./" pattern ";do test -e \"$f\" && echo \"$f\";done"
   while ((script | getline file)>0) {
     file = substr(file, 3)
+    arrPush(GlobFiles,file)
     arrPush(GlobGoals,(goal_name ? goal_name "@" : "") file)
   }
   close(script)
@@ -253,7 +256,7 @@ function handleReachedIf(   i) {
 }
 
 function makeGlobVarsCode(i) {
-  return "ITEM=" quoteArg(GlobGoals[i]) ";INDEX=" i ";TOTAL=" arrLen(GlobGoals) ";"
+  return "ITEM=" quoteArg(GlobFiles[i]) ";INDEX=" i ";TOTAL=" arrLen(GlobGoals) ";"
 }
 
 function registerReachedIf(goal_name, pre_script) {
