@@ -6,6 +6,6 @@
 @depends_on a
 @doc doc for b
 
-@goal_glob 14_doc.tush
+@goal @glob 14_doc.tush
 @depends_on a b
 @doc doc for glob

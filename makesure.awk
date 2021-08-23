@@ -31,8 +31,7 @@ BEGIN {
 "@options"    == $1 { handleOptions();    next }
 "@define"     == $1 { handleDefine();     next }
 "@shell"      == $1 { handleShell();      next }
-"@goal"       == $1 { handleGoal();       next }
-"@goal_glob"  == $1 { handleGoalGlob();   next }
+"@goal"       == $1 { if ("@glob" == $2 || "@glob" == $3) handleGoalGlob(); else handleGoal(); next }
 "@doc"        == $1 { handleDoc();        next }
 "@depends_on" == $1 { handleDependsOn();  next }
 "@reached_if" == $1 { handleReachedIf();  next }
@@ -193,6 +192,10 @@ function parseGoalLine(   priv) {
 function handleGoalGlob(   goal_name,priv,i) {
   started("goal_glob")
   priv = parseGoalLine()
+  goal_name = $2; $2 = ""
+  if ("@glob" == goal_name) {
+    goal_name = ""
+  } else $3 = ""
   calcGlob(trim($0))
   for (i=0; i<arrLen(GlobFiles); i++){
     registerGoal(GlobFiles[i], priv)
