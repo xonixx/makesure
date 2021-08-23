@@ -20,7 +20,7 @@ BEGIN {
   split("",DependenciesCnt) # name   -> dep cnd
   split("",Doc)    # name -> doc str
   split("",ReachedIf) # name -> condition line
-  split("",GlobFiles) # list
+  split("",GlobGoals) # list
   Mode = "prelude" # prelude/goal/goal_glob
   srand()
   prepareArgs()
@@ -170,12 +170,12 @@ function registerGoal(goal_name, priv) {
   GoalsByName[goal_name] = priv
 }
 
-function calcGlob(pattern,   script, file) {
-  split("",GlobFiles)
+function calcGlob(goal_name, pattern,   script, file) {
+  split("",GlobGoals)
   script = MyDirScript ";for f in ./" pattern ";do test -e \"$f\" && echo \"$f\";done"
   while ((script | getline file)>0) {
     file = substr(file, 3)
-    arrPush(GlobFiles,file)
+    arrPush(GlobGoals,(goal_name ? goal_name "@" : "") file)
   }
   close(script)
 }
@@ -196,9 +196,9 @@ function handleGoalGlob(   goal_name,priv,i) {
   if ("@glob" == goal_name) {
     goal_name = ""
   } else $3 = ""
-  calcGlob(trim($0))
-  for (i=0; i<arrLen(GlobFiles); i++){
-    registerGoal((goal_name ? goal_name "@" : "") GlobFiles[i], priv)
+  calcGlob(goal_name, trim($0))
+  for (i=0; i<arrLen(GlobGoals); i++){
+    registerGoal(GlobGoals[i], priv)
   }
 }
 
@@ -208,8 +208,8 @@ function handleDoc(   i) {
   if ("goal" == Mode)
     registerDoc(currentGoalName())
   else {
-    for (i=0; i<arrLen(GlobFiles); i++){
-      registerDoc(GlobFiles[i])
+    for (i=0; i<arrLen(GlobGoals); i++){
+      registerDoc(GlobGoals[i])
     }
   }
 }
@@ -227,8 +227,8 @@ function handleDependsOn(   i) {
   if ("goal" == Mode)
     registerDependsOn(currentGoalName())
   else {
-    for (i=0; i<arrLen(GlobFiles); i++){
-      registerDependsOn(GlobFiles[i])
+    for (i=0; i<arrLen(GlobGoals); i++){
+      registerDependsOn(GlobGoals[i])
     }
   }
 }
@@ -246,14 +246,14 @@ function handleReachedIf(   i) {
   if ("goal" == Mode)
     registerReachedIf(currentGoalName())
   else {
-    for (i=0; i<arrLen(GlobFiles); i++){
-      registerReachedIf(GlobFiles[i], makeGlobVarsCode(i))
+    for (i=0; i<arrLen(GlobGoals); i++){
+      registerReachedIf(GlobGoals[i], makeGlobVarsCode(i))
     }
   }
 }
 
 function makeGlobVarsCode(i) {
-  return "ITEM=" quoteArg(GlobFiles[i]) ";INDEX=" i ";TOTAL=" arrLen(GlobFiles) ";"
+  return "ITEM=" quoteArg(GlobGoals[i]) ";INDEX=" i ";TOTAL=" arrLen(GlobGoals) ";"
 }
 
 function registerReachedIf(goal_name, pre_script) {
@@ -442,8 +442,8 @@ function getMyDir(makesurefilePath) {
 
 function handleCodeLine(line,   goal_name) {
   if ("goal_glob" == Mode) {
-    for (i=0; i<arrLen(GlobFiles); i++){
-      if (!Code[goal_name = GlobFiles[i]])
+    for (i=0; i<arrLen(GlobGoals); i++){
+      if (!Code[goal_name = GlobGoals[i]])
         addCodeLine(goal_name, makeGlobVarsCode(i))
       addCodeLine(goal_name, line)
     }
