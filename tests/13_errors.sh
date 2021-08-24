@@ -2,8 +2,8 @@
 @reached_if true
 @depends_on g1
 @doc Doc in prelude
-@options usupported
-@shell usupported
+@options unsupported
+@shell unsupported
 @use_lib lib1
 
 @goal

@@ -6,10 +6,10 @@ $ cd "$MYDIR"; ./makesure -f tests/13_errors.sh
 @ tests/13_errors.sh:3: @depends_on g1
 @ Only use @doc in @goal:
 @ tests/13_errors.sh:4: @doc Doc in prelude
-@ Option 'usupported' is not supported:
-@ tests/13_errors.sh:5: @options usupported
-@ Shell 'usupported' is not supported:
-@ tests/13_errors.sh:6: @shell usupported
+@ Option 'unsupported' is not supported:
+@ tests/13_errors.sh:5: @options unsupported
+@ Shell 'unsupported' is not supported:
+@ tests/13_errors.sh:6: @shell unsupported
 @ Only use @use_lib in @goal:
 @ tests/13_errors.sh:7: @use_lib lib1
 @ Goal must have a name:
