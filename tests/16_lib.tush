@@ -1,0 +1,12 @@
+
+
+$ cd "$MYDIR"; ./makesure -f tests/16_lib.sh -l
+| Available goals:
+|   a
+|   15_private.sh
+
+$ cd "$MYDIR"; ./makesure -f tests/16_lib.sh g1
+
+$ cd "$MYDIR"; ./makesure -f tests/16_lib.sh g2
+
+

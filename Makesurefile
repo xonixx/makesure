@@ -110,6 +110,7 @@
 @depends_on tests/13_errors.tush
 @depends_on tests/14_doc.tush
 @depends_on tests/15_private.tush
+@depends_on tests/16_lib.tush
 
 @goal stable
 @doc rebuilds makesure_stable & README.md for release

@@ -22,7 +22,10 @@ BEGIN {
   split("",ReachedIf) # name -> condition line
   split("",GlobFiles) # list
   split("",GlobGoals) # list
-  Mode = "prelude" # prelude/goal/goal_glob
+  split("",LibNames) # list
+  split("",Lib)      # name -> code
+  split("",GoalToLib)# goal name -> lib name
+  Mode = "prelude" # prelude|goal|goal_glob|lib
   srand()
   prepareArgs()
   MyDirScript = "MYDIR=" quoteArg(getMyDir(ARGV[1])) ";export MYDIR;cd \"$MYDIR\""
@@ -36,6 +39,8 @@ BEGIN {
 "@doc"        == $1 { handleDoc();        next }
 "@depends_on" == $1 { handleDependsOn();  next }
 "@reached_if" == $1 { handleReachedIf();  next }
+"@lib"        == $1 { handleLib();        next }
+"@use_lib"    == $1 { handleUseLib();     next }
 $1 ~ /^@/           { addError("Unknown directive: " $1); next }
                     { handleCodeLine($0); next }
 
@@ -154,6 +159,36 @@ function adjustOptions() {
 function started(mode) {
   if (isPrelude()) adjustOptions()
   Mode = mode
+}
+
+function handleLib() {
+  started("lib")
+
+  libName = trim($2)
+  if (libName in Lib) {
+    die("Lib '" libName "' is already defined")
+  }
+  arrPush(LibNames, script_name)
+  Lib[libName]
+}
+
+function handleUseLib(   goal_name) {
+  checkGoalOnly()
+
+  if ("goal" == Mode)
+    registerUseLib(currentGoalName())
+  else {
+    for (i=0; i<arrLen(GlobGoals); i++){
+      registerUseLib(GlobGoals[i])
+    }
+  }
+}
+
+function registerUseLib(goal_name) {
+  if (goal_name in GoalToLib)
+    die("You can only use one @lib in a @goal")
+
+  GoalToLib[goal_name] = $2
 }
 
 function handleGoal(   priv) {
@@ -408,6 +443,7 @@ function isPrelude() { return "prelude"==Mode }
 function checkPreludeOnly() { if (!isPrelude()) addError("Only use " $1 " in prelude") }
 function checkGoalOnly() { if ("goal" != Mode && "goal_glob" != Mode) addError("Only use " $1 " in @goal") }
 function currentGoalName() { return isPrelude() ? "" : arrLast(GoalNames) }
+function currentLibName() { return arrLast(LibNames) }
 
 function realExit(code,   i) {
   Died = 1
@@ -445,7 +481,11 @@ function getMyDir(makesurefilePath) {
 }
 
 function handleCodeLine(line,   goal_name) {
-  if ("goal_glob" == Mode) {
+  if ("lib" == Mode) {
+    name = currentLibName()
+    #print "Append line for '" name "': " line
+    Lib[name] = addL(Lib[name], line)
+  } else if ("goal_glob" == Mode) {
     for (i=0; i<arrLen(GlobGoals); i++){
       if (!Code[goal_name = GlobGoals[i]])
         addCodeLine(goal_name, makeGlobVarsCode(i))
