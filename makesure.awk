@@ -178,7 +178,7 @@ function handleUseLib(   goal_name) {
   if ("goal" == Mode)
     registerUseLib(currentGoalName())
   else {
-    for (i=0; i<arrLen(GlobGoals); i++){
+    for (i=0; i in GlobGoals; i++){
       registerUseLib(GlobGoals[i])
     }
   }
@@ -236,7 +236,7 @@ function handleGoalGlob(   goal_name,priv,i) {
     goal_name = ""
   } else $3 = ""
   calcGlob(goal_name, trim($0))
-  for (i=0; i<arrLen(GlobGoals); i++){
+  for (i=0; i in GlobGoals; i++){
     registerGoal(GlobGoals[i], priv)
   }
 }
@@ -247,7 +247,7 @@ function handleDoc(   i) {
   if ("goal" == Mode)
     registerDoc(currentGoalName())
   else {
-    for (i=0; i<arrLen(GlobGoals); i++){
+    for (i=0; i in GlobGoals; i++){
       registerDoc(GlobGoals[i])
     }
   }
@@ -266,7 +266,7 @@ function handleDependsOn(   i) {
   if ("goal" == Mode)
     registerDependsOn(currentGoalName())
   else {
-    for (i=0; i<arrLen(GlobGoals); i++){
+    for (i=0; i in GlobGoals; i++){
       registerDependsOn(GlobGoals[i])
     }
   }
@@ -285,7 +285,7 @@ function handleReachedIf(   i) {
   if ("goal" == Mode)
     registerReachedIf(currentGoalName())
   else {
-    for (i=0; i<arrLen(GlobGoals); i++){
+    for (i=0; i in GlobGoals; i++){
       registerReachedIf(GlobGoals[i], makeGlobVarsCode(i))
     }
   }
@@ -315,7 +315,7 @@ body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed, list)
   list="-l" in Args || "--list" in Args
   if (list || "-la" in Args || "--list-all" in Args) {
     print "Available goals:"
-    for (i = 0; i < arrLen(GoalNames); i++) {
+    for (i = 0; i in GoalNames; i++) {
       goal_name = GoalNames[i]
       if (list && GoalsByName[goal_name]) # private
         continue
@@ -342,7 +342,7 @@ body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed, list)
     if (DefinesFile)
       addLine(defines_line, ". " DefinesFile)
 
-    for (i = 0; i < arrLen(GoalNames); i++) {
+    for (i = 0; i in GoalNames; i++) {
       goal_name = GoalNames[i]
 
       body = trim(Code[goal_name])
@@ -395,11 +395,11 @@ body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed, list)
 
     if ("-d" in Args || "--resolved" in Args) {
       printf("Resolved goals to reach for '%s':\n", join(ArgGoals, 0, arrLen(ArgGoals), " "))
-      for (i = 0; i < arrLen(resolved_goals); i++) {
+      for (i = 0; i in resolved_goals; i++) {
         print "  " resolved_goals[i]
       }
     } else {
-      for (i = 0; i < arrLen(resolved_goals); i++) {
+      for (i = 0; i in resolved_goals; i++) {
         goal_name = resolved_goals[i]
         goal_timed = "timing" in Options && !reached_goals[goal_name] && !empty_goals[goal_name]
         if (goal_timed)
@@ -428,7 +428,7 @@ function resolveGoalsToRun(result,   i, goal_name, loop) {
   if (arrLen(ArgGoals) == 0)
     arrPush(ArgGoals, "default")
 
-  for (i = 0; i < arrLen(ArgGoals); i++) {
+  for (i = 0; i in ArgGoals; i++) {
     goal_name = ArgGoals[i]
     if (!(goal_name in GoalsByName)) {
       dieMsg("Goal not found: " goal_name)
@@ -488,7 +488,7 @@ function handleCodeLine(line,   goal_name) {
     #print "Append line for '" name "': " line
     Lib[name] = addL(Lib[name], line)
   } else if ("goal_glob" == Mode) {
-    for (i=0; i<arrLen(GlobGoals); i++){
+    for (i=0; i in GlobGoals; i++){
       if (!Code[goal_name = GlobGoals[i]])
         addCodeLine(goal_name, makeGlobVarsCode(i))
       addCodeLine(goal_name, line)
