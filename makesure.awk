@@ -166,7 +166,7 @@ function handleLib() {
 
   libName = trim($2)
   if (libName in Lib) {
-    die("Lib '" libName "' is already defined")
+    addError("Lib '" libName "' is already defined")
   }
   arrPush(LibNames, libName)
   Lib[libName]
@@ -186,7 +186,7 @@ function handleUseLib(   goal_name) {
 
 function registerUseLib(goal_name) {
   if (goal_name in GoalToLib)
-    die("You can only use one @lib in a @goal")
+    addError("You can only use one @lib in a @goal")
 
   GoalToLib[goal_name] = $2
 }
@@ -336,7 +336,7 @@ body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed, list)
     addLine(goal_body, trim(Code[""]))
     exit_code = shellExec(goal_body[0]) # TODO optimize : don't exec empty prelude
     if (exit_code != 0)
-      realExit(exit_code)
+      realExit(exit_code) # TODO show prelude failed
 
     addLine(defines_line, MyDirScript)
     if (DefinesFile)
