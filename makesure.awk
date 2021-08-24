@@ -168,7 +168,7 @@ function handleLib() {
   if (libName in Lib) {
     die("Lib '" libName "' is already defined")
   }
-  arrPush(LibNames, script_name)
+  arrPush(LibNames, libName)
   Lib[libName]
 }
 
@@ -334,7 +334,7 @@ body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed, list)
     if ("tracing" in Options)
       addLine(goal_body, "set -x")
     addLine(goal_body, trim(Code[""]))
-    exit_code = shellExec(goal_body[0])
+    exit_code = shellExec(goal_body[0]) # TODO optimize : don't exec empty prelude
     if (exit_code != 0)
       realExit(exit_code)
 
@@ -381,6 +381,8 @@ body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed, list)
         addLine(goal_body, "exit 0")
 
       addLine(goal_body, defines_line[0])
+      if (goal_name in GoalToLib)
+        addLine(goal_body, Lib[GoalToLib[goal_name]]) # TODO handle unknown lib
 
       if ("tracing" in Options)
         addLine(goal_body, "set -x")

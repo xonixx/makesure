@@ -16,4 +16,4 @@ f1 World
 
 @goal g2
 @use_lib lib_name
-f1 World
+f2 World
