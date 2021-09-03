@@ -57,10 +57,30 @@
 @goal prepared4tests @private
 @depends_on tush_installed debug
 
-@goal @glob tests/*.tush @private
-@depends_on prepared4tests
-  f="$ITEM"
+@lib testing_tush
+  function run_tush_file() {
+    local f="$1"
+    local makesure="$2"
 
+    before_count=$(calc_temp_files)
+
+    export PATH="$PATH:$MYDIR/soft/tush/bin"
+    export NEXT_VERSION="NEXT_VERSION"
+
+    if DIFF="diff --strip-trailing-cr" tush-check "$f"
+    then
+      echo "TESTS PASSED : $f"
+    else
+      echo >&2 "!!! TESTS FAILED !!! : $f"
+      exit 1
+    fi
+    after_count=$(calc_temp_files)
+    if (( before_count != after_count ))
+    then
+      echo >&2 "!!! temp file not deleted !!!"
+      exit 1
+    fi
+  }
   function calc_temp_files {
     local tmp_count=$(find /tmp -maxdepth 1 -type f -name 'makesure.*' | wc -l)
     local cnt
@@ -73,27 +93,18 @@
     echo $cnt
   }
 
-  before_count=$(calc_temp_files)
+@goal @glob tests/*.tush @private
+@depends_on prepared4tests
+@use_lib testing_tush
+  run_tush_file "$ITEM" makesure
 
-  export PATH="$PATH:$MYDIR/soft/tush/bin"
-  export NEXT_VERSION="NEXT_VERSION"
-
-  if DIFF="diff --strip-trailing-cr" tush-check "$f"
-  then
-    echo "TESTS PASSED : $f"
-  else
-    echo >&2 "!!! TESTS FAILED !!! : $f"
-    exit 1
-  fi
-  after_count=$(calc_temp_files)
-  if (( before_count != after_count ))
-  then
-    echo >&2 "!!! temp file not deleted !!!"
-    exit 1
-  fi
+@goal test_stable_version @glob tests/*.tush @private
+@depends_on prepared4tests
+@use_lib testing_tush
+  run_tush_file "$ITEM" makesure_stable
 
 @goal tested
-@doc runs all tests with default awk
+@doc runs all tests with default awk on './makesure'
 @depends_on tests/0_basic.tush
 @depends_on tests/1_goals.tush
 @depends_on tests/2_mydir.tush
@@ -111,6 +122,26 @@
 @depends_on tests/14_doc.tush
 @depends_on tests/15_private.tush
 @depends_on tests/16_lib.tush
+
+@goal tested_stable
+@doc runs all tests with default awk on './makesure_stable'
+@depends_on test_stable_version@tests/0_basic.tush
+@depends_on test_stable_version@tests/1_goals.tush
+@depends_on test_stable_version@tests/2_mydir.tush
+@depends_on test_stable_version@tests/3_loop.tush
+@depends_on test_stable_version@tests/4_trace.tush
+@depends_on test_stable_version@tests/5_shell.tush
+@depends_on test_stable_version@tests/6_reached_if.tush
+@depends_on test_stable_version@tests/7_options.tush
+@depends_on test_stable_version@tests/8_timing.tush
+@depends_on test_stable_version@tests/9_prelude.tush
+@depends_on test_stable_version@tests/10_define.tush
+@depends_on test_stable_version@tests/11_goal_glob.tush
+@depends_on test_stable_version@tests/12_update.tush
+@depends_on test_stable_version@tests/13_errors.tush
+@depends_on test_stable_version@tests/14_doc.tush
+@depends_on test_stable_version@tests/15_private.tush
+@depends_on test_stable_version@tests/16_lib.tush
 
 @goal stable
 @doc rebuilds makesure_stable & README.md for release
