@@ -64,7 +64,7 @@
     before_count=$(calc_temp_files)
 
     export PATH="$PATH:$MYDIR/soft/tush/bin"
-    export NEXT_VERSION="NEXT_VERSION"
+    export NEXT_VERSION
 
     if DIFF="diff --strip-trailing-cr" tush-check "$f"
     then
@@ -156,8 +156,6 @@
 @goal makesure_stable @private
 @doc compiles makesure_stable
 @depends_on tested
-  OUT=makesure_stable
-
   {
     echo '#!/bin/sh'
     echo
@@ -166,7 +164,7 @@
     echo "exec awk -v \"Version=\$VERSION\" -v \"Prog=\$0\" '"
     awk "{ gsub(\"'\",\"'\\\\''\"); print}" makesure.awk
     echo \'' Makesurefile "$@"'
-  } > $OUT
+  } > makesure_stable
 
 @goal default
 @doc calls tested goal

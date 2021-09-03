@@ -38,7 +38,7 @@ BEGIN {
   if ("@options" == $1) handleOptions()
   else if ("@define" == $1) handleDefine()
   else if ("@shell" == $1) handleShell()
-  else if ("@goal" == $1) { if ("@glob" == $2 || "@glob" == $3) handleGoalGlob(); else handleGoal(); }
+  else if ("@goal" == $1) { if ("@glob" == $2 || "@glob" == $3) handleGoalGlob(); else handleGoal() }
   else if ("@doc" == $1) handleDoc()
   else if ("@depends_on" == $1) handleDependsOn()
   else if ("@reached_if" == $1) handleReachedIf()
