@@ -1,16 +1,16 @@
 
-$ cd "$MYDIR"; ./makesure -f tests/4_trace.sh
+$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh
 |   goal 'default' ...
 | A=aaa
 
-$ cd "$MYDIR"; ./makesure -f tests/4_trace.sh -x
+$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh -x
 |   goal 'default' ...
 | A=aaa
 @ + A=aaa
 @ + echo ' A=aaa'
 @ + echo A=aaa
 
-$ cd "$MYDIR"; ./makesure -f tests/4_trace.sh --tracing
+$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh --tracing
 |   goal 'default' ...
 | A=aaa
 @ + A=aaa

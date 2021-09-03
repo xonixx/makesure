@@ -1,16 +1,16 @@
 
-$ cd "$MYDIR"; ./makesure -f tests/6_reached_if.sh
+$ cd "$MYDIR"; ./$MAKESURE -f tests/6_reached_if.sh
 |   goal 'bbb' [already satisfied].
 |   goal 'aaa' ...
 | aaa
 |   goal 'default' [empty].
 
-$ cd "$MYDIR"; ./makesure -f tests/6_reached_if.sh -d
+$ cd "$MYDIR"; ./$MAKESURE -f tests/6_reached_if.sh -d
 | Resolved goals to reach for 'default':
 |   bbb
 |   aaa
 |   default
 
-$ cd "$MYDIR"; ./makesure -f tests/6_reached_if.sh --resolved bbb
+$ cd "$MYDIR"; ./$MAKESURE -f tests/6_reached_if.sh --resolved bbb
 | Resolved goals to reach for 'bbb':
 |   bbb

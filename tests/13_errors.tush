@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; ./makesure -f tests/13_errors.sh
+$ cd "$MYDIR"; ./$MAKESURE -f tests/13_errors.sh
 @ Only use @reached_if in @goal:
 @ tests/13_errors.sh:2: @reached_if true
 @ Only use @depends_on in @goal:

@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; ./makesure -f tests/11_goal_glob.sh test1 -l
+$ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh test1 -l
 | Available goals:
 |   11_goal_glob_1.txt - test goal_glob
 |   11_goal_glob_2.txt - test goal_glob
@@ -10,7 +10,7 @@ $ cd "$MYDIR"; ./makesure -f tests/11_goal_glob.sh test1 -l
 |   goal_name@11_goal_glob_2.txt
 |   goal_name@11_goal_glob_3.txt
 
-$ cd "$MYDIR"; ./makesure -f tests/11_goal_glob.sh test1
+$ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh test1
 |   goal '11_goal_glob_1.txt' ...
 | 11_goal_glob_1.txt :: 0 :: 3
 | content 111
@@ -20,7 +20,7 @@ $ cd "$MYDIR"; ./makesure -f tests/11_goal_glob.sh test1
 | content 333
 |   goal 'test1' [empty].
 
-$ cd "$MYDIR"; ./makesure -f tests/11_goal_glob.sh test2
+$ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh test2
 |   goal 'goal_name@11_goal_glob_2.txt' ...
 | goal_name ::: 11_goal_glob_2.txt :: 1 :: 3
 |   goal 'goal_name@11_goal_glob_3.txt' ...

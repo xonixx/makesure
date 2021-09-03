@@ -60,7 +60,6 @@
 @lib testing_tush
   function run_tush_file() {
     local f="$1"
-    local makesure="$2"
 
     before_count=$(calc_temp_files)
 
@@ -96,12 +95,14 @@
 @goal @glob tests/*.tush @private
 @depends_on prepared4tests
 @use_lib testing_tush
-  run_tush_file "$ITEM" makesure
+  MAKESURE=makesure \
+    run_tush_file "$ITEM"
 
 @goal test_stable_version @glob tests/*.tush @private
 @depends_on prepared4tests
 @use_lib testing_tush
-  run_tush_file "$ITEM" makesure_stable
+  MAKESURE=makesure_stable \
+    run_tush_file "$ITEM"
 
 @goal tested
 @doc runs all tests with default awk on './makesure'
