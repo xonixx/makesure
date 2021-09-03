@@ -19,17 +19,19 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/13_errors.sh
 @ Multiple @reached_if not allowed for a goal:
 @ tests/13_errors.sh:17: @reached_if false
 @ Only use @shell in prelude:
-@ tests/13_errors.sh:21: @shell sh
+@ tests/13_errors.sh:22: @shell sh
 @ Only use @define in prelude:
-@ tests/13_errors.sh:22: @define A=1
+@ tests/13_errors.sh:23: @define A=1
 @ Multiple @doc not allowed for a goal:
-@ tests/13_errors.sh:27: @doc doc2
+@ tests/13_errors.sh:28: @doc doc2
 @ Only use @options in prelude:
-@ tests/13_errors.sh:28: @options timing
+@ tests/13_errors.sh:29: @options timing
 @ Unknown directive: @unknown_directive:
-@ tests/13_errors.sh:29: @unknown_directive arg
+@ tests/13_errors.sh:30: @unknown_directive arg
 @ You can only use one @lib in a @goal:
-@ tests/13_errors.sh:31: @use_lib lib2
+@ tests/13_errors.sh:32: @use_lib lib2
 @ Goal 'g1' has unknown dependency 'unknown':
 @ tests/13_errors.sh:13: @depends_on unknown
+@ Goal 'g2' uses unknown lib 'unknown':
+@ tests/13_errors.sh:21: @use_lib unknown
 ? 1

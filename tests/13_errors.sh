@@ -18,6 +18,7 @@
   echo Goal already defined
 
 @goal g2
+@use_lib unknown
 @shell sh
 @define A=1
 @lib lib2

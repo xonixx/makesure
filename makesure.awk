@@ -311,12 +311,15 @@ function registerReachedIf(goalName, preScript) {
 
 function checkBeforeRun(   i,dep,depCnt) {
   for (goalName in GoalsByName) {
-    # check valid dependencies
     depCnt = DependenciesCnt[goalName]
     for (i=0; i < depCnt; i++) {
       dep = Dependencies[goalName, i]
       if (!(dep in GoalsByName))
         addError("Goal '" goalName "' has unknown dependency '" dep "'", DependenciesLineNo[goalName, i])
+    }
+    if (goalName in GoalToLib) {
+      if (!(GoalToLib[goalName] in Lib))
+        addError("Goal '" goalName "' uses unknown lib '" GoalToLib[goalName] "'", UseLibLineNo[goalName])
     }
   }
 }
@@ -398,11 +401,8 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
         addLine(goalBody, "exit 0")
 
       addLine(goalBody, definesLine[0])
-      if (goalName in GoalToLib) {
-        if (!(GoalToLib[goalName] in Lib))
-          die("Goal '" goalName "' uses unknown lib '" GoalToLib[goalName] "'", UseLibLineNo[goalName])
+      if (goalName in GoalToLib)
         addLine(goalBody, Lib[GoalToLib[goalName]])
-      }
 
       if ("tracing" in Options)
         addLine(goalBody, "set -x")
@@ -474,7 +474,6 @@ function realExit(code,   i) {
   exit code
 }
 function addError(err, n) { if (!n) n=NR; Error=addL(Error, err ":\n" ARGV[1] ":" n ": " Lines[n]) }
-function die(msg, n) { if (!n) n=NR; dieMsg(msg ":\n" ARGV[1] ":" n ": " Lines[n]) }
 function dieMsg(msg,    out) {
   out = "cat 1>&2" # trick to write from awk to stderr
   print msg | out
