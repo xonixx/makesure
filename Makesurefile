@@ -156,6 +156,11 @@
 @goal makesure_stable @private
 @doc compiles makesure_stable
 @depends_on tested
+@depends_on stable_version_prepared
+@depends_on tested_stable
+
+#TODO ^V this should be more pure
+@goal stable_version_prepared @private
   {
     echo '#!/bin/sh'
     echo
