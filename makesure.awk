@@ -107,7 +107,7 @@ function prepareArgs(   i,arg) {
     Options["timing"]
 }
 
-function dbgA(name, arr,   i) { print "--- " name ": "; for (i in arr) print i " : " arr[i] }
+#function dbgA(name, arr,   i) { print "--- " name ": "; for (i in arr) print i " : " arr[i] }
 
 function splitKV(arg, kv,   n) {
   n = index(arg, "=")
