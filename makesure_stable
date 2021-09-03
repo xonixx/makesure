@@ -1,10 +1,7 @@
 #!/bin/sh
-
-VERSION="0.9.7.1"
-
-exec awk -v "Version=$VERSION" -v "Prog=$0" '
+exec awk -v "Version=0.9.7.1" -v "Prog=$0" '
 BEGIN {
-  Shell = "bash" # default shell
+  Shell = "bash"
   SupportedShells["bash"]
   SupportedShells["sh"]
   SupportedOptions["tracing"]
@@ -12,44 +9,49 @@ BEGIN {
   SupportedOptions["timing"]
   Tmp = isDir("/dev/shm") ? "/dev/shm" : "/tmp"
   split("",Lines)
-  split("",Args) # parsed CLI args
-  split("",ArgGoals) # invoked goals
+  split("",Args)
+  split("",ArgGoals)
   split("",Options)
-  split("",GoalNames)   # list
-  split("",GoalsByName) # name -> private
-  split("",Code)        # name -> body
-  split("",DefineOverrides) # k -> v
+  split("",GoalNames)
+  split("",GoalsByName)
+  split("",Code)
+  split("",DefineOverrides)
   DefinesFile=""
-  split("",Dependencies)       # name,i -> dep goal
-  split("",DependenciesLineNo) # name,i -> line no.
-  split("",DependenciesCnt) # name   -> dep cnd
-  split("",Doc)    # name -> doc str
-  split("",ReachedIf) # name -> condition line
-  split("",GlobFiles) # list
-  split("",GlobGoals) # list
-  Mode = "prelude" # prelude/goal/goal_glob
+  split("",Dependencies)
+  split("",DependenciesLineNo)
+  split("",DependenciesCnt)
+  split("",Doc)
+  split("",ReachedIf)
+  split("",GlobFiles)
+  split("",GlobGoals)
+  split("",LibNames)
+  split("",Lib)
+  split("",UseLibLineNo)
+  split("",GoalToLib)
+  Mode = "prelude"
   srand()
   prepareArgs()
   MyDirScript = "MYDIR=" quoteArg(getMyDir(ARGV[1])) ";export MYDIR;cd \"$MYDIR\""
   Error=""
 }
-                    { Lines[NR]=$0             }
-"@options"    == $1 { handleOptions();    next }
-"@define"     == $1 { handleDefine();     next }
-"@shell"      == $1 { handleShell();      next }
-"@goal"       == $1 { if ("@glob" == $2 || "@glob" == $3) handleGoalGlob(); else handleGoal(); next }
-"@doc"        == $1 { handleDoc();        next }
-"@depends_on" == $1 { handleDependsOn();  next }
-"@reached_if" == $1 { handleReachedIf();  next }
-$1 ~ /^@/           { addError("Unknown directive: " $1); next }
-                    { handleCodeLine($0); next }
-
+{
+  Lines[NR]=$0
+  if ("@options" == $1) handleOptions()
+  else if ("@define" == $1) handleDefine()
+  else if ("@shell" == $1) handleShell()
+  else if ("@goal" == $1) { if ("@glob" == $2 || "@glob" == $3) handleGoalGlob(); else handleGoal() }
+  else if ("@doc" == $1) handleDoc()
+  else if ("@depends_on" == $1) handleDependsOn()
+  else if ("@reached_if" == $1) handleReachedIf()
+  else if ("@lib" == $1) handleLib()
+  else if ("@use_lib" == $1) handleUseLib()
+  else if ($1 ~ /^@/) addError("Unknown directive: " $1)
+  else handleCodeLine($0)
+}
 END { if (!Died) doWork() }
-
 function prepareArgs(   i,arg) {
   for (i = 2; i < ARGC; i++) {
     arg = ARGV[i]
-    #print i " " arg
     if (substr(arg,1,1) == "-") {
       if (arg == "-f" || arg == "--file") {
         delete ARGV[i]
@@ -61,8 +63,7 @@ function prepareArgs(   i,arg) {
         Args[arg]
     } else
       arrPush(ArgGoals, arg)
-
-    delete ARGV[i] # https://unix.stackexchange.com/a/460375
+    delete ARGV[i]
   }
   if ("-h" in Args || "--help" in Args) {
     print "makesure ver. " Version
@@ -101,9 +102,7 @@ function prepareArgs(   i,arg) {
   if ("-t" in Args || "--timing" in Args)
     Options["timing"]
 }
-
 function dbgA(name, arr,   i) { print "--- " name ": "; for (i in arr) print i " : " arr[i] }
-
 function splitKV(arg, kv,   n) {
   n = index(arg, "=")
   kv[0] = trim(substr(arg,1,n-1))
@@ -114,17 +113,14 @@ function handleOptionDefineOverride(arg,   kv) {
   splitKV(arg, kv)
   DefineOverrides[kv[0]] = kv[1]
 }
-
 function handleOptions() {
   checkPreludeOnly()
-
   for (i=2; i<=NF; i++) {
     if (!($i in SupportedOptions))
       addError("Option '\''" $i "'\'' is not supported")
     Options[$i]
   }
 }
-
 function handleDefine(   line,kv) {
   checkPreludeOnly()
   $1 = ""
@@ -133,62 +129,76 @@ function handleDefine(   line,kv) {
 function handleDefineLine(line,   kv) {
   if (!DefinesFile)
     DefinesFile = executeGetLine("mktemp " Tmp "/makesure.XXXXXXXXXX")
-
   splitKV(line, kv)
-
   if (!(kv[0] in DefineOverrides)) {
     handleCodeLine(line)
     handleCodeLine("echo " quoteArg(line) " >> " DefinesFile)
   }
 }
-
 function handleShell() {
   checkPreludeOnly()
-
   Shell = trim($2)
-
   if (!(Shell in SupportedShells))
     addError("Shell '\''" Shell "'\'' is not supported")
 }
-
 function adjustOptions() {
   if ("silent" in Options)
     delete Options["timing"]
 }
-
 function started(mode) {
   if (isPrelude()) adjustOptions()
   Mode = mode
 }
-
+function handleLib() {
+  started("lib")
+  libName = trim($2)
+  if (libName in Lib) {
+    addError("Lib '\''" libName "'\'' is already defined")
+  }
+  arrPush(LibNames, libName)
+  Lib[libName]
+}
+function handleUseLib(   goalName) {
+  checkGoalOnly()
+  if ("goal" == Mode)
+    registerUseLib(currentGoalName())
+  else {
+    for (i=0; i in GlobGoals; i++){
+      registerUseLib(GlobGoals[i])
+    }
+  }
+}
+function registerUseLib(goalName) {
+  if (goalName in GoalToLib)
+    addError("You can only use one @lib in a @goal")
+  GoalToLib[goalName] = $2
+  UseLibLineNo[goalName] = NR
+}
 function handleGoal(   priv) {
   started("goal")
   priv = parseGoalLine()
   registerGoal($0, priv)
 }
-
-function registerGoal(goal_name, priv) {
-  goal_name = trim(goal_name)
-  if (length(goal_name) == 0)
+function registerGoal(goalName, priv) {
+  goalName = trim(goalName)
+  if (length(goalName) == 0)
     addError("Goal must have a name")
-  if (goal_name in GoalsByName)
-    addError("Goal '\''" goal_name "'\'' is already defined")
-  arrPush(GoalNames, goal_name)
-  GoalsByName[goal_name] = priv
+  if (goalName in GoalsByName)
+    addError("Goal '\''" goalName "'\'' is already defined")
+  arrPush(GoalNames, goalName)
+  GoalsByName[goalName] = priv
 }
-
-function calcGlob(goal_name, pattern,   script, file) {
+function calcGlob(goalName, pattern,   script, file) {
   split("",GlobGoals)
   split("",GlobFiles)
   script = MyDirScript ";for f in ./" pattern ";do test -e \"$f\" && echo \"$f\";done"
   while ((script | getline file)>0) {
     file = substr(file, 3)
     arrPush(GlobFiles,file)
-    arrPush(GlobGoals,(goal_name ? goal_name "@" : "") file)
+    arrPush(GlobGoals,(goalName ? goalName "@" : "") file)
   }
   close(script)
 }
-
 function parseGoalLine(   priv) {
   if ($NF == "@private") {
     priv=1
@@ -197,223 +207,190 @@ function parseGoalLine(   priv) {
   $1 = ""
   return priv
 }
-
-function handleGoalGlob(   goal_name,priv,i) {
+function handleGoalGlob(   goalName,priv,i) {
   started("goal_glob")
   priv = parseGoalLine()
-  goal_name = $2; $2 = ""
-  if ("@glob" == goal_name) {
-    goal_name = ""
+  goalName = $2; $2 = ""
+  if ("@glob" == goalName) {
+    goalName = ""
   } else $3 = ""
-  calcGlob(goal_name, trim($0))
-  for (i=0; i<arrLen(GlobGoals); i++){
+  calcGlob(goalName, trim($0))
+  for (i=0; i in GlobGoals; i++){
     registerGoal(GlobGoals[i], priv)
   }
 }
-
 function handleDoc(   i) {
   checkGoalOnly()
-
   if ("goal" == Mode)
     registerDoc(currentGoalName())
   else {
-    for (i=0; i<arrLen(GlobGoals); i++){
+    for (i=0; i in GlobGoals; i++){
       registerDoc(GlobGoals[i])
     }
   }
 }
-
-function registerDoc(goal_name) {
-  if (goal_name in Doc)
+function registerDoc(goalName) {
+  if (goalName in Doc)
     addError("Multiple " $1 " not allowed for a goal")
   $1 = ""
-  Doc[goal_name] = trim($0)
+  Doc[goalName] = trim($0)
 }
-
 function handleDependsOn(   i) {
   checkGoalOnly()
-
   if ("goal" == Mode)
     registerDependsOn(currentGoalName())
   else {
-    for (i=0; i<arrLen(GlobGoals); i++){
+    for (i=0; i in GlobGoals; i++){
       registerDependsOn(GlobGoals[i])
     }
   }
 }
-
-function registerDependsOn(goal_name,   i) {
+function registerDependsOn(goalName,   i) {
   for (i=2; i<=NF; i++) {
-    Dependencies[goal_name, DependenciesCnt[goal_name]++] = $i
-    DependenciesLineNo[goal_name, DependenciesCnt[goal_name]] = NR
+    Dependencies[goalName, DependenciesCnt[goalName]++] = $i
+    DependenciesLineNo[goalName, DependenciesCnt[goalName]] = NR
   }
 }
-
 function handleReachedIf(   i) {
   checkGoalOnly()
-
   if ("goal" == Mode)
     registerReachedIf(currentGoalName())
   else {
-    for (i=0; i<arrLen(GlobGoals); i++){
+    for (i=0; i in GlobGoals; i++){
       registerReachedIf(GlobGoals[i], makeGlobVarsCode(i))
     }
   }
 }
-
 function makeGlobVarsCode(i) {
   return "ITEM=" quoteArg(GlobFiles[i]) ";INDEX=" i ";TOTAL=" arrLen(GlobGoals) ";"
 }
-
-function registerReachedIf(goal_name, pre_script) {
-  if (goal_name in ReachedIf)
+function registerReachedIf(goalName, preScript) {
+  if (goalName in ReachedIf)
     addError("Multiple " $1 " not allowed for a goal")
-
   $1 = ""
-  ReachedIf[goal_name] = pre_script trim($0)
+  ReachedIf[goalName] = preScript trim($0)
 }
-
 function doWork(\
-  i,j,goal_name,dep_cnt,dep,reached_if,reached_goals,empty_goals,defines_line,
-body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed, list) {
-
-  started("end") # end last directive
-
+  i,j,goalName,depCnt,dep,reachedIf,reachedGoals,emptyGoals,definesLine,
+body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
+  started("end")
   if (Error)
     dieMsg(Error)
-
   list="-l" in Args || "--list" in Args
   if (list || "-la" in Args || "--list-all" in Args) {
     print "Available goals:"
-    for (i = 0; i < arrLen(GoalNames); i++) {
-      goal_name = GoalNames[i]
-      if (list && GoalsByName[goal_name]) # private
+    for (i = 0; i in GoalNames; i++) {
+      goalName = GoalNames[i]
+      if (list && GoalsByName[goalName])
         continue
       printf "  "
-      if (goal_name in Doc)
-        printf "%s - %s\n", goal_name, Doc[goal_name]
+      if (goalName in Doc)
+        printf "%s - %s\n", goalName, Doc[goalName]
       else
-        print goal_name
+        print goalName
     }
   } else {
     if ("timing" in Options)
       t0 = currentTimeMillis()
-
-    # run prelude first to process all @defines
-    goal_body[0] = MyDirScript
+    goalBody[0] = MyDirScript
     if ("tracing" in Options)
-      addLine(goal_body, "set -x")
-    addLine(goal_body, trim(Code[""]))
-    exit_code = shellExec(goal_body[0])
-    if (exit_code != 0)
-      realExit(exit_code)
-
-    addLine(defines_line, MyDirScript)
+      addLine(goalBody, "set -x")
+    addLine(goalBody, trim(Code[""]))
+    exitCode = shellExec(goalBody[0])
+    if (exitCode != 0)
+      realExit(exitCode)
+    addLine(definesLine, MyDirScript)
     if (DefinesFile)
-      addLine(defines_line, ". " DefinesFile)
-
-    for (i = 0; i < arrLen(GoalNames); i++) {
-      goal_name = GoalNames[i]
-
-      body = trim(Code[goal_name])
-
-      reached_if = ReachedIf[goal_name]
-      reached_goals[goal_name] = reached_if ? checkConditionReached(defines_line[0], reached_if) : 0
-      empty_goals[goal_name] = length(body) == 0
-
-      # check valid dependencies
-      dep_cnt = DependenciesCnt[goal_name]
-      for (j=0; j < dep_cnt; j++) {
-        dep = Dependencies[goal_name, j]
+      addLine(definesLine, ". " DefinesFile)
+    for (i = 0; i in GoalNames; i++) {
+      goalName = GoalNames[i]
+      body = trim(Code[goalName])
+      reachedIf = ReachedIf[goalName]
+      reachedGoals[goalName] = reachedIf ? checkConditionReached(definesLine[0], reachedIf) : 0
+      emptyGoals[goalName] = length(body) == 0
+      depCnt = DependenciesCnt[goalName]
+      for (j=0; j < depCnt; j++) {
+        dep = Dependencies[goalName, j]
         if (!(dep in GoalsByName))
-          die("Goal '\''" goal_name "'\'' has unknown dependency '\''" dep "'\''", DependenciesLineNo[goal_name, j])
-        if (!reached_goals[goal_name]) {
-          # we only add a dependency to this goal if it'\''s not reached
-          #print " [not reached] " goal_name " -> " dep
-          topologicalSortAddConnection(goal_name, dep)
+          die("Goal '\''" goalName "'\'' has unknown dependency '\''" dep "'\''", DependenciesLineNo[goalName, j])
+        if (!reachedGoals[goalName]) {
+          topologicalSortAddConnection(goalName, dep)
         } else {
-          #print " [    reached] " goal_name " -> " dep
         }
       }
-
-      goal_body[0] = ""
+      goalBody[0] = ""
       if (!("silent" in Options)) {
-        addStr(goal_body, "echo \"  goal '\''" goal_name "'\'' ")
-        if (reached_goals[goal_name])
-          addStr(goal_body, "[already satisfied].")
-        else if (empty_goals[goal_name])
-          addStr(goal_body, "[empty].")
+        addStr(goalBody, "echo \"  goal '\''" goalName "'\'' ")
+        if (reachedGoals[goalName])
+          addStr(goalBody, "[already satisfied].")
+        else if (emptyGoals[goalName])
+          addStr(goalBody, "[empty].")
         else
-          addStr(goal_body, "...")
-        addStr(goal_body, "\"")
+          addStr(goalBody, "...")
+        addStr(goalBody, "\"")
       }
-      if (reached_goals[goal_name])
-        addLine(goal_body, "exit 0")
-
-      addLine(goal_body, defines_line[0])
-
+      if (reachedGoals[goalName])
+        addLine(goalBody, "exit 0")
+      addLine(goalBody, definesLine[0])
+      if (goalName in GoalToLib) {
+        if (!(GoalToLib[goalName] in Lib))
+          die("Goal '\''" goalName "'\'' uses unknown lib '\''" GoalToLib[goalName] "'\''", UseLibLineNo[goalName])
+        addLine(goalBody, Lib[GoalToLib[goalName]])
+      }
       if ("tracing" in Options)
-        addLine(goal_body, "set -x")
-
-      addLine(goal_body, body)
-      goal_bodies[goal_name] = goal_body[0]
+        addLine(goalBody, "set -x")
+      addLine(goalBody, body)
+      goalBodies[goalName] = goalBody[0]
     }
-
-    resolveGoalsToRun(resolved_goals)
-
+    resolveGoalsToRun(resolvedGoals)
     if ("-d" in Args || "--resolved" in Args) {
       printf("Resolved goals to reach for '\''%s'\'':\n", join(ArgGoals, 0, arrLen(ArgGoals), " "))
-      for (i = 0; i < arrLen(resolved_goals); i++) {
-        print "  " resolved_goals[i]
+      for (i = 0; i in resolvedGoals; i++) {
+        print "  " resolvedGoals[i]
       }
     } else {
-      for (i = 0; i < arrLen(resolved_goals); i++) {
-        goal_name = resolved_goals[i]
-        goal_timed = "timing" in Options && !reached_goals[goal_name] && !empty_goals[goal_name]
-        if (goal_timed)
+      for (i = 0; i in resolvedGoals; i++) {
+        goalName = resolvedGoals[i]
+        goalTimed = "timing" in Options && !reachedGoals[goalName] && !emptyGoals[goalName]
+        if (goalTimed)
           t1 = t2 ? t2 : currentTimeMillis()
-        exit_code = shellExec(goal_bodies[goal_name])
-        if (exit_code != 0)
-          print "  goal '\''" goal_name "'\'' failed"
-        if (goal_timed) {
+        exitCode = shellExec(goalBodies[goalName])
+        if (exitCode != 0)
+          print "  goal '\''" goalName "'\'' failed"
+        if (goalTimed) {
           t2 = currentTimeMillis()
-          print "  goal '\''" goal_name "'\'' took " renderDuration(t2 - t1)
+          print "  goal '\''" goalName "'\'' took " renderDuration(t2 - t1)
         }
-        if (exit_code != 0)
+        if (exitCode != 0)
           break
       }
       if ("timing" in Options)
         print "  total time " renderDuration((t2 ? t2 : currentTimeMillis()) - t0)
-      if (exit_code != 0)
-        realExit(exit_code)
+      if (exitCode != 0)
+        realExit(exitCode)
     }
-
     realExit(0)
   }
 }
-
-function resolveGoalsToRun(result,   i, goal_name, loop) {
+function resolveGoalsToRun(result,   i, goalName, loop) {
   if (arrLen(ArgGoals) == 0)
     arrPush(ArgGoals, "default")
-
-  for (i = 0; i < arrLen(ArgGoals); i++) {
-    goal_name = ArgGoals[i]
-    if (!(goal_name in GoalsByName)) {
-      dieMsg("Goal not found: " goal_name)
+  for (i = 0; i in ArgGoals; i++) {
+    goalName = ArgGoals[i]
+    if (!(goalName in GoalsByName)) {
+      dieMsg("Goal not found: " goalName)
     }
-    topologicalSortPerform(goal_name, result, loop)
+    topologicalSortPerform(goalName, result, loop)
   }
-
   if (loop[0] == 1) {
     dieMsg("There is a loop in goal dependencies via " loop[1] " -> " loop[2])
   }
 }
-
 function isPrelude() { return "prelude"==Mode }
 function checkPreludeOnly() { if (!isPrelude()) addError("Only use " $1 " in prelude") }
 function checkGoalOnly() { if ("goal" != Mode && "goal_glob" != Mode) addError("Only use " $1 " in @goal") }
 function currentGoalName() { return isPrelude() ? "" : arrLast(GoalNames) }
-
+function currentLibName() { return arrLast(LibNames) }
 function realExit(code,   i) {
   Died = 1
   if (DefinesFile)
@@ -423,60 +400,47 @@ function realExit(code,   i) {
 function addError(err) { Error=addL(Error, err ":\n" ARGV[1] ":" NR ": " Lines[NR]) }
 function die(msg, n) { if (!n) n=NR; dieMsg(msg ":\n" ARGV[1] ":" n ": " Lines[n]) }
 function dieMsg(msg,    out) {
-  out = "cat 1>&2" # trick to write from awk to stderr
+  out = "cat 1>&2"
   print msg | out
   close(out)
   realExit(1)
 }
-
-function checkConditionReached(defines_line, condition_str,    script) {
-  script = defines_line # need this to initialize variables for check conditions
-  script = script "\n" condition_str
-  #print "script: " script
+function checkConditionReached(definesLine, conditionStr,    script) {
+  script = definesLine
+  script = script "\n" conditionStr
   return shellExec(script) == 0
 }
-
 function shellExec(script,   res) {
   script = Shell " -e -c " quoteArg(script)
-
-  #print script
   res = system(script)
-  #print "res " res
   return res
 }
-
 function getMyDir(makesurefilePath) {
   return executeGetLine("cd \"$(dirname " quoteArg(makesurefilePath) ")\";pwd")
 }
-
-function handleCodeLine(line,   goal_name) {
-  if ("goal_glob" == Mode) {
-    for (i=0; i<arrLen(GlobGoals); i++){
-      if (!Code[goal_name = GlobGoals[i]])
-        addCodeLine(goal_name, makeGlobVarsCode(i))
-      addCodeLine(goal_name, line)
+function handleCodeLine(line,   goalName) {
+  if ("lib" == Mode) {
+    name = currentLibName()
+    Lib[name] = addL(Lib[name], line)
+  } else if ("goal_glob" == Mode) {
+    for (i=0; i in GlobGoals; i++){
+      if (!Code[goalName = GlobGoals[i]])
+        addCodeLine(goalName, makeGlobVarsCode(i))
+      addCodeLine(goalName, line)
     }
   } else
     addCodeLine(currentGoalName(), line)
 }
-
 function addCodeLine(name, line) {
-  #print "Append line for '\''" name "'\'': " line
   Code[name] = addL(Code[name], line)
 }
-
 function topologicalSortAddConnection(from, to) {
-  # Slist - list of successors by node
-  # Scnt - count of successors by node
-  Slist[from, ++Scnt[from]] = to # add '\''to'\'' to successors of '\''from'\''
+  Slist[from, ++Scnt[from]] = to
 }
-
 function topologicalSortPerform(node, result, loop,   i, s) {
   if (Visited[node] == 2)
     return
-
   Visited[node] = 1
-
   for (i = 1; i <= Scnt[node]; i++) {
     if (Visited[s = Slist[node, i]] == 0)
       topologicalSortPerform(s, result, loop)
@@ -486,18 +450,14 @@ function topologicalSortPerform(node, result, loop,   i, s) {
       loop[2] = node
     }
   }
-
   Visited[node] = 2
-
   arrPush(result, node)
 }
-
 function currentTimeMillis(   script, res) {
   res = executeGetLine("date +%s%3N")
-  sub(/%3N/, "000", res) # if date doesn'\''t support %N (macos?) just use second-precision
+  sub(/%3N/, "000", res)
   return res + 0
 }
-
 function selfUpdate(   url, tmp, err, newVer) {
   url = "https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable?token=" rand()
   tmp = executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX")
@@ -514,36 +474,29 @@ function selfUpdate(   url, tmp, err, newVer) {
   rm(tmp)
   if (err) dieMsg(err)
 }
-
 function renderDuration(deltaMillis,\
   deltaSec,deltaMin,deltaHr,deltaDay,dayS,hrS,minS,secS,secSI,res) {
-
   deltaSec = deltaMillis / 1000
   deltaMin = 0
   deltaHr = 0
   deltaDay = 0
-
   if (deltaSec >= 60) {
     deltaMin = int(deltaSec / 60)
     deltaSec = deltaSec - deltaMin * 60
   }
-
   if (deltaMin >= 60) {
     deltaHr = int(deltaMin / 60)
     deltaMin = deltaMin - deltaHr * 60
   }
-
   if (deltaHr >= 24) {
     deltaDay = int(deltaHr / 24)
     deltaHr = deltaHr - deltaDay * 24
   }
-
   dayS = deltaDay > 0 ? deltaDay " d" : ""
   hrS = deltaHr > 0 ? deltaHr " h" : ""
   minS = deltaMin > 0 ? deltaMin " m" : ""
   secS = deltaSec > 0 ? deltaSec " s" : ""
   secSI = deltaSec > 0 ? int(deltaSec) " s" : ""
-
   if (dayS != "")
     res = dayS " " (hrS == "" ? "0 h" : hrS)
   else if (deltaHr > 0)
@@ -552,7 +505,6 @@ function renderDuration(deltaMillis,\
     res = minS " " (secSI == "" ? "0 s" : secSI)
   else
     res = deltaSec > 0 ? secS : "0 s"
-
   return res
 }
 function executeGetLine(script,   res) {
@@ -570,9 +522,9 @@ function dl(url, dest,    verbose) {
       return "error with curl"
   } else return "wget/curl no found"
 }
-function join(arr, start_incl, end_excl, sep,   result, i) {
-  result = arr[start_incl]
-  for (i = start_incl + 1; i < end_excl; i++)
+function join(arr, startIncl, endExcl, sep,   result, i) {
+  result = arr[startIncl]
+  for (i = startIncl + 1; i < endExcl; i++)
     result = result sep arr[i]
   return result
 }

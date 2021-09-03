@@ -1,25 +1,25 @@
 
-$ cd "$MYDIR"; ./makesure -f tests/10_define.sh testA
+$ cd "$MYDIR"; ./$MAKESURE -f tests/10_define.sh testA
 |   goal 'testA' ...
 | A=aaa
 
-$ cd "$MYDIR"; ./makesure -f tests/10_define.sh testB
+$ cd "$MYDIR"; ./$MAKESURE -f tests/10_define.sh testB
 |   goal 'testB' ...
 | B=aaabbb
 
-$ cd "$MYDIR"; ./makesure -f tests/10_define.sh -D B=xxx testB
+$ cd "$MYDIR"; ./$MAKESURE -f tests/10_define.sh -D B=xxx testB
 |   goal 'testB' ...
 | B=xxx
 
-$ cd "$MYDIR"; ./makesure -f tests/10_define.sh -D A=yyy testB
+$ cd "$MYDIR"; ./$MAKESURE -f tests/10_define.sh -D A=yyy testB
 |   goal 'testB' ...
 | B=yyybbb
 
-$ cd "$MYDIR"; ./makesure -f tests/10_define.sh testC
+$ cd "$MYDIR"; ./$MAKESURE -f tests/10_define.sh testC
 |   goal 'testC' ...
 | C=
 
-$ cd "$MYDIR"; ./makesure -f tests/10_define.sh testABC
+$ cd "$MYDIR"; ./$MAKESURE -f tests/10_define.sh testABC
 |   goal 'testA' ...
 | A=aaa
 |   goal 'testB' ...
@@ -28,7 +28,7 @@ $ cd "$MYDIR"; ./makesure -f tests/10_define.sh testABC
 | C=
 |   goal 'testABC' [empty].
 
-$ cd "$MYDIR"; ./makesure -f tests/10_define.sh testABC --define A=111 -D "B=222" --define 'C=333'
+$ cd "$MYDIR"; ./$MAKESURE -f tests/10_define.sh testABC --define A=111 -D "B=222" --define 'C=333'
 |   goal 'testA' ...
 | A=111
 |   goal 'testB' ...
@@ -37,13 +37,13 @@ $ cd "$MYDIR"; ./makesure -f tests/10_define.sh testABC --define A=111 -D "B=222
 | C=333
 |   goal 'testABC' [empty].
 
-$ cd "$MYDIR"; ./makesure -f tests/10_define.sh must_be_reached1
+$ cd "$MYDIR"; ./$MAKESURE -f tests/10_define.sh must_be_reached1
 |   goal 'must_be_reached1' [already satisfied].
 
-$ cd "$MYDIR"; ./makesure -f tests/10_define.sh must_be_reached2
+$ cd "$MYDIR"; ./$MAKESURE -f tests/10_define.sh must_be_reached2
 |   goal 'must_be_reached2' [already satisfied].
 
-$ cd "$MYDIR"; ./makesure -f tests/10_define.sh children_reached_or_not
+$ cd "$MYDIR"; ./$MAKESURE -f tests/10_define.sh children_reached_or_not
 |   goal 'must_be_reached1' [already satisfied].
 |   goal 'must_be_reached2' [already satisfied].
 |   goal 'other_goal_2' ...
@@ -52,13 +52,13 @@ $ cd "$MYDIR"; ./makesure -f tests/10_define.sh children_reached_or_not
 | should show
 |   goal 'children_reached_or_not' [empty].
 
-$ cd "$MYDIR"; ./makesure -f tests/10_define.sh is_not_reached
+$ cd "$MYDIR"; ./$MAKESURE -f tests/10_define.sh is_not_reached
 |   goal 'other_goal_2' ...
 | other goal 2
 |   goal 'is_not_reached' ...
 | should show
 
-$ cd "$MYDIR"; ./makesure -f tests/10_define.sh children_reached_or_not -d
+$ cd "$MYDIR"; ./$MAKESURE -f tests/10_define.sh children_reached_or_not -d
 | Resolved goals to reach for 'children_reached_or_not':
 |   must_be_reached1
 |   must_be_reached2
@@ -66,7 +66,7 @@ $ cd "$MYDIR"; ./makesure -f tests/10_define.sh children_reached_or_not -d
 |   is_not_reached
 |   children_reached_or_not
 
-$ cd "$MYDIR"; ./makesure -f tests/10_define_in_goal.sh
+$ cd "$MYDIR"; ./$MAKESURE -f tests/10_define_in_goal.sh
 @ Only use @define in prelude:
 @ tests/10_define_in_goal.sh:3: @define A=1
 ? 1

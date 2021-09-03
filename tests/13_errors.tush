@@ -1,29 +1,33 @@
 
-$ cd "$MYDIR"; ./makesure -f tests/13_errors.sh
+$ cd "$MYDIR"; ./$MAKESURE -f tests/13_errors.sh
 @ Only use @reached_if in @goal:
 @ tests/13_errors.sh:2: @reached_if true
 @ Only use @depends_on in @goal:
 @ tests/13_errors.sh:3: @depends_on g1
 @ Only use @doc in @goal:
 @ tests/13_errors.sh:4: @doc Doc in prelude
-@ Option 'usupported' is not supported:
-@ tests/13_errors.sh:5: @options usupported
-@ Shell 'usupported' is not supported:
-@ tests/13_errors.sh:6: @shell usupported
+@ Option 'unsupported' is not supported:
+@ tests/13_errors.sh:5: @options unsupported
+@ Shell 'unsupported' is not supported:
+@ tests/13_errors.sh:6: @shell unsupported
+@ Only use @use_lib in @goal:
+@ tests/13_errors.sh:7: @use_lib lib1
 @ Goal must have a name:
-@ tests/13_errors.sh:8: @goal
+@ tests/13_errors.sh:9: @goal
 @ Goal 'g1' is already defined:
-@ tests/13_errors.sh:14: @goal g1
+@ tests/13_errors.sh:15: @goal g1
 @ Multiple @reached_if not allowed for a goal:
-@ tests/13_errors.sh:16: @reached_if false
+@ tests/13_errors.sh:17: @reached_if false
 @ Only use @shell in prelude:
-@ tests/13_errors.sh:20: @shell sh
+@ tests/13_errors.sh:21: @shell sh
 @ Only use @define in prelude:
-@ tests/13_errors.sh:21: @define A=1
+@ tests/13_errors.sh:22: @define A=1
 @ Multiple @doc not allowed for a goal:
-@ tests/13_errors.sh:25: @doc doc2
+@ tests/13_errors.sh:27: @doc doc2
 @ Only use @options in prelude:
-@ tests/13_errors.sh:26: @options timing
+@ tests/13_errors.sh:28: @options timing
 @ Unknown directive: @unknown_directive:
-@ tests/13_errors.sh:27: @unknown_directive arg
+@ tests/13_errors.sh:29: @unknown_directive arg
+@ You can only use one @lib in a @goal:
+@ tests/13_errors.sh:31: @use_lib lib2
 ? 1

@@ -1,20 +1,20 @@
 
-$ cd "$MYDIR"; ./makesure -f tests/7_options_silent.sh
+$ cd "$MYDIR"; ./$MAKESURE -f tests/7_options_silent.sh
 | ccc
 | bbb
 | aaa
 
-$ cd "$MYDIR"; ./makesure -f tests/7_options_invalid.sh
+$ cd "$MYDIR"; ./$MAKESURE -f tests/7_options_invalid.sh
 @ Option 'invalid' is not supported:
 @ tests/7_options_invalid.sh:2: @options invalid
 ? 1
 
-$ cd "$MYDIR"; ./makesure -f tests/7_options_in_goal.sh
+$ cd "$MYDIR"; ./$MAKESURE -f tests/7_options_in_goal.sh
 @ Only use @options in prelude:
 @ tests/7_options_in_goal.sh:3: @options tracing
 ? 1
 
-$ cd "$MYDIR"; ./makesure -f tests/7_options_tracing.sh -x
+$ cd "$MYDIR"; ./$MAKESURE -f tests/7_options_tracing.sh -x
 | prelude 123
 |   goal 'default' ...
 | test

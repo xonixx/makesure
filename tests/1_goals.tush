@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; ./makesure -f tests/1_goals.sh
+$ cd "$MYDIR"; ./$MAKESURE -f tests/1_goals.sh
 |   goal 'ddd' ...
 | ddd
 |   goal 'ccc' ...
@@ -10,19 +10,19 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh
 | aaa
 |   goal 'default' [empty].
 
-$ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -s
+$ cd "$MYDIR"; ./$MAKESURE -f tests/1_goals.sh -s
 | ddd
 | ccc
 | bbb
 | aaa
 
-$ cd "$MYDIR"; ./makesure -f tests/1_goals.sh --silent
+$ cd "$MYDIR"; ./$MAKESURE -f tests/1_goals.sh --silent
 | ddd
 | ccc
 | bbb
 | aaa
 
-$ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -l
+$ cd "$MYDIR"; ./$MAKESURE -f tests/1_goals.sh -l
 | Available goals:
 |   default
 |   aaa - Documenatation for aaa
@@ -32,7 +32,7 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -l
 |   fail
 |   fail123
 
-$ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -d
+$ cd "$MYDIR"; ./$MAKESURE -f tests/1_goals.sh -d
 | Resolved goals to reach for 'default':
 |   ddd
 |   ccc
@@ -40,40 +40,40 @@ $ cd "$MYDIR"; ./makesure -f tests/1_goals.sh -d
 |   aaa
 |   default
 
-$ cd "$MYDIR"; ./makesure -f tests/1_goals.sh fail
+$ cd "$MYDIR"; ./$MAKESURE -f tests/1_goals.sh fail
 |   goal 'fail' ...
 | stdout
 |   goal 'fail' failed
 @ stderr
 ? 1
 
-$ cd "$MYDIR"; ./makesure -f tests/1_goals.sh fail123
+$ cd "$MYDIR"; ./$MAKESURE -f tests/1_goals.sh fail123
 |   goal 'fail123' ...
 | stdout
 |   goal 'fail123' failed
 @ stderr
 ? 123
 
-$ cd "$MYDIR"; ./makesure -f tests/1_goals_unknown.sh
+$ cd "$MYDIR"; ./$MAKESURE -f tests/1_goals_unknown.sh
 @ Goal 'a' has unknown dependency 'unknown':
 @ tests/1_goals_unknown.sh:3:   @depends_on unknown
 ? 1
 
-$ cd "$MYDIR"; ./makesure -f tests/1_goals.sh zzz
+$ cd "$MYDIR"; ./$MAKESURE -f tests/1_goals.sh zzz
 @ Goal not found: zzz
 ? 1
 
-$ cd "$MYDIR"; ./makesure -f tests/1_goals_already_defined.sh
+$ cd "$MYDIR"; ./$MAKESURE -f tests/1_goals_already_defined.sh
 @ Goal 'a' is already defined:
 @ tests/1_goals_already_defined.sh:5: @goal a
 ? 1
 
-$ cd "$MYDIR"; ./makesure -f tests/1_goals_no_name.sh
+$ cd "$MYDIR"; ./$MAKESURE -f tests/1_goals_no_name.sh
 @ Goal must have a name:
 @ tests/1_goals_no_name.sh:5: @goal
 ? 1
 
-$ cd "$MYDIR"; ./makesure -f tests/1_goals_multi_reached_if.sh
+$ cd "$MYDIR"; ./$MAKESURE -f tests/1_goals_multi_reached_if.sh
 @ Multiple @reached_if not allowed for a goal:
 @ tests/1_goals_multi_reached_if.sh:4: @reached_if false
 ? 1

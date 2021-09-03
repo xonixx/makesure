@@ -1,51 +1,51 @@
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_1
+$ cd "$MYDIR"; ./$MAKESURE -f tests/2_mydir.sh mydir_1
 |   goal 'mydir_1' ...
 | mydir
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_2
+$ cd "$MYDIR"; ./$MAKESURE -f tests/2_mydir.sh mydir_2
 |   goal 'mydir_2' ...
 | mydir
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_3
+$ cd "$MYDIR"; ./$MAKESURE -f tests/2_mydir.sh mydir_3
 |   goal 'mydir_3' ...
 | mydir
 
-$ cd "$MYDIR"; ./makesure -f tests/dir\ with\ spaces/2_mydir.sh
+$ cd "$MYDIR"; ./$MAKESURE -f tests/dir\ with\ spaces/2_mydir.sh
 |   goal 'default' ...
 | mydir
 
-$ cd "$MYDIR/tests/dir with spaces"; ../../makesure -f 2_mydir.sh
+$ cd "$MYDIR/tests/dir with spaces"; ../../$MAKESURE -f 2_mydir.sh
 |   goal 'default' ...
 | mydir
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_reached_if_1
+$ cd "$MYDIR"; ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_1
 |   goal 'mydir_in_reached_if_1' [already satisfied].
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_reached_if_2
+$ cd "$MYDIR"; ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_2
 |   goal 'mydir_in_reached_if_2' [already satisfied].
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_reached_if_3
+$ cd "$MYDIR"; ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_3
 |   goal 'mydir_in_reached_if_3' [already satisfied].
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_reached_if_4
+$ cd "$MYDIR"; ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_4
 |   goal 'mydir_in_reached_if_4' ...
 | should show
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_reached_if_5
+$ cd "$MYDIR"; ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_5
 |   goal 'mydir_in_reached_if_5' ...
 | should show
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_reached_if_6
+$ cd "$MYDIR"; ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_6
 |   goal 'mydir_in_reached_if_6' ...
 | should show
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_reached_if_of_dep_1
+$ cd "$MYDIR"; ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_of_dep_1
 |   goal 'dep_1' [already satisfied].
 |   goal 'mydir_in_reached_if_of_dep_1' ...
 | should show
 
-$ cd "$MYDIR"; ./makesure -f tests/2_mydir.sh mydir_in_reached_if_of_dep_2
+$ cd "$MYDIR"; ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_of_dep_2
 |   goal 'dep_3' ...
 | dep_3
 |   goal 'dep_2' ...
