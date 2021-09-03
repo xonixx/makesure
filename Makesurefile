@@ -163,11 +163,8 @@
 @goal stable_version_prepared @private
   {
     echo '#!/bin/sh'
-    echo
-    echo "VERSION=\"$NEXT_VERSION\""
-    echo
-    echo "exec awk -v \"Version=\$VERSION\" -v \"Prog=\$0\" '"
-    awk "{ gsub(\"'\",\"'\\\\''\"); print}" makesure.awk
+    echo "exec awk -v \"Version=$NEXT_VERSION\" -v \"Prog=\$0\" '"
+    awk "NF{ gsub(\"'\",\"'\\\\''\"); print}" makesure.awk
     echo \'' Makesurefile "$@"'
   } > makesure_stable
 
