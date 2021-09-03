@@ -278,10 +278,10 @@ function handleDependsOn(   i) {
   }
 }
 
-function registerDependsOn(goalName,   i) {
+function registerDependsOn(goalName,   i,x) {
   for (i=2; i<=NF; i++) {
-    Dependencies[goalName, DependenciesCnt[goalName]++] = $i
-    DependenciesLineNo[goalName, DependenciesCnt[goalName]] = NR
+    Dependencies[x = goalName SUBSEP DependenciesCnt[goalName]++] = $i
+    DependenciesLineNo[x] = NR
   }
 }
 
@@ -309,11 +309,25 @@ function registerReachedIf(goalName, preScript) {
   ReachedIf[goalName] = preScript trim($0)
 }
 
+function checkBeforeRun(   i,dep,depCnt) {
+  for (goalName in GoalsByName) {
+    # check valid dependencies
+    depCnt = DependenciesCnt[goalName]
+    for (i=0; i < depCnt; i++) {
+      dep = Dependencies[goalName, i]
+      if (!(dep in GoalsByName))
+        addError("Goal '" goalName "' has unknown dependency '" dep "'", DependenciesLineNo[goalName, i])
+    }
+  }
+}
+
 function doWork(\
   i,j,goalName,depCnt,dep,reachedIf,reachedGoals,emptyGoals,definesLine,
 body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
   started("end") # end last directive
+
+  checkBeforeRun()
 
   if (Error)
     dieMsg(Error)
@@ -357,12 +371,9 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       reachedGoals[goalName] = reachedIf ? checkConditionReached(definesLine[0], reachedIf) : 0
       emptyGoals[goalName] = length(body) == 0
 
-      # check valid dependencies
       depCnt = DependenciesCnt[goalName]
       for (j=0; j < depCnt; j++) {
         dep = Dependencies[goalName, j]
-        if (!(dep in GoalsByName))
-          die("Goal '" goalName "' has unknown dependency '" dep "'", DependenciesLineNo[goalName, j])
         if (!reachedGoals[goalName]) {
           # we only add a dependency to this goal if it's not reached
           #print " [not reached] " goalName " -> " dep
@@ -462,7 +473,7 @@ function realExit(code,   i) {
     rm(DefinesFile)
   exit code
 }
-function addError(err) { Error=addL(Error, err ":\n" ARGV[1] ":" NR ": " Lines[NR]) }
+function addError(err, n) { if (!n) n=NR; Error=addL(Error, err ":\n" ARGV[1] ":" n ": " Lines[n]) }
 function die(msg, n) { if (!n) n=NR; dieMsg(msg ":\n" ARGV[1] ":" n ": " Lines[n]) }
 function dieMsg(msg,    out) {
   out = "cat 1>&2" # trick to write from awk to stderr
