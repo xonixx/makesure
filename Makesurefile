@@ -164,7 +164,9 @@
   {
     echo '#!/bin/sh'
     echo "exec awk -v \"Version=$NEXT_VERSION\" -v \"Prog=\$0\" '"
-    awk "NF{ gsub(\"'\",\"'\\\\''\"); print}" makesure.awk
+    awk -v Q=\' '
+function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s }
+{ gsub("\\s*#.+$", ""); gsub(Q, Q "\\" Q Q); if (trim($0)) print}' makesure.awk
     echo \'' Makesurefile "$@"'
   } > makesure_stable
 
