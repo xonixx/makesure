@@ -1,13 +1,13 @@
 
 $ cd "$MYDIR"; ./$MAKESURE -v; ./$MAKESURE --version
-| 0.9.7.1
-| 0.9.7.1
+| 0.9.8
+| 0.9.8
 
 $ cd "$MYDIR/tests/emptydir"; ../../$MAKESURE -v
-| 0.9.7.1
+| 0.9.8
 
 $ cd "$MYDIR/tests/emptydir"; ../../$MAKESURE -h
-| makesure ver. 0.9.7.1
+| makesure ver. 0.9.8
 | Usage: makesure [options...] [-f buildfile] [goals...]
 |  -f,--file buildfile
 |                  set buildfile to use (default Makesurefile)
