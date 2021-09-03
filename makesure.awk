@@ -97,7 +97,7 @@ function prepareArgs(   i,arg) {
     if (isFile(ARGV[1] "/Makesurefile"))
       ARGV[1] = ARGV[1] "/Makesurefile"
     else
-      dieMsg("makesure file not found: " ARGV[1])
+      die("makesure file not found: " ARGV[1])
   }
   if ("-s" in Args || "--silent" in Args)
     Options["silent"]
@@ -333,7 +333,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
   checkBeforeRun()
 
   if (Error)
-    dieMsg(Error)
+    die(Error)
 
   list="-l" in Args || "--list" in Args
   if (list || "-la" in Args || "--list-all" in Args) {
@@ -451,13 +451,13 @@ function resolveGoalsToRun(result,   i, goalName, loop) {
   for (i = 0; i in ArgGoals; i++) {
     goalName = ArgGoals[i]
     if (!(goalName in GoalsByName)) {
-      dieMsg("Goal not found: " goalName)
+      die("Goal not found: " goalName)
     }
     topologicalSortPerform(goalName, result, loop)
   }
 
   if (loop[0] == 1) {
-    dieMsg("There is a loop in goal dependencies via " loop[1] " -> " loop[2])
+    die("There is a loop in goal dependencies via " loop[1] " -> " loop[2])
   }
 }
 
@@ -474,7 +474,7 @@ function realExit(code,   i) {
   exit code
 }
 function addError(err, n) { if (!n) n=NR; Error=addL(Error, err ":\n" ARGV[1] ":" n ": " Lines[n]) }
-function dieMsg(msg,    out) {
+function die(msg,    out) {
   out = "cat 1>&2" # trick to write from awk to stderr
   print msg | out
   close(out)
@@ -568,7 +568,7 @@ function selfUpdate(   url, tmp, err, newVer) {
     } else print "you have latest version " Version " installed"
   }
   rm(tmp)
-  if (err) dieMsg(err)
+  if (err) die(err)
 }
 
 function renderDuration(deltaMillis,\
