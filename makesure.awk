@@ -24,6 +24,7 @@ BEGIN {
   split("",GlobGoals) # list
   split("",LibNames) # list
   split("",Lib)      # name -> code
+  split("",UseLibLineNo)# name -> line no.
   split("",GoalToLib)# goal name -> lib name
   Mode = "prelude" # prelude|goal|goal_glob|lib
   srand()
@@ -189,6 +190,7 @@ function registerUseLib(goal_name) {
     addError("You can only use one @lib in a @goal")
 
   GoalToLib[goal_name] = $2
+  UseLibLineNo[goal_name] = NR
 }
 
 function handleGoal(   priv) {
@@ -381,8 +383,11 @@ body,goal_body,goal_bodies,resolved_goals,exit_code, t0,t1,t2, goal_timed, list)
         addLine(goal_body, "exit 0")
 
       addLine(goal_body, defines_line[0])
-      if (goal_name in GoalToLib)
-        addLine(goal_body, Lib[GoalToLib[goal_name]]) # TODO handle unknown lib
+      if (goal_name in GoalToLib) {
+        if (!(GoalToLib[goal_name] in Lib))
+          die("Goal '" goal_name "' uses unknown lib '" GoalToLib[goal_name] "'", UseLibLineNo[goal_name])
+        addLine(goal_body, Lib[GoalToLib[goal_name]])
+      }
 
       if ("tracing" in Options)
         addLine(goal_body, "set -x")
