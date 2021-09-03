@@ -93,7 +93,7 @@ function prepareArgs(   i,arg) {
     if (isFile(ARGV[1] "/Makesurefile"))
       ARGV[1] = ARGV[1] "/Makesurefile"
     else
-      dieMsg("makesure file not found: " ARGV[1])
+      die("makesure file not found: " ARGV[1])
   }
   if ("-s" in Args || "--silent" in Args)
     Options["silent"]
@@ -244,10 +244,10 @@ function handleDependsOn(   i) {
     }
   }
 }
-function registerDependsOn(goalName,   i) {
+function registerDependsOn(goalName,   i,x) {
   for (i=2; i<=NF; i++) {
-    Dependencies[goalName, DependenciesCnt[goalName]++] = $i
-    DependenciesLineNo[goalName, DependenciesCnt[goalName]] = NR
+    Dependencies[x = goalName SUBSEP DependenciesCnt[goalName]++] = $i
+    DependenciesLineNo[x] = NR
   }
 }
 function handleReachedIf(   i) {
@@ -269,12 +269,27 @@ function registerReachedIf(goalName, preScript) {
   $1 = ""
   ReachedIf[goalName] = preScript trim($0)
 }
+function checkBeforeRun(   i,dep,depCnt) {
+  for (goalName in GoalsByName) {
+    depCnt = DependenciesCnt[goalName]
+    for (i=0; i < depCnt; i++) {
+      dep = Dependencies[goalName, i]
+      if (!(dep in GoalsByName))
+        addError("Goal '\''" goalName "'\'' has unknown dependency '\''" dep "'\''", DependenciesLineNo[goalName, i])
+    }
+    if (goalName in GoalToLib) {
+      if (!(GoalToLib[goalName] in Lib))
+        addError("Goal '\''" goalName "'\'' uses unknown lib '\''" GoalToLib[goalName] "'\''", UseLibLineNo[goalName])
+    }
+  }
+}
 function doWork(\
   i,j,goalName,depCnt,dep,reachedIf,reachedGoals,emptyGoals,definesLine,
 body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
   started("end")
+  checkBeforeRun()
   if (Error)
-    dieMsg(Error)
+    die(Error)
   list="-l" in Args || "--list" in Args
   if (list || "-la" in Args || "--list-all" in Args) {
     print "Available goals:"
@@ -310,8 +325,6 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       depCnt = DependenciesCnt[goalName]
       for (j=0; j < depCnt; j++) {
         dep = Dependencies[goalName, j]
-        if (!(dep in GoalsByName))
-          die("Goal '\''" goalName "'\'' has unknown dependency '\''" dep "'\''", DependenciesLineNo[goalName, j])
         if (!reachedGoals[goalName]) {
           topologicalSortAddConnection(goalName, dep)
         } else {
@@ -331,11 +344,8 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       if (reachedGoals[goalName])
         addLine(goalBody, "exit 0")
       addLine(goalBody, definesLine[0])
-      if (goalName in GoalToLib) {
-        if (!(GoalToLib[goalName] in Lib))
-          die("Goal '\''" goalName "'\'' uses unknown lib '\''" GoalToLib[goalName] "'\''", UseLibLineNo[goalName])
+      if (goalName in GoalToLib)
         addLine(goalBody, Lib[GoalToLib[goalName]])
-      }
       if ("tracing" in Options)
         addLine(goalBody, "set -x")
       addLine(goalBody, body)
@@ -377,12 +387,12 @@ function resolveGoalsToRun(result,   i, goalName, loop) {
   for (i = 0; i in ArgGoals; i++) {
     goalName = ArgGoals[i]
     if (!(goalName in GoalsByName)) {
-      dieMsg("Goal not found: " goalName)
+      die("Goal not found: " goalName)
     }
     topologicalSortPerform(goalName, result, loop)
   }
   if (loop[0] == 1) {
-    dieMsg("There is a loop in goal dependencies via " loop[1] " -> " loop[2])
+    die("There is a loop in goal dependencies via " loop[1] " -> " loop[2])
   }
 }
 function isPrelude() { return "prelude"==Mode }
@@ -396,9 +406,8 @@ function realExit(code,   i) {
     rm(DefinesFile)
   exit code
 }
-function addError(err) { Error=addL(Error, err ":\n" ARGV[1] ":" NR ": " Lines[NR]) }
-function die(msg, n) { if (!n) n=NR; dieMsg(msg ":\n" ARGV[1] ":" n ": " Lines[n]) }
-function dieMsg(msg,    out) {
+function addError(err, n) { if (!n) n=NR; Error=addL(Error, err ":\n" ARGV[1] ":" n ": " Lines[n]) }
+function die(msg,    out) {
   out = "cat 1>&2"
   print msg | out
   close(out)
@@ -471,7 +480,7 @@ function selfUpdate(   url, tmp, err, newVer) {
     } else print "you have latest version " Version " installed"
   }
   rm(tmp)
-  if (err) dieMsg(err)
+  if (err) die(err)
 }
 function renderDuration(deltaMillis,\
   deltaSec,deltaMin,deltaHr,deltaDay,dayS,hrS,minS,secS,secSI,res) {
