@@ -32,18 +32,22 @@ BEGIN {
   MyDirScript = "MYDIR=" quoteArg(getMyDir(ARGV[1])) ";export MYDIR;cd \"$MYDIR\""
   Error=""
 }
-                    { Lines[NR]=$0             }
-"@options"    == $1 { handleOptions();    next }
-"@define"     == $1 { handleDefine();     next }
-"@shell"      == $1 { handleShell();      next }
-"@goal"       == $1 { if ("@glob" == $2 || "@glob" == $3) handleGoalGlob(); else handleGoal(); next }
-"@doc"        == $1 { handleDoc();        next }
-"@depends_on" == $1 { handleDependsOn();  next }
-"@reached_if" == $1 { handleReachedIf();  next }
-"@lib"        == $1 { handleLib();        next }
-"@use_lib"    == $1 { handleUseLib();     next }
-$1 ~ /^@/           { addError("Unknown directive: " $1); next }
-                    { handleCodeLine($0); next }
+
+{
+  Lines[NR]=$0
+  if ("@options" == $1) handleOptions()
+  else if ("@define" == $1) handleDefine()
+  else if ("@shell" == $1) handleShell()
+  else if ("@goal" == $1) { if ("@glob" == $2 || "@glob" == $3) handleGoalGlob(); else handleGoal(); }
+  else if ("@doc" == $1) handleDoc()
+  else if ("@depends_on" == $1) handleDependsOn()
+  else if ("@reached_if" == $1) handleReachedIf()
+  else if ("@lib" == $1) handleLib()
+  else if ("@use_lib" == $1) handleUseLib()
+  else if ($1 ~ /^@/) addError("Unknown directive: " $1)
+  else handleCodeLine($0)
+}
+
 
 END { if (!Died) doWork() }
 
