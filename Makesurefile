@@ -123,6 +123,7 @@
 @depends_on tests/14_doc.tush
 @depends_on tests/15_private.tush
 @depends_on tests/16_lib.tush
+@depends_on tests/17_prelude_fail.tush
 
 @goal tested_stable
 @doc runs all tests with default awk on './makesure_stable'
@@ -143,6 +144,7 @@
 @depends_on test_stable_version@tests/14_doc.tush
 @depends_on test_stable_version@tests/15_private.tush
 @depends_on test_stable_version@tests/16_lib.tush
+@depends_on test_stable_version@tests/17_prelude_fail.tush
 
 @goal stable
 @doc rebuilds makesure_stable & README.md for release
