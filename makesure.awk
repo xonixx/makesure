@@ -352,15 +352,17 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     if ("timing" in Options)
       t0 = currentTimeMillis()
 
-    # run prelude first to process all @defines
-    goalBody[0] = MyDirScript
-    if ("tracing" in Options)
-      addLine(goalBody, "set -x")
-    addLine(goalBody, trim(Code[""]))
-    exitCode = shellExec(goalBody[0]) # TODO optimize : don't exec empty prelude
-    if (exitCode != 0) {
-      print "  prelude failed"
-      realExit(exitCode)
+    if (length(body = trim(Code[""])) > 0) {
+      # run prelude first to process all @defines
+      goalBody[0] = MyDirScript
+      if ("tracing" in Options)
+        addLine(goalBody, "set -x")
+      addLine(goalBody, body)
+      exitCode = shellExec(goalBody[0])
+      if (exitCode != 0) {
+        print "  prelude failed"
+        realExit(exitCode)
+      }
     }
 
     addLine(definesLine, MyDirScript)
