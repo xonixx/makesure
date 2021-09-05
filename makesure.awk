@@ -13,7 +13,7 @@ BEGIN {
   split("",GoalNames)   # list
   split("",GoalsByName) # name -> private
   split("",Code)        # name -> body
-  split("",DefineOverrides) # k -> v
+  split("",DefineOverrides) # k -> ""
   DefinesFile=""
   split("",Dependencies)       # name,i -> dep goal
   split("",DependenciesLineNo) # name,i -> line no.
@@ -117,7 +117,7 @@ function splitKV(arg, kv,   n) {
 function handleOptionDefineOverride(arg,   kv) {
   splitKV(arg, kv)
   handleDefineLine(kv[0] "=" quoteArg(kv[1]))
-  DefineOverrides[kv[0]] = kv[1]
+  DefineOverrides[kv[0]]
 }
 
 function handleOptions() {
