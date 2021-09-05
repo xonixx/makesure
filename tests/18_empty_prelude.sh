@@ -1,0 +1,3 @@
+
+@goal default
+  echo "hello"

@@ -1,0 +1,5 @@
+
+$ cd "$MYDIR"; PATH=tests/bash_wrapper:$PATH ./$MAKESURE -f tests/18_empty_prelude.sh
+| running bash
+|   goal 'default' ...
+| hello
