@@ -115,8 +115,8 @@ function splitKV(arg, kv,   n) {
   kv[1] = trim(substr(arg,n+1))
 }
 function handleOptionDefineOverride(arg,   kv) {
-  handleDefineLine(arg)
   splitKV(arg, kv)
+  handleDefineLine(kv[0] "=" quoteArg(kv[1]))
   DefineOverrides[kv[0]] = kv[1]
 }
 
