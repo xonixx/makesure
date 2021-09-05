@@ -358,8 +358,10 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       addLine(goalBody, "set -x")
     addLine(goalBody, trim(Code[""]))
     exitCode = shellExec(goalBody[0]) # TODO optimize : don't exec empty prelude
-    if (exitCode != 0)
-      realExit(exitCode) # TODO show prelude failed
+    if (exitCode != 0) {
+      print "  prelude failed"
+      realExit(exitCode)
+    }
 
     addLine(definesLine, MyDirScript)
     if (DefinesFile)
