@@ -8,7 +8,7 @@ The simplest way to think of this tool is to have a way to have "shortcuts" (aka
 
 Example `Makesurefile`:
 
-```bash
+```
 @goal downloaded
 @reached_if [[ -f code.tar.gz ]]
   wget http://domain/code.tar.gz
@@ -40,19 +40,19 @@ By default, all scripts inside goals are executed with `bash`. If you want to us
 
 ## Features
 
-- [Zero-install](#installation)
-- [Very portable](#os)
-- Very simple, only bare minimum of truly needed features. You don’t need to learn a whole new programming language to use the tool! Literally it’s goals + dependencies + bash/shell
+- [Zero-install](#installation).
+- [Very portable](#os).
+- Very simple, only bare minimum of truly needed features. You don’t need to learn a whole new programming language to use the tool! Literally it’s goals + dependencies + bash/shell.
 - Much saner and simpler `make` analog.
 - A bunch of useful built-in facilities: timing the goal's execution, listing goals in a build file, a means to speed-up repeated builds (link to @reached_if).
 - The syntax of a build file is also a valid bash/shell (though semantics is different). This can to some extent be in use for editing in IDE.
 
 ## Concepts
 
-- Build file is a text file named `Makesurefile`
+- Build file is a text file named `Makesurefile`.
 - Build file consists of a prelude and a set of goals.
 - Prelude is a piece of a shell script (can be empty) that goes before goals and can `@define` (Link) global variables visible to goals. Prelude only runs once.
-- A goal is a labeled piece of shell
+- A goal is a labeled piece of shell.
 - A goal can declare dependencies on other goals (link). During execution each referenced dependency will run only once despite the number of occurrences in dependency tree. Dependencies will run in proper order according to the inferred topological order. Dependency loops will be reported as error.
 - Goal bodies are executed in separate shell invocations. It means, you can’t easily pass variables from one goal to another. This is done on purpose to enforce declarative style.
 - By default, both prelude and goals are run with `bash`. You can change to `sh` with `@shell sh` in prelude.
@@ -132,7 +132,7 @@ The tool will **not** work with Busybox awk.
 - Tests coverage is a must.
 
 ## Omitted features
-- goals with arguments (like in just). We deliberately don’t support this feature. The idea is that the build file should be self-contained, so have all the information to run in it, no external parameters should be required. This should be much easier for the final user to run a build. The other reason is that the idea of goal parameterization doesn’t play well with dependencies. The tool however has limited parameterization capabilities via -D (link).
+- goals with arguments (like in just). We deliberately don’t support this feature. The idea is that the build file should be self-contained, so have all the information to run in it, no external parameters should be required. This should be much easier for the final user to run a build. The other reason is that the idea of goal parameterization doesn't play well with dependencies. The tool however has limited parameterization capabilities via -D (link).
 - Includes TODO
 - shells other from bash/sh TODO
 - Custom programming language TODO
