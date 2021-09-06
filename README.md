@@ -30,9 +30,9 @@ Example `Makesurefile`:
 @depends_on deployed
 ```
 
-Now to run the whole build you just issue `makesure` command in a folder with `Makesurefile` (`default` goal will be called). 
+Now to run the whole build you just issue `./makesure` command in a folder with `Makesurefile` (`default` goal will be called). 
 
-You can as well call single goal explicitly, example `makesure built`. 
+You can as well call single goal explicitly, example `./makesure built`. 
 
 Also pay attention to `@reached_if` directive. This one allows skipping goal if it's already satisfied. This allows to speedup subsequent executions.
 
@@ -40,39 +40,23 @@ By default, all scripts inside goals are executed with `bash`. If you want to us
 
 ## Features
 
-- Zero-install (link)
-- Very portable (link)
-- Very simple, only bare minimum of truly needed features. You don’t need to learn a whole new programming
-    language to use the tool! Literally it’s goals + dependencies + bash/shell
-  
+- [Zero-install](#installation)
+- [Very portable](#os)
+- Very simple, only bare minimum of truly needed features. You don’t need to learn a whole new programming language to use the tool! Literally it’s goals + dependencies + bash/shell
 - Much saner and simpler `make` analog.
-- A bunch of useful built-in facilities: timing the goals execution, introspecting goals in a build file, a means
-    to speed-up repeated builds (link to @reached_if).
-  
-- The syntax of a build file is also a valid bash/shell (though semantics is different). This can to some extent
-    be in use for editing in IDE.
-    
+- A bunch of useful built-in facilities: timing the goal's execution, listing goals in a build file, a means to speed-up repeated builds (link to @reached_if).
+- The syntax of a build file is also a valid bash/shell (though semantics is different). This can to some extent be in use for editing in IDE.
 
 ## Concepts
+
 - Build file is a text file named `Makesurefile`
 - Build file consists of a prelude and a set of goals.
-- Prelude is a piece of a shell script (can be empty) that goes before goals and can `@define` (Link) global
-    variables visible to goals. Prelude only runs once.
-
+- Prelude is a piece of a shell script (can be empty) that goes before goals and can `@define` (Link) global variables visible to goals. Prelude only runs once.
 - A goal is a labeled piece of shell
-- A goal can declare dependencies on other goals (link). Each dependency will run only once despite the number
-    of occurrences in dependency tree. Dependencies will run in proper order according to the inferred
-    topological order. Dependency loops will be reported as error.
-
-- Goal bodies are executed in separate shell invocations. It means, you can’t easily pass variables from one
-    goal to another. This is done on purpose to enforce declarativity.
-
-- By default both prelude and goals are run with `bash`. You can change to `sh` with `@shell sh` in prelude.
-
-- Goal can declare `@reached_if condition` directive (link). Only one per goal allowed. The goal will be
-    considered fulfilled (and thus will not run) if `condition` executed as a shell script returns exit code 0.
-    Any `@reached_if condition` evaluation is done only once.&nbsp;
-
+- A goal can declare dependencies on other goals (link). During execution each referenced dependency will run only once despite the number of occurrences in dependency tree. Dependencies will run in proper order according to the inferred topological order. Dependency loops will be reported as error.
+- Goal bodies are executed in separate shell invocations. It means, you can’t easily pass variables from one goal to another. This is done on purpose to enforce declarative style.
+- By default, both prelude and goals are run with `bash`. You can change to `sh` with `@shell sh` in prelude.
+- Goal can declare `@reached_if condition` directive (link). Only one per goal allowed. The goal will be considered fulfilled (and thus will not run) if `condition` executed as a shell script returns exit code `0`. Any `@reached_if condition` evaluation is done only once.
 
 ## Usage
 
