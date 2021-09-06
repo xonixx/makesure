@@ -81,7 +81,7 @@ Usage: makesure [options...] [-f buildfile] [goals...]
 
 ## Installation
 
-Since `makesure` is a tiny utility represented by a single file, the recommended installation strategy is to keep it local to a project where it's used. Not only this eliminates the need for repetitive installation for every programmer but also allows using separate `makesure` version per project and update only as needed.
+Since `makesure` is a tiny utility represented by a single file, the recommended installation strategy is to keep it local to a project where it's used (this means in code repository). Not only this eliminates the need for repetitive installation for every programmer, but also allows using separate `makesure` version per project and update only as needed.
 
 ```shell
 wget "https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable?token=$(date +%s)" -Omakesure && \
@@ -132,12 +132,7 @@ The tool will **not** work with Busybox awk.
 - Tests coverage is a must.
 
 ## Omitted features
-- goals with arguments (like in just). We deliberately don’t support this feature. The idea is that the build
-    file should be self-contained, so have all the information to run in it, no external parameters should be
-    required. This should be much easier for the final user to run a build. The other reason is that the idea of
-    goal parameterization doesn’t play well with dependencies. The tool however has limited parameterization
-    capabilities via -D (link).
-
+- goals with arguments (like in just). We deliberately don’t support this feature. The idea is that the build file should be self-contained, so have all the information to run in it, no external parameters should be required. This should be much easier for the final user to run a build. The other reason is that the idea of goal parameterization doesn’t play well with dependencies. The tool however has limited parameterization capabilities via -D (link).
 - Includes TODO
 - shells other from bash/sh TODO
 - Custom programming language TODO
