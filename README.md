@@ -8,7 +8,7 @@ The simplest way to think of this tool is to have a way to have "shortcuts" (aka
 
 Example `Makesurefile`:
 
-```
+```bash
 @goal downloaded
 @reached_if [[ -f code.tar.gz ]]
   wget http://domain/code.tar.gz
