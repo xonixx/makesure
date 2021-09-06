@@ -38,6 +38,42 @@ Also pay attention to `@reached_if` directive. This one allows skipping goal if 
 
 By default, all scripts inside goals are executed with `bash`. If you want to use `sh` just add `@shell sh` directive at start of the `Makesurefile`.  
 
+## Features
+
+- Zero-install (link)
+- Very portable (link)
+- Very simple, only bare minimum of truly needed features. You don’t need to learn a whole new programming
+    language to use the tool! Literally it’s goals + dependencies + bash/shell
+  
+- Much saner and simpler `make` analog.
+- A bunch of useful built-in facilities: timing the goals execution, introspecting goals in a build file, a means
+    to speed-up repeated builds (link to @reached_if).
+  
+- The syntax of a build file is also a valid bash/shell (though semantics is different). This can to some extent
+    be in use for editing in IDE.
+    
+
+## Concepts
+- Build file is a text file named `Makesurefile`
+- Build file consists of a prelude and a set of goals.
+- Prelude is a piece of a shell script (can be empty) that goes before goals and can `@define` (Link) global
+    variables visible to goals. Prelude only runs once.
+
+- A goal is a labeled piece of shell
+- A goal can declare dependencies on other goals (link). Each dependency will run only once despite the number
+    of occurrences in dependency tree. Dependencies will run in proper order according to the inferred
+    topological order. Dependency loops will be reported as error.
+
+- Goal bodies are executed in separate shell invocations. It means, you can’t easily pass variables from one
+    goal to another. This is done on purpose to enforce declarativity.
+
+- By default both prelude and goals are run with `bash`. You can change to `sh` with `@shell sh` in prelude.
+
+- Goal can declare `@reached_if condition` directive (link). Only one per goal allowed. The goal will be
+    considered fulfilled (and thus will not run) if `condition` executed as a shell script returns exit code 0.
+    Any `@reached_if condition` evaluation is done only once.&nbsp;
+
+
 ## Usage
 
 ```
@@ -111,6 +147,17 @@ The tool will **not** work with Busybox awk.
 - [Principle of least surprise](https://en.wikipedia.org/wiki/Principle_of_least_astonishment).
 - Tests coverage is a must.
 
+## Omitted features
+- goals with arguments (like in just). We deliberately don’t support this feature. The idea is that the build
+    file should be self-contained, so have all the information to run in it, no external parameters should be
+    required. This should be much easier for the final user to run a build. The other reason is that the idea of
+    goal parameterization doesn’t play well with dependencies. The tool however has limited parameterization
+    capabilities via -D (link).
+
+- Includes TODO
+- shells other from bash/sh TODO
+- Custom programming language TODO
+
 ## Documentation
 
 ### Directives
@@ -123,6 +170,8 @@ TODO
   - just is a handy way to save and run project-specific commands
 - **Task** https://github.com/go-task/task
   - Task is a task runner / build tool that aims to be simpler and easier to use than, for example, GNU Make.
+- **haku** https://github.com/VladimirMarkelov/haku
+  - A task/command runner inspired by 'make'
 - **gup** https://github.com/timbertson/gup
   - Gup is a general purpose, recursive, top down software build system.
 - **redo** https://github.com/apenwarr/redo
