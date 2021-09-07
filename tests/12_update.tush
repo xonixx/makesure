@@ -1,32 +1,30 @@
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/12_update.sh test_err
 |   goal 'makesure_prepared' ...
-|   goal 'run_selfupdate' ...
+|   goal 'test_err' ...
 | XXX
-|   goal 'run_selfupdate' failed
+|   goal 'test_err' failed
 @ wget/curl no found
 ? 1
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/12_update.sh test_wget
 |   goal 'makesure_prepared' ...
 |   goal 'wget_prepared' ...
-|   goal 'run_selfupdate' ...
+|   goal 'test_wget' ...
 | XXX
 | running wget
 | updated XXX -> 0.9.8
 | running wget
 | you have latest version 0.9.8 installed
 | 0.9.8
-|   goal 'test_wget' [empty].
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/12_update.sh test_curl
 |   goal 'makesure_prepared' ...
 |   goal 'curl_prepared' ...
-|   goal 'run_selfupdate' ...
+|   goal 'test_curl' ...
 | XXX
 | running curl
 | updated XXX -> 0.9.8
 | running curl
 | you have latest version 0.9.8 installed
 | 0.9.8
-|   goal 'test_curl' [empty].

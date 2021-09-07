@@ -23,30 +23,34 @@
     chmod +x "$D/$cmd"
   done
 
-@goal run_selfupdate
-  export PATH="$D"
-  export NEXT_VERSION=XXX
-  "$D/makesure" --version
-  "$D/makesure" --selfupdate
-  "$D/makesure" --selfupdate
-  "$D/makesure" --version
-  rm -r "$D"
+@lib
+  function run_selfupdate() {
+    export PATH="$D"
+    export NEXT_VERSION=XXX
+    "$D/makesure" --version
+    "$D/makesure" --selfupdate
+    "$D/makesure" --selfupdate
+    "$D/makesure" --version
+    rm -r "$D"
+  }
 
 @goal test_err
-  @depends_on makesure_prepared
-  @depends_on run_selfupdate
+@depends_on makesure_prepared
+@use_lib
+  run_selfupdate
 
 @goal test_wget
-  @depends_on makesure_prepared
-  @depends_on wget_prepared
-  @depends_on run_selfupdate
+@depends_on wget_prepared
+@use_lib
+  run_selfupdate
 
 @goal test_curl
-  @depends_on makesure_prepared
-  @depends_on curl_prepared
-  @depends_on run_selfupdate
+@depends_on curl_prepared
+@use_lib
+  run_selfupdate
 
 @goal wget_prepared
+@depends_on makesure_prepared
   cmd="wget"
   (
     echo "#!/bin/bash"
@@ -62,6 +66,7 @@
   chmod +x "$D/$cmd"
 
 @goal curl_prepared
+@depends_on makesure_prepared
   cmd="curl"
   cmd1=`command -v $cmd`
   (
