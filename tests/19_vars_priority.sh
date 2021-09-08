@@ -4,7 +4,7 @@ echo "in prelude: V=$V"
 sh -c 'echo "in prelude: in child: A=$A"'
 sh -c 'echo "in prelude: in child: V=$V"'
 
-@define V="prelude"
+@define V="V_prelude"
 
 echo "in prelude: A=$A"
 echo "in prelude: V=$V"
