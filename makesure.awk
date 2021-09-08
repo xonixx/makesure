@@ -135,15 +135,15 @@ function handleDefine(   line,kv) {
   $1 = ""
   handleDefineLine($0)
 }
-function handleDefineLine(line,   kv) {
+function handleDefineLine(line,   kv,l) {
   if (!DefinesFile)
     DefinesFile = executeGetLine("mktemp " Tmp "/makesure.XXXXXXXXXX")
 
   splitKV(line, kv)
 
   if (!(kv[0] in DefineOverrides)) {
-    handleCodeLine(line)
-    handleCodeLine("echo " quoteArg(line) " >> " DefinesFile)
+    handleCodeLine(l = line "; export " kv[0])
+    handleCodeLine("echo " quoteArg(l) " >> " DefinesFile)
   }
 }
 
