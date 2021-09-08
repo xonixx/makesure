@@ -20,7 +20,7 @@
 
   cd "soft"
 
-  if which wget >/dev/null 2>/dev/null
+  if command -v wget >/dev/null
   then
     wget $TUSH_REPO/archive/master.tar.gz -O./tush.tar.gz
     tar xzvf ./tush.tar.gz
