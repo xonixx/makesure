@@ -120,25 +120,6 @@ This means that the default AWK implementation in your OS will work.
 
 The tool will **not** work with Busybox awk.
 
-## Design principles
-
-- Convention over configuration.
-- Minimalistic. Bare minimum of features that compose good with each other.
-- There should be one way to do the thing.
-- Overall [Zen of Python](https://www.python.org/dev/peps/pep-0020/#the-zen-of-python). 
-- Think hard before adding new feature. Think of a damage it could cause used improperly. Think of cognitive complexity it introduces. Only add a feature generic enough to cover lots of useful cases instead of just some corner cases. Let's better have a list of recipes for the latter.
-- Do not introduce unjustified complexity. User should not be forced to learn a whole new programming language to work with a tool. Instead, the tool is based on limited set of simple concepts, like goals + dependencies + @reached_if + familiar shell language (bash/sh).
-- [Worse is better](https://en.wikipedia.org/wiki/Worse_is_better).
-- [Principle of least surprise](https://en.wikipedia.org/wiki/Principle_of_least_astonishment).
-- Tests coverage is a must.
-
-## Omitted features
-- goals with arguments (like in just). We deliberately don’t support this feature. The idea is that the build file should be self-contained, so have all the information to run in it, no external parameters should be required. This should be much easier for the final user to run a build. The other reason is that the idea of goal parameterization doesn't play well with dependencies. The tool however has limited parameterization capabilities via -D (link).
-- Includes TODO
-- shells other from bash/sh TODO
-- Custom programming language TODO
-- parallel execution TODO
-
 ## Documentation
 
 ### Directives
@@ -201,6 +182,25 @@ Example:
 #### @lib
 
 #### @use_lib
+
+## Design principles
+
+- Convention over configuration.
+- Minimalistic. Bare minimum of features that compose good with each other.
+- There should be one way to do the thing.
+- Overall [Zen of Python](https://www.python.org/dev/peps/pep-0020/#the-zen-of-python).
+- Think hard before adding new feature. Think of a damage it could cause used improperly. Think of cognitive complexity it introduces. Only add a feature generic enough to cover lots of useful cases instead of just some corner cases. Let's better have a list of recipes for the latter.
+- Do not introduce unjustified complexity. User should not be forced to learn a whole new programming language to work with a tool. Instead, the tool is based on limited set of simple concepts, like goals + dependencies + @reached_if + familiar shell language (bash/sh).
+- [Worse is better](https://en.wikipedia.org/wiki/Worse_is_better).
+- [Principle of least surprise](https://en.wikipedia.org/wiki/Principle_of_least_astonishment).
+- Tests coverage is a must.
+
+## Omitted features
+- goals with arguments (like in just). We deliberately don’t support this feature. The idea is that the build file should be self-contained, so have all the information to run in it, no external parameters should be required. This should be much easier for the final user to run a build. The other reason is that the idea of goal parameterization doesn't play well with dependencies. The tool however has limited parameterization capabilities via -D (link).
+- Includes TODO
+- shells other from bash/sh TODO
+- Custom programming language TODO
+- parallel execution TODO
 
 ## Similar tools
 
