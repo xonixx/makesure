@@ -174,7 +174,7 @@ Syntax #1:
 
 Defines a goal. `@private` modifier is optional. When goal is private, it won't show in `./makesure -l`. To list all goals including private use `./makesure -la`.
 
-Lines that go after this declaration line (but before next `@goal` declaration line) will be considered as a shell script for the body of the goal. Example:
+Lines that go after this declaration line (but before next `@goal` declaration line) will be treated as a shell script for the body of the goal. Example:
 
 ```
 @goal just_test
@@ -184,6 +184,13 @@ Lines that go after this declaration line (but before next `@goal` declaration l
 Having the above in `Makesurefile` will produce next output when ran with `./makesure just_test`
 ```
 hello world
+```
+
+Indentation in goal body is optional, unlike `make`, so below is perfectly valid:
+
+```
+@goal just_test
+echo "Hello world" 
 ```
 
 Syntax #2:
@@ -229,14 +236,15 @@ as equivalent for
 
 So essentially one glob goal declaration expands to multiple goal declarations based on files present in project that match the glob pattern. Shell glob expansion mechanism applies. 
 
-The useful use case here could be to represent a set of test files as a set of goals. The example could be found in the project's own [build file](https://github.com/xonixx/makesure/blob/main/Makesurefile#L95).
+The useful use case here would be to represent a set of test files as a set of goals. The example could be found in the project's own [build file](https://github.com/xonixx/makesure/blob/main/Makesurefile#L95).
 
 Why this may be useful? Imagine in your nodejs application you have `test1.js`, `test2.js`, `test3.js`.
 Now you can use this `Makesurefile`
 
 ```
 @goal @glob test*.js
-node $ITEM
+  echo "running test file $INDEX out of $TOTAL ..."
+  node $ITEM
 
 @goal test_all
 @depends_on test1.js
