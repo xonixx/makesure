@@ -110,7 +110,7 @@ Updates `makesure` executable to latest available version in-place:
 #### AWK
 
 The core of this tool is implemented in [AWK](https://en.wikipedia.org/wiki/AWK).
-Almost all major implementations of AWK will work. Tested and officially supported are: [Gawk](https://www.gnu.org/software/gawk/), [BWK](https://github.com/onetrueawk/awk), [mawk](https://invisible-island.net/mawk/). This means that the default AWK implementation in your OS will work.
+Almost all major implementations of AWK will work. Tested and officially supported are [Gawk](https://www.gnu.org/software/gawk/), [BWK](https://github.com/onetrueawk/awk), [mawk](https://invisible-island.net/mawk/). This means that the default AWK implementation in your OS will work.
 
 The tool will **not** work with Busybox awk.
 
@@ -120,7 +120,7 @@ The tool will **not** work with Busybox awk.
    
 #### @options
 
-Only valid: in prelude.
+Only valid: in prelude (meaning before any `@goal` declaration).
 
 Valid options: `timing`, `tracing`, `silent`
 
@@ -166,6 +166,85 @@ Example:
 ```
 
 #### @goal
+
+Syntax #1:
+```
+@goal goal_name [ @private ]
+```
+
+Defines a goal. `@private` modifier is optional. When goal is private, it won't show in `./makesure -l`. To list all goals including private use `./makesure -la`.
+
+Lines that go after this declaration line (but before next `@goal` declaration line) will be considered as a shell script for the body of the goal. Example:
+
+```
+@goal just_test
+  echo "Hello world" 
+```
+
+Having the above in `Makesurefile` will produce next output when ran with `./makesure just_test`
+```
+hello world
+```
+
+Syntax #2:
+```
+@goal [ goal_name ] @glob <glob pattern> [ @private ]
+```
+
+This one is easy to illustrate with an example:
+
+```
+@goal goal_name @glob *.txt 
+ echo $ITEM $INDEX $TOTAL
+```
+
+Is equivalent to declaring two goals
+
+```
+@goal goal_name@a.txt
+ echo a.txt 0 2
+
+@goal goal_name@b.txt
+ echo b.txt 1 2
+```
+iff
+```
+$ ls
+a.txt b.txt
+```
+
+For convenience, you can omit name in case of glob goal:
+```
+@goal @glob *.txt
+ echo $ITEM $INDEX $TOTAL
+```
+as equivalent for
+```
+@goal a.txt
+ echo a.txt 0 2
+
+@goal b.txt
+ echo b.txt 1 2
+```
+
+So essentially one glob goal declaration expands to multiple goal declarations based on files present in project that match the glob pattern. Shell glob expansion mechanism applies. 
+
+The useful use case here could be to represent a set of test files as a set of goals. The example could be found in the project's own [build file](https://github.com/xonixx/makesure/blob/main/Makesurefile#L95).
+
+Why this may be useful? Imagine in your nodejs application you have `test1.js`, `test2.js`, `test3.js`.
+Now you can use this `Makesurefile`
+
+```
+@goal @glob test*.js
+node $ITEM
+
+@goal test_all
+@depends_on test1.js
+@depends_on test2.js
+@depends_on test3.js
+```
+
+to be able to run each test individually (`./makesure test2.js` for example) and all together (`./makesure test_all`). 
 
 #### @doc
 
