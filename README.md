@@ -2,7 +2,7 @@
 
 [![Run tests](https://github.com/xonixx/makesure/workflows/Run%20tests/badge.svg)](https://github.com/xonixx/makesure/actions?query=workflow%3A%22Run+tests%22)
 
-Simple build tool a-la `make` with declarative goals and dependencies.
+Simple task/command runner inspired by `make` with declarative goals and dependencies.
 
 The simplest way to think of this tool is to have a way to have "shortcuts" (aka goals) to some pieces of scripts. This way allows to call them easily without the need to call long shell one-liners instead.
 
@@ -137,12 +137,70 @@ The tool will **not** work with Busybox awk.
 - Includes TODO
 - shells other from bash/sh TODO
 - Custom programming language TODO
+- parallel execution TODO
 
 ## Documentation
 
 ### Directives
+   
+#### @options
 
-TODO
+Only valid: in prelude.
+
+Valid options: `timing`, `tracing`, `silent`
+
+```
+@options timing
+```
+Will measure and log each goal execution time + total time. 
+```
+@options tracing
+```
+Will trace the executed shell script. This activates `set -x` shell option under the hood.
+```
+@options silent
+```
+By default `makesure` logs the goals being executed. Use this option if this is not desired (you only need the output of your own code in goals).
+
+#### @define
+
+Only valid: in prelude.
+
+Use this directive to declare global variable (visible to all goals).
+The variable will be declared as environment variable (via `export`).
+
+Example:
+
+```
+@define A=hello
+@define B="${A} world"
+```
+
+#### @shell
+
+Only valid: in prelude.
+
+Valid options: `bash` (default), `sh`
+
+Sets the shell interpreter to be used for execution of prelude and goals.
+
+Example:
+
+```
+@shell sh
+```
+
+#### @goal
+
+#### @doc
+
+#### @depends_on
+
+#### @reached_if
+
+#### @lib
+
+#### @use_lib
 
 ## Similar tools
 
