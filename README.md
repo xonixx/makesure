@@ -82,7 +82,7 @@ Usage: makesure [options...] [-f buildfile] [goals...]
 
 ## Installation
 
-Since `makesure` is a tiny utility represented by a single file, the recommended installation strategy is to keep it local to a project where it's used (this means in code repository). Not only this eliminates the need for repetitive installation for every programmer, but also allows using separate `makesure` version per project and update only as needed.
+Since `makesure` is a tiny utility represented by a single file, the recommended installation strategy is to keep it local to a project where it's used (this means in code repository). Not only this eliminates the need for repetitive installation for every dev on a project, but also allows using separate `makesure` version per project and update only as needed.
 
 ```shell
 wget "https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable?token=$(date +%s)" -Omakesure && \
@@ -255,6 +255,30 @@ Now you can use this `Makesurefile`
 to be able to run each test individually (`./makesure test2.js` for example) and all together (`./makesure test_all`). 
 
 #### @doc
+
+Only valid: inside `@goal`.
+                  
+Provides a description for a goal.
+
+Example:
+
+```
+@goal build
+@doc builds the project 
+  echo "Building ..."
+  
+@goal test
+@doc tests the project
+  echo "Testing ..."
+```
+
+Having this `Makesurefile` and running `./makesure -l` will show
+
+```
+Available goals:
+  build - builds the project
+  test - tests the project 
+```
 
 #### @depends_on
 
