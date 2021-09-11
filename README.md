@@ -167,7 +167,7 @@ Example:
 
 #### @goal
 
-Syntax #1:
+<u>Syntax #1:</u>
 ```
 @goal goal_name [ @private ]
 ```
@@ -193,7 +193,14 @@ Indentation in goal body is optional, unlike `make`, so below is perfectly valid
 echo "Hello world" 
 ```
 
-Syntax #2:
+Invoking `./makesure` without arguments will attempt to call the goal named `default`:
+
+```
+@goal default
+  echo "I'm default goal"
+```
+
+<u>Syntax #2:</u>
 ```
 @goal [ goal_name ] @glob <glob pattern> [ @private ]
 ```
@@ -260,7 +267,7 @@ Only valid: inside `@goal`.
                   
 Provides a description for a goal.
 
-Example:
+Example `Makesurefile`:
 
 ```
 @goal build
@@ -272,7 +279,7 @@ Example:
   echo "Testing ..."
 ```
 
-Having this `Makesurefile` and running `./makesure -l` will show
+Running `./makesure -l` will show
 
 ```
 Available goals:
@@ -282,7 +289,83 @@ Available goals:
 
 #### @depends_on
 
+Only valid: inside `@goal`.
+
+Declares a dependency on other goal. 
+
+Example `Makesurefile`:
+
+```
+@goal a
+  echo a
+  
+@goal b
+@depends_on a
+  echo b
+```
+
+Running `./makesure b` will show
+ 
+```
+  goal 'a' ...
+a
+  goal 'b' ...
+b
+```
+
+You can declare multiple dependencies for a goal:
+
+```
+@goal a
+  echo a
+
+@goal b
+@depends_on a
+  echo b
+
+@goal c
+  echo c
+
+@goal d
+@depends_on b c
+  echo d
+```
+
+Running `./makesure d` will show
+```
+  goal 'a' ...
+a
+  goal 'b' ...
+b
+  goal 'c' ...
+c
+  goal 'd' ...
+d
+```
+
+Circular dependency will cause an error:
+
+```
+@goal a
+@depends_on b
+
+@goal b
+@depends_on c
+
+@goal c
+@depends_on a
+```
+
+Running `./makesure a` will show
+```
+There is a loop in goal dependencies via a -> c
+```
+
 #### @reached_if
+
+Only valid: inside `@goal`.
+
+
 
 #### @lib
 
