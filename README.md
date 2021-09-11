@@ -58,7 +58,7 @@ By default, all scripts inside goals are executed with `bash`. If you want to us
 - Goal bodies are executed in separate shell invocations. It means, you can’t easily pass variables from one goal to another. This is done on purpose to enforce declarative style.
 - By default, both prelude and goals are run with `bash`. You can change to `sh` with `@shell sh` in prelude.
 - For convenience in all shell invocations (prelude, goals, etc.) the current directory is automatically set to the one of `Makesurefile`. Typically, this is the root of the project. This allows using relative paths without bothering of the way the build is run.
-- Goal can declare `@reached_if condition` directive (link). Only one per goal allowed. The goal will be considered fulfilled (and thus will not run) if `condition` executed as a shell script returns exit code `0`. Any `@reached_if condition` evaluation is done only once.
+- Goal can declare `@reached_if` directive ([link](#reached_if)). This allows skipping goal execution if it's already satisfied.
 
 ## Usage
 
@@ -363,8 +363,35 @@ There is a loop in goal dependencies via a -> c
 ### @reached_if
 
 Only valid: inside `@goal`.
+     
+Syntax:
+```
+@reached_if <condition>
+```
 
+Allows skipping goal execution if it's already satisfied. This allows to speedup subsequent executions. Only one per goal allowed. The goal will be considered fulfilled (and thus will not run) if `condition` executed as a shell script returns exit code `0`. Any `condition` evaluation is done only once.
 
+Example `Makesurefile`:
+
+```
+@goal file_created
+@reached_if [[ -f ./file.txt ]]
+  echo "Creating file ..."
+  echo "hello world" > ./file.txt
+```
+
+If you run `$ ./makesure file_created` first time:
+```
+  goal 'file_created' ...
+Creating file ...
+```
+
+If you run `$ ./makesure file_created` second time:
+```
+  goal 'file_created' [already satisfied].
+```
+
+It is a good practice to name goals that declare `@reached_if` in past tense.
 
 ### @lib
 
