@@ -42,7 +42,7 @@ By default, all scripts inside goals are executed with `bash`. If you want to us
 
 - [Zero-install](#installation).
 - [Very portable](#os).
-- Very simple, only bare minimum of truly needed features. You don’t need to learn a whole new programming language to use the tool! Literally it’s goals + dependencies + bash/shell.
+- Very simple, only bare minimum of truly needed features. You don’t need to learn a whole new programming language to use the tool! Literally it’s goals + dependencies + handful of directives + bash/shell.
 - Much saner and simpler `make` analog.
 - A bunch of useful built-in facilities: timing the goal's execution, listing goals in a build file, a [means](#reached_if) to speed-up repeated builds.
 - The syntax of a build file is also a valid bash/shell (though semantics is different). This can to some extent be in use for editing in IDE.
@@ -400,7 +400,7 @@ Syntax:
 @lib [ lib_name ]
 ```
 
-Helps with code reuse. Occasionally you need to run similar code in multiple goals. The most obvious approach would be to place a code into `shared.sh` and call it in both goals. The downside is that now you need an additional file(s) and the build file is no more self-contained. `@lib` to the resque!
+Helps with code reuse. Occasionally you need to run similar code in multiple goals. The most obvious approach would be to place a code into `shared.sh` and invoke it in both goals. The downside is that now you need an additional file(s) and the build file is no more self-contained. `@lib` to the resque!
 
 The usage is simple:
 
@@ -425,6 +425,15 @@ For simplicity can omit name:
 
 @goal hello_world
 @use_lib
+  a World
+```
+     
+Operationally `@use_lib` is just substituted by content of a corresponding `@lib`'s body, as if the above goal is declared like:
+```
+@goal hello_world
+  a() {
+    echo Hello $1  
+  }
   a World
 ```
 
