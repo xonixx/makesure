@@ -466,7 +466,7 @@ Only single `@use_lib` per goal is allowed.
 
 ## Omitted features
 - Goals with parameters, like in [just](https://github.com/casey/just#recipe-parameters) 
-  - We deliberately don’t support this feature. The idea is that the build file should be self-contained, so have all the information to run in it, no external parameters should be required. This should be much easier for the final user to run a build. The other reason is that the idea of goal parameterization doesn't play well with dependencies. The tool however has limited parameterization capabilities via -D (link).
+  - We deliberately don’t support this feature. The idea is that the build file should be self-contained, so have all the information to run in it, no external parameters should be required. This should be much easier for the final user to run a build. The other reason is that the idea of goal parameterization doesn't play well with dependencies. The tool however has limited parameterization capabilities via `./makesure -D VAR=value`.
 - Includes
   - This is a considerable complication to the tool. Also, it makes the build file not self-contained.  
 - Shells other from bash/sh
