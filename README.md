@@ -51,6 +51,7 @@ By default, all scripts inside goals are executed with `bash`. If you want to us
 
 - Build file is a text file named `Makesurefile`.
 - Build file consists of a prelude and a set of goals.
+- Build file uses [directives](#directives). 
 - Prelude is a piece of a shell script (can be empty) that goes before goals and can `@define` (Link) global variables visible to goals. Prelude only runs once.
 - A goal is a labeled piece of shell (link).
 - A goal can declare dependencies on other goals (link). During execution each referenced dependency will run only once despite the number of occurrences in dependency tree. Dependencies will run in proper order according to the inferred topological order. Dependency loops will be reported as error.
@@ -114,11 +115,9 @@ Almost all major implementations of AWK will work. Tested and officially support
 
 The tool will **not** work with Busybox awk.
 
-## Documentation
-
-### Directives
+## Directives
    
-#### @options
+### @options
 
 Only valid: in prelude (meaning before any `@goal` declaration).
 
@@ -137,7 +136,7 @@ Will trace the executed shell script. This activates `set -x` shell option under
 ```
 By default `makesure` logs the goals being executed. Use this option if this is not desired (you only need the output of your own code in goals).
 
-#### @define
+### @define
 
 Only valid: in prelude.
 
@@ -151,7 +150,7 @@ Example:
 @define B="${A} world"
 ```
 
-#### @shell
+### @shell
 
 Only valid: in prelude.
 
@@ -165,9 +164,9 @@ Example:
 @shell sh
 ```
 
-#### @goal
+### @goal
 
-<u>Syntax #1:</u>
+<ins>Syntax #1:</ins>
 ```
 @goal goal_name [ @private ]
 ```
@@ -200,7 +199,7 @@ Invoking `./makesure` without arguments will attempt to call the goal named `def
   echo "I'm default goal"
 ```
 
-<u>Syntax #2:</u>
+<ins>Syntax #2:</ins>
 ```
 @goal [ goal_name ] @glob <glob pattern> [ @private ]
 ```
@@ -261,7 +260,7 @@ Now you can use this `Makesurefile`
 
 to be able to run each test individually (`./makesure test2.js` for example) and all together (`./makesure test_all`). 
 
-#### @doc
+### @doc
 
 Only valid: inside `@goal`.
                   
@@ -287,7 +286,7 @@ Available goals:
   test - tests the project 
 ```
 
-#### @depends_on
+### @depends_on
 
 Only valid: inside `@goal`.
 
@@ -361,15 +360,15 @@ Running `./makesure a` will show
 There is a loop in goal dependencies via a -> c
 ```
 
-#### @reached_if
+### @reached_if
 
 Only valid: inside `@goal`.
 
 
 
-#### @lib
+### @lib
 
-#### @use_lib
+### @use_lib
 
 ## Design principles
 
