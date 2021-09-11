@@ -150,6 +150,15 @@ Example:
 @define B="${A} world"
 ```
 
+Variable defined with `@define` can be overridden with a variable passed in invocation via `-D` parameter. 
+
+Overall the precedence for variables resolution is (higher priority top):
+
+- `./makesure -D VAR=1`
+- `@define VAR=2` in `Makesurefile`
+- `VAR=3 ./makesure`
+
+
 ### @shell
 
 Only valid: in prelude.
@@ -456,11 +465,18 @@ Only single `@use_lib` per goal is allowed.
 - Tests coverage is a must.
 
 ## Omitted features
-- goals with arguments (like in just). We deliberately don’t support this feature. The idea is that the build file should be self-contained, so have all the information to run in it, no external parameters should be required. This should be much easier for the final user to run a build. The other reason is that the idea of goal parameterization doesn't play well with dependencies. The tool however has limited parameterization capabilities via -D (link).
-- Includes TODO
-- shells other from bash/sh TODO
-- Custom programming language TODO
-- parallel execution TODO
+- Goals with parameters, like in [just](https://github.com/casey/just#recipe-parameters) 
+  - We deliberately don’t support this feature. The idea is that the build file should be self-contained, so have all the information to run in it, no external parameters should be required. This should be much easier for the final user to run a build. The other reason is that the idea of goal parameterization doesn't play well with dependencies. The tool however has limited parameterization capabilities via -D (link).
+- Includes
+  - This is a considerable complication to the tool. Also, it makes the build file not self-contained.  
+- Shells other from bash/sh
+  - Less portable build
+  - If you need to use, say, python for a goal body, it's unclear why you even need `makesure` at all. Besides, you always can just use `python -c "script"` 
+- Custom own programming language, like `make` has
+  - We think that this would be unjustified complexity
+  - We believe that the power of shell is enough
+- parallel execution
+  - `makesure` is a task runner, not a full-fledged build tool, like `make`, `ninja` or `bazel`. So if you need one, just use a proper build tool of your choice. 
 
 ## Similar tools
 
