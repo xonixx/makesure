@@ -44,7 +44,7 @@ By default, all scripts inside goals are executed with `bash`. If you want to us
 - [Very portable](#os).
 - Very simple, only bare minimum of truly needed features. You don’t need to learn a whole new programming language to use the tool! Literally it’s goals + dependencies + bash/shell.
 - Much saner and simpler `make` analog.
-- A bunch of useful built-in facilities: timing the goal's execution, listing goals in a build file, a means to speed-up repeated builds (link to @reached_if).
+- A bunch of useful built-in facilities: timing the goal's execution, listing goals in a build file, a [means](#reached_if) to speed-up repeated builds.
 - The syntax of a build file is also a valid bash/shell (though semantics is different). This can to some extent be in use for editing in IDE.
 
 ## Concepts
@@ -52,9 +52,9 @@ By default, all scripts inside goals are executed with `bash`. If you want to us
 - Build file is a text file named `Makesurefile`.
 - Build file consists of a prelude and a set of goals.
 - Build file uses [directives](#directives). 
-- Prelude is a piece of a shell script (can be empty) that goes before goals and can `@define` (Link) global variables visible to goals. Prelude only runs once.
-- A goal is a labeled piece of shell (link).
-- A goal can declare dependencies on other goals (link). During execution each referenced dependency will run only once despite the number of occurrences in dependency tree. Dependencies will run in proper order according to the inferred topological order. Dependency loops will be reported as error.
+- Prelude is a piece of a shell script (can be empty) that goes before goals. The purpose of prelude is to `@define` ([link](#define)) global variables visible to goals. Prelude only runs once.
+- A [goal](#goal) is a labeled piece of shell.
+- A goal can declare [dependencies](#depends_on) on other goals. During execution each referenced dependency will run only once despite the number of occurrences in dependency tree. Dependencies will run in proper order according to the inferred topological order. Dependency loops will be reported as error.
 - Goal bodies are executed in separate shell invocations. It means, you can’t easily pass variables from one goal to another. This is done on purpose to enforce declarative style.
 - By default, both prelude and goals are run with `bash`. You can change to `sh` with `@shell sh` in prelude.
 - For convenience in all shell invocations (prelude, goals, etc.) the current directory is automatically set to the one of `Makesurefile`. Typically, this is the root of the project. This allows using relative paths without bothering of the way the build is run.
@@ -380,13 +380,13 @@ Example `Makesurefile`:
   echo "hello world" > ./file.txt
 ```
 
-If you run `$ ./makesure file_created` first time:
+If you run `$ ./makesure file_created` the first time:
 ```
   goal 'file_created' ...
 Creating file ...
 ```
 
-If you run `$ ./makesure file_created` second time:
+If you run `$ ./makesure file_created` the second time:
 ```
   goal 'file_created' [already satisfied].
 ```
@@ -395,7 +395,44 @@ It is a good practice to name goals that declare `@reached_if` in past tense.
 
 ### @lib
 
+Syntax:
+```
+@lib [ lib_name ]
+```
+
+Helps with code reuse. Occasionally you need to run similar code in multiple goals. The most obvious approach would be to place a code into `shared.sh` and call it in both goals. The downside is that now you need an additional file(s) and the build file is no more self-contained. `@lib` to the resque!
+
+The usage is simple:
+
+```
+@lib lib_name
+  a() { 
+    echo Hello $1  
+  }
+
+@goal hello_world
+@use_lib lib_name
+  a World
+```
+
+For simplicity can omit name:
+       
+```
+@lib
+  a() {
+    echo Hello $1  
+  }
+
+@goal hello_world
+@use_lib
+  a World
+```
+
 ### @use_lib
+
+Only valid: inside `@goal`.
+
+Only single `@use_lib` per goal is allowed. 
 
 ## Design principles
 
@@ -404,7 +441,7 @@ It is a good practice to name goals that declare `@reached_if` in past tense.
 - There should be one way to do the thing.
 - Overall [Zen of Python](https://www.python.org/dev/peps/pep-0020/#the-zen-of-python).
 - Think hard before adding new feature. Think of a damage it could cause used improperly. Think of cognitive complexity it introduces. Only add a feature generic enough to cover lots of useful cases instead of just some corner cases. Let's better have a list of recipes for the latter.
-- Do not introduce unjustified complexity. User should not be forced to learn a whole new programming language to work with a tool. Instead, the tool is based on limited set of simple concepts, like goals + dependencies + @reached_if + familiar shell language (bash/sh).
+- Do not introduce unjustified complexity. User should not be forced to learn a whole new programming language to work with a tool. Instead, the tool is based on limited set of simple concepts, like goals + dependencies + handful of directives + familiar shell language (bash/sh).
 - [Worse is better](https://en.wikipedia.org/wiki/Worse_is_better).
 - [Principle of least surprise](https://en.wikipedia.org/wiki/Principle_of_least_astonishment).
 - Tests coverage is a must.
