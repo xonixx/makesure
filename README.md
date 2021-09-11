@@ -389,13 +389,13 @@ Example `Makesurefile`:
   echo "hello world" > ./file.txt
 ```
 
-If you run `$ ./makesure file_created` the first time:
+If you run `./makesure file_created` the first time:
 ```
   goal 'file_created' ...
 Creating file ...
 ```
 
-If you run `$ ./makesure file_created` the second time:
+If you run `./makesure file_created` the second time:
 ```
   goal 'file_created' [already satisfied].
 ```
@@ -465,16 +465,17 @@ Only single `@use_lib` per goal is allowed.
 - Tests coverage is a must.
 
 ## Omitted features
+
 - Goals with parameters, like in [just](https://github.com/casey/just#recipe-parameters) 
-  - We deliberately don’t support this feature. The idea is that the build file should be self-contained, so have all the information to run in it, no external parameters should be required. This should be much easier for the final user to run a build. The other reason is that the idea of goal parameterization doesn't play well with dependencies. The tool however has limited parameterization capabilities via `./makesure -D VAR=value`.
+  - We deliberately don't support this feature. The idea is that the build file should be self-contained, so have all the information to run in it, no external parameters should be required. This should be much easier for the final user to run a build. The other reason is that the idea of goal parameterization doesn't play well with dependencies. The tool however has limited parameterization capabilities via `./makesure -D VAR=value`.
 - Includes
   - This is a considerable complication to the tool. Also, it makes the build file not self-contained.  
 - Shells other from bash/sh
-  - Less portable build
-  - If you need to use, say, python for a goal body, it's unclear why you even need `makesure` at all. Besides, you always can just use `python -c "script"` 
+  - Less portable build.
+  - If you need to use, say, python for a goal body, it's unclear why you even need `makesure` at all. Besides, you always can just use `python -c "script"`. 
 - Custom own programming language, like `make` has
-  - We think that this would be unjustified complexity
-  - We believe that the power of shell is enough
+  - We think that this would be unjustified complexity.
+  - We believe that the power of shell is enough.
 - parallel execution
   - `makesure` is a task runner, not a full-fledged build tool, like `make`, `ninja` or `bazel`. So if you need one, just use a proper build tool of your choice. 
 
