@@ -1,6 +1,7 @@
 
 #@options tracing
 
+@define AWK="${AWK:-awk}"
 @define D='/tmp/dirXXX with spaces'
 #@define D='/tmp/dirXXX'
 
