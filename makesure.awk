@@ -555,7 +555,7 @@ function topologicalSortPerform(node, result, loop,   i, s) {
 function currentTimeMillis(   script, res) {
   res = executeGetLine("date +%s%3N")
   sub(/%3N/, "000", res) # if date doesn't support %N (macos?) just use second-precision
-  return res + 0
+  return +res
 }
 
 function selfUpdate(   url, tmp, err, newVer) {
@@ -640,7 +640,7 @@ function addStr(target, str) { target[0] = target[0] str }
 function addLine(target, line) { target[0] = addL(target[0], line) }
 function addL(s, l) { return s ? s "\n" l : l }
 function arrPush(arr, elt) { arr[arr[-7]++] = elt }
-function arrLen(arr) { return 0 + arr[-7] }
+function arrLen(arr) { return +arr[-7] }
 function arrLast(arr) { return arr[arrLen(arr)-1] }
 function commandExists(cmd) { return ok("command -v " cmd " >/dev/null") }
 function ok(cmd) { return system(cmd) == 0 }
