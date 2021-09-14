@@ -185,11 +185,11 @@ Defines a goal. `@private` modifier is optional. When goal is private, it won't 
 Lines that go after this declaration line (but before next `@goal` declaration line) will be treated as a shell script for the body of the goal. Example:
 
 ```
-@goal just_test
+@goal hello
   echo "Hello world" 
 ```
 
-Having the above in `Makesurefile` will produce next output when ran with `./makesure just_test`
+Having the above in `Makesurefile` will produce next output when ran with `./makesure hello`
 ```
 hello world
 ```
@@ -197,7 +197,7 @@ hello world
 Indentation in goal body is optional, unlike `make`, so below is perfectly valid:
 
 ```
-@goal just_test
+@goal hello
 echo "Hello world" 
 ```
 
@@ -216,17 +216,17 @@ Invoking `./makesure` without arguments will attempt to call the goal named `def
 This one is easy to illustrate with an example:
 
 ```
-@goal goal_name @glob *.txt 
+@goal process_file @glob *.txt 
  echo $ITEM $INDEX $TOTAL
 ```
 
 Is equivalent to declaring two goals
 
 ```
-@goal goal_name@a.txt
+@goal process_file@a.txt
  echo a.txt 0 2
 
-@goal goal_name@b.txt
+@goal process_file@b.txt
  echo b.txt 1 2
 ```
 iff
@@ -470,7 +470,7 @@ Only single `@use_lib` per goal is allowed.
   - We deliberately don't support this feature. The idea is that the build file should be self-contained, so have all the information to run in it, no external parameters should be required. This should be much easier for the final user to run a build. The other reason is that the idea of goal parameterization doesn't play well with dependencies. The tool however has limited parameterization capabilities via `./makesure -D VAR=value`.
 - Includes
   - This is a considerable complication to the tool. Also, it makes the build file not self-contained.  
-- Shells other from bash/sh
+- Shells other than `bash`/`sh`
   - Less portable build.
   - If you need to use, say, python for a goal body, it's unclear why you even need `makesure` at all. Besides, you always can just use `python -c "script"`. 
 - Custom own programming language, like `make` has
