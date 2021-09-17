@@ -391,19 +391,6 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       }
 
       goalBody[0] = ""
-      #      if (!("silent" in Options)) {
-      #        addStr(goalBody, "echo \"  goal '" goalName "' ")
-      #        if (reachedGoals[goalName])
-      #          addStr(goalBody, "[already satisfied].")
-      #        else if (emptyGoals[goalName])
-      #          addStr(goalBody, "[empty].")
-      #        else
-      #          addStr(goalBody, "...")
-      #        addStr(goalBody, "\"")
-      #      }
-      #      if (reachedGoals[goalName])
-      #        addLine(goalBody, "exit 0")
-
       addLine(goalBody, definesLine[0])
       if (goalName in GoalToLib)
         addLine(goalBody, Lib[GoalToLib[goalName]])
