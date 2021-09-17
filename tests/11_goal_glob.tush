@@ -1,9 +1,9 @@
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh test1 -l
 | Available goals:
-|   11_goal_glob_1.txt - test goal_glob
-|   11_goal_glob_2.txt - test goal_glob
-|   11_goal_glob_3.txt - test goal_glob
+|   11_goal_glob_1.txt           : test goal_glob
+|   11_goal_glob_2.txt           : test goal_glob
+|   11_goal_glob_3.txt           : test goal_glob
 |   test1
 |   test2
 |   goal_name@11_goal_glob_1.txt

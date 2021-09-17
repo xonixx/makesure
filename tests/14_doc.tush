@@ -12,6 +12,6 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/14_doc_multi2.sh -l
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/14_doc.sh -l
 | Available goals:
-|   a - doc for a
-|   b - doc for b
-|   14_doc.tush - doc for glob
+|   a           : doc for a
+|   b           : doc for b
+|   14_doc.tush : doc for glob
