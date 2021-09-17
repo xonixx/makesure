@@ -1,0 +1,6 @@
+
+$ cd "$MYDIR"; PATH=tests/wrapper/bash:$PATH ./$MAKESURE -f tests/20_optimize_goals.sh hello_empty
+| running bash
+|   goal 'hello' ...
+| Hello world
+|   goal 'hello_empty' [empty].
