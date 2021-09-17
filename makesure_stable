@@ -284,7 +284,7 @@ function checkBeforeRun(   i,dep,depCnt) {
   }
 }
 function doWork(\
-  i,j,goalName,depCnt,dep,reachedIf,reachedGoals,emptyGoals,definesLine,
+  i,j,goalName,gnLen,gnMaxLen,depCnt,dep,reachedIf,reachedGoals,emptyGoals,definesLine,
 body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
   started("end")
   checkBeforeRun()
@@ -297,9 +297,16 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       goalName = GoalNames[i]
       if (list && GoalsByName[goalName])
         continue
+      if ((gnLen = length(goalName)) > gnMaxLen && gnLen <= 30)
+        gnMaxLen = gnLen
+    }
+    for (i = 0; i in GoalNames; i++) {
+      goalName = GoalNames[i]
+      if (list && GoalsByName[goalName])
+        continue
       printf "  "
       if (goalName in Doc)
-        printf "%s - %s\n", goalName, Doc[goalName]
+        printf "%-" gnMaxLen "s : %s\n", goalName, Doc[goalName]
       else
         print goalName
     }
@@ -335,18 +342,6 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
         }
       }
       goalBody[0] = ""
-      if (!("silent" in Options)) {
-        addStr(goalBody, "echo \"  goal '\''" goalName "'\'' ")
-        if (reachedGoals[goalName])
-          addStr(goalBody, "[already satisfied].")
-        else if (emptyGoals[goalName])
-          addStr(goalBody, "[empty].")
-        else
-          addStr(goalBody, "...")
-        addStr(goalBody, "\"")
-      }
-      if (reachedGoals[goalName])
-        addLine(goalBody, "exit 0")
       addLine(goalBody, definesLine[0])
       if (goalName in GoalToLib)
         addLine(goalBody, Lib[GoalToLib[goalName]])
@@ -367,7 +362,9 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
         goalTimed = "timing" in Options && !reachedGoals[goalName] && !emptyGoals[goalName]
         if (goalTimed)
           t1 = t2 ? t2 : currentTimeMillis()
-        exitCode = shellExec(goalBodies[goalName])
+        if (!("silent" in Options))
+          print "  goal '\''" goalName "'\'' " (reachedGoals[goalName] ? "[already satisfied]." : emptyGoals[goalName] ? "[empty]." : "...")
+        exitCode = (reachedGoals[goalName] || emptyGoals[goalName]) ? 0 : shellExec(goalBodies[goalName])
         if (exitCode != 0)
           print "  goal '\''" goalName "'\'' failed"
         if (goalTimed) {
@@ -467,8 +464,8 @@ function topologicalSortPerform(node, result, loop,   i, s) {
 }
 function currentTimeMillis(   script, res) {
   res = executeGetLine("date +%s%3N")
-  sub(/%3N/, "000", res)
-  return res + 0
+  sub(/%?3N/, "000", res)
+  return +res
 }
 function selfUpdate(   url, tmp, err, newVer) {
   url = "https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable?token=" rand()
@@ -544,7 +541,7 @@ function addStr(target, str) { target[0] = target[0] str }
 function addLine(target, line) { target[0] = addL(target[0], line) }
 function addL(s, l) { return s ? s "\n" l : l }
 function arrPush(arr, elt) { arr[arr[-7]++] = elt }
-function arrLen(arr) { return 0 + arr[-7] }
+function arrLen(arr) { return +arr[-7] }
 function arrLast(arr) { return arr[arrLen(arr)-1] }
 function commandExists(cmd) { return ok("command -v " cmd " >/dev/null") }
 function ok(cmd) { return system(cmd) == 0 }
