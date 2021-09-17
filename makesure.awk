@@ -325,7 +325,7 @@ function checkBeforeRun(   i,dep,depCnt) {
 }
 
 function doWork(\
-  i,j,goalName,depCnt,dep,reachedIf,reachedGoals,emptyGoals,definesLine,
+  i,j,goalName,gnLen,gnMaxLen,depCnt,dep,reachedIf,reachedGoals,emptyGoals,definesLine,
 body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
   started("end") # end last directive
@@ -342,9 +342,16 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       goalName = GoalNames[i]
       if (list && GoalsByName[goalName]) # private
         continue
+      if ((gnLen = length(goalName)) > gnMaxLen && gnLen <= 30)
+        gnMaxLen = gnLen
+    }
+    for (i = 0; i in GoalNames; i++) {
+      goalName = GoalNames[i]
+      if (list && GoalsByName[goalName]) # private
+        continue
       printf "  "
       if (goalName in Doc)
-        printf "%s - %s\n", goalName, Doc[goalName]
+        printf "%-" gnMaxLen "s : %s\n", goalName, Doc[goalName]
       else
         print goalName
     }

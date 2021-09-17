@@ -1,0 +1,20 @@
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/21_list_goals.sh -l
+| Available goals:
+|   aaa               : some description
+|   other_goal        : do something important
+|   other_goal_no_doc
+|   yet_another_goal  : do something even more important
+|   yet_another_goal_looooooooooooooooooong : do something even more important
+|   hello
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/21_list_goals.sh -la
+| Available goals:
+|   aaa                   : some description
+|   other_goal            : do something important
+|   other_goal_no_doc
+|   yet_another_goal      : do something even more important
+|   yet_another_goal_priv : do something even more important private
+|   yet_another_goal_looooooooooooooooooong : do something even more important
+|   yet_another_goal_loooooooooooooong_private : do something even more important
+|   hello

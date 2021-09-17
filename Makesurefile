@@ -126,6 +126,8 @@
 @depends_on tests/17_prelude_fail.tush
 @depends_on tests/18_empty_prelude.tush
 @depends_on tests/19_vars_priority.tush
+@depends_on tests/20_optimize_goals.tush
+@depends_on tests/21_list_goals.tush
 
 @goal tested_stable
 @doc runs all tests with default awk on './makesure_stable'
@@ -149,6 +151,8 @@
 @depends_on test_stable_version@tests/17_prelude_fail.tush
 @depends_on test_stable_version@tests/18_empty_prelude.tush
 @depends_on test_stable_version@tests/19_vars_priority.tush
+@depends_on test_stable_version@tests/20_optimize_goals.tush
+@depends_on test_stable_version@tests/21_list_goals.tush
 
 @goal stable
 @doc rebuilds makesure_stable & README.md for release
@@ -316,5 +320,22 @@ function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return 
 
   mv goawk $GOAWK
   "./$GOAWK" --version
+
+@goal installed_just @private
+@reached_if [[ -f soft/just ]]
+@depends_on soft_folder_created
+  VER="0.10.1"
+  echo
+  echo "Fetching Just $VER ..."
+  echo
+
+  cd "soft"
+
+  F=just-$VER-x86_64-unknown-linux-musl.tar.gz
+  wget "https://github.com/casey/just/releases/download/$VER/$F"
+  tar xzvf "$F" just
+  rm "$F"
+
+  "./just" --version
 
 
