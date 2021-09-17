@@ -391,18 +391,18 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       }
 
       goalBody[0] = ""
-      if (!("silent" in Options)) {
-        addStr(goalBody, "echo \"  goal '" goalName "' ")
-        if (reachedGoals[goalName])
-          addStr(goalBody, "[already satisfied].")
-        else if (emptyGoals[goalName])
-          addStr(goalBody, "[empty].")
-        else
-          addStr(goalBody, "...")
-        addStr(goalBody, "\"")
-      }
-      if (reachedGoals[goalName])
-        addLine(goalBody, "exit 0")
+      #      if (!("silent" in Options)) {
+      #        addStr(goalBody, "echo \"  goal '" goalName "' ")
+      #        if (reachedGoals[goalName])
+      #          addStr(goalBody, "[already satisfied].")
+      #        else if (emptyGoals[goalName])
+      #          addStr(goalBody, "[empty].")
+      #        else
+      #          addStr(goalBody, "...")
+      #        addStr(goalBody, "\"")
+      #      }
+      #      if (reachedGoals[goalName])
+      #        addLine(goalBody, "exit 0")
 
       addLine(goalBody, definesLine[0])
       if (goalName in GoalToLib)
@@ -428,7 +428,11 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
         goalTimed = "timing" in Options && !reachedGoals[goalName] && !emptyGoals[goalName]
         if (goalTimed)
           t1 = t2 ? t2 : currentTimeMillis()
-        exitCode = shellExec(goalBodies[goalName])
+
+        if (!("silent" in Options))
+          print "  goal '" goalName "' " (reachedGoals[goalName] ? "[already satisfied]." : emptyGoals[goalName] ? "[empty]." : "...")
+
+        exitCode = (reachedGoals[goalName] || emptyGoals[goalName]) ? 0 : shellExec(goalBodies[goalName])
         if (exitCode != 0)
           print "  goal '" goalName "' failed"
         if (goalTimed) {
