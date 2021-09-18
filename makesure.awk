@@ -12,7 +12,6 @@ BEGIN {
   split("",Options)
   split("",GoalNames)   # list
   split("",GoalsByName) # name -> private
-  split("",Glob)        # name -> pattern
   split("",Code)        # name -> body
   split("",DefineOverrides) # k -> ""
   DefinesFile=""
@@ -215,7 +214,6 @@ function registerGoal(goalName, priv) {
 }
 
 function calcGlob(goalName, pattern,   script, file) {
-  Glob[goalName] = pattern
   split("",GlobGoals)
   split("",GlobFiles)
   script = MyDirScript ";for f in ./" pattern ";do test -e \"$f\" && echo \"$f\";done"
@@ -225,6 +223,8 @@ function calcGlob(goalName, pattern,   script, file) {
     arrPush(GlobGoals,(goalName ? goalName "@" : "") file)
   }
   close(script)
+  quicksort(GlobFiles,0,arrLen(GlobFiles)-1) # TODO: can we just use one array?
+  quicksort(GlobGoals,0,arrLen(GlobGoals)-1)
 }
 
 function parseGoalLine(   priv) {
@@ -236,7 +236,7 @@ function parseGoalLine(   priv) {
   return priv
 }
 
-function handleGoalGlob(   goalName,g,priv,i,pattern) {
+function handleGoalGlob(   goalName,globAllGoal,g,priv,i,pattern) {
   started("goal_glob")
   priv = parseGoalLine()
   goalName = $2; $2 = ""
@@ -244,11 +244,12 @@ function handleGoalGlob(   goalName,g,priv,i,pattern) {
     goalName = ""
   } else $3 = ""
   calcGlob(goalName, pattern = trim($0))
+  globAllGoal = goalName ? goalName : pattern
   for (i=0; i in GlobGoals; i++){
-    registerDependency(goalName, g = GlobGoals[i])
+    registerDependency(globAllGoal, g = GlobGoals[i])
     registerGoal(g, 1)
   }
-  registerGoal(goalName = goalName ? goalName : pattern, priv)
+  registerGoal(globAllGoal, priv)
 }
 
 function handleDoc(   i) {
@@ -634,6 +635,48 @@ function dl(url, dest,    verbose) {
     if (!ok("curl " (verbose ? "" : "-s") " " quoteArg(url) " -o " quoteArg(dest)))
       return "error with curl"
   } else return "wget/curl no found"
+}
+# s1 > s2 -> 1
+# s1== s2 -> 0
+# s1 < s2 -> -1
+function natOrder(s1,s2, i1,i2,   c1, c2, n1,n2, l1, l2) {
+  l1 = length(s1); l2 = length(s2)
+
+  if (i1 == l1+1 || i2 == l2+1)
+    return _cmp(l1-i1, l2-i2)
+
+  while ((c1 = substr(s1,i1,1)) == (c2 = substr(s2,i2,1))) {
+    i1++; i2++
+    if (i1>l1 || i2>l2)
+      return _cmp(l1-i1, l2-i2)
+  }
+
+  if (!_digit(c1) || !_digit(c2))
+    return _cmp(c1, c2)
+
+  n1 = 0; while(_digit(c1 = substr(s1,i1++,1))) { n1 = n1 * 10 + c1 }
+  n2 = 0; while(_digit(c2 = substr(s2,i2++,1))) { n2 = n2 * 10 + c2 }
+
+  return n1 == n2 ? natOrder(s1, s2, i1, i2) : _cmp(n1, n2)
+}
+function _cmp(v1, v2) { return v1 > v2 ? 1 : v1 < v2 ? -1 : 0 }
+function _digit(c) { return c >= "0" && c <= "9" }
+function quicksort(data, left, right,   i, last) {
+  if (left >= right)
+    return
+  quicksortSwap(data, left, int((left + right) / 2))
+  last = left
+  for (i = left + 1; i <= right; i++)
+    if (natOrder(data[i], data[left]) < 1)
+      quicksortSwap(data, ++last, i)
+  quicksortSwap(data, left, last)
+  quicksort(data, left, last - 1)
+  quicksort(data, last + 1, right)
+}
+function quicksortSwap(data, i, j,   temp) {
+  temp = data[i]
+  data[i] = data[j]
+  data[j] = temp
 }
 function join(arr, startIncl, endExcl, sep,   result, i) {
   result = arr[startIncl]
