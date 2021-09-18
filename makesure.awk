@@ -234,16 +234,18 @@ function parseGoalLine(   priv) {
   return priv
 }
 
-function handleGoalGlob(   goalName,priv,i) {
+function handleGoalGlob(   goalName,g,priv,i,pattern) {
   started("goal_glob")
   priv = parseGoalLine()
   goalName = $2; $2 = ""
   if ("@glob" == goalName) {
     goalName = ""
   } else $3 = ""
-  calcGlob(goalName, trim($0))
+  calcGlob(goalName, pattern = trim($0))
+  registerGoal(goalName = goalName ? goalName : pattern, priv)
   for (i=0; i in GlobGoals; i++){
-    registerGoal(GlobGoals[i], priv)
+    registerDependency(goalName, g = GlobGoals[i])
+    registerGoal(g, 1)
   }
 }
 
@@ -278,11 +280,14 @@ function handleDependsOn(   i) {
   }
 }
 
-function registerDependsOn(goalName,   i,x) {
-  for (i=2; i<=NF; i++) {
-    Dependencies[x = goalName SUBSEP DependenciesCnt[goalName]++] = $i
-    DependenciesLineNo[x] = NR
-  }
+function registerDependsOn(goalName,   i) {
+  for (i=2; i<=NF; i++)
+    registerDependency(goalName, $i)
+}
+
+function registerDependency(goalName, depGoalName,   x) {
+  Dependencies[x = goalName SUBSEP DependenciesCnt[goalName]++] = depGoalName
+  DependenciesLineNo[x] = NR
 }
 
 function handleReachedIf(   i) {
