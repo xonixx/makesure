@@ -12,13 +12,14 @@ BEGIN {
   split("",Options)
   split("",GoalNames)   # list
   split("",GoalsByName) # name -> private
+  split("",Glob)        # name -> pattern
   split("",Code)        # name -> body
   split("",DefineOverrides) # k -> ""
   DefinesFile=""
   split("",Dependencies)       # name,i -> dep goal
   split("",DependenciesLineNo) # name,i -> line no.
-  split("",DependenciesCnt) # name   -> dep cnd
-  split("",Doc)    # name -> doc str
+  split("",DependenciesCnt)    # name   -> dep cnd
+  split("",Doc)       # name -> doc str
   split("",ReachedIf) # name -> condition line
   split("",GlobFiles) # list
   split("",GlobGoals) # list
@@ -214,6 +215,7 @@ function registerGoal(goalName, priv) {
 }
 
 function calcGlob(goalName, pattern,   script, file) {
+  Glob[goalName] = pattern
   split("",GlobGoals)
   split("",GlobFiles)
   script = MyDirScript ";for f in ./" pattern ";do test -e \"$f\" && echo \"$f\";done"
@@ -242,19 +244,19 @@ function handleGoalGlob(   goalName,g,priv,i,pattern) {
     goalName = ""
   } else $3 = ""
   calcGlob(goalName, pattern = trim($0))
-  registerGoal(goalName = goalName ? goalName : pattern, priv)
   for (i=0; i in GlobGoals; i++){
     registerDependency(goalName, g = GlobGoals[i])
     registerGoal(g, 1)
   }
+  registerGoal(goalName = goalName ? goalName : pattern, priv)
 }
 
 function handleDoc(   i) {
   checkGoalOnly()
 
-  if ("goal" == Mode)
-    registerDoc(currentGoalName())
-  else {
+  registerDoc(currentGoalName())
+
+  if ("goal_glob" == Mode) {
     for (i=0; i in GlobGoals; i++){
       registerDoc(GlobGoals[i])
     }
