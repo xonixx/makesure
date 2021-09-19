@@ -20,7 +20,7 @@ BEGIN {
   split("",DependenciesCnt)    # name   -> dep cnd
   split("",Doc)       # name -> doc str
   split("",ReachedIf) # name -> condition line
-  GlobCnt = 0
+  GlobCnt = 0         # count of files for glob
   GlobGoalName = ""
   split("",GlobFiles) # list
   split("",LibNames) # list
@@ -251,11 +251,11 @@ function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern) {
   for (i=0; i < GlobCnt; i++){
     registerGoal(globGoal(i), globSingle ? priv : 1)
   }
-  if (globSingle) # glob on single file
-    return
-  registerGoal(globAllGoal, priv)
-  for (i=0; i < GlobCnt; i++){
-    registerDependency(globAllGoal, globGoal(i))
+  if (!globSingle) { # glob on single file
+    registerGoal(globAllGoal, priv)
+    for (i=0; i < GlobCnt; i++){
+      registerDependency(globAllGoal, globGoal(i))
+    }
   }
 }
 
