@@ -8,27 +8,9 @@ BEGIN {
   SupportedOptions["silent"]
   SupportedOptions["timing"]
   Tmp = isDir("/dev/shm") ? "/dev/shm" : "/tmp"
-  split("",Lines)
-  split("",Args)
-  split("",ArgGoals)
-  split("",Options)
-  split("",GoalNames)
-  split("",GoalsByName)
-  split("",Code)
-  split("",DefineOverrides)
   DefinesFile=""
-  split("",Dependencies)
-  split("",DependenciesLineNo)
-  split("",DependenciesCnt)
-  split("",Doc)
-  split("",ReachedIf)
   GlobCnt = 0
   GlobGoalName = ""
-  split("",GlobFiles)
-  split("",LibNames)
-  split("",Lib)
-  split("",UseLibLineNo)
-  split("",GoalToLib)
   Mode = "prelude"
   srand()
   prepareArgs()
