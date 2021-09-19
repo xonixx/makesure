@@ -236,7 +236,7 @@ function parseGoalLine(   priv) {
   return priv
 }
 
-function handleGoalGlob(   goalName,globAllGoal,g,priv,i,pattern) {
+function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern) {
   started("goal_glob")
   priv = parseGoalLine()
   goalName = $2; $2 = ""
@@ -245,19 +245,26 @@ function handleGoalGlob(   goalName,globAllGoal,g,priv,i,pattern) {
   } else $3 = ""
   calcGlob(goalName, pattern = trim($0))
   globAllGoal = goalName ? goalName : pattern
+  globSingle = arrLen(GlobGoals) == 1 && globAllGoal == GlobGoals[0]
   for (i=0; i in GlobGoals; i++){
-    registerDependency(globAllGoal, g = GlobGoals[i])
-    registerGoal(g, 1)
+    registerGoal(GlobGoals[i], globSingle ? priv : 1)
   }
+  if (globSingle) # glob on single file
+    return
   registerGoal(globAllGoal, priv)
+  for (i=0; i in GlobGoals; i++){
+    registerDependency(globAllGoal, GlobGoals[i])
+  }
 }
 
 function handleDoc(   i) {
   checkGoalOnly()
 
-  registerDoc(currentGoalName())
-
-  if ("goal_glob" == Mode) {
+  if ("goal" == Mode) {
+    registerDoc(currentGoalName())
+  } else {
+    if (!(arrLen(GlobGoals) == 1 && currentGoalName() == GlobGoals[0])) # glob on single file
+      registerDoc(currentGoalName())
     for (i=0; i in GlobGoals; i++){
       registerDoc(GlobGoals[i])
     }
