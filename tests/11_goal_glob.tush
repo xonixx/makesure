@@ -1,28 +1,60 @@
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh test1 -l
+$ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh -l
 | Available goals:
-|   11_goal_glob_1.txt           : test goal_glob
-|   11_goal_glob_2.txt           : test goal_glob
-|   11_goal_glob_3.txt           : test goal_glob
+|   11_goal_glob*.txt  : test goal_glob
+|   non-existent-glob*
 |   test1
 |   test2
-|   goal_name@11_goal_glob_1.txt
-|   goal_name@11_goal_glob_2.txt
-|   goal_name@11_goal_glob_3.txt
+|   glob_goal_name
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh -la
+| Available goals:
+|   11_goal_glob_1.txt  : test goal_glob
+|   11_goal_glob_2.txt  : test goal_glob
+|   11_goal_glob_3.txt  : test goal_glob
+|   11_goal_glob_10.txt : test goal_glob
+|   11_goal_glob*.txt   : test goal_glob
+|   non-existent-glob*
+|   test1
+|   test2
+|   glob_goal_name@11_goal_glob_1.txt
+|   glob_goal_name@11_goal_glob_2.txt
+|   glob_goal_name@11_goal_glob_3.txt
+|   glob_goal_name@11_goal_glob_10.txt
+|   glob_goal_name
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh -d '11_goal_glob*.txt'
+| Resolved goals to reach for '11_goal_glob*.txt':
+|   11_goal_glob_1.txt
+|   11_goal_glob_2.txt
+|   11_goal_glob_3.txt
+|   11_goal_glob_10.txt
+|   11_goal_glob*.txt
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh test1
 |   goal '11_goal_glob_1.txt' ...
-| 11_goal_glob_1.txt :: 0 :: 3
+| 11_goal_glob_1.txt :: 0 :: 4
 | content 111
 |   goal '11_goal_glob_2.txt' [already satisfied].
 |   goal '11_goal_glob_3.txt' ...
-| 11_goal_glob_3.txt :: 2 :: 3
+| 11_goal_glob_3.txt :: 2 :: 4
 | content 333
 |   goal 'test1' [empty].
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh test2
-|   goal 'goal_name@11_goal_glob_2.txt' ...
-| goal_name ::: 11_goal_glob_2.txt :: 1 :: 3
-|   goal 'goal_name@11_goal_glob_3.txt' ...
-| goal_name ::: 11_goal_glob_3.txt :: 2 :: 3
+|   goal 'glob_goal_name@11_goal_glob_2.txt' ...
+| glob_goal_name ::: 11_goal_glob_2.txt :: 1 :: 4
+|   goal 'glob_goal_name@11_goal_glob_3.txt' ...
+| glob_goal_name ::: 11_goal_glob_3.txt :: 2 :: 4
 |   goal 'test2' [empty].
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh glob_goal_name
+|   goal 'glob_goal_name@11_goal_glob_1.txt' ...
+| glob_goal_name ::: 11_goal_glob_1.txt :: 0 :: 4
+|   goal 'glob_goal_name@11_goal_glob_2.txt' ...
+| glob_goal_name ::: 11_goal_glob_2.txt :: 1 :: 4
+|   goal 'glob_goal_name@11_goal_glob_3.txt' ...
+| glob_goal_name ::: 11_goal_glob_3.txt :: 2 :: 4
+|   goal 'glob_goal_name@11_goal_glob_10.txt' ...
+| glob_goal_name ::: 11_goal_glob_10.txt :: 3 :: 4
+|   goal 'glob_goal_name' [empty].

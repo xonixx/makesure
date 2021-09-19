@@ -220,14 +220,18 @@ This one is easy to illustrate with an example:
  echo $ITEM $INDEX $TOTAL
 ```
 
-Is equivalent to declaring two goals
+Is equivalent to declaring three goals
 
 ```
-@goal process_file@a.txt
+@goal process_file@a.txt @private
  echo a.txt 0 2
 
-@goal process_file@b.txt
+@goal process_file@b.txt @private
  echo b.txt 1 2
+ 
+@goal process_file
+@depends_on process_file@a.txt   
+@depends_on process_file@b.txt   
 ```
 iff
 ```
@@ -242,16 +246,20 @@ For convenience, you can omit name in case of glob goal:
 ```
 as equivalent for
 ```
-@goal a.txt
+@goal a.txt @private
  echo a.txt 0 2
 
-@goal b.txt
+@goal b.txt @private
  echo b.txt 1 2
+ 
+@goal *.txt
+@depends_on a.txt 
+@depends_on b.txt 
 ```
 
 So essentially one glob goal declaration expands to multiple goal declarations based on files present in project that match the glob pattern. Shell glob expansion mechanism applies. 
 
-The useful use case here would be to represent a set of test files as a set of goals. The example could be found in the project's own [build file](https://github.com/xonixx/makesure/blob/main/Makesurefile#L95).
+The useful use case here would be to represent a set of test files as a set of goals. The example could be found in the project's own [build file](https://github.com/xonixx/makesure/blob/main/Makesurefile#L98).
 
 Why this may be useful? Imagine in your nodejs application you have `test1.js`, `test2.js`, `test3.js`.
 Now you can use this `Makesurefile`
@@ -260,14 +268,9 @@ Now you can use this `Makesurefile`
 @goal @glob test*.js
   echo "running test file $INDEX out of $TOTAL ..."
   node $ITEM
-
-@goal test_all
-@depends_on test1.js
-@depends_on test2.js
-@depends_on test3.js
 ```
 
-to be able to run each test individually (`./makesure test2.js` for example) and all together (`./makesure test_all`). 
+to be able to run each test individually (`./makesure test2.js` for example) and all together (`./makesure 'test*.js'`). 
 
 ### @doc
 
