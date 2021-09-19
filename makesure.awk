@@ -20,8 +20,9 @@ BEGIN {
   split("",DependenciesCnt)    # name   -> dep cnd
   split("",Doc)       # name -> doc str
   split("",ReachedIf) # name -> condition line
+  GlobCnt = 0
+  GlobGoalName = ""
   split("",GlobFiles) # list
-  split("",GlobGoals) # list
   split("",LibNames) # list
   split("",Lib)      # name -> code
   split("",UseLibLineNo)# name -> line no.
@@ -183,8 +184,8 @@ function handleUseLib(   goalName) {
   if ("goal" == Mode)
     registerUseLib(currentGoalName())
   else {
-    for (i=0; i in GlobGoals; i++){
-      registerUseLib(GlobGoals[i])
+    for (i=0; i < GlobCnt; i++){
+      registerUseLib(globGoal(i))
     }
   }
 }
@@ -213,18 +214,19 @@ function registerGoal(goalName, priv) {
   GoalsByName[goalName] = priv
 }
 
+function globGoal(i) { return (GlobGoalName ? GlobGoalName "@" : "") GlobFiles[i] }
 function calcGlob(goalName, pattern,   script, file) {
-  split("",GlobGoals)
+  GlobCnt = 0
+  GlobGoalName = goalName
   split("",GlobFiles)
   script = MyDirScript ";for f in ./" pattern ";do test -e \"$f\" && echo \"$f\";done"
   while ((script | getline file)>0) {
+    GlobCnt++
     file = substr(file, 3)
     arrPush(GlobFiles,file)
-    arrPush(GlobGoals,(goalName ? goalName "@" : "") file)
   }
   close(script)
-  quicksort(GlobFiles,0,arrLen(GlobFiles)-1) # TODO: can we just use one array?
-  quicksort(GlobGoals,0,arrLen(GlobGoals)-1)
+  quicksort(GlobFiles,0,arrLen(GlobFiles)-1)
 }
 
 function parseGoalLine(   priv) {
@@ -245,15 +247,15 @@ function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern) {
   } else $3 = ""
   calcGlob(goalName, pattern = trim($0))
   globAllGoal = goalName ? goalName : pattern
-  globSingle = arrLen(GlobGoals) == 1 && globAllGoal == GlobGoals[0]
-  for (i=0; i in GlobGoals; i++){
-    registerGoal(GlobGoals[i], globSingle ? priv : 1)
+  globSingle = GlobCnt == 1 && globAllGoal == globGoal(0)
+  for (i=0; i < GlobCnt; i++){
+    registerGoal(globGoal(i), globSingle ? priv : 1)
   }
   if (globSingle) # glob on single file
     return
   registerGoal(globAllGoal, priv)
-  for (i=0; i in GlobGoals; i++){
-    registerDependency(globAllGoal, GlobGoals[i])
+  for (i=0; i < GlobCnt; i++){
+    registerDependency(globAllGoal, globGoal(i))
   }
 }
 
@@ -263,10 +265,10 @@ function handleDoc(   i) {
   if ("goal" == Mode) {
     registerDoc(currentGoalName())
   } else {
-    if (!(arrLen(GlobGoals) == 1 && currentGoalName() == GlobGoals[0])) # glob on single file
+    if (!(GlobCnt == 1 && currentGoalName() == globGoal(0))) # glob on single file
       registerDoc(currentGoalName())
-    for (i=0; i in GlobGoals; i++){
-      registerDoc(GlobGoals[i])
+    for (i=0; i < GlobCnt; i++){
+      registerDoc(globGoal(i))
     }
   }
 }
@@ -284,8 +286,8 @@ function handleDependsOn(   i) {
   if ("goal" == Mode)
     registerDependsOn(currentGoalName())
   else {
-    for (i=0; i in GlobGoals; i++){
-      registerDependsOn(GlobGoals[i])
+    for (i=0; i < GlobCnt; i++){
+      registerDependsOn(globGoal(i))
     }
   }
 }
@@ -306,14 +308,14 @@ function handleReachedIf(   i) {
   if ("goal" == Mode)
     registerReachedIf(currentGoalName())
   else {
-    for (i=0; i in GlobGoals; i++){
-      registerReachedIf(GlobGoals[i], makeGlobVarsCode(i))
+    for (i=0; i < GlobCnt; i++){
+      registerReachedIf(globGoal(i), makeGlobVarsCode(i))
     }
   }
 }
 
 function makeGlobVarsCode(i) {
-  return "ITEM=" quoteArg(GlobFiles[i]) ";INDEX=" i ";TOTAL=" arrLen(GlobGoals) ";"
+  return "ITEM=" quoteArg(GlobFiles[i]) ";INDEX=" i ";TOTAL=" GlobCnt ";"
 }
 
 function registerReachedIf(goalName, preScript) {
@@ -524,8 +526,8 @@ function handleCodeLine(line,   goalName) {
     #print "Append line for '" name "': " line
     Lib[name] = addL(Lib[name], line)
   } else if ("goal_glob" == Mode) {
-    for (i=0; i in GlobGoals; i++){
-      if (!Code[goalName = GlobGoals[i]])
+    for (i=0; i < GlobCnt; i++){
+      if (!Code[goalName = globGoal(i)])
         addCodeLine(goalName, makeGlobVarsCode(i))
       addCodeLine(goalName, line)
     }
