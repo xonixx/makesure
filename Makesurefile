@@ -93,6 +93,7 @@
   }
 
 @goal tested
+@doc runs all *.tush tests
 @depends_on tests/*.tush
 
 @goal @glob tests/*.tush @private
@@ -134,7 +135,7 @@ function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return 
   } > makesure_stable
 
 @goal default
-@doc calls tested goal
+@doc calls 'tested' goal
 @depends_on tested
 
 @goal tested_awks
@@ -168,7 +169,7 @@ function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return 
 #  AWK="busybox awk" ./makesure tested
 
 @goal installed_awks
-@doc installs all awks
+@doc installs all awks into ./soft
 @depends_on installed_bwk
 @depends_on installed_gawk51
 @depends_on installed_mawk134
