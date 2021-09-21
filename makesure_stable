@@ -1,5 +1,5 @@
 #!/bin/sh
-exec awk -v "Version=0.9.9" -v "Prog=$0" '
+exec awk -v "Version=0.9.10" -v "Prog=$0" '
 BEGIN {
   Shell = "bash"
   SupportedShells["bash"]

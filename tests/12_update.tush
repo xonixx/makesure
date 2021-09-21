@@ -13,10 +13,10 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/12_update.sh test_wget
 |   goal 'test_wget' ...
 | XXX
 | running wget
-| updated XXX -> 0.9.9
+| updated XXX -> 0.9.10
 | running wget
-| you have latest version 0.9.9 installed
-| 0.9.9
+| you have latest version 0.9.10 installed
+| 0.9.10
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/12_update.sh test_curl
 |   goal 'makesure_prepared' ...
@@ -24,7 +24,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/12_update.sh test_curl
 |   goal 'test_curl' ...
 | XXX
 | running curl
-| updated XXX -> 0.9.9
+| updated XXX -> 0.9.10
 | running curl
-| you have latest version 0.9.9 installed
-| 0.9.9
+| you have latest version 0.9.10 installed
+| 0.9.10
