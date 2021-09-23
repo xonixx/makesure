@@ -225,9 +225,13 @@ in_begin && $1 ~ /^split/ { next }
 
   cd "gawk-5.1.0"
 
-  ./configure && make && make check
+  ./configure
+  make
+  # make check
 
   mv gawk ../gawk51
+  mkdir ../gawk51_libs
+  mv extension/.libs/*.so ../gawk51_libs # for AWKLIBPATH
 
   cd ..
   ./gawk51 --version
