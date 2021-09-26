@@ -20,8 +20,28 @@ jobs:
 
       - name: "run tests"
         run: |
-          [[ "$OSTYPE" == "darwin"* ]] && brew install gawk
           ./makesure_stable
+
+  macos_gawk:
+    name: "Run tests macos/Gawk"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-10.15, macos-11.0 ]
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        id: cache-tush
+        with:
+          path: soft/tush
+          key: ${{ runner.os }}-tush-2
+
+      - name: "run tests"
+        run: |
+          brew install gawk
+          ./makesure_stable
+          
   win:
     name: "Run tests Win"
     runs-on: ${{ matrix.os }}
