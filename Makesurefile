@@ -127,7 +127,8 @@
 @goal stable_version_prepared @private
   {
     echo '#!/bin/sh'
-    echo "exec awk -v \"Version=$NEXT_VERSION\" -v \"Prog=\$0\" '"
+    echo "command -v gawk >/dev/null && AWK='gawk -ltime -v Gawk=1' || AWK=awk"
+    echo "exec \$AWK -v \"Version=$NEXT_VERSION\" -v \"Prog=\$0\" '"
     awk -v Q=\' '
 function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s }
 /^BEGIN/                  { in_begin=1 }

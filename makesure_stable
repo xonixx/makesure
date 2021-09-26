@@ -1,5 +1,6 @@
 #!/bin/sh
-exec awk -v "Version=0.9.10" -v "Prog=$0" '
+command -v gawk >/dev/null && AWK='gawk -ltime -v Gawk=1' || AWK=awk
+exec $AWK -v "Version=0.9.10" -v "Prog=$0" '
 BEGIN {
   Shell = "bash"
   SupportedShells["bash"]
@@ -461,6 +462,8 @@ function topologicalSortPerform(node, result, loop,   i, s) {
   arrPush(result, node)
 }
 function currentTimeMillis(   script, res) {
+  if (Gawk)
+    return int(gettimeofday()*1000)
   res = executeGetLine("date +%s%3N")
   sub(/%?3N/, "000", res)
   return +res

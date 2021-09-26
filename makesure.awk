@@ -568,6 +568,8 @@ function topologicalSortPerform(node, result, loop,   i, s) {
 }
 
 function currentTimeMillis(   script, res) {
+  if (Gawk)
+    return int(gettimeofday()*1000)
   res = executeGetLine("date +%s%3N")
   sub(/%?3N/, "000", res) # if date doesn't support %N (macos?) just use second-precision
   return +res
