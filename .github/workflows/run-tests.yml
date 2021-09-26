@@ -20,6 +20,7 @@ jobs:
 
       - name: "run tests"
         run: |
+          [[ "$OSTYPE" == "darwin"* ]] && brew install gawk
           ./makesure_stable
   win:
     name: "Run tests Win"
