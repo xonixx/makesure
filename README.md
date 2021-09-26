@@ -153,7 +153,7 @@ Executing goal 'a' ...
   total time 3.006 s
 ```
 
-*Small issue exists with this option on macOS.* Due to BSD `date` not supporting `+%N` formatting option the default precision of timings is 1 sec. To make it 1 ms precise (if this is important) just install Gawk (`brew install gawk`). In this case Gawk built-in `gettimeofday` function will be used. 
+*Small issue exists with this option on macOS.* Due to BSD's `date` not supporting `+%N` formatting option, the default precision of timings is 1 sec. To make it 1 ms precise (if this is important) just install Gawk (`brew install gawk`). In this case Gawk built-in `gettimeofday` function will be used. 
 ```
 @options tracing
 ```
