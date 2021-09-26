@@ -126,7 +126,34 @@ Valid options: `timing`, `tracing`, `silent`
 ```
 @options timing
 ```
-Will measure and log each goal execution time + total time. 
+Will measure and log each goal execution time + total time.
+
+Example `Makesurefile`:
+```
+@options timing
+
+@goal a
+@depends_on b
+  echo "Executing goal 'a' ..."
+  sleep 1
+@goal b
+  echo "Executing goal 'b' ..."
+  sleep 2
+```
+
+Running:
+```
+$ ./makesure a
+  goal 'b' ...
+Executing goal 'b' ...
+  goal 'b' took 2.003 s
+  goal 'a' ...
+Executing goal 'a' ...
+  goal 'a' took 1.003 s
+  total time 3.006 s
+```
+
+*Small issue exists with this option on macOS.* Due to BSD `date` not supporting `+%N` formatting option the default precision of timings is 1 sec. To make it 1 ms precise (if this is important) just install Gawk (`brew install gawk`). In this case Gawk built-in `gettimeofday` function will be used. 
 ```
 @options tracing
 ```

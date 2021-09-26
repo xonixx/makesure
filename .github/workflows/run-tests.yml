@@ -39,7 +39,7 @@ jobs:
 
       - name: "run tests"
         run: |
-          brew install gawk
+          brew install gawk # TODO understand if this step can be cached
           ./makesure_stable
           
   win:
