@@ -20,7 +20,7 @@ jobs:
 
       - name: "run tests"
         run: |
-          ./makesure_stable
+          ./makesure_stable tested_awks
 
   macos_gawk:
     name: "Run tests macos/Gawk"
