@@ -40,8 +40,8 @@ By default, all scripts inside goals are executed with `bash`. If you want to us
 
 ## Features
 
-- [Zero-install](#installation).
-- [Very portable](#os).
+- [Zero-install](#installation)
+- [Very portable](#os)
 - Very simple, only bare minimum of truly needed features. You don’t need to learn a whole new programming language to use the tool! Literally it’s goals + dependencies + handful of directives + bash/shell.
 - Much saner and simpler `make` analog.
 - A bunch of useful built-in facilities: timing the goal's execution, listing goals in a build file, a [means](#reached_if) to speed-up repeated builds.
@@ -321,8 +321,8 @@ Running `./makesure -l` will show
 
 ```
 Available goals:
-  build - builds the project
-  test - tests the project 
+  build : builds the project
+  test  : tests the project
 ```
 
 ### @depends_on
