@@ -61,4 +61,3 @@ jobs:
       - name: "run tests"
         run: |
           & bash -e -c "./makesure_stable"
-
