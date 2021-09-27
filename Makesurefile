@@ -168,7 +168,12 @@ in_begin && $1 ~ /^split/ { next }
   AWK="$(pwd)/soft/$GOAWK" ./makesure tested
 
 @goal tested_mawk @private
-  AWK="/usr/bin/mawk" ./makesure tested
+  if [[ -x /usr/bin/mawk ]]
+  then
+    AWK="/usr/bin/mawk" ./makesure tested
+  else
+    echo "No default mawk... Skipped testing it."
+  fi
 
 #@goal tested_busybox
 #  AWK="busybox awk" ./makesure tested
