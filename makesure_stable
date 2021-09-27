@@ -1,5 +1,5 @@
 #!/bin/sh
-if command -v gawk >/dev/null;then AWK='gawk -ltime -v Gawk=1'; X='';else AWK=awk; X=';function gettimeofday(){}';fi
+if command -v gawk >/dev/null;then AWK='gawk -ltime -v Gawk=1'; X='';else AWK=awk; X='function gettimeofday(){}';fi
 exec $AWK -v "Version=0.9.10" -v "Prog=$0" '
 BEGIN {
   Shell = "bash"

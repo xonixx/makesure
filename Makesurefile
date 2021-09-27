@@ -127,7 +127,7 @@
 @goal stable_version_prepared @private
   {
     echo '#!/bin/sh'
-    echo "if command -v gawk >/dev/null;then AWK='gawk -ltime -v Gawk=1'; X='';else AWK=awk; X=';function gettimeofday(){}';fi"
+    echo "if command -v gawk >/dev/null;then AWK='gawk -ltime -v Gawk=1'; X='';else AWK=awk; X='function gettimeofday(){}';fi"
     echo "exec \$AWK -v \"Version=$NEXT_VERSION\" -v \"Prog=\$0\" '"
     awk -v Q=\' '
 function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s }
