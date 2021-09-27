@@ -150,6 +150,7 @@ in_begin && $1 ~ /^split/ { next }
 @depends_on tested_mawk
 @depends_on tested_mawk134
 @depends_on tested_gawk51
+#@depends_on tested_goawk
 
 @goal tested_bwk @private
 @depends_on installed_bwk
@@ -281,7 +282,16 @@ in_begin && $1 ~ /^split/ { next }
 
   cd "soft"
 
-  F=goawk_v${GOAWK_VERSION}_linux_amd64.tar.gz
+  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    os="linux"
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+    os="darwin"
+  else
+    >&2 echo "Unknown OS"
+    exit 1
+  fi
+
+  F=goawk_v${GOAWK_VERSION}_${os}_amd64.tar.gz
   wget "https://github.com/benhoyt/goawk/releases/download/v$GOAWK_VERSION/$F"
   tar xzvf "$F" goawk
   rm "$F"
