@@ -11,5 +11,5 @@
   - **how** is generated via `./makesure candidate` from `makesure.awk`.
 - [makesure](../makesure)
   - **what** contains a latest released version of a tool
-  - **why** this one should be very stable and only change with a new release published. Serves the source of `./makesure --self-update`. *Should only change when the `makesure` version is incremented!*
+  - **why** this one should be very stable and only change with a new release published. Serves the source of `./makesure --selfupdate`. *Should only change when the `makesure` version is incremented!*
   - **how** copied from `makesure_candidate` at the time of release in `./makesure release`.
