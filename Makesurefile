@@ -114,7 +114,7 @@
 @depends_on tested_candidate
 
 @goal release
-@doc creates release version of `makesure` + updates README.md
+@doc creates release version of 'makesure' + updates README.md
 @depends_on candidate
 @depends_on release_makesure
 @depends_on README.md

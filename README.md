@@ -509,6 +509,10 @@ Only single `@use_lib` per goal is allowed.
 - parallel execution
   - `makesure` is a task runner, not a full-fledged build tool, like `make`, `ninja` or `bazel`. So if you need one, just use a proper build tool of your choice. 
 
+## Developer notes
+
+Find some contributor instructions in [DEVELOPER.md](docs/DEVELOPER.md).
+
 ## Similar tools
 
 - **just** https://github.com/casey/just
