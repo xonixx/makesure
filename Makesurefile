@@ -102,29 +102,29 @@
   MAKESURE=makesure \
     run_tush_file "$ITEM"
 
-@goal tested_stable @glob tests/*.tush @private
+@goal tested_candidate @glob tests/*.tush @private
 @depends_on prepared4tests
 @use_lib testing_tush
-  MAKESURE=makesure_stable \
+  MAKESURE=makesure_candidate \
     run_tush_file "$ITEM"
 
-@goal stable
-@doc rebuilds makesure_stable & README.md for release
-@depends_on makesure_stable
+@goal candidate
+@doc rebuilds makesure_candidate & README.md for release
+@depends_on makesure_candidate
   awk '
-    /^\$ \.\/makesure -h$/ { print; stop=1; system("./makesure_stable -h") }
+    /^\$ \.\/makesure -h$/ { print; stop=1; system("./makesure_candidate -h") }
     /^```$/ { stop=0 }
     !stop' README.md > README.md.1
   mv README.md.1 README.md
 
-@goal makesure_stable @private
-@doc compiles makesure_stable
+@goal makesure_candidate @private
+@doc compiles makesure_candidate
 @depends_on tested
-@depends_on stable_version_prepared
-@depends_on tested_stable
+@depends_on candidate_version_prepared
+@depends_on tested_candidate
 
 #TODO ^V this should be more pure
-@goal stable_version_prepared @private
+@goal candidate_version_prepared @private
   {
     echo '#!/bin/sh'
     echo "if command -v gawk >/dev/null;then AWK='gawk -ltime -v Gawk=1'; X='';else AWK=awk; X='function gettimeofday(){}';fi"
@@ -137,7 +137,7 @@ in_begin && $1 ~ /^split/ { next }
 /^function gettimeofday/  { next }
 { gsub("\\s*#.+$", ""); gsub(Q, Q "\\" Q Q); if (trim($0)) print}' makesure.awk
     echo \''"$X" Makesurefile "$@"'
-  } > makesure_stable
+  } > makesure_candidate
 
 @goal default
 @doc calls 'tested' goal
