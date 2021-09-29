@@ -1,0 +1,10 @@
+#!/bin/sh
+
+mydir=$(
+  cd "$(dirname "$0")"
+  pwd
+)
+
+export AWK="${AWK:-awk}"
+
+exec $AWK -v "Version=$NEXT_VERSION" -v "Prog=$0" -f "$mydir/makesure.awk" Makesurefile "$@"

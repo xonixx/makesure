@@ -99,36 +99,47 @@
 @goal @glob tests/*.tush @private
 @depends_on prepared4tests
 @use_lib testing_tush
-  MAKESURE=makesure \
+  MAKESURE=makesure_dev \
     run_tush_file "$ITEM"
 
-@goal tested_stable @glob tests/*.tush @private
+@goal tested_candidate @glob tests/*.tush @private
 @depends_on prepared4tests
+@depends_on candidate_version_prepared
 @use_lib testing_tush
-  MAKESURE=makesure_stable \
+  MAKESURE=makesure_candidate \
     run_tush_file "$ITEM"
 
-@goal stable
-@doc rebuilds makesure_stable & README.md for release
-@depends_on makesure_stable
+@goal candidate
+@doc compiles makesure_candidate
+@depends_on tested_candidate
+
+@goal release
+@doc creates release version of 'makesure' + updates README.md
+@depends_on candidate
+@depends_on release_makesure
+@depends_on README.md
+
+@goal release_makesure @private
+  cp makesure_candidate makesure
+
+@goal README.md @private
+@doc compiles release version of README.md
   awk '
-    /^\$ \.\/makesure -h$/ { print; stop=1; system("./makesure_stable -h") }
+    /^\$ \.\/makesure -h$/ { print; stop=1; system("./makesure -h") }
     /^```$/ { stop=0 }
     !stop' README.md > README.md.1
   mv README.md.1 README.md
 
-@goal makesure_stable @private
-@doc compiles makesure_stable
+@goal candidate_version_prepared @private
 @depends_on tested
-@depends_on stable_version_prepared
-@depends_on tested_stable
-
-#TODO ^V this should be more pure
-@goal stable_version_prepared @private
+  F=makesure_candidate
   {
     echo '#!/bin/sh'
-    echo "if command -v gawk >/dev/null;then AWK='gawk -ltime -v Gawk=1'; X='';else AWK=awk; X='function gettimeofday(){}';fi"
-    echo "exec \$AWK -v \"Version=$NEXT_VERSION\" -v \"Prog=\$0\" '"
+    # We use `makesure_awk`, not `AWK` because otherwise it clashes with `AWK` set for tests.
+    # The same we can't just use `A` because it can clash with external config variable that user might want to use.
+    # Since in Posix sh there is no way to declare local var, let's just make names more specific.
+    echo "if command -v gawk >/dev/null;then makesure_awk='gawk -ltime -v Gawk=1';makesure_pre='';else makesure_awk=awk;makesure_pre='function gettimeofday(){}';fi"
+    echo 'exec $makesure_awk -v "Version='$NEXT_VERSION'" -v "Prog=$0" "$makesure_pre"'\'
     awk -v Q=\' '
 function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s }
 /^BEGIN/                  { in_begin=1 }
@@ -136,8 +147,9 @@ in_begin && /^}/          { in_begin=0 }
 in_begin && $1 ~ /^split/ { next }
 /^function gettimeofday/  { next }
 { gsub("\\s*#.+$", ""); gsub(Q, Q "\\" Q Q); if (trim($0)) print}' makesure.awk
-    echo \''"$X" Makesurefile "$@"'
-  } > makesure_stable
+    echo \'' Makesurefile "$@"'
+  } > "$F"
+  chmod +x "$F"
 
 @goal default
 @doc calls 'tested' goal
@@ -154,30 +166,30 @@ in_begin && $1 ~ /^split/ { next }
 
 @goal tested_bwk @private
 @depends_on installed_bwk
-  AWK="$(pwd)/soft/bwk" ./makesure tested
+  AWK="$(pwd)/soft/bwk" ./makesure_dev tested
 
 @goal tested_mawk134 @private
 @depends_on installed_mawk134
-  AWK="$(pwd)/soft/mawk134" ./makesure tested
+  AWK="$(pwd)/soft/mawk134" ./makesure_dev tested
 
 @goal tested_gawk51 @private
 @depends_on installed_gawk51
-  AWK="$(pwd)/soft/gawk51" ./makesure tested
+  AWK="$(pwd)/soft/gawk51" ./makesure_dev tested
 
 @goal tested_goawk @private
 @depends_on installed_goawk
-  AWK="$(pwd)/soft/$GOAWK" ./makesure tested
+  AWK="$(pwd)/soft/$GOAWK" ./makesure_dev tested
 
 @goal tested_mawk @private
   if [[ -x /usr/bin/mawk ]]
   then
-    AWK="/usr/bin/mawk" ./makesure tested
+    AWK="/usr/bin/mawk" ./makesure_dev tested
   else
     echo "No default mawk... Skipped testing it."
   fi
 
 #@goal tested_busybox
-#  AWK="busybox awk" ./makesure tested
+#  AWK="busybox awk" ./makesure_dev tested
 
 @goal installed_awks
 @doc installs all awks into ./soft

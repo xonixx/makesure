@@ -1,6 +1,6 @@
 #!/bin/sh
-if command -v gawk >/dev/null;then AWK='gawk -ltime -v Gawk=1'; X='';else AWK=awk; X='function gettimeofday(){}';fi
-exec $AWK -v "Version=0.9.10" -v "Prog=$0" '
+if command -v gawk >/dev/null;then makesure_awk='gawk -ltime -v Gawk=1';makesure_pre='';else makesure_awk=awk;makesure_pre='function gettimeofday(){}';fi
+exec $makesure_awk -v "Version=0.9.10" -v "Prog=$0" "$makesure_pre"'
 BEGIN {
   Shell = "bash"
   SupportedShells["bash"]
@@ -585,4 +585,4 @@ function isDir(path) { return ok("test -d " quoteArg(path)) }
 function rm(f) { system("rm " quoteArg(f)) }
 function quoteArg(a) { gsub("'\''", "'\''\\'\'''\''", a); return "'\''" a "'\''" }
 function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s }
-'"$X" Makesurefile "$@"
+' Makesurefile "$@"

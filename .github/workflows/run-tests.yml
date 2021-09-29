@@ -21,7 +21,7 @@ jobs:
 
       - name: "run tests"
         run: |
-          ./makesure_stable tested_awks
+          ./makesure tested_awks
 
   macos_gawk:
     name: "Run tests macos / gawk"
@@ -41,7 +41,7 @@ jobs:
       - name: "run tests"
         run: |
           brew install gawk # TODO understand if this step can be cached
-          ./makesure_stable
+          ./makesure
           
   win:
     name: "Run tests Win"
@@ -60,4 +60,4 @@ jobs:
 
       - name: "run tests"
         run: |
-          & bash -e -c "./makesure_stable"
+          & bash -e -c "./makesure"
