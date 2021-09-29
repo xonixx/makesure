@@ -27,10 +27,10 @@
     else
       cmd1=`command -v $cmd`
     fi
-    (
+    {
       echo "#!/bin/sh"
       echo "exec $cmd1 \"\$@\""
-    ) > "$D/$cmd"
+    } > "$D/$cmd"
     chmod +x "$D/$cmd"
   done
 
@@ -63,7 +63,7 @@
 @goal wget_prepared
 @depends_on makesure_prepared
   cmd="wget"
-  (
+  {
     echo "#!/bin/bash"
     echo 'echo "running wget"'
     if cmd1=`command -v $cmd`
@@ -73,16 +73,16 @@
       # fake wget with curl
       echo "exec $(command -v curl) \"\${1/-q/-s}\" \"\$2\" \"\${3/-O/-o}\""
     fi
-  ) > "$D/$cmd"
+  } > "$D/$cmd"
   chmod +x "$D/$cmd"
 
 @goal curl_prepared
 @depends_on makesure_prepared
   cmd="curl"
   cmd1=`command -v $cmd`
-  (
+  {
     echo "#!/bin/sh"
     echo 'echo "running curl"'
     echo "exec $cmd1 \"\$@\""
-  ) > "$D/$cmd"
+  } > "$D/$cmd"
   chmod +x "$D/$cmd"
