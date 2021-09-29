@@ -8,7 +8,17 @@
 @goal makesure_prepared
   [[ -d "$D" ]] && rm -r "$D"
   mkdir "$D"
-  cp ../makesure ../makesure.awk "$D"
+  cp "../$MAKESURE" ../makesure.awk "$D"
+
+  export NEXT_VERSION=XXX
+  if [[ "$("$D/$MAKESURE" --version)" != "XXX" ]]
+  then
+    # this is compiled version
+    awk '/^exec/ { sub(/Version=[0-9.]+/,"Version=XXX") } 1' "$D/$MAKESURE" > "$D/$MAKESURE"_1
+    cat "$D/$MAKESURE"_1 > "$D/$MAKESURE"
+    rm "$D/$MAKESURE"_1
+  fi
+
   for cmd in awk mktemp rm cp dirname cat chmod
   do
     if [[ $cmd == 'awk' && $AWK != 'awk' ]]
@@ -28,10 +38,10 @@
   function run_selfupdate() {
     export PATH="$D"
     export NEXT_VERSION=XXX
-    "$D/makesure" --version
-    "$D/makesure" --selfupdate
-    "$D/makesure" --selfupdate
-    "$D/makesure" --version
+    "$D/$MAKESURE" --version
+    "$D/$MAKESURE" --selfupdate
+    "$D/$MAKESURE" --selfupdate
+    "$D/$MAKESURE" --version
     rm -r "$D"
   }
 
