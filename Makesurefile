@@ -113,6 +113,15 @@
 @doc compiles makesure_candidate
 @depends_on tested_candidate
 
+@goal release
+@doc creates release version of `makesure` + updates README.md
+@depends_on candidate
+@depends_on release_makesure
+@depends_on README.md
+
+@goal release_makesure @private
+  cp makesure_candidate makesure
+
 @goal README.md @private
 @doc compiles release version of README.md
   awk '
