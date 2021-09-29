@@ -7,24 +7,24 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/12_update.sh test_err
 @ wget/curl no found
 ? 1
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/12_update.sh test_wget
+$ cd "$MYDIR"; ./$MAKESURE -f tests/12_update.sh test_wget | awk '{ sub(/[0-9][0-9.]+/,"YYY") } 1'
 |   goal 'makesure_prepared' ...
 |   goal 'wget_prepared' ...
 |   goal 'test_wget' ...
 | XXX
 | running wget
-| updated XXX -> 0.9.10
+| updated XXX -> YYY
 | running wget
-| you have latest version 0.9.10 installed
-| 0.9.10
+| you have latest version YYY installed
+| YYY
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/12_update.sh test_curl
+$ cd "$MYDIR"; ./$MAKESURE -f tests/12_update.sh test_curl | awk '{ sub(/[0-9][0-9.]+/,"YYY") } 1'
 |   goal 'makesure_prepared' ...
 |   goal 'curl_prepared' ...
 |   goal 'test_curl' ...
 | XXX
 | running curl
-| updated XXX -> 0.9.10
+| updated XXX -> YYY
 | running curl
-| you have latest version 0.9.10 installed
-| 0.9.10
+| you have latest version YYY installed
+| YYY
