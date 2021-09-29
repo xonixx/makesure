@@ -1,13 +1,15 @@
 
-$ cd "$MYDIR"; ./$MAKESURE -v; ./$MAKESURE --version
-| 0.9.10
-| 0.9.10
+$ cd "$MYDIR"; ./$MAKESURE -v | awk -v "v=$NEXT_VERSION" '{ sub(v,"XXX") } 1'
+| XXX
 
-$ cd "$MYDIR/tests/emptydir"; ../../$MAKESURE -v
-| 0.9.10
+$ cd "$MYDIR"; ./$MAKESURE --version | awk -v "v=$NEXT_VERSION" '{ sub(v,"XXX") } 1'
+| XXX
 
-$ cd "$MYDIR/tests/emptydir"; ../../$MAKESURE -h
-| makesure ver. 0.9.10
+$ cd "$MYDIR/tests/emptydir"; ../../$MAKESURE -v | awk -v "v=$NEXT_VERSION" '{ sub(v,"XXX") } 1'
+| XXX
+
+$ cd "$MYDIR/tests/emptydir"; ../../$MAKESURE -h | awk -v "v=$NEXT_VERSION" '{ sub(v,"XXX") } 1'
+| makesure ver. XXX
 | Usage: makesure [options...] [-f buildfile] [goals...]
 |  -f,--file buildfile
 |                  set buildfile to use (default Makesurefile)
