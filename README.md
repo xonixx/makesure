@@ -328,7 +328,11 @@ Available goals:
 ### @depends_on
 
 Only valid: inside `@goal`.
-
+                 
+Syntax:
+```
+@depends_on goal1 [ goals2 [ goal3 [...] ] ]
+```
 Declares a dependency on other goal. 
 
 Example `Makesurefile`:
