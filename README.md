@@ -331,7 +331,7 @@ Only valid: inside `@goal`.
                  
 Syntax:
 ```
-@depends_on goal1 [ goals2 [ goal3 [...] ] ]
+@depends_on goal1 [ goal2 [ goal3 [...] ] ]
 ```
 Declares a dependency on other goal. 
 
