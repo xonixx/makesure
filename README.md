@@ -47,19 +47,6 @@ By default, all scripts inside goals are executed with `bash`. If you want to us
 - A bunch of useful built-in facilities: timing the goal's execution, listing goals in a build file, a [means](#reached_if) to speed-up repeated builds.
 - The syntax of a build file is also a valid bash/shell (though semantics is different). This can to some extent be in use for editing in IDE.
 
-## Concepts
-
-- Build file is a text file named `Makesurefile`.
-- Build file consists of a prelude and a set of goals.
-- Build file uses [directives](#directives). 
-- Prelude is a piece of a shell script (can be empty) that goes before goals. The purpose of prelude is to `@define` ([link](#define)) global variables visible to goals. Prelude only runs once.
-- A [goal](#goal) is a labeled piece of shell.
-- A goal can declare [dependencies](#depends_on) on other goals. During execution each referenced dependency will run only once despite the number of occurrences in dependency tree. Dependencies will run in proper order according to the inferred topological order. Dependency loops will be reported as error.
-- Goal bodies are executed in separate shell invocations. It means, you can’t easily pass variables from one goal to another. This is done on purpose to enforce declarative style.
-- By default, both prelude and goals are run with `bash`. You can change to `sh` with `@shell sh` in prelude.
-- For convenience in all shell invocations (prelude, goals, etc.) the current directory is automatically set to the one of `Makesurefile`. Typically, this is the root of the project. This allows using relative paths without bothering of the way the build is run.
-- Goal can declare `@reached_if` directive ([link](#reached_if)). This allows skipping goal execution if it's already satisfied.
-
 ## Usage
 
 ```
@@ -114,6 +101,19 @@ The core of this tool is implemented in [AWK](https://en.wikipedia.org/wiki/AWK)
 Almost all major implementations of AWK will work. Tested and officially supported are [Gawk](https://www.gnu.org/software/gawk/), [BWK](https://github.com/onetrueawk/awk), [mawk](https://invisible-island.net/mawk/). This means that the default AWK implementation in your OS will work.
 
 The tool will **not** work with Busybox awk.
+
+## Concepts
+
+- Build file is a text file named `Makesurefile`.
+- Build file consists of a prelude and a set of goals.
+- Build file uses [directives](#directives).
+- Prelude is a piece of a shell script (can be empty) that goes before goals. The purpose of prelude is to `@define` ([link](#define)) global variables visible to goals. Prelude only runs once.
+- A [goal](#goal) is a labeled piece of shell.
+- A goal can declare [dependencies](#depends_on) on other goals. During execution each referenced dependency will run only once despite the number of occurrences in dependency tree. Dependencies will run in proper order according to the inferred topological order. Dependency loops will be reported as error.
+- Goal bodies are executed in separate shell invocations. It means, you can’t easily pass variables from one goal to another. This is done on purpose to enforce declarative style.
+- By default, both prelude and goals are run with `bash`. You can change to `sh` with `@shell sh` in prelude.
+- For convenience in all shell invocations (prelude, goals, etc.) the current directory is automatically set to the one of `Makesurefile`. Typically, this is the root of the project. This allows using relative paths without bothering of the way the build is run.
+- Goal can declare `@reached_if` directive ([link](#reached_if)). This allows skipping goal execution if it's already satisfied.
 
 ## Directives
    
@@ -517,6 +517,8 @@ Find some contributor instructions in [DEVELOPER.md](docs/DEVELOPER.md).
 
 - **just** https://github.com/casey/just
   - just is a handy way to save and run project-specific commands
+- **Taskile** https://github.com/adriancooney/Taskfile
+  - A Taskfile is a bash \[...] script that follows a specific format \[...], sits in the root of your project \[...] and contains the tasks to build your project.
 - **Task** https://github.com/go-task/task
   - Task is a task runner / build tool that aims to be simpler and easier to use than, for example, GNU Make.
 - **haku** https://github.com/VladimirMarkelov/haku
