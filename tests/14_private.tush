@@ -1,0 +1,15 @@
+
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/14_private.sh -l
+| Available goals:
+|   a
+|   14_private.sh
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/14_private.sh --list-all
+| Available goals:
+|   a
+|   b
+|   14_private.sh
+|   14_private.tush
+
+

@@ -1,7 +1,7 @@
 
 
 echo "hello"
-exit 17
+exit 47
 echo "world"
 
 @goal default

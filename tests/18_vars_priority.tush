@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/19_vars_priority.sh
+$ cd "$MYDIR"; ./$MAKESURE -f tests/18_vars_priority.sh
 | in prelude: A=
 | in prelude: V=
 | in prelude: in child: A=
@@ -14,7 +14,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/19_vars_priority.sh
 | in child: A=
 | in child: V=V_prelude
 
-$ cd "$MYDIR"; A=A_env ./$MAKESURE -f tests/19_vars_priority.sh
+$ cd "$MYDIR"; A=A_env ./$MAKESURE -f tests/18_vars_priority.sh
 | in prelude: A=A_env
 | in prelude: V=
 | in prelude: in child: A=A_env
@@ -29,7 +29,7 @@ $ cd "$MYDIR"; A=A_env ./$MAKESURE -f tests/19_vars_priority.sh
 | in child: A=A_env
 | in child: V=V_prelude
 
-$ cd "$MYDIR"; V=V_env ./$MAKESURE -f tests/19_vars_priority.sh
+$ cd "$MYDIR"; V=V_env ./$MAKESURE -f tests/18_vars_priority.sh
 | in prelude: A=
 | in prelude: V=V_env
 | in prelude: in child: A=
@@ -44,7 +44,7 @@ $ cd "$MYDIR"; V=V_env ./$MAKESURE -f tests/19_vars_priority.sh
 | in child: A=
 | in child: V=V_prelude
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/19_vars_priority.sh -D V=V_D
+$ cd "$MYDIR"; ./$MAKESURE -f tests/18_vars_priority.sh -D V=V_D
 | in prelude: A=
 | in prelude: V=V_D
 | in prelude: in child: A=
@@ -59,7 +59,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/19_vars_priority.sh -D V=V_D
 | in child: A=
 | in child: V=V_D
 
-$ cd "$MYDIR"; V=V_env ./$MAKESURE -f tests/19_vars_priority.sh -D V=V_D
+$ cd "$MYDIR"; V=V_env ./$MAKESURE -f tests/18_vars_priority.sh -D V=V_D
 | in prelude: A=
 | in prelude: V=V_D
 | in prelude: in child: A=

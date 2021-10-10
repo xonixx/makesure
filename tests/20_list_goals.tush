@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/21_list_goals.sh -l
+$ cd "$MYDIR"; ./$MAKESURE -f tests/20_list_goals.sh -l
 | Available goals:
 |   aaa               : some description
 |   other_goal        : do something important
@@ -8,7 +8,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/21_list_goals.sh -l
 |   yet_another_goal_looooooooooooooooooong : do something even more important
 |   hello
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/21_list_goals.sh -la
+$ cd "$MYDIR"; ./$MAKESURE -f tests/20_list_goals.sh -la
 | Available goals:
 |   aaa                   : some description
 |   other_goal            : do something important

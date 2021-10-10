@@ -5,8 +5,8 @@ echo a
 @goal b @private
 echo b
 
-@goal @glob 15_private.sh
+@goal @glob 14_private.sh
 echo $ITEM
 
-@goal @glob 15_private.tush @private
+@goal @glob 14_private.tush @private
 echo $ITEM

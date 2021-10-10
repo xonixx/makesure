@@ -1,0 +1,17 @@
+
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/13_doc_multi1.sh
+@ Multiple @doc not allowed for a goal:
+@ tests/13_doc_multi1.sh:4: @doc d2
+? 1
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/13_doc_multi2.sh -l
+@ Multiple @doc not allowed for a goal:
+@ tests/13_doc_multi2.sh:4: @doc d2
+? 1
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/13_doc.sh -l
+| Available goals:
+|   a           : doc for a
+|   b           : doc for b
+|   13_doc.tush : doc for glob
