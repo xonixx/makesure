@@ -1,0 +1,24 @@
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/22_parsing_spaces.sh -la
+| Available goals:
+|   22_parsing 1.txt
+|   22_parsing 2.txt
+|   22_parsing*.txt
+|   test2
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/22_parsing_spaces.sh test2
+|   goal '22_parsing 2.txt' ...
+| 22_parsing 2.txt
+| 2
+|   goal 'test2' [empty].
+
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/22_parsing_comments.sh -la
+| Available goals:
+|   goal_with_comment
+|   test1
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/22_parsing_comments.sh test1
+|   goal 'goal_with_comment' ...
+| goal_with_comment
+|   goal 'test1' [empty].
