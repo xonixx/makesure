@@ -36,6 +36,7 @@ BEGIN {
 
 {
   Lines[NR]=$0
+  if ($1 ~ /^@/) reparseCli()
   if ("@options" == $1) handleOptions()
   else if ("@define" == $1) handleDefine()
   else if ("@shell" == $1) handleShell()
@@ -694,6 +695,43 @@ function join(arr, startIncl, endExcl, sep,   result, i) {
   for (i = startIncl + 1; i < endExcl; i++)
     result = result sep arr[i]
   return result
+}
+function parseCli(line, res,   pos,c,last) {
+  for(pos=1;;) {
+    while((c = substr(line,pos,1))==" " || c == "\t") pos++ # consume spaces
+    if ((c = substr(line,pos,1))=="#" || c=="")
+      return
+    else if (c == "'") { # start of string
+      # consume quoted string
+      res[last = res[-7]++] = ""
+      while((c = substr(line,++pos,1)) != "'") { # closing '
+        if (c=="")
+          return "unterminated argument"
+        else if (c=="\\" && substr(line,pos+1,1)=="'") { # escaped '
+          c = "'"; pos++
+        }
+        res[last] = res[last] c
+      }
+      if((c = substr(line,++pos,1)) != "" && c != " " && c != "\t")
+        return "joined arguments"
+    } else {
+      # consume unquoted argument
+      res[last = res[-7]++] = c
+      while((c = substr(line,++pos,1)) != "" && c != " " && c != "\t") { # whitespace denotes end of arg
+        if(c=="'")
+          return "joined arguments"
+        res[last] = res[last] c
+      }
+    }
+  }
+}
+function reparseCli(   res,i) {
+  err = parseCli($0, res)
+  if (err)
+    die("syntax error at line " NR ": " err)
+  else
+    for (i=NF=0; i in res; i++)
+      $(++NF)=res[i]
 }
 function addStr(target, str) { target[0] = target[0] str }
 function addLine(target, line) { target[0] = addL(target[0], line) }
