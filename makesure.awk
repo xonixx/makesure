@@ -109,7 +109,8 @@ function prepareArgs(   i,arg) {
     Options["timing"]
 }
 
-#function dbgA(name, arr,   i) { print "--- " name ": "; for (i in arr) print i " : " arr[i] }
+#function dbgA(name, arr,   i) { print "--- " name ": "; for (i in arr) printf "%2s : %s\n", i, arr[i] }
+#function dbgAO(name, arr,   i) { print "--- " name ": "; for (i=0;i in arr;i++) printf "%2s : %s\n", i, arr[i] }
 
 function splitKV(arg, kv,   n) {
   n = index(arg, "=")
@@ -660,7 +661,7 @@ function natOrder(s1,s2, i1,i2,   c1, c2, n1,n2) {
   }
 
   # consume till equal substrings
-  while ((c1 = substr(s1,i1,1)) == (c2 = substr(s2,i2,1)) && c1 != "") {
+  while ((c1 = substr(s1,i1,1)) == (c2 = substr(s2,i2,1)) && c1 != "" && !_digit(c1)) {
     i1++; i2++
   }
 

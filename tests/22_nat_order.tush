@@ -22,3 +22,28 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/22_nat_order.sh nat_order_test
 | 19_optimize_goals.tush
 | 20_list_goals.tush
 | 21_parsing.tush
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/22_nat_order nat_order_test
+| ../0_basic.tush
+| ../1_goals.tush
+| ../2_mydir.tush
+| ../3_loop.tush
+| ../4_trace.tush
+| ../5_shell.tush
+| ../6_reached_if.tush
+| ../7_options.tush
+| ../8_timing.tush
+| ../9_prelude.tush
+| ../10_define.tush
+| ../11_goal_glob.tush
+| ../12_errors.tush
+| ../13_doc.tush
+| ../14_private.tush
+| ../15_lib.tush
+| ../16_prelude_fail.tush
+| ../17_empty_prelude.tush
+| ../18_vars_priority.tush
+| ../19_optimize_goals.tush
+| ../20_list_goals.tush
+| ../21_parsing.tush
+
