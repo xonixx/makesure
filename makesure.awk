@@ -123,7 +123,7 @@ function handleOptionDefineOverride(arg,   kv) {
   DefineOverrides[kv[0]]
 }
 
-function handleOptions() {
+function handleOptions(   i) {
   checkPreludeOnly()
 
   for (i=2; i<=NF; i++) {
@@ -133,7 +133,7 @@ function handleOptions() {
   }
 }
 
-function handleDefine(   line,kv) {
+function handleDefine() {
   checkPreludeOnly()
   $1 = ""
   handleDefineLine($0)
@@ -169,7 +169,7 @@ function started(mode) {
   Mode = mode
 }
 
-function handleLib() {
+function handleLib(   libName) {
   started("lib")
 
   libName = trim($2)
@@ -180,7 +180,7 @@ function handleLib() {
   Lib[libName]
 }
 
-function handleUseLib(   goalName) {
+function handleUseLib(   i) {
   checkGoalOnly()
 
   if ("goal" == Mode)
@@ -328,7 +328,7 @@ function registerReachedIf(goalName, preScript) {
   ReachedIf[goalName] = preScript trim($0)
 }
 
-function checkBeforeRun(   i,dep,depCnt) {
+function checkBeforeRun(   i,dep,depCnt,goalName) {
   for (goalName in GoalsByName) {
     depCnt = DependenciesCnt[goalName]
     for (i=0; i < depCnt; i++) {
@@ -488,7 +488,7 @@ function checkGoalOnly() { if ("goal" != Mode && "goal_glob" != Mode) addError("
 function currentGoalName() { return isPrelude() ? "" : arrLast(GoalNames) }
 function currentLibName() { return arrLast(LibNames) }
 
-function realExit(code,   i) {
+function realExit(code) {
   Died = 1
   if (DefinesFile)
     rm(DefinesFile)
@@ -522,7 +522,7 @@ function getMyDir(makesurefilePath) {
   return executeGetLine("cd \"$(dirname " quoteArg(makesurefilePath) ")\";pwd")
 }
 
-function handleCodeLine(line,   goalName) {
+function handleCodeLine(line,   goalName, name, i) {
   if ("lib" == Mode) {
     name = currentLibName()
     #print "Append line for '" name "': " line
@@ -569,7 +569,7 @@ function topologicalSortPerform(node, result, loop,   i, s) {
   arrPush(result, node)
 }
 
-function currentTimeMillis(   script, res) {
+function currentTimeMillis(   res) {
   if (Gawk)
     return int(gettimeofday()*1000)
   res = executeGetLine("date +%s%3N")
@@ -721,7 +721,7 @@ function parseCli(line, res,   pos,c,last) {
     }
   }
 }
-function reparseCli(   res,i) {
+function reparseCli(   res,i,err) {
   err = parseCli($0, res)
   if (err)
     die("syntax error at line " NR ": " err)
@@ -729,7 +729,6 @@ function reparseCli(   res,i) {
     for (i=NF=0; i in res; i++)
       $(++NF)=res[i]
 }
-function addStr(target, str) { target[0] = target[0] str }
 function addLine(target, line) { target[0] = addL(target[0], line) }
 function addL(s, l) { return s ? s "\n" l : l }
 function arrPush(arr, elt) { arr[arr[-7]++] = elt }
