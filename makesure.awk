@@ -740,7 +740,7 @@ function quote2(s,force) {
     gsub(/'/,"\\'",s)
     return "$'" s "'"
   } else
-    return force || s ~ /[ \t\\]/ ? "'" s "'" : s
+    return force || s ~ /[^a-zA-Z0-9.,@_\/=+-]/ ? "'" s "'" : s
 }
 function addLine(target, line) { target[0] = addL(target[0], line) }
 function addL(s, l) { return s ? s "\n" l : l }

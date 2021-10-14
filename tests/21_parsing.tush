@@ -39,6 +39,9 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_quoting.sh -l
 |   no_space              : no_space
 |   'name with spaces'    : name with spaces
 |   $'name with \' quote' : name with ' quote
+|   'goal|a'
+|   'goal;b'
+|   'goal&c'
 |   default
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_quoting.sh -d
@@ -46,6 +49,9 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_quoting.sh -d
 |   no_space
 |   'name with spaces'
 |   $'name with \' quote'
+|   'goal|a'
+|   'goal;b'
+|   'goal&c'
 |   default
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_quoting.sh
@@ -55,4 +61,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_quoting.sh
 | name with spaces
 |   goal $'name with \' quote' ...
 | name with ' quote
+|   goal 'goal|a' [empty].
+|   goal 'goal;b' [empty].
+|   goal 'goal&c' [empty].
 |   goal 'default' [empty].

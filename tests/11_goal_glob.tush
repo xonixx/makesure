@@ -1,20 +1,20 @@
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh -l
 | Available goals:
-|   11_goal_glob*.txt  : test goal_glob
-|   non-existent-glob*
+|   '11_goal_glob*.txt'  : test goal_glob
+|   'non-existent-glob*'
 |   test1
 |   test2
 |   glob_goal_name
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh -la
 | Available goals:
-|   11_goal_glob_1.txt  : test goal_glob
-|   11_goal_glob_2.txt  : test goal_glob
-|   11_goal_glob_3.txt  : test goal_glob
-|   11_goal_glob_10.txt : test goal_glob
-|   11_goal_glob*.txt   : test goal_glob
-|   non-existent-glob*
+|   11_goal_glob_1.txt   : test goal_glob
+|   11_goal_glob_2.txt   : test goal_glob
+|   11_goal_glob_3.txt   : test goal_glob
+|   11_goal_glob_10.txt  : test goal_glob
+|   '11_goal_glob*.txt'  : test goal_glob
+|   'non-existent-glob*'
 |   test1
 |   test2
 |   glob_goal_name@11_goal_glob_1.txt
@@ -29,7 +29,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh -d '11_goal_glob*.txt'
 |   11_goal_glob_2.txt
 |   11_goal_glob_3.txt
 |   11_goal_glob_10.txt
-|   11_goal_glob*.txt
+|   '11_goal_glob*.txt'
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh test1
 |   goal '11_goal_glob_1.txt' ...
