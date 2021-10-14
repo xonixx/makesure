@@ -211,7 +211,7 @@ function registerGoal(goalName, priv) {
   if (length(goalName) == 0)
     addError("Goal must have a name")
   if (goalName in GoalsByName)
-    addError("Goal '" goalName "' is already defined")
+    addError("Goal " quote2(goalName,1) " is already defined")
   arrPush(GoalNames, goalName)
   GoalsByName[goalName] = priv
 }
@@ -335,11 +335,11 @@ function checkBeforeRun(   i,dep,depCnt,goalName) {
     for (i=0; i < depCnt; i++) {
       dep = Dependencies[goalName, i]
       if (!(dep in GoalsByName))
-        addError("Goal '" goalName "' has unknown dependency '" dep "'", DependenciesLineNo[goalName, i])
+        addError("Goal " quote2(goalName,1) " has unknown dependency '" dep "'", DependenciesLineNo[goalName, i])
     }
     if (goalName in GoalToLib) {
       if (!(GoalToLib[goalName] in Lib))
-        addError("Goal '" goalName "' uses unknown lib '" GoalToLib[goalName] "'", UseLibLineNo[goalName])
+        addError("Goal " quote2(goalName,1) " uses unknown lib '" GoalToLib[goalName] "'", UseLibLineNo[goalName])
     }
   }
 }
@@ -444,14 +444,14 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
           t1 = t2 ? t2 : currentTimeMillis()
 
         if (!("silent" in Options))
-          print "  goal '" goalName "' " (reachedGoals[goalName] ? "[already satisfied]." : emptyGoals[goalName] ? "[empty]." : "...")
+          print "  goal " quote2(goalName,1) " " (reachedGoals[goalName] ? "[already satisfied]." : emptyGoals[goalName] ? "[empty]." : "...")
 
         exitCode = (reachedGoals[goalName] || emptyGoals[goalName]) ? 0 : shellExec(goalBodies[goalName])
         if (exitCode != 0)
-          print "  goal '" goalName "' failed"
+          print "  goal " quote2(goalName,1) " failed"
         if (goalTimed) {
           t2 = currentTimeMillis()
-          print "  goal '" goalName "' took " renderDuration(t2 - t1)
+          print "  goal " quote2(goalName,1) " took " renderDuration(t2 - t1)
         }
         if (exitCode != 0)
           break
