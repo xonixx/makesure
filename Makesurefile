@@ -146,7 +146,7 @@ function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return 
 in_begin && /^}/          { in_begin=0 }
 in_begin && $1 ~ /^split/ { next }
 /^function gettimeofday/  { next }
-{ gsub("\\s*#.+$", ""); gsub(Q, Q "\\" Q Q); if (trim($0)) print}' makesure.awk
+{ if (!/"#"/) gsub("\\s*#.+$", ""); gsub(Q, Q "\\" Q Q); if (trim($0)) print}' makesure.awk
     echo \'' Makesurefile "$@"'
   } > "$F"
   chmod +x "$F"
