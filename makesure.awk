@@ -362,7 +362,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       goalName = GoalNames[i]
       if (list && GoalsByName[goalName]) # private
         continue
-      if ((gnLen = length(goalName)) > gnMaxLen && gnLen <= 30)
+      if ((gnLen = length(quote2(goalName))) > gnMaxLen && gnLen <= 30)
         gnMaxLen = gnLen
     }
     for (i = 0; i in GoalNames; i++) {
@@ -371,9 +371,9 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
         continue
       printf "  "
       if (goalName in Doc)
-        printf "%-" gnMaxLen "s : %s\n", goalName, Doc[goalName]
+        printf "%-" gnMaxLen "s : %s\n", quote2(goalName), Doc[goalName]
       else
-        print goalName
+        print quote2(goalName)
     }
   } else {
     if ("timing" in Options)
@@ -733,6 +733,14 @@ function reparseCli(   res,i,err) {
   else
     for (i=NF=0; i in res; i++)
       $(++NF)=res[i]
+}
+function quote2(s,force) {
+  if (index(s,"'")) {
+    gsub(/\\/,"\\\\",s)
+    gsub(/'/,"\\'",s)
+    return "$'" s "'"
+  } else
+    return force || s ~ /[ \t\\]/ ? "'" s "'" : s
 }
 function addLine(target, line) { target[0] = addL(target[0], line) }
 function addL(s, l) { return s ? s "\n" l : l }

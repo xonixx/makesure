@@ -1,11 +1,11 @@
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_spaces.sh -la
 | Available goals:
-|   21_parsing 1.txt
-|   21_parsing 2.txt
+|   '21_parsing 1.txt'
+|   '21_parsing 2.txt'
 |   21_parsing*.txt
-|   g1@21_parsing 1.txt
-|   g1@21_parsing 2.txt
+|   'g1@21_parsing 1.txt'
+|   'g1@21_parsing 2.txt'
 |   g1
 |   test2
 |   test3
@@ -34,9 +34,9 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_comments.sh test1
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_quoting.sh -l
 | Available goals:
-|   no_space          : no_space
-|   name with spaces  : name with spaces
-|   name with ' quote : name with ' quote
+|   no_space              : no_space
+|   'name with spaces'    : name with spaces
+|   $'name with \' quote' : name with ' quote
 |   default
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_quoting.sh
