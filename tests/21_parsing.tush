@@ -4,7 +4,11 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_spaces.sh -la
 |   21_parsing 1.txt
 |   21_parsing 2.txt
 |   21_parsing*.txt
+|   g1@21_parsing 1.txt
+|   g1@21_parsing 2.txt
+|   g1
 |   test2
+|   test3
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_spaces.sh test2
 |   goal '21_parsing 2.txt' ...
@@ -12,6 +16,11 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_spaces.sh test2
 | 2
 |   goal 'test2' [empty].
 
+$ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_spaces.sh test3
+|   goal 'g1@21_parsing 2.txt' ...
+| 21_parsing 2.txt
+| 2
+|   goal 'test3' [empty].
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_comments.sh -la
 | Available goals:
