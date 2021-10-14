@@ -693,31 +693,35 @@ function join(arr, startIncl, endExcl, sep,   result, i) {
     result = result sep arr[i]
   return result
 }
-function parseCli(line, res,   pos,c,last) {
+function parseCli(line, res,   pos,c,last,is_doll,c1) {
   for(pos=1;;) {
     while((c = substr(line,pos,1))==" " || c == "\t") pos++ # consume spaces
     if ((c = substr(line,pos,1))=="#" || c=="")
       return
-    else if (c == "'") { # start of string
-      # consume quoted string
-      res[last = res[-7]++] = ""
-      while((c = substr(line,++pos,1)) != "'") { # closing '
-        if (c=="")
-          return "unterminated argument"
-        else if (c=="\\" && substr(line,pos+1,1)=="'") { # escaped '
-          c = "'"; pos++
+    else {
+      if ((is_doll = c == "$") && substr(line,pos+1,1)=="'" || c == "'") { # start of string
+        if(is_doll)
+          pos++
+          # consume quoted string
+        res[last = res[-7]++] = ""
+        while((c = substr(line,++pos,1)) != "'") { # closing '
+          if (c=="")
+            return "unterminated argument"
+          else if (is_doll && c=="\\" && ((c1=substr(line,pos+1,1))=="'" || c1==c)) { # escaped ' or \
+            c = c1; pos++
+          }
+          res[last] = res[last] c
         }
-        res[last] = res[last] c
-      }
-      if((c = substr(line,++pos,1)) != "" && c != " " && c != "\t")
-        return "joined arguments"
-    } else {
-      # consume unquoted argument
-      res[last = res[-7]++] = c
-      while((c = substr(line,++pos,1)) != "" && c != " " && c != "\t") { # whitespace denotes end of arg
-        if(c=="'")
+        if((c = substr(line,++pos,1)) != "" && c != " " && c != "\t")
           return "joined arguments"
-        res[last] = res[last] c
+      } else {
+        # consume unquoted argument
+        res[last = res[-7]++] = c
+        while((c = substr(line,++pos,1)) != "" && c != " " && c != "\t") { # whitespace denotes end of arg
+          if(c=="'")
+            return "joined arguments"
+          res[last] = res[last] c
+        }
       }
     }
   }
