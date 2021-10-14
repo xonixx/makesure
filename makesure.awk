@@ -432,9 +432,9 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     resolveGoalsToRun(resolvedGoals)
 
     if ("-d" in Args || "--resolved" in Args) {
-      printf("Resolved goals to reach for '%s':\n", join(ArgGoals, 0, arrLen(ArgGoals), " "))
+      printf("Resolved goals to reach for '%s':\n", join(ArgGoals, 0, arrLen(ArgGoals), " ")) # TODO
       for (i = 0; i in resolvedGoals; i++) {
-        print "  " resolvedGoals[i]
+        print "  " quote2(resolvedGoals[i])
       }
     } else {
       for (i = 0; i in resolvedGoals; i++) {
