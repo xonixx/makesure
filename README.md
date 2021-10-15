@@ -490,7 +490,7 @@ Only single `@use_lib` per goal is allowed.
 
 ### Naming rules
 
-It's *recommended* that you name your goals using alpha-numeric chars + underscore. 
+It's *recommended* that you name your goals using alphanumeric chars + underscore. 
 
 However, it's possible to name a goal any way you want provided that you apply proper escaping:
 
@@ -510,7 +510,10 @@ Available goals:
   usual_name
 ```
 
-Note, how goal names are already escaped in output. This is to make it easier for to call it directly `./makesure $'name that contains \' single quote'`.
+Note, how goal names are already escaped in output. This is to make it easier for you to call it directly
+```
+./makesure $'name that contains \' single quote'
+```.
 
 Same naming rules apply to other directives (like `@doc`).
 
