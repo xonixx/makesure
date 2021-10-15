@@ -75,3 +75,13 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_quoting.sh
 |   goal 'goal;b' [empty].
 |   goal 'goal&c' [empty].
 |   goal 'default' [empty].
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_err1.sh
+@ Syntax error: unterminated argument:
+@ tests/21_parsing_err1.sh:3: @goal 'goal name
+? 1
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_err2.sh
+@ Syntax error: joined arguments:
+@ tests/21_parsing_err2.sh:4: @doc doc'text
+? 1

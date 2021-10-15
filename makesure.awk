@@ -724,9 +724,10 @@ function parseCli(line, res,   pos,c,last,is_doll,c1) {
 }
 function reparseCli(   res,i,err) {
   err = parseCli($0, res)
-  if (err)
-    die("syntax error at line " NR ": " err)
-  else
+  if (err) {
+    addError("Syntax error: " err)
+    die(Error)
+  } else
     for (i=NF=0; i in res; i++)
       $(++NF)=res[i]
 }
