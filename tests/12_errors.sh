@@ -3,6 +3,7 @@
 @depends_on g1
 @doc Doc in prelude
 @options unsupported
+@options
 @shell unsupported
 @use_lib lib1
 
@@ -13,6 +14,7 @@
 @depends_on unknown
 
 @goal g1
+@depends_on
 @reached_if false
 @reached_if false
   echo Goal already defined

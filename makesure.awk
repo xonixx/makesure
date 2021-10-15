@@ -126,6 +126,9 @@ function handleOptionDefineOverride(arg,   kv) {
 function handleOptions(   i) {
   checkPreludeOnly()
 
+  if (NF<2)
+    addError("Provide at least one option")
+
   for (i=2; i<=NF; i++) {
     if (!($i in SupportedOptions))
       addError("Option '" $i "' is not supported")
@@ -285,6 +288,9 @@ function registerDoc(goalName) {
 
 function handleDependsOn(   i) {
   checkGoalOnly()
+
+  if (NF<2)
+    addError("Provide at least one dependency")
 
   if ("goal" == Mode)
     registerDependsOn(currentGoalName())
