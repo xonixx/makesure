@@ -432,10 +432,12 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     resolveGoalsToRun(resolvedGoals)
 
     if ("-d" in Args || "--resolved" in Args) {
-      printf("Resolved goals to reach for '%s':\n", join(ArgGoals, 0, arrLen(ArgGoals), " ")) # TODO
-      for (i = 0; i in resolvedGoals; i++) {
+      printf "Resolved goals to reach for"
+      for (i = 0; i in ArgGoals; i++)
+        printf " %s", quote2(ArgGoals[i],1)
+      print ":"
+      for (i = 0; i in resolvedGoals; i++)
         print "  " quote2(resolvedGoals[i])
-      }
     } else {
       for (i = 0; i in resolvedGoals; i++) {
         goalName = resolvedGoals[i]
@@ -686,12 +688,6 @@ function quicksortSwap(data, i, j,   temp) {
   temp = data[i]
   data[i] = data[j]
   data[j] = temp
-}
-function join(arr, startIncl, endExcl, sep,   result, i) {
-  result = arr[startIncl]
-  for (i = startIncl + 1; i < endExcl; i++)
-    result = result sep arr[i]
-  return result
 }
 function parseCli(line, res,   pos,c,last,is_doll,c1) {
   for(pos=1;;) {
