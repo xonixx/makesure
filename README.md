@@ -297,7 +297,9 @@ Now you can use this `Makesurefile`
   node $ITEM
 ```
 
-to be able to run each test individually (`./makesure test2.js` for example) and all together (`./makesure 'test*.js'`). 
+to be able to run each test individually (`./makesure test2.js` for example) and all together (`./makesure 'test*.js'`).
+
+In case if you need to glob the files with spaces in their names, please check the [naming rules section](#naming-rules) below.
 
 ### @doc
 
@@ -484,7 +486,41 @@ Operationally `@use_lib` is just substituted by content of a corresponding `@lib
 
 Only valid: inside `@goal`.
 
-Only single `@use_lib` per goal is allowed. 
+Only single `@use_lib` per goal is allowed.
+
+### Naming rules
+
+It's *recommended* that you name your goals using alpha-numeric chars + underscore. 
+
+However, it's possible to name a goal any way you want provided that you apply proper escaping:
+
+```sh
+@goal 'name with spaces' # all chars between '' have literal meaning, same as in shell, ' itself is not allowed in it
+
+@goal $'name that contains \' single quote' # if you need to have ' in a string, use dollar-strings and escape it
+
+@goal usual_name  
+```
+
+Now `./makesure -l` gives:
+```
+Available goals:
+  'name with spaces'
+  $'name that contains \' single quote'
+  usual_name
+```
+
+Note, how goal names are already escaped in output. This is to make it easier for to call it directly `./makesure $'name that contains \' single quote'`.
+
+Same naming rules apply to other directives (like `@doc`).
+
+Usually you won't need this escaping tricks often, but they can be especially in use for `@glob` goals if the relevant files have spaces in them:
+
+```
+@goal @glob 'file with spaces*.txt'
+```
+
+More info on this topic is covered in the [issue](https://github.com/xonixx/makesure/issues/63).
 
 ## Design principles
 
