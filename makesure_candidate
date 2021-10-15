@@ -99,6 +99,8 @@ function handleOptionDefineOverride(arg,   kv) {
 }
 function handleOptions(   i) {
   checkPreludeOnly()
+  if (NF<2)
+    addError("Provide at least one option")
   for (i=2; i<=NF; i++) {
     if (!($i in SupportedOptions))
       addError("Option '\''" $i "'\'' is not supported")
@@ -235,6 +237,8 @@ function registerDoc(goalName) {
 }
 function handleDependsOn(   i) {
   checkGoalOnly()
+  if (NF<2)
+    addError("Provide at least one dependency")
   if ("goal" == Mode)
     registerDependsOn(currentGoalName())
   else {
@@ -353,10 +357,12 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     }
     resolveGoalsToRun(resolvedGoals)
     if ("-d" in Args || "--resolved" in Args) {
-      printf("Resolved goals to reach for '\''%s'\'':\n", join(ArgGoals, 0, arrLen(ArgGoals), " "))
-      for (i = 0; i in resolvedGoals; i++) {
+      printf "Resolved goals to reach for"
+      for (i = 0; i in ArgGoals; i++)
+        printf " %s", quote2(ArgGoals[i],1)
+      print ":"
+      for (i = 0; i in resolvedGoals; i++)
         print "  " quote2(resolvedGoals[i])
-      }
     } else {
       for (i = 0; i in resolvedGoals; i++) {
         goalName = resolvedGoals[i]
@@ -564,12 +570,6 @@ function quicksortSwap(data, i, j,   temp) {
   data[i] = data[j]
   data[j] = temp
 }
-function join(arr, startIncl, endExcl, sep,   result, i) {
-  result = arr[startIncl]
-  for (i = startIncl + 1; i < endExcl; i++)
-    result = result sep arr[i]
-  return result
-}
 function parseCli(line, res,   pos,c,last,is_doll,c1) {
   for(pos=1;;) {
     while((c = substr(line,pos,1))==" " || c == "\t") pos++
@@ -603,9 +603,10 @@ function parseCli(line, res,   pos,c,last,is_doll,c1) {
 }
 function reparseCli(   res,i,err) {
   err = parseCli($0, res)
-  if (err)
-    die("syntax error at line " NR ": " err)
-  else
+  if (err) {
+    addError("Syntax error: " err)
+    die(Error)
+  } else
     for (i=NF=0; i in res; i++)
       $(++NF)=res[i]
 }
