@@ -510,10 +510,10 @@ Available goals:
   usual_name
 ```
 
-Note, how goal names are already escaped in output. This is to make it easier for you to call it directly
+Note, how goal names are already escaped in output. This is to make it easier for you to call it directly:
 ```
 ./makesure $'name that contains \' single quote'
-```.
+```
 
 Same naming rules apply to other directives (like `@doc`).
 
