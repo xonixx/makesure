@@ -5,6 +5,7 @@
 @options unsupported
 @options
 @shell unsupported
+@shell
 @use_lib lib1
 
 @goal
