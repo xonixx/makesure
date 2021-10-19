@@ -684,7 +684,7 @@ function quicksort(data, left, right,   i, last) {
   quicksortSwap(data, left, int((left + right) / 2))
   last = left
   for (i = left + 1; i <= right; i++)
-    if (natOrder(data[i], data[left],1,1) < 1)
+    if (natOrder(data[i], data[left],1,1) < 0)
       quicksortSwap(data, ++last, i)
   quicksortSwap(data, left, last)
   quicksort(data, left, last - 1)
