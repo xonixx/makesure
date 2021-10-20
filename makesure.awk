@@ -224,7 +224,7 @@ function calcGlob(goalName, pattern,   script, file) {
   GlobCnt = 0
   GlobGoalName = goalName
   split("",GlobFiles)
-  gsub(/ /,"\\ ",pattern)
+#  gsub(/ /,"\\ ",pattern)
   script = MyDirScript ";for f in ./" pattern ";do test -e \"$f\" && echo \"$f\";done"
   while ((script | getline file)>0) {
     GlobCnt++
