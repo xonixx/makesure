@@ -560,7 +560,7 @@ Find some contributor instructions in [DEVELOPER.md](docs/DEVELOPER.md).
 
 - **just** https://github.com/casey/just
   - just is a handy way to save and run project-specific commands
-- **Taskile** https://github.com/adriancooney/Taskfile
+- **Taskfile** https://github.com/adriancooney/Taskfile
   - A Taskfile is a bash \[...] script that follows a specific format \[...], sits in the root of your project \[...] and contains the tasks to build your project.
 - **Task** https://github.com/go-task/task
   - Task is a task runner / build tool that aims to be simpler and easier to use than, for example, GNU Make.
