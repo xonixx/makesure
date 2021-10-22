@@ -225,6 +225,8 @@ function calcGlob(goalName, pattern,   script, file) {
   GlobGoalName = goalName
   split("",GlobFiles)
   script = MyDirScript ";for f in " pattern ";do test -e \"$f\" && echo \"$f\";done"
+  if ("sh" != Shell)
+    script = Shell " -c " quoteArg(script)
   while ((script | getline file)>0) {
     GlobCnt++
     arrPush(GlobFiles,file)
