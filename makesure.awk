@@ -224,11 +224,11 @@ function calcGlob(goalName, pattern,   script, file) {
   GlobCnt = 0
   GlobGoalName = goalName
   split("",GlobFiles)
-  gsub(/ /,"\\ ",pattern)
-  script = MyDirScript ";for f in ./" pattern ";do test -e \"$f\" && echo \"$f\";done"
+  script = MyDirScript ";for f in " pattern ";do test -e \"$f\" && echo \"$f\";done"
+  if ("sh" != Shell)
+    script = Shell " -c " quoteArg(script)
   while ((script | getline file)>0) {
     GlobCnt++
-    file = substr(file, 3)
     arrPush(GlobFiles,file)
   }
   close(script)
