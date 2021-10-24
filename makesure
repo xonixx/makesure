@@ -1,6 +1,6 @@
 #!/bin/sh
 if command -v gawk >/dev/null;then makesure_awk='gawk -ltime -v Gawk=1';makesure_pre='';else makesure_awk=awk;makesure_pre='function gettimeofday(){}';fi
-exec $makesure_awk -v "Version=0.9.12" -v "Prog=$0" "$makesure_pre"'
+exec $makesure_awk -v "Version=0.9.13" -v "Prog=$0" "$makesure_pre"'
 BEGIN {
   Shell = "bash"
   SupportedShells["bash"]
@@ -179,11 +179,11 @@ function calcGlob(goalName, pattern,   script, file) {
   GlobCnt = 0
   GlobGoalName = goalName
   split("",GlobFiles)
-  gsub(/ /,"\\ ",pattern)
-  script = MyDirScript ";for f in ./" pattern ";do test -e \"$f\" && echo \"$f\";done"
+  script = MyDirScript ";for f in " pattern ";do test -e \"$f\" && echo \"$f\";done"
+  if ("sh" != Shell)
+    script = Shell " -c " quoteArg(script)
   while ((script | getline file)>0) {
     GlobCnt++
-    file = substr(file, 3)
     arrPush(GlobFiles,file)
   }
   close(script)
@@ -559,7 +559,7 @@ function quicksort(data, left, right,   i, last) {
   quicksortSwap(data, left, int((left + right) / 2))
   last = left
   for (i = left + 1; i <= right; i++)
-    if (natOrder(data[i], data[left],1,1) < 1)
+    if (natOrder(data[i], data[left],1,1) < 0)
       quicksortSwap(data, ++last, i)
   quicksortSwap(data, left, last)
   quicksort(data, left, last - 1)

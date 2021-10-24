@@ -1,5 +1,5 @@
 
-@define NEXT_VERSION="0.9.12"
+@define NEXT_VERSION="0.9.13"
 @define TUSH_REPO=https://github.com/adolfopa/tush
 
 @define GOAWK_VERSION=1.9.1
