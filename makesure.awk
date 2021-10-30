@@ -335,13 +335,16 @@ function registerReachedIf(goalName, preScript) {
   ReachedIf[goalName] = preScript trim($0)
 }
 
-function checkBeforeRun(   i,dep,depCnt,goalName) {
-  for (goalName in GoalsByName) {
+function checkBeforeRun(   i,j,dep,depCnt,goalName,visited) {
+  for (i = 0; i in GoalNames; i++) {
+    goalName = GoalNames[i]
+    if (visited[goalName]++)
+      continue
     depCnt = DependenciesCnt[goalName]
-    for (i=0; i < depCnt; i++) {
-      dep = Dependencies[goalName, i]
+    for (j=0; j < depCnt; j++) {
+      dep = Dependencies[goalName, j]
       if (!(dep in GoalsByName))
-        addError("Goal " quote2(goalName,1) " has unknown dependency '" dep "'", DependenciesLineNo[goalName, i])
+        addError("Goal " quote2(goalName,1) " has unknown dependency '" dep "'", DependenciesLineNo[goalName, j])
     }
     if (goalName in GoalToLib) {
       if (!(GoalToLib[goalName] in Lib))

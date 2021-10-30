@@ -162,7 +162,7 @@ in_begin && $1 ~ /^split/ { next }
 @depends_on tested_mawk
 @depends_on tested_mawk134
 @depends_on tested_gawk51
-#@depends_on tested_goawk
+@depends_on tested_goawk
 
 @goal tested_bwk @private
 @depends_on installed_bwk

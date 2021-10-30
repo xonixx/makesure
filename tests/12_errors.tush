@@ -36,12 +36,12 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/12_errors.sh
 @ tests/12_errors.sh:33: @unknown_directive arg
 @ You can only use one @lib in a @goal:
 @ tests/12_errors.sh:35: @use_lib lib2
-@ Goal 'g13' uses unknown lib 'unknown1':
-@ tests/12_errors.sh:38: @use_lib unknown1
-@ Goal 'g14' has unknown dependency 'unknown1':
-@ tests/12_errors.sh:41: @depends_on unknown1
 @ Goal 'g1' has unknown dependency 'unknown':
 @ tests/12_errors.sh:15: @depends_on unknown
 @ Goal 'g2' uses unknown lib 'unknown':
 @ tests/12_errors.sh:24: @use_lib unknown
+@ Goal 'g13' uses unknown lib 'unknown1':
+@ tests/12_errors.sh:38: @use_lib unknown1
+@ Goal 'g14' has unknown dependency 'unknown1':
+@ tests/12_errors.sh:41: @depends_on unknown1
 ? 1
