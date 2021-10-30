@@ -33,3 +33,9 @@
 @unknown_directive arg
 @use_lib lib1
 @use_lib lib2
+
+@goal g13
+@use_lib unknown1
+
+@goal g14
+@depends_on unknown1
