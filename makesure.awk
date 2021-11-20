@@ -515,7 +515,6 @@ function die(msg,    out) {
 }
 
 function checkConditionReached(goalName, definesLine, conditionStr,    script) {
-
   script = definesLine # need this to initialize variables for check conditions
   if (goalName in GoalToLib)
     script = script "\n" Lib[GoalToLib[goalName]]
