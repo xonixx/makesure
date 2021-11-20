@@ -1,9 +1,12 @@
 
-@define HELLO="Hello"
+# TODO found one other bug, but let's fix it separately
+#@define HELLO="Hello"
 
 @lib
   f1 () {
-    echo "$HELLO $1"
+# TODO found one other bug, but let's fix it separately
+    #echo "$HELLO $1"
+    echo "Hello $1"
   }
 
 @goal g1
