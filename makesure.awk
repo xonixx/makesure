@@ -411,7 +411,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       body = trim(Code[goalName])
 
       reachedIf = ReachedIf[goalName]
-      reachedGoals[goalName] = reachedIf ? checkConditionReached(definesLine[0], reachedIf) : 0
+      reachedGoals[goalName] = reachedIf ? checkConditionReached(goalName, definesLine[0], reachedIf) : 0
       emptyGoals[goalName] = length(body) == 0
 
       depCnt = DependenciesCnt[goalName]
@@ -514,8 +514,10 @@ function die(msg,    out) {
   realExit(1)
 }
 
-function checkConditionReached(definesLine, conditionStr,    script) {
+function checkConditionReached(goalName, definesLine, conditionStr,    script) {
   script = definesLine # need this to initialize variables for check conditions
+  if (goalName in GoalToLib)
+    script = script "\n" Lib[GoalToLib[goalName]]
   script = script "\n" conditionStr
   #print "script: " script
   return shellExec(script) == 0
