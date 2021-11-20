@@ -17,3 +17,8 @@ f2 World
   f2 () {
     echo "Hello lib_name $1"
   }
+
+@goal g5
+@use_lib
+@reached_if [ "$(f1 World)" = "Hello World" ]
+echo "Should not see this"
