@@ -8,7 +8,6 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh -x
 | A=aaa
 @ + A=aaa
 @ + export A
-@ + echo ' A=aaa; export A'
 @ + echo A=aaa
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh --tracing
@@ -16,6 +15,5 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh --tracing
 | A=aaa
 @ + A=aaa
 @ + export A
-@ + echo ' A=aaa; export A'
 @ + echo A=aaa
 
