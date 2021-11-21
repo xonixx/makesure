@@ -502,7 +502,6 @@ function currentGoalName() { return isPrelude() ? "" : arrLast(GoalNames) }
 function currentLibName() { return arrLast(LibNames) }
 
 function realExit(code) {
-  Died = 1
   if (DefinesFile)
     rm(DefinesFile)
   exit code
