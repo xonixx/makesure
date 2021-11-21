@@ -52,6 +52,7 @@ function makesure() {
     else handleCodeLine($0)
   }
   doWork()
+  realExit(0)
 }
 
 function prepareArgs(   i,arg) {
@@ -473,8 +474,6 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       if (exitCode != 0)
         realExit(exitCode)
     }
-
-    realExit(0)
   }
 }
 
