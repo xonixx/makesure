@@ -1,6 +1,6 @@
 #!/bin/sh
 if command -v gawk >/dev/null;then makesure_awk='gawk -ltime -v Gawk=1';makesure_pre='';else makesure_awk=awk;makesure_pre='function gettimeofday(){}';fi
-exec $makesure_awk -v "Version=0.9.13" -v "Prog=$0" "$makesure_pre"'
+exec $makesure_awk -v "Version=0.9.14" -v "Prog=$0" "$makesure_pre"'
 BEGIN {
   Shell = "bash"
   SupportedShells["bash"]
@@ -17,23 +17,27 @@ BEGIN {
   prepareArgs()
   MyDirScript = "MYDIR=" quoteArg(getMyDir(ARGV[1])) ";export MYDIR;cd \"$MYDIR\""
   Error=""
+  makesure()
 }
-{
-  Lines[NR]=$0
-  if ($1 ~ /^@/ && "@define" != $1) reparseCli()
-  if ("@options" == $1) handleOptions()
-  else if ("@define" == $1) handleDefine()
-  else if ("@shell" == $1) handleShell()
-  else if ("@goal" == $1) { if ("@glob" == $2 || "@glob" == $3) handleGoalGlob(); else handleGoal() }
-  else if ("@doc" == $1) handleDoc()
-  else if ("@depends_on" == $1) handleDependsOn()
-  else if ("@reached_if" == $1) handleReachedIf()
-  else if ("@lib" == $1) handleLib()
-  else if ("@use_lib" == $1) handleUseLib()
-  else if ($1 ~ /^@/) addError("Unknown directive: " $1)
-  else handleCodeLine($0)
+function makesure() {
+  while (getline > 0) {
+    Lines[NR]=$0
+    if ($1 ~ /^@/ && "@define" != $1) reparseCli()
+    if ("@options" == $1) handleOptions()
+    else if ("@define" == $1) handleDefine()
+    else if ("@shell" == $1) handleShell()
+    else if ("@goal" == $1) { if ("@glob" == $2 || "@glob" == $3) handleGoalGlob(); else handleGoal() }
+    else if ("@doc" == $1) handleDoc()
+    else if ("@depends_on" == $1) handleDependsOn()
+    else if ("@reached_if" == $1) handleReachedIf()
+    else if ("@lib" == $1) handleLib()
+    else if ("@use_lib" == $1) handleUseLib()
+    else if ($1 ~ /^@/) addError("Unknown directive: " $1)
+    else handleCodeLine($0)
+  }
+  doWork()
+  realExit(0)
 }
-END { if (!Died) doWork() }
 function prepareArgs(   i,arg) {
   for (i = 2; i < ARGC; i++) {
     arg = ARGV[i]
@@ -274,13 +278,16 @@ function registerReachedIf(goalName, preScript) {
   $1 = ""
   ReachedIf[goalName] = preScript trim($0)
 }
-function checkBeforeRun(   i,dep,depCnt,goalName) {
-  for (goalName in GoalsByName) {
+function checkBeforeRun(   i,j,dep,depCnt,goalName,visited) {
+  for (i = 0; i in GoalNames; i++) {
+    goalName = GoalNames[i]
+    if (visited[goalName]++)
+      continue
     depCnt = DependenciesCnt[goalName]
-    for (i=0; i < depCnt; i++) {
-      dep = Dependencies[goalName, i]
+    for (j=0; j < depCnt; j++) {
+      dep = Dependencies[goalName, j]
       if (!(dep in GoalsByName))
-        addError("Goal " quote2(goalName,1) " has unknown dependency '\''" dep "'\''", DependenciesLineNo[goalName, i])
+        addError("Goal " quote2(goalName,1) " has unknown dependency '\''" dep "'\''", DependenciesLineNo[goalName, j])
     }
     if (goalName in GoalToLib) {
       if (!(GoalToLib[goalName] in Lib))
@@ -336,7 +343,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       goalName = GoalNames[i]
       body = trim(Code[goalName])
       reachedIf = ReachedIf[goalName]
-      reachedGoals[goalName] = reachedIf ? checkConditionReached(definesLine[0], reachedIf) : 0
+      reachedGoals[goalName] = reachedIf ? checkConditionReached(goalName, definesLine[0], reachedIf) : 0
       emptyGoals[goalName] = length(body) == 0
       depCnt = DependenciesCnt[goalName]
       for (j=0; j < depCnt; j++) {
@@ -386,7 +393,6 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       if (exitCode != 0)
         realExit(exitCode)
     }
-    realExit(0)
   }
 }
 function resolveGoalsToRun(result,   i, goalName, loop) {
@@ -409,7 +415,6 @@ function checkGoalOnly() { if ("goal" != Mode && "goal_glob" != Mode) addError("
 function currentGoalName() { return isPrelude() ? "" : arrLast(GoalNames) }
 function currentLibName() { return arrLast(LibNames) }
 function realExit(code) {
-  Died = 1
   if (DefinesFile)
     rm(DefinesFile)
   exit code
@@ -421,8 +426,10 @@ function die(msg,    out) {
   close(out)
   realExit(1)
 }
-function checkConditionReached(definesLine, conditionStr,    script) {
+function checkConditionReached(goalName, definesLine, conditionStr,    script) {
   script = definesLine
+  if (goalName in GoalToLib)
+    script = script "\n" Lib[GoalToLib[goalName]]
   script = script "\n" conditionStr
   return shellExec(script) == 0
 }
