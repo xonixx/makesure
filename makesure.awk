@@ -32,26 +32,27 @@ BEGIN {
   prepareArgs()
   MyDirScript = "MYDIR=" quoteArg(getMyDir(ARGV[1])) ";export MYDIR;cd \"$MYDIR\""
   Error=""
+  makesure()
 }
 
-{
-  Lines[NR]=$0
-  if ($1 ~ /^@/ && "@define" != $1) reparseCli()
-  if ("@options" == $1) handleOptions()
-  else if ("@define" == $1) handleDefine()
-  else if ("@shell" == $1) handleShell()
-  else if ("@goal" == $1) { if ("@glob" == $2 || "@glob" == $3) handleGoalGlob(); else handleGoal() }
-  else if ("@doc" == $1) handleDoc()
-  else if ("@depends_on" == $1) handleDependsOn()
-  else if ("@reached_if" == $1) handleReachedIf()
-  else if ("@lib" == $1) handleLib()
-  else if ("@use_lib" == $1) handleUseLib()
-  else if ($1 ~ /^@/) addError("Unknown directive: " $1)
-  else handleCodeLine($0)
+function makesure() {
+  while (getline > 0) {
+    Lines[NR]=$0
+    if ($1 ~ /^@/ && "@define" != $1) reparseCli()
+    if ("@options" == $1) handleOptions()
+    else if ("@define" == $1) handleDefine()
+    else if ("@shell" == $1) handleShell()
+    else if ("@goal" == $1) { if ("@glob" == $2 || "@glob" == $3) handleGoalGlob(); else handleGoal() }
+    else if ("@doc" == $1) handleDoc()
+    else if ("@depends_on" == $1) handleDependsOn()
+    else if ("@reached_if" == $1) handleReachedIf()
+    else if ("@lib" == $1) handleLib()
+    else if ("@use_lib" == $1) handleUseLib()
+    else if ($1 ~ /^@/) addError("Unknown directive: " $1)
+    else handleCodeLine($0)
+  }
+  doWork()
 }
-
-
-END { if (!Died) doWork() }
 
 function prepareArgs(   i,arg) {
   for (i = 2; i < ARGC; i++) {
