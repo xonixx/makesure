@@ -328,4 +328,15 @@ in_begin && $1 ~ /^split/ { next }
 
   "./just" --version
 
-
+@goal gh_release # @private
+@doc 'publish Github release (draft)'
+  fail () {
+    echo >&2 "$@"
+    exit 1
+  }
+  milestoneId=$(gh api -X GET "repos/xonixx/makesure/milestones" --jq '.[] | select(.title=="'$NEXT_VERSION'").number')
+  if [[ -z $milestoneId ]]
+  then
+    fail "Unable to determine milestoneId by release version"
+  fi
+  echo "Milestone ID : $milestoneId"
