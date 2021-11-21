@@ -118,6 +118,7 @@
 @depends_on candidate
 @depends_on release_makesure
 @depends_on README.md
+# @depends_on gh_release TODO we can't just do it since we need to commit first
 
 @goal release_makesure @private
   cp makesure_candidate makesure
@@ -328,8 +329,12 @@ in_begin && $1 ~ /^split/ { next }
 
   "./just" --version
 
-@goal gh_release # @private
+@goal gh_release #@private
 @doc 'publish Github release (draft)'
+  releaseTag="v$NEXT_VERSION"
+  echo
+  echo "Will publish a draft release for $releaseTag ..."
+  echo
   fail () {
     echo >&2 "$@"
     exit 1
@@ -340,3 +345,12 @@ in_begin && $1 ~ /^split/ { next }
     fail "Unable to determine milestoneId by release version"
   fi
   echo "Milestone ID : $milestoneId"
+
+  notesStr="Issues in release: https://github.com/xonixx/makesure/milestone/$milestoneId?closed=1"
+
+  gh release create "$releaseTag" \
+    --title "$releaseTag" \
+    --notes "$notesStr" \
+    --draft
+
+  echo "Please don't forget to open the release draft, edit it as needed and PUBLISH!"
