@@ -102,6 +102,8 @@ Almost all major implementations of AWK will work. Tested and officially support
 
 The tool will **not** work with Busybox awk.
 
+Developed in [xonixx/intellij-awk](https://github.com/xonixx/intellij-awk).
+
 ## Concepts
 
 - Build file is a text file named `Makesurefile`.
@@ -558,19 +560,19 @@ Find some contributor instructions in [DEVELOPER.md](docs/DEVELOPER.md).
 
 ## Similar tools
 
-- **just** https://github.com/casey/just
+- **just** https://github.com/casey/just `Rust`
   - just is a handy way to save and run project-specific commands
-- **Taskfile** https://github.com/adriancooney/Taskfile
+- **Taskfile** https://github.com/adriancooney/Taskfile `Bash`
   - A Taskfile is a bash \[...] script that follows a specific format \[...], sits in the root of your project \[...] and contains the tasks to build your project.
-- **Task** https://github.com/go-task/task
+- **Task** https://github.com/go-task/task `Go`
   - Task is a task runner / build tool that aims to be simpler and easier to use than, for example, GNU Make.
-- **haku** https://github.com/VladimirMarkelov/haku
+- **haku** https://github.com/VladimirMarkelov/haku `Rust` 
   - A task/command runner inspired by 'make'
-- **gup** https://github.com/timbertson/gup
+- **gup** https://github.com/timbertson/gup `Python` `OCaml`
   - Gup is a general purpose, recursive, top down software build system.
-- **redo** https://github.com/apenwarr/redo
+- **redo** https://github.com/apenwarr/redo `Python`
   - redo - a recursive build system. Smaller, easier, more powerful, and more reliable than make.
-- **Tup** https://github.com/gittup/tup
+- **Tup** https://github.com/gittup/tup `C`
   - Tup is a file-based build system for Linux, OSX, and Windows.
-- **Please** https://github.com/thought-machine/please
+- **Please** https://github.com/thought-machine/please `Go`
   - Please is a cross-language build system with an emphasis on high performance, extensibility and reproducibility.
