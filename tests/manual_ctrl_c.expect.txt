@@ -1,5 +1,5 @@
 
-spawn ./makesure_dev -f tests/101_ctrl_c.sh a
+spawn ./makesure_dev -f tests/manual_ctrl_c.sh a
 expect {
     "b start" {
         sleep 0.2
