@@ -524,7 +524,11 @@ function checkConditionReached(goalName, definesLine, conditionStr,    script) {
 
 function shellExec(script,   res) {
   script = Shell " -e -c " quoteArg(script)
-#  script = "trap 'echo \\ \\ \\ trap; exit 7' INT;" script
+
+  # This is hard to unit-test properly.
+  # The issue with Ctrl-C only happens with Gawk 4.1.3.
+  # The manual test exists via `expect -f tests/101_ctrl_c.expect.txt`
+  script = "trap 'exit 7' INT;" script
 
   #print script
   res = system(script)
