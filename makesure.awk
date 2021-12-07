@@ -524,6 +524,7 @@ function checkConditionReached(goalName, definesLine, conditionStr,    script) {
 
 function shellExec(script,   res) {
   script = Shell " -e -c " quoteArg(script)
+#  script = "trap 'echo \\ \\ \\ trap; exit 7' INT;" script
 
   #print script
   res = system(script)
