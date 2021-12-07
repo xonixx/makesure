@@ -4,6 +4,8 @@ expect {
     "b start" {
         sleep 0.2
         send \x03
-        interact
+        exp_continue
     }
+    "goal 'b' failed" { puts "SUCCESS" }
+    "SHOULD NOT SHOW" { puts "ERROR" }
 }
