@@ -14,7 +14,7 @@ BEGIN {
   split("",GoalsByName) # name -> private
   split("",Code)        # name -> body
   split("",DefineOverrides) # k -> ""
-  DefinesFile=""
+  DefinesCode=""
   split("",Dependencies)       # name,i -> dep goal
   split("",DependenciesLineNo) # name,i -> line no.
   split("",DependenciesCnt)    # name   -> dep cnd
@@ -143,16 +143,11 @@ function handleDefine() {
   $1 = ""
   handleDefineLine($0)
 }
-function handleDefineLine(line,   kv,l) {
-  if (!DefinesFile)
-    DefinesFile = executeGetLine("mktemp " Tmp "/makesure.XXXXXXXXXX")
-
+function handleDefineLine(line,   kv) {
   splitKV(line, kv)
 
-  if (!(kv[0] in DefineOverrides)) {
-    addCodeLine(l = line "; export " kv[0])
-    addCodeLine("echo " quoteArg(l) " >> " DefinesFile)
-  }
+  if (!(kv[0] in DefineOverrides))
+    DefinesCode = addL(DefinesCode, line "; export " kv[0])
 }
 
 function handleShell() {
@@ -404,8 +399,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     }
 
     addLine(definesLine, MyDirScript)
-    if (DefinesFile)
-      addLine(definesLine, ". " DefinesFile)
+    addLine(definesLine, DefinesCode)
 
     for (i = 0; i in GoalNames; i++) {
       goalName = GoalNames[i]
@@ -501,8 +495,7 @@ function currentGoalName() { return isPrelude() ? "" : arrLast(GoalNames) }
 function currentLibName() { return arrLast(LibNames) }
 
 function realExit(code) {
-  if (DefinesFile)
-    rm(DefinesFile)
+  # place here any cleanup if needed
   exit code
 }
 function addError(err, n) { if (!n) n=NR; Error=addL(Error, err ":\n" ARGV[1] ":" n ": " Lines[n]) }
