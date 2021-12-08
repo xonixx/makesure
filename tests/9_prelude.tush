@@ -1,6 +1,5 @@
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/9_prelude.sh a
-| prelude should execute only once
 |   goal 'c' [already satisfied].
 |   goal 'd' ...
 | d

@@ -15,10 +15,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/7_options_in_goal.sh
 ? 1
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/7_options_tracing.sh -x
-| prelude 123
 |   goal 'default' ...
 | test
-@ + A=123
-@ + echo 'prelude 123'
 @ + echo test
 

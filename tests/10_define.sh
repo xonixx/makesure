@@ -2,7 +2,6 @@
 
 @define A=aaa
 @define B=${A}bbb
-C=ccc
 
 @goal testA
 echo A=$A
