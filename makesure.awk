@@ -150,8 +150,8 @@ function handleDefineLine(line,   kv,l) {
   splitKV(line, kv)
 
   if (!(kv[0] in DefineOverrides)) {
-    handleCodeLine(l = line "; export " kv[0])
-    handleCodeLine("echo " quoteArg(l) " >> " DefinesFile)
+    addCodeLine(l = line "; export " kv[0])
+    addCodeLine("echo " quoteArg(l) " >> " DefinesFile)
   }
 }
 
@@ -540,7 +540,14 @@ function getMyDir(makesurefilePath) {
   return executeGetLine("cd \"$(dirname " quoteArg(makesurefilePath) ")\";pwd")
 }
 
-function handleCodeLine(line,   goalName, name, i) {
+function handleCodeLine(line) {
+  if (isPrelude() && line !~ /^#/ && trim(line) != "" && !ShellInPreludeErrorShown++)
+    addError("Shell code is not allowed in prelude area")
+  else
+    addCodeLine(line)
+}
+
+function addCodeLine(line,   goalName, name, i) {
   if ("lib" == Mode) {
     name = currentLibName()
     #print "Append line for '" name "': " line
@@ -548,14 +555,14 @@ function handleCodeLine(line,   goalName, name, i) {
   } else if ("goal_glob" == Mode) {
     for (i=0; i < GlobCnt; i++){
       if (!Code[goalName = globGoal(i)])
-        addCodeLine(goalName, makeGlobVarsCode(i))
-      addCodeLine(goalName, line)
+        addCodeLineToGoal(goalName, makeGlobVarsCode(i))
+      addCodeLineToGoal(goalName, line)
     }
   } else
-    addCodeLine(currentGoalName(), line)
+    addCodeLineToGoal(currentGoalName(), line)
 }
 
-function addCodeLine(name, line) {
+function addCodeLineToGoal(name, line) {
   #print "Append line for '" name "': " line
   Code[name] = addL(Code[name], line)
 }
