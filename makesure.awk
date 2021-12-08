@@ -146,7 +146,7 @@ function handleDefineLine(line,   kv) {
   splitKV(line, kv)
 
   if (!(kv[0] in DefineOverrides))
-    DefinesCode = addL(DefinesCode, line "; export " kv[0])
+    DefinesCode = addL(DefinesCode, line "\nexport " kv[0])
 }
 
 function handleShell() {
