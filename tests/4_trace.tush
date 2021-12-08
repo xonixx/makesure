@@ -6,16 +6,10 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh
 $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh -x
 |   goal 'default' ...
 | A=aaa
-@ + A=aaa
-@ + export A
-@ + echo ' A=aaa; export A'
 @ + echo A=aaa
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh --tracing
 |   goal 'default' ...
 | A=aaa
-@ + A=aaa
-@ + export A
-@ + echo ' A=aaa; export A'
 @ + echo A=aaa
 

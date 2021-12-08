@@ -46,6 +46,7 @@
 @goal debug @private
 @doc shows software versions
   AWK="${AWK:-awk}"
+  printf "%s: " "$AWK"
   case "$AWK" in
     *mawk*) "$AWK" -W version 2>&1 | head -n 1
             ;;
@@ -61,7 +62,7 @@
   function run_tush_file() {
     local f="$1"
 
-    before_count=$(calc_temp_files)
+#    before_count=$(calc_temp_files)
 
     export PATH="$PATH:$MYDIR/soft/tush/bin"
     export NEXT_VERSION
@@ -73,12 +74,12 @@
       echo >&2 "!!! TESTS FAILED !!! : $f"
       exit 1
     fi
-    after_count=$(calc_temp_files)
-    if (( before_count != after_count ))
-    then
-      echo >&2 "!!! temp file not deleted !!!"
-      exit 1
-    fi
+#    after_count=$(calc_temp_files)
+#    if (( before_count != after_count ))
+#    then
+#      echo >&2 "!!! temp file not deleted !!!"
+#      exit 1
+#    fi
   }
   function calc_temp_files {
     local tmp_count=$(find /tmp -maxdepth 1 -type f -name 'makesure.*' | wc -l)

@@ -1,4 +1,7 @@
 
+echo 'code in prelude'
+echo 'more code in prelude'
+
 @reached_if true
 @depends_on g1
 @doc Doc in prelude

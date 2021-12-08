@@ -5,7 +5,6 @@ BEGIN {
   SupportedOptions["tracing"]
   SupportedOptions["silent"]
   SupportedOptions["timing"]
-  Tmp = isDir("/dev/shm") ? "/dev/shm" : "/tmp"
   split("",Lines)
   split("",Args) # parsed CLI args
   split("",ArgGoals) # invoked goals
@@ -14,7 +13,7 @@ BEGIN {
   split("",GoalsByName) # name -> private
   split("",Code)        # name -> body
   split("",DefineOverrides) # k -> ""
-  DefinesFile=""
+  DefinesCode=""
   split("",Dependencies)       # name,i -> dep goal
   split("",DependenciesLineNo) # name,i -> line no.
   split("",DependenciesCnt)    # name   -> dep cnd
@@ -143,16 +142,11 @@ function handleDefine() {
   $1 = ""
   handleDefineLine($0)
 }
-function handleDefineLine(line,   kv,l) {
-  if (!DefinesFile)
-    DefinesFile = executeGetLine("mktemp " Tmp "/makesure.XXXXXXXXXX")
-
+function handleDefineLine(line,   kv) {
   splitKV(line, kv)
 
-  if (!(kv[0] in DefineOverrides)) {
-    handleCodeLine(l = line "; export " kv[0])
-    handleCodeLine("echo " quoteArg(l) " >> " DefinesFile)
-  }
+  if (!(kv[0] in DefineOverrides))
+    DefinesCode = addL(DefinesCode, line "\nexport " kv[0])
 }
 
 function handleShell() {
@@ -404,8 +398,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     }
 
     addLine(definesLine, MyDirScript)
-    if (DefinesFile)
-      addLine(definesLine, ". " DefinesFile)
+    addLine(definesLine, DefinesCode)
 
     for (i = 0; i in GoalNames; i++) {
       goalName = GoalNames[i]
@@ -501,8 +494,7 @@ function currentGoalName() { return isPrelude() ? "" : arrLast(GoalNames) }
 function currentLibName() { return arrLast(LibNames) }
 
 function realExit(code) {
-  if (DefinesFile)
-    rm(DefinesFile)
+  # place here any cleanup if needed
   exit code
 }
 function addError(err, n) { if (!n) n=NR; Error=addL(Error, err ":\n" ARGV[1] ":" n ": " Lines[n]) }
@@ -540,7 +532,14 @@ function getMyDir(makesurefilePath) {
   return executeGetLine("cd \"$(dirname " quoteArg(makesurefilePath) ")\";pwd")
 }
 
-function handleCodeLine(line,   goalName, name, i) {
+function handleCodeLine(line) {
+  if (isPrelude() && line !~ /^[ \t]*#/ && trim(line) != "" && !ShellInPreludeErrorShown++)
+    addError("Shell code is not allowed in prelude area")
+  else
+    addCodeLine(line)
+}
+
+function addCodeLine(line,   goalName, name, i) {
   if ("lib" == Mode) {
     name = currentLibName()
     #print "Append line for '" name "': " line
@@ -548,14 +547,14 @@ function handleCodeLine(line,   goalName, name, i) {
   } else if ("goal_glob" == Mode) {
     for (i=0; i < GlobCnt; i++){
       if (!Code[goalName = globGoal(i)])
-        addCodeLine(goalName, makeGlobVarsCode(i))
-      addCodeLine(goalName, line)
+        addCodeLineToGoal(goalName, makeGlobVarsCode(i))
+      addCodeLineToGoal(goalName, line)
     }
   } else
-    addCodeLine(currentGoalName(), line)
+    addCodeLineToGoal(currentGoalName(), line)
 }
 
-function addCodeLine(name, line) {
+function addCodeLineToGoal(name, line) {
   #print "Append line for '" name "': " line
   Code[name] = addL(Code[name], line)
 }
@@ -762,7 +761,6 @@ function arrLast(arr) { return arr[arrLen(arr)-1] }
 function commandExists(cmd) { return ok("command -v " cmd " >/dev/null") }
 function ok(cmd) { return system(cmd) == 0 }
 function isFile(path) { return ok("test -f " quoteArg(path)) }
-function isDir(path) { return ok("test -d " quoteArg(path)) }
 function rm(f) { system("rm " quoteArg(f)) }
 function quoteArg(a) { gsub("'", "'\\''", a); return "'" a "'" }
 function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s }

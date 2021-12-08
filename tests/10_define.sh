@@ -2,7 +2,7 @@
 
 @define A=aaa
 @define B=${A}bbb
-C=ccc
+@define Commented=value # just a comment
 
 @goal testA
 echo A=$A
@@ -38,3 +38,7 @@ echo C=$C
 
 @goal children_reached_or_not
 @depends_on must_be_reached1 must_be_reached2 is_not_reached
+
+@goal test_commented_define
+  echo "in goal: $Commented"
+  sh -c 'echo in child process: $Commented'

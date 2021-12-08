@@ -1,5 +1,11 @@
 
-echo "prelude should execute only once"
+# no code allowed in prelude,
+# only comments, @define, @shell, @options
+
+  # comment with whitespaces before it
+
+@shell bash
+@define A=B
 
 @goal a
 @depends_on b
