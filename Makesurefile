@@ -46,6 +46,7 @@
 @goal debug @private
 @doc shows software versions
   AWK="${AWK:-awk}"
+  printf "%s: " "$AWK"
   case "$AWK" in
     *mawk*) "$AWK" -W version 2>&1 | head -n 1
             ;;
