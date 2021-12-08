@@ -107,14 +107,13 @@ Developed in [xonixx/intellij-awk](https://github.com/xonixx/intellij-awk).
 ## Concepts
 
 - Build file is a text file named `Makesurefile`.
-- Build file consists of a prelude and a set of goals.
 - Build file uses [directives](#directives).
-- Prelude is a piece of a shell script (can be empty) that goes before goals. The purpose of prelude is to `@define` ([link](#define)) global variables visible to goals. Prelude only runs once.
+- Build file consists of a set of goals.
 - A [goal](#goal) is a labeled piece of shell.
-- A goal can declare [dependencies](#depends_on) on other goals. During execution each referenced dependency will run only once despite the number of occurrences in dependency tree. Dependencies will run in proper order according to the inferred topological order. Dependency loops will be reported as error.
+- A goal can declare [dependencies](#depends_on) on other goals. During execution each referenced dependency will run only once despite the number of occurrences in dependency tree. Dependencies will run in proper sequence according to the inferred topological order. Dependency loops will be reported as error.
 - Goal bodies are executed in separate shell invocations. It means, you can’t easily pass variables from one goal to another. This is done on purpose to enforce declarative style.
-- By default, both prelude and goals are run with `bash`. You can change to `sh` with `@shell sh` in prelude.
-- For convenience in all shell invocations (prelude, goals, etc.) the current directory is automatically set to the one of `Makesurefile`. Typically, this is the root of the project. This allows using relative paths without bothering of the way the build is run.
+- By default, goals are run with `bash`. You can change to `sh` with `@shell sh` directive specified before all goals.
+- For convenience in all shell invocations the current directory is automatically set to the one of `Makesurefile`. Typically, this is the root of the project. This allows using relative paths without bothering of the way the build is run.
 - Goal can declare `@reached_if` directive ([link](#reached_if)). This allows skipping goal execution if it's already satisfied.
 
 ## Directives
@@ -194,7 +193,7 @@ Only valid: in prelude.
 
 Valid options: `bash` (default), `sh`
 
-Sets the shell interpreter to be used for execution of prelude and goals.
+Sets the shell interpreter to be used for execution of goal bodies and `@reached_if` conditions.
 
 Example:
 
