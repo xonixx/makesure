@@ -5,7 +5,6 @@ BEGIN {
   SupportedOptions["tracing"]
   SupportedOptions["silent"]
   SupportedOptions["timing"]
-  Tmp = isDir("/dev/shm") ? "/dev/shm" : "/tmp"
   split("",Lines)
   split("",Args) # parsed CLI args
   split("",ArgGoals) # invoked goals
@@ -762,7 +761,6 @@ function arrLast(arr) { return arr[arrLen(arr)-1] }
 function commandExists(cmd) { return ok("command -v " cmd " >/dev/null") }
 function ok(cmd) { return system(cmd) == 0 }
 function isFile(path) { return ok("test -f " quoteArg(path)) }
-function isDir(path) { return ok("test -d " quoteArg(path)) }
 function rm(f) { system("rm " quoteArg(f)) }
 function quoteArg(a) { gsub("'", "'\\''", a); return "'" a "'" }
 function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s }
