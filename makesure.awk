@@ -541,7 +541,7 @@ function getMyDir(makesurefilePath) {
 }
 
 function handleCodeLine(line) {
-  if (isPrelude() && line !~ /^#/ && trim(line) != "" && !ShellInPreludeErrorShown++)
+  if (isPrelude() && line !~ /^\s*#/ && trim(line) != "" && !ShellInPreludeErrorShown++)
     addError("Shell code is not allowed in prelude area")
   else
     addCodeLine(line)
