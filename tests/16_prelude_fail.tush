@@ -1,0 +1,7 @@
+
+TODO shall we delete this?
+
+#$ cd "$MYDIR"; ./$MAKESURE -f tests/16_prelude_fail.sh
+#| hello
+#|   prelude failed
+#? 47
