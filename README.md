@@ -51,7 +51,7 @@ By default, all scripts inside goals are executed with `bash`. If you want to us
 
 ```
 $ ./makesure -h
-makesure ver. 0.9.14
+makesure ver. 0.9.15
 Usage: makesure [options...] [-f buildfile] [goals...]
  -f,--file buildfile
                  set buildfile to use (default Makesurefile)
