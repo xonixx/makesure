@@ -384,19 +384,6 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     if ("timing" in Options)
       t0 = currentTimeMillis()
 
-    if (length(body = trim(Code[""])) > 0) {
-      # run prelude first to process all @defines
-      goalBody[0] = MyDirScript
-      if ("tracing" in Options)
-        addLine(goalBody, "set -x")
-      addLine(goalBody, body)
-      exitCode = shellExec(goalBody[0])
-      if (exitCode != 0) {
-        print "  prelude failed"
-        realExit(exitCode)
-      }
-    }
-
     addLine(definesLine, MyDirScript)
     addLine(definesLine, DefinesCode)
 
@@ -490,7 +477,7 @@ function resolveGoalsToRun(result,   i, goalName, loop) {
 function isPrelude() { return "prelude"==Mode }
 function checkPreludeOnly() { if (!isPrelude()) addError("Only use " $1 " in prelude") }
 function checkGoalOnly() { if ("goal" != Mode && "goal_glob" != Mode) addError("Only use " $1 " in @goal") }
-function currentGoalName() { return isPrelude() ? "" : arrLast(GoalNames) }
+function currentGoalName() { return arrLast(GoalNames) }
 function currentLibName() { return arrLast(LibNames) }
 
 function realExit(code) {
@@ -533,9 +520,10 @@ function getMyDir(makesurefilePath) {
 }
 
 function handleCodeLine(line) {
-  if (isPrelude() && line !~ /^[ \t]*#/ && trim(line) != "" && !ShellInPreludeErrorShown++)
-    addError("Shell code is not allowed in prelude area")
-  else
+  if (isPrelude() && line !~ /^[ \t]*#/ && trim(line) != "") {
+    if (!ShellInPreludeErrorShown++)
+      addError("Shell code is not allowed in prelude area")
+  } else
     addCodeLine(line)
 }
 
