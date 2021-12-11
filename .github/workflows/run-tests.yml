@@ -38,9 +38,9 @@ jobs:
           usesh: true
           prepare: |
             pkg install -y curl
-#            pkg install -y wget
+            # pkg install -y wget
             pkg install -y bash
-#            pkg install -y gawk
+            # pkg install -y gawk
           run: |
             echo "---------------------------------------"
             freebsd-version
