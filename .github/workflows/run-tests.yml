@@ -23,6 +23,33 @@ jobs:
         run: |
           ./makesure tested_awks
 
+  # https://github.com/marketplace/actions/freebsd-vm
+  freebsd:
+    runs-on: macos-latest
+    name: "Run tests on FreeBSD"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Tests in FreeBSD
+        id: test
+        uses: vmactions/freebsd-vm@v0.1.5
+        with:
+          usesh: true
+#          prepare: |
+#            pkg install -y curl
+#            pkg install -y wget
+#            pkg install -y bash
+#            pkg install -y gawk
+          run: |
+            echo "---------------------------------------"
+            freebsd-version
+            bash --version  || true
+            awk --version   || true
+            gawk --version  || true
+            curl --version  || true
+            wget --version  || true
+            echo "======================================="
+            ./makesure
+
   macos_gawk:
     name: "Run tests macos / gawk"
     runs-on: ${{ matrix.os }}
