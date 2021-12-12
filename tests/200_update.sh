@@ -63,17 +63,18 @@
 @goal wget_prepared
 @depends_on makesure_prepared
   cmd="wget"
-  {
-    echo "#!/bin/sh"
-    echo 'echo "running wget"'
-    if cmd1=`command -v $cmd`
-    then
-      echo "exec $cmd1 \"\$@\""
-    else
-      # fake wget with curl
-      echo "exec $(command -v curl) \"\${1/-q/-s}\" \"\$2\" \"\${3/-O/-o}\""
-    fi
-  } > "$D/$cmd"
+
+  echo $'#!/bin/sh
+echo "running wget"
+# fake wget with curl
+exec awk -vCURL="'$(command -v curl)$'" -va1="$1" -va2="$2" -va3="$3" \'
+BEGIN {
+sub(/-q/,"-s",a1)
+sub(/-O/,"-o",a3)
+system(CURL " " a1 " " a2 " " a3)
+}\'
+' > "$D/$cmd"
+
   chmod +x "$D/$cmd"
 
 @goal curl_prepared
