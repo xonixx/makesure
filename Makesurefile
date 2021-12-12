@@ -170,6 +170,7 @@ in_begin && $1 ~ /^split/ { next }
 @depends_on tested_mawk
 @depends_on tested_mawk134
 @depends_on tested_gawk51
+#@depends_on tested_gawk511
 @depends_on tested_goawk
 
 @goal tested_bwk @private
@@ -183,6 +184,10 @@ in_begin && $1 ~ /^split/ { next }
 @goal tested_gawk51 @private
 @depends_on installed_gawk51
   AWK="$(pwd)/soft/gawk51" ./makesure_dev tested
+
+@goal tested_gawk511 @private
+@depends_on installed_gawk511
+  AWK="$(pwd)/soft/gawk511" ./makesure_dev tested
 
 @goal tested_goawk @private
 @depends_on installed_goawk
@@ -203,6 +208,7 @@ in_begin && $1 ~ /^split/ { next }
 @doc installs all awks into ./soft
 @depends_on installed_bwk
 @depends_on installed_gawk51
+@depends_on installed_gawk511
 @depends_on installed_mawk134
 @depends_on installed_goawk
 
@@ -233,37 +239,52 @@ in_begin && $1 ~ /^split/ { next }
   ./bwk --version
   rm -r awk-master
 
+@lib gawk
+  install_gawk() {
+    local version="$1"
+    local exeName="$2"
+
+    echo
+    echo "Fetching Gawk-$version..."
+    echo
+
+    cd "soft"
+
+    G=gawk-$version.tar.gz
+    wget "http://git.savannah.gnu.org/cgit/gawk.git/snapshot/$G"
+    tar xzvf "$G"
+    rm "$G"
+
+    echo
+    echo "Compile Gawk-$version..."
+    echo
+
+    cd "gawk-$version"
+
+    ./configure
+    make
+    # make check
+
+    mv gawk ../$exeName
+    mkdir ../${exeName}_libs
+    mv extension/.libs/*.so ../${exeName}_libs # for AWKLIBPATH
+
+    cd ..
+    ./$exeName --version
+    rm -r "gawk-$version"
+  }
+
 @goal installed_gawk51 @private
 @reached_if [[ -f soft/gawk51 ]]
 @depends_on soft_folder_created
-  echo
-  echo "Fetching Gawk-5.1.0..."
-  echo
+@use_lib gawk
+  install_gawk 5.1.0 gawk51
 
-  cd "soft"
-
-  G=gawk-5.1.0.tar.gz
-  wget "http://git.savannah.gnu.org/cgit/gawk.git/snapshot/$G"
-  tar xzvf "$G"
-  rm "$G"
-
-  echo
-  echo "Compile Gawk-5.1.0..."
-  echo
-
-  cd "gawk-5.1.0"
-
-  ./configure
-  make
-  # make check
-
-  mv gawk ../gawk51
-  mkdir ../gawk51_libs
-  mv extension/.libs/*.so ../gawk51_libs # for AWKLIBPATH
-
-  cd ..
-  ./gawk51 --version
-  rm -r "gawk-5.1.0"
+@goal installed_gawk511 @private
+@reached_if [[ -f soft/gawk511 ]]
+@depends_on soft_folder_created
+@use_lib gawk
+  install_gawk 5.1.1 gawk511
 
 @goal installed_mawk134 @private
 @reached_if [[ -f soft/mawk134 ]]
