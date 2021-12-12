@@ -60,6 +60,7 @@
 @use_lib
   run_selfupdate
 
+# TODO is it possible to test via native wget if available?
 @goal wget_prepared
 @depends_on makesure_prepared
   cmd="wget"

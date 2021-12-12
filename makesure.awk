@@ -652,7 +652,7 @@ function dl(url, dest,    verbose) {
   } else if (commandExists("curl")) {
     if (!ok("curl " (verbose ? "" : "-s") " " quoteArg(url) " -o " quoteArg(dest)))
       return "error with curl"
-  } else return "wget/curl no found"
+  } else return "wget/curl not found"
 }
 # s1 > s2 -> 1
 # s1== s2 -> 0

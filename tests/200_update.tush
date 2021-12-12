@@ -4,7 +4,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/200_update.sh test_err
 |   goal 'test_err' ...
 | XXX
 |   goal 'test_err' failed
-@ wget/curl no found
+@ wget/curl not found
 ? 1
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/200_update.sh test_wget | awk '{ sub(/[0-9][0-9.]+/,"YYY") } 1'
