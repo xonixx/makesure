@@ -1,3 +1,6 @@
 #!/bin/sh
-echo "running bash" "$@"
-/bin/bash "$@"
+echo 'running bash' "$@"
+for b in '/bin/bash' '/usr/local/bin/bash'
+do
+    [ -x "$b" ] && exec "$b" "$@"
+done

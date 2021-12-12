@@ -64,7 +64,7 @@
 @depends_on makesure_prepared
   cmd="wget"
   {
-    echo "#!/bin/bash"
+    echo "#!/bin/sh"
     echo 'echo "running wget"'
     if cmd1=`command -v $cmd`
     then
