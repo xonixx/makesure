@@ -67,7 +67,7 @@
   echo $'#!/bin/sh
 echo "running wget"
 # fake wget with curl
-exec awk -vCURL="'$(command -v curl)$'" -va1="$1" -va2="$2" -va3="$3" \'
+exec awk -v CURL="'$(command -v curl)$'" -v a1="$1" -va2="$2" -v a3="$3" \'
 BEGIN {
 sub(/-q/,"-s",a1)
 sub(/-O/,"-o",a3)
