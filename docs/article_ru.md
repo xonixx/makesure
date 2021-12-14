@@ -8,9 +8,11 @@
 AWK - интерпретируемый язык. Он очень минималистичный. 
 Скудный минимум фич включает строки, числа, функции, ассоциативные массивы, построчный I/O. 
 Пожалуй, можно сказать что он содержит тот минимум фич меньше которого на нём невозможно было бы вовсе программировать.
-Каноническая и очень увлекательная [книжка](https://ia903404.us.archive.org/0/items/pdfy-MgN0H1joIoDVoIC7/The_AWK_Programming_Language.pdf).
+Каноническая и очень увлекательная [книжка](https://ia903404.us.archive.org/0/items/pdfy-MgN0H1joIoDVoIC7/The_AWK_Programming_Language.pdf) за авторством всей тройки A, W и K cоздателей, которая вышла в далёком 1988 году, но совершенно не потеряла актуальности.
 
 > Read The AWK Programming Language, a joy to read, one of the finest docs ever written, I reckon.
+
+Освежить основы AWK можно в статье [Awk in 20 Minutes](https://ferd.ca/awk-in-20-minutes.html)
 
 Удивительно, но язык AWK для своей реализации не требует GC. Впрочем, как и sh/bash.
 
@@ -119,10 +121,13 @@ $ gawk 'function sum(n) { return n == 0 ? 0 : n + sum(n-1) }; BEGIN { print sum(
 5. Простая интероперабельность с shell. Хоть ядро AWK очень мало, но вся мощь стандартных утилит *nix в вашем распоряжении.
 6. Язык весьма минималистичный и не-избыточный, не меняющийся с, наверное, года 1985. Поэтому прочитав даже [каноническую книгу](https://ia903404.us.archive.org/0/items/pdfy-MgN0H1joIoDVoIC7/The_AWK_Programming_Language.pdf), упомянутую выше можно быть уверенным, что знаешь весь язык. Вряд ли кто-то осмелится сказать подобное даже про POSIX sh. 
 
-Ну, довольно лирики.
-
+Ту же мысль доносит и [блог пост](https://blog.jpalardy.com/posts/why-learn-awk/) - другими словами и гораздо более талантливо, но смысл тот же.
 
 О синтаксисе/грамматике AWK. 
+
+## Links
+
+- [The state of the AWK](https://lwn.net/Articles/820829/)
 
 
 ## 6. IntelliJ-awk
