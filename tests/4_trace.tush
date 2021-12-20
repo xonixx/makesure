@@ -1,15 +1,79 @@
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh
+|   goal 'goal2' [already satisfied].
+|   goal 'goal1' ...
+| goal 1
 |   goal 'default' ...
 | A=aaa
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh -x
+$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh -x         2>&1 | awk '{ sub(ENVIRON["MYDIR"],"/some/path") } 1'
+| + : default@reached_if
+| + MYDIR=/some/path/tests
+| + export MYDIR
+| + cd /some/path/tests
+| + A=aaa
+| + export A
+| + [[ 1 -eq 2 ]]
+| + : goal2@reached_if
+| + MYDIR=/some/path/tests
+| + export MYDIR
+| + cd /some/path/tests
+| + A=aaa
+| + export A
+| + true
+|   goal 'goal2' [already satisfied].
+|   goal 'goal1' ...
+| + : goal1
+| + MYDIR=/some/path/tests
+| + export MYDIR
+| + cd /some/path/tests
+| + A=aaa
+| + export A
+| + echo 'goal 1'
+| goal 1
 |   goal 'default' ...
+| + : default
+| + MYDIR=/some/path/tests
+| + export MYDIR
+| + cd /some/path/tests
+| + A=aaa
+| + export A
+| + echo A=aaa
 | A=aaa
-@ + echo A=aaa
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh --tracing
+$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh --tracing  2>&1 | awk '{ sub(ENVIRON["MYDIR"],"/some/path") } 1'
+| + : default@reached_if
+| + MYDIR=/some/path/tests
+| + export MYDIR
+| + cd /some/path/tests
+| + A=aaa
+| + export A
+| + [[ 1 -eq 2 ]]
+| + : goal2@reached_if
+| + MYDIR=/some/path/tests
+| + export MYDIR
+| + cd /some/path/tests
+| + A=aaa
+| + export A
+| + true
+|   goal 'goal2' [already satisfied].
+|   goal 'goal1' ...
+| + : goal1
+| + MYDIR=/some/path/tests
+| + export MYDIR
+| + cd /some/path/tests
+| + A=aaa
+| + export A
+| + echo 'goal 1'
+| goal 1
 |   goal 'default' ...
+| + : default
+| + MYDIR=/some/path/tests
+| + export MYDIR
+| + cd /some/path/tests
+| + A=aaa
+| + export A
+| + echo A=aaa
 | A=aaa
-@ + echo A=aaa
+
 
