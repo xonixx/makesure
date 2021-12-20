@@ -8,7 +8,7 @@
 @goal makesure_prepared
   [[ -d "$D" ]] && rm -r "$D"
   mkdir "$D"
-  cp "../$MAKESURE" ../makesure.awk "$D"
+  cp "../$MAKESURE" ../makesure.awk ../mawk_ext.awk "$D"
 
   export NEXT_VERSION=XXX
   if [[ "$("$D/$MAKESURE" --version)" != "XXX" ]]
