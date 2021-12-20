@@ -9,7 +9,7 @@
 
 @goal goal1
 @depends_on goal2
-  echo 'goal 1'
+  echo goal1
 
 @goal goal2
 @reached_if true
