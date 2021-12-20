@@ -413,9 +413,6 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       if (goalName in GoalToLib)
         addLine(goalBody, Lib[GoalToLib[goalName]])
 
-      if ("tracing" in Options)
-        addLine(goalBody, "set -x")
-
       addLine(goalBody, body)
       goalBodies[goalName] = goalBody[0]
     }
@@ -439,7 +436,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
         if (!("silent" in Options))
           print "  goal " quote2(goalName,1) " " (reachedGoals[goalName] ? "[already satisfied]." : emptyGoals[goalName] ? "[empty]." : "...")
 
-        exitCode = (reachedGoals[goalName] || emptyGoals[goalName]) ? 0 : shellExec(goalBodies[goalName])
+        exitCode = (reachedGoals[goalName] || emptyGoals[goalName]) ? 0 : shellExec(goalBodies[goalName],goalName)
         if (exitCode != 0)
           print "  goal " quote2(goalName,1) " failed"
         if (goalTimed) {
@@ -498,11 +495,15 @@ function checkConditionReached(goalName, definesLine, conditionStr,    script) {
     script = script "\n" Lib[GoalToLib[goalName]]
   script = script "\n" conditionStr
   #print "script: " script
-  return shellExec(script) == 0
+  return shellExec(script, goalName "@reached_if") == 0
 }
 
-function shellExec(script,   res) {
-  script = Shell " -e -c " quoteArg(script)
+function shellExec(script, comment,   res) {
+  if ("tracing" in Options) {
+    script = ": " quoteArg(comment) "\n" script
+    script = Shell " -x -e -c " quoteArg(script)
+  } else
+    script = Shell " -e -c " quoteArg(script)
 
   # This is hard to unit-test properly.
   # The issue with Ctrl-C only happens with Gawk 4.1.3.
