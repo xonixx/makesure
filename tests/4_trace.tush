@@ -7,74 +7,74 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh
 | A=aaa
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh -x         2>&1 | awk -f tests/unify_tracing_output.awk
-| + : default@reached_if
-| + MYDIR=/some/path/tests
-| + export MYDIR
-| + cd /some/path/tests
-| + A=aaa
-| + export A
-| + [[ 1 -eq 2 ]]
-| + : goal2@reached_if
-| + MYDIR=/some/path/tests
-| + export MYDIR
-| + cd /some/path/tests
-| + A=aaa
-| + export A
-| + true
 |   goal 'goal2' [already satisfied].
 |   goal 'goal1' ...
-| + : goal1
-| + MYDIR=/some/path/tests
-| + export MYDIR
-| + cd /some/path/tests
-| + A=aaa
-| + export A
-| + echo goal1
 | goal1
 |   goal 'default' ...
-| + : default
-| + MYDIR=/some/path/tests
-| + export MYDIR
-| + cd /some/path/tests
-| + A=aaa
-| + export A
-| + echo A=aaa
 | A=aaa
+@ + : default@reached_if
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + [[ 1 -eq 2 ]]
+@ + : goal2@reached_if
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + true
+@ + : goal1
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + echo goal1
+@ + : default
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + echo A=aaa
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh --tracing  2>&1 | awk -f tests/unify_tracing_output.awk
-| + : default@reached_if
-| + MYDIR=/some/path/tests
-| + export MYDIR
-| + cd /some/path/tests
-| + A=aaa
-| + export A
-| + [[ 1 -eq 2 ]]
-| + : goal2@reached_if
-| + MYDIR=/some/path/tests
-| + export MYDIR
-| + cd /some/path/tests
-| + A=aaa
-| + export A
-| + true
 |   goal 'goal2' [already satisfied].
 |   goal 'goal1' ...
-| + : goal1
-| + MYDIR=/some/path/tests
-| + export MYDIR
-| + cd /some/path/tests
-| + A=aaa
-| + export A
-| + echo goal1
 | goal1
 |   goal 'default' ...
-| + : default
-| + MYDIR=/some/path/tests
-| + export MYDIR
-| + cd /some/path/tests
-| + A=aaa
-| + export A
-| + echo A=aaa
 | A=aaa
+@ + : default@reached_if
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + [[ 1 -eq 2 ]]
+@ + : goal2@reached_if
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + true
+@ + : goal1
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + echo goal1
+@ + : default
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + echo A=aaa
 
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace_shell_sh.sh
@@ -85,71 +85,71 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace_shell_sh.sh
 | A=aaa
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace_shell_sh.sh -x         2>&1 | awk -f tests/unify_tracing_output.awk
-| + : default@reached_if
-| + MYDIR=/some/path/tests
-| + export MYDIR
-| + cd /some/path/tests
-| + A=aaa
-| + export A
-| + [ 1 -eq 2 ]
-| + : goal2@reached_if
-| + MYDIR=/some/path/tests
-| + export MYDIR
-| + cd /some/path/tests
-| + A=aaa
-| + export A
-| + true
 |   goal 'goal2' [already satisfied].
 |   goal 'goal1' ...
-| + : goal1
-| + MYDIR=/some/path/tests
-| + export MYDIR
-| + cd /some/path/tests
-| + A=aaa
-| + export A
-| + echo goal1
 | goal1
 |   goal 'default' ...
-| + : default
-| + MYDIR=/some/path/tests
-| + export MYDIR
-| + cd /some/path/tests
-| + A=aaa
-| + export A
-| + echo A=aaa
 | A=aaa
+@ + : default@reached_if
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + [ 1 -eq 2 ]
+@ + : goal2@reached_if
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + true
+@ + : goal1
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + echo goal1
+@ + : default
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + echo A=aaa
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace_shell_sh.sh --tracing  2>&1 | awk -f tests/unify_tracing_output.awk
-| + : default@reached_if
-| + MYDIR=/some/path/tests
-| + export MYDIR
-| + cd /some/path/tests
-| + A=aaa
-| + export A
-| + [ 1 -eq 2 ]
-| + : goal2@reached_if
-| + MYDIR=/some/path/tests
-| + export MYDIR
-| + cd /some/path/tests
-| + A=aaa
-| + export A
-| + true
 |   goal 'goal2' [already satisfied].
 |   goal 'goal1' ...
-| + : goal1
-| + MYDIR=/some/path/tests
-| + export MYDIR
-| + cd /some/path/tests
-| + A=aaa
-| + export A
-| + echo goal1
 | goal1
 |   goal 'default' ...
-| + : default
-| + MYDIR=/some/path/tests
-| + export MYDIR
-| + cd /some/path/tests
-| + A=aaa
-| + export A
-| + echo A=aaa
 | A=aaa
+@ + : default@reached_if
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + [ 1 -eq 2 ]
+@ + : goal2@reached_if
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + true
+@ + : goal1
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + echo goal1
+@ + : default
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + echo A=aaa
