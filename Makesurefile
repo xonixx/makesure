@@ -257,12 +257,16 @@ in_begin && $1 ~ /^split/ { next }
     dlFolder="gawk-$version"
     if [[ $version == '5.1.1' ]]
     then
-      G='master.tar.gz'
-      dlUrl="https://github.com/gnu-mirror-unofficial/gawk/archive/refs/heads/$G"
-      dlFolder='gawk-master'
+#      G='master.tar.gz'
+#      dlUrl="https://github.com/gnu-mirror-unofficial/gawk/archive/refs/heads/$G"
+#      dlFolder='gawk-master'
+      G="gawk-$version.tar.xz"
+      dlUrl="https://fossies.org/linux/misc/$G"
+      dlFolder="gawk-$version"
+      tarOpts="xvf"
     fi
     wget "$dlUrl"
-    tar xzvf "$G"
+    tar "${tarOpts:-xzvf}" "$G"
     rm "$G"
 
     echo
