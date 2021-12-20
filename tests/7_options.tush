@@ -14,7 +14,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/7_options_in_goal.sh
 @ tests/7_options_in_goal.sh:3: @options tracing
 ? 1
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/7_options_tracing.sh   2>&1 | awk '{ sub(ENVIRON["MYDIR"],"/some/path") } 1'
+$ cd "$MYDIR"; ./$MAKESURE -f tests/7_options_tracing.sh   2>&1 | awk -f tests/unify_tracing_output.awk
 |   goal 'default' ...
 | + : default
 | + MYDIR=/some/path/tests

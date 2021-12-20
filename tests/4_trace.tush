@@ -6,7 +6,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh
 |   goal 'default' ...
 | A=aaa
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh -x         2>&1 | awk '{ sub(ENVIRON["MYDIR"],"/some/path") } 1'
+$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh -x         2>&1 | awk -f tests/unify_tracing_output.awk
 | + : default@reached_if
 | + MYDIR=/some/path/tests
 | + export MYDIR
@@ -41,7 +41,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh -x         2>&1 | awk '{ sub(ENVI
 | + echo A=aaa
 | A=aaa
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh --tracing  2>&1 | awk '{ sub(ENVIRON["MYDIR"],"/some/path") } 1'
+$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh --tracing  2>&1 | awk -f tests/unify_tracing_output.awk
 | + : default@reached_if
 | + MYDIR=/some/path/tests
 | + export MYDIR
@@ -84,7 +84,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace_shell_sh.sh
 |   goal 'default' ...
 | A=aaa
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace_shell_sh.sh -x         2>&1 | awk '{ sub(ENVIRON["MYDIR"],"/some/path") } 1'
+$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace_shell_sh.sh -x         2>&1 | awk -f tests/unify_tracing_output.awk
 | + : default@reached_if
 | + MYDIR=/some/path/tests
 | + export MYDIR
@@ -119,7 +119,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace_shell_sh.sh -x         2>&1 | awk '{
 | + echo A=aaa
 | A=aaa
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace_shell_sh.sh --tracing  2>&1 | awk '{ sub(ENVIRON["MYDIR"],"/some/path") } 1'
+$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace_shell_sh.sh --tracing  2>&1 | awk -f tests/unify_tracing_output.awk
 | + : default@reached_if
 | + MYDIR=/some/path/tests
 | + export MYDIR
