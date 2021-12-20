@@ -253,7 +253,15 @@ in_begin && $1 ~ /^split/ { next }
     cd "soft"
 
     G=gawk-$version.tar.gz
-    wget "http://git.savannah.gnu.org/cgit/gawk.git/snapshot/$G"
+    dlUrl="http://git.savannah.gnu.org/cgit/gawk.git/snapshot/$G"
+    dlFolder="gawk-$version"
+    if [[ $version == '5.1.1' ]]
+    then
+      G='master.tar.gz'
+      dlUrl="https://github.com/gnu-mirror-unofficial/gawk/archive/refs/heads/$G"
+      dlFolder='gawk-master'
+    fi
+    wget "$dlUrl"
     tar xzvf "$G"
     rm "$G"
 
@@ -261,7 +269,7 @@ in_begin && $1 ~ /^split/ { next }
     echo "Compile Gawk-$version..."
     echo
 
-    cd "gawk-$version"
+    cd "$dlFolder"
 
     ./configure
     make
@@ -269,11 +277,11 @@ in_begin && $1 ~ /^split/ { next }
 
     mv gawk ../$exeName
     mkdir ../${exeName}_libs
-    mv extension/.libs/*.so ../${exeName}_libs # for AWKLIBPATH
+    mv extension/.libs/*.so ../"${exeName}"_libs # for AWKLIBPATH
 
     cd ..
     ./$exeName --version
-    rm -r "gawk-$version"
+    rm -r "$dlFolder"
   }
 
 @goal installed_gawk51 @private
