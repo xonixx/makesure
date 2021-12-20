@@ -752,4 +752,4 @@ function isFile(path) { return ok("test -f " quoteArg(path)) }
 function rm(f) { system("rm " quoteArg(f)) }
 function quoteArg(a) { gsub("'", "'\\''", a); return "'" a "'" }
 function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s }
-function gettimeofday(){} # hack for mawk
+#function gettimeofday(){} # hack for mawk
