@@ -534,7 +534,7 @@ function dl(url, dest,    verbose) {
   } else if (commandExists("curl")) {
     if (!ok("curl " (verbose ? "" : "-s") " " quoteArg(url) " -o " quoteArg(dest)))
       return "error with curl"
-  } else return "wget/curl no found"
+  } else return "wget/curl not found"
 }
 function natOrder(s1,s2, i1,i2,   c1, c2, n1,n2) {
   if (_digit(c1 = substr(s1,i1,1)) && _digit(c2 = substr(s2,i2,1))) {
