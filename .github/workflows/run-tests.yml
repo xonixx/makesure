@@ -17,7 +17,7 @@ jobs:
         with:
           path: soft
           # key: ${{ runner.os }}-soft
-          key: ${{ matrix.os }}-soft--all
+          key: ${{ matrix.os }}-soft--all-1
 
       - name: "run tests"
         run: |
