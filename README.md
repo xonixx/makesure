@@ -89,7 +89,7 @@ Updates `makesure` executable to latest available version in-place:
 
 ### OS    
 
-`makesure` will run on any environment with Posix shell available. [Tested](https://github.com/xonixx/makesure/actions) and officially supported are:
+`makesure` will run on any environment with POSIX shell available. [Tested](https://github.com/xonixx/makesure/actions) and officially supported are:
  
 - Linux
 - MacOS
