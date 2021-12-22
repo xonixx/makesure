@@ -1,0 +1,97 @@
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/16_define_validation.sh
+|   goal 'default' ...
+| EMPTY=
+| EMPTY1=
+| EMPTY2=
+| EMPTY3=
+| _a123=123
+| good__NaMe_=123
+| A  =aaa
+| B  =bbb bbb
+| B1 =bbb # bbb
+| B2 =bbb ; bbb
+| C  =cc'c cc'c
+| C1 =cc'c cc'c
+| D  =a b  c
+| D1 =abcd
+| D2 =a'c"
+| E  =eee eee
+| F  =eee \ " eee
+| K  =aaabbbcc'ca b  ceee
+| L  =aaabbb bbb cc'c cc'ca b  c eee eee
+| AC1=aaa
+| AC2=aaa#
+| BC1=bbb bbb
+| BC2=bbb bbb#
+| CC1=cc'c cc'c
+| DC1=a b c
+| EC1=eee
+| KC1=aaabbbcc'ca b ceee
+| LC1=aaabbb bbbcc'c cc'ca b  ceee eee
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/16_define_validation_error.sh
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:2: @define echo
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:3: @define echo;
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:4: @define echo;echo
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:5: @define echo ; echo
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:6: @define echo 'Hello'
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:7: @define echo 'Hello';
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:8: @define A=aaa echo 'Hello'
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:9: @define B=aaa\ aaa echo 'Hello'
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:10: @define C='aaa aaa' echo 'Hello'
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:12: @define echo                       # comment
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:13: @define echo 'Hello'           # comment
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:14: @define echo 'Hello';           # comment
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:15: @define echo 'Hello'  ;# comment
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:16: @define A=aaa echo 'Hello'        # comment
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:17: @define B=aaa\ aaa echo 'Hello'# comment
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:18: @define C='aaa aaa' echo 'Hello' # comment
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:19: @define C1='aaa aaa' echo 'Hello' ; # comment
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:22: @define B3='bbb ; bbb';
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:23: @define B4='bbb ; bbb'    ;
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:24: @define BC3='bbb bbb';  # comment
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:25: @define BC4='bbb ; bbb'   ;  # comment
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:28: @define IL1=a||b
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:29: @define IL2=a&b
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:30: @define IL3=a&&b
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:31: @define IL4=a!b
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:32: @define IL5=a-b
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:33: @define IL6=a+b
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:34: @define IL7=a;;;b
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:36: @define 0wrong_name=123
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:37: @define wrong,name=123
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:38: @define wrong-name=123
+? 1
+

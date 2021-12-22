@@ -143,10 +143,19 @@ function handleDefine() {
   handleDefineLine($0)
 }
 function handleDefineLine(line,   kv) {
+  if (!checkValidDefineSyntax(line))
+    return
+
   splitKV(line, kv)
 
   if (!(kv[0] in DefineOverrides))
     DefinesCode = addL(DefinesCode, line "\nexport " kv[0])
+}
+function checkValidDefineSyntax(line) {
+  if (line ~ /^[ \t]*[A-Za-z_][A-Za-z0-9_]*=(([A-Za-z0-9_]|(\\.))+|('[^']*')|("((\\\\)|(\\")|[^"])*")|(\$'((\\\\)|(\\')|[^'])*'))*[ \t]*(#.*)?$/)
+    return 1
+  addError("Invalid define declaration")
+  return 0
 }
 
 function handleShell() {
@@ -505,9 +514,9 @@ function shellExec(script, comment,   res) {
   } else
     script = Shell " -e -c " quoteArg(script)
 
-  # This is hard to unit-test properly.
-  # The issue with Ctrl-C only happens with Gawk 4.1.3.
-  # The manual test exists via `expect -f tests/manual_ctrl_c.expect.txt`
+    # This is hard to unit-test properly.
+    # The issue with Ctrl-C only happens with Gawk 4.1.3.
+    # The manual test exists via `expect -f tests/manual_ctrl_c.expect.txt`
   script = "trap 'exit 7' INT;" script
 
   #print script

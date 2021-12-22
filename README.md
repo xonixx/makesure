@@ -72,7 +72,7 @@ Usage: makesure [options...] [-f buildfile] [goals...]
 
 Since `makesure` is a tiny utility represented by a single file, the recommended installation strategy is to keep it local to a project where it's used (this means in code repository). Not only this eliminates the need for repetitive installation for every dev on a project, but also allows using separate `makesure` version per project and update only as needed.
 
-```shell
+```sh
 wget "https://raw.githubusercontent.com/xonixx/makesure/main/makesure?token=$(date +%s)" -Omakesure && \
 chmod +x makesure && echo "makesure $(./makesure -v) installed"
 ```
@@ -81,7 +81,7 @@ chmod +x makesure && echo "makesure $(./makesure -v) installed"
 
 Updates `makesure` executable to latest available version in-place:
 
-```shell
+```sh
 ./makesure -U
 ```
 
@@ -130,7 +130,7 @@ Valid options: `timing`, `tracing`, `silent`
 Will measure and log each goal execution time + total time.
 
 Example `Makesurefile`:
-```
+```sh
 @options timing
 
 @goal a
@@ -173,7 +173,7 @@ The variable will be declared as environment variable (via `export`).
 
 Example:
 
-```
+```sh
 @define A=hello
 @define B="${A} world"
 ```
@@ -186,6 +186,14 @@ Overall the precedence for variables resolution is (higher priority top):
 - `@define VAR=2` in `Makesurefile`
 - `VAR=3 ./makesure`
 
+Please note, the parser of `makesure` is somewhat stricter here than shell's one:
+```sh
+@define VERSION=1.2.3    # makesure won't accept
+@define VERSION='1.2.3'  # OK
+
+@define HW=${HELLO}world    # makesure won't accept  
+@define HW="${HELLO}world"  # OK  
+```
 
 ### @shell
 
@@ -212,7 +220,7 @@ Defines a goal. `@private` modifier is optional. When goal is private, it won't 
 
 Lines that go after this declaration line (but before next `@goal` declaration line) will be treated as a shell script for the body of the goal. Example:
 
-```
+```sh
 @goal hello
   echo "Hello world" 
 ```
@@ -224,14 +232,14 @@ hello world
 
 Indentation in goal body is optional, unlike `make`, so below is perfectly valid:
 
-```
+```sh
 @goal hello
 echo "Hello world" 
 ```
 
 Invoking `./makesure` without arguments will attempt to call the goal named `default`:
 
-```
+```sh
 @goal default
   echo "I'm default goal"
 ```
@@ -243,14 +251,14 @@ Invoking `./makesure` without arguments will attempt to call the goal named `def
 
 This one is easy to illustrate with an example:
 
-```
+```sh
 @goal process_file @glob *.txt 
  echo $ITEM $INDEX $TOTAL
 ```
 
 Is equivalent to declaring three goals
 
-```
+```sh
 @goal process_file@a.txt @private
  echo a.txt 0 2
 
@@ -268,12 +276,12 @@ a.txt b.txt
 ```
 
 For convenience, you can omit name in case of glob goal:
-```
+```sh
 @goal @glob *.txt
  echo $ITEM $INDEX $TOTAL
 ```
 as equivalent for
-```
+```sh
 @goal a.txt @private
  echo a.txt 0 2
 
@@ -292,7 +300,7 @@ The useful use case here would be to represent a set of test files as a set of g
 Why this may be useful? Imagine in your nodejs application you have `test1.js`, `test2.js`, `test3.js`.
 Now you can use this `Makesurefile`
 
-```
+```sh
 @goal @glob test*.js
   echo "running test file $INDEX out of $TOTAL ..."
   node $ITEM
@@ -310,7 +318,7 @@ Provides a description for a goal.
 
 Example `Makesurefile`:
 
-```
+```sh
 @goal build
 @doc builds the project 
   echo "Building ..."
@@ -340,7 +348,7 @@ Declares a dependency on other goal.
 
 Example `Makesurefile`:
 
-```
+```sh
 @goal a
   echo a
   
@@ -360,7 +368,7 @@ b
 
 You can declare multiple dependencies for a goal:
 
-```
+```sh
 @goal a
   echo a
 
@@ -390,7 +398,7 @@ d
 
 Circular dependency will cause an error:
 
-```
+```sh
 @goal a
 @depends_on b
 
@@ -419,7 +427,7 @@ Allows skipping goal execution if it's already satisfied. This allows to speedup
 
 Example `Makesurefile`:
 
-```
+```sh
 @goal file_created
 @reached_if [[ -f ./file.txt ]]
   echo "Creating file ..."
@@ -450,7 +458,7 @@ Helps with code reuse. Occasionally you need to run similar code in multiple goa
 
 The usage is simple:
 
-```
+```sh
 @lib lib_name
   a() { 
     echo Hello $1  
@@ -463,7 +471,7 @@ The usage is simple:
 
 For simplicity can omit name:
        
-```
+```sh
 @lib
   a() {
     echo Hello $1  
@@ -475,7 +483,7 @@ For simplicity can omit name:
 ```
      
 Operationally `@use_lib` is just substituted by content of a corresponding `@lib`'s body, as if the above goal is declared like:
-```
+```sh
 @goal hello_world
   a() {
     echo Hello $1  
@@ -512,7 +520,7 @@ Available goals:
 ```
 
 Note, how goal names are already escaped in output. This is to make it easier for you to call it directly:
-```
+```sh
 ./makesure $'name that contains \' single quote'
 ```
 
@@ -520,8 +528,10 @@ Same naming rules apply to other directives (like `@doc`).
 
 Usually you won't need this escaping tricks often, but they can be especially in use for `@glob` goals if the relevant files have spaces in them:
 
-```
-@goal @glob 'file with spaces*.txt'
+```sh
+@goal @glob 'file\ with\ spaces*.txt'
+@goal other
+  @depends_on 'file with spaces1.txt'
 ```
 
 More info on this topic is covered in the [issue](https://github.com/xonixx/makesure/issues/63).

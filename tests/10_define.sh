@@ -1,7 +1,7 @@
 
 
 @define A=aaa
-@define B=${A}bbb
+@define B="${A}bbb"
 @define Commented=value # just a comment
 
 @goal testA

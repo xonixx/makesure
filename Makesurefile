@@ -1,9 +1,9 @@
 
-@define NEXT_VERSION="0.9.15"
-@define TUSH_REPO=https://github.com/adolfopa/tush
+@define NEXT_VERSION='0.9.15'
+@define TUSH_REPO='https://github.com/adolfopa/tush'
 
-@define GOAWK_VERSION=1.9.1
-@define GOAWK=goawk$GOAWK_VERSION
+@define GOAWK_VERSION='1.9.1'
+@define GOAWK="goawk$GOAWK_VERSION"
 
 @options timing
 
@@ -153,7 +153,7 @@ function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return 
 /^BEGIN/                  { in_begin=1 }
 in_begin && /^}/          { in_begin=0 }
 in_begin && $1 ~ /^split/ { next }
-{ if (!/"#"/ && !/\*\#\//) gsub("\\s*#.+$", ""); gsub(Q, Q "\\" Q Q); if (trim($0)) print}' makesure.awk
+{ if (!/"#"/ && !/\*\#\// && !/\*\(\#/) gsub("\\s*#.+$", ""); gsub(Q, Q "\\" Q Q); if (trim($0)) print}' makesure.awk
     echo \'' Makesurefile "$@"'
   } > "$F"
   chmod +x "$F"
