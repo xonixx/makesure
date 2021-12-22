@@ -16,7 +16,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/22_nat_order.sh nat_order_test
 | 13_doc.tush
 | 14_private.tush
 | 15_lib.tush
-| 16_prelude_fail.tush
+| 16_define_validation.tush
 | 17_empty_prelude.tush
 | 18_vars_priority.tush
 | 19_optimize_goals.tush
@@ -40,7 +40,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/22_nat_order nat_order_test
 | ../13_doc.tush
 | ../14_private.tush
 | ../15_lib.tush
-| ../16_prelude_fail.tush
+| ../16_define_validation.tush
 | ../17_empty_prelude.tush
 | ../18_vars_priority.tush
 | ../19_optimize_goals.tush

@@ -18,6 +18,20 @@
 @define C='aaa aaa' echo 'Hello' # comment
 @define C='aaa aaa' echo 'Hello' ; # comment
 
+# Let's disallow ';' for simplicity and unification
+@define B3='bbb ; bbb';
+@define B4='bbb ; bbb'    ;
+@define BC3='bbb bbb';  # comment
+@define BC4='bbb ; bbb'   ;  # comment
+
+# Illegal chars. This is more restrictive than shell but simpler to parse
+@define IL1=a||b
+@define IL2=a&b
+@define IL3=a&&b
+@define IL4=a!b
+@define IL5=a-b
+@define IL5=a+b
+
 @goal default
   echo 'Should not show'
 
