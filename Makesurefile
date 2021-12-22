@@ -1,4 +1,4 @@
-
+# vim: syntax=bash
 @define NEXT_VERSION='0.9.15'
 @define TUSH_REPO='https://github.com/adolfopa/tush'
 
