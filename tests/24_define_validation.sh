@@ -9,6 +9,7 @@
 @define C1='cc'\''c  cc'\''c'
 @define D=a\ b\ \ c
 @define E="eee eee"
+@define F="eee \\ \" eee"
 
 @define K=aaa'bbb'$'cc\'c'a\ b\ \ c"eee"
 @define L="$A$B $C$D  $E"
@@ -27,7 +28,7 @@
 @define LC1="$A$B$C$D$E"                 # other comment
 
 @goal default
-  for x in A B B1 B2 B3 B4 C C1 D E K L AC1 AC2 BC1 BC2 BC3 BC4 CC1 DC1 EC1 KC1 LC1
+  for x in A B B1 B2 B3 B4 C C1 D E F K L AC1 AC2 BC1 BC2 BC3 BC4 CC1 DC1 EC1 KC1 LC1
   do
     printf '%-3s=%s\n' "$x" "${!x}"
   done

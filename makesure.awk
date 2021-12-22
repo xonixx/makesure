@@ -152,7 +152,7 @@ function handleDefineLine(line,   kv) {
     DefinesCode = addL(DefinesCode, line "\nexport " kv[0])
 }
 function checkValidDefineSyntax(line) {
-  if (line ~ /[ \t]*[A-Za-z_][A-Za-z0-9_]*=/)
+  if (line ~ /[ \t]*[A-Za-z_][A-Za-z0-9_]*=((([^ ;'"]|(\\ ))([^ ;]|(\\ ))*)|('[^']*')|("((\\\\)|(\\")|[^"])*")|(\$'((\\\\)|(\\')|[^'])*'))+[ \t]*(#.*)?$/)
     return 1
   addError("Invalid define declaration")
   return 0
