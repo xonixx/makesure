@@ -1,6 +1,12 @@
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/16_define_validation.sh
 |   goal 'default' ...
+| EMPTY=
+| EMPTY1=
+| EMPTY2=
+| EMPTY3=
+| _a123=123
+| good__NaMe_=123
 | A  =aaa
 | B  =bbb bbb
 | B1 =bbb # bbb
@@ -81,5 +87,11 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/16_define_validation_error.sh
 @ tests/16_define_validation_error.sh:33: @define IL6=a+b
 @ Invalid define declaration:
 @ tests/16_define_validation_error.sh:34: @define IL7=a;;;b
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:36: @define 0wrong_name=123
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:37: @define wrong,name=123
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:38: @define wrong-name=123
 ? 1
 

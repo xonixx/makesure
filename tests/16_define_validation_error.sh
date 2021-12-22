@@ -33,6 +33,10 @@
 @define IL6=a+b
 @define IL7=a;;;b
 
+@define 0wrong_name=123
+@define wrong,name=123
+@define wrong-name=123
+
 @goal default
   echo 'Should not show'
 

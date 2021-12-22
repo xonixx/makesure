@@ -1,4 +1,10 @@
 
+@define EMPTY=
+@define EMPTY1=''
+@define EMPTY2=$''
+@define EMPTY3=""
+@define _a123=123
+@define good__NaMe_=123
 @define A=aaa
 @define B='bbb bbb'
 @define B1='bbb # bbb'
@@ -26,7 +32,7 @@
 @define LC1="$A$B$C$D$E"                 # other comment
 
 @goal default
-  for x in A B B1 B2 C C1 D D1 D2 E F K L AC1 AC2 BC1 BC2 CC1 DC1 EC1 KC1 LC1
+  for x in EMPTY EMPTY1 EMPTY2 EMPTY3 _a123 good__NaMe_ A B B1 B2 C C1 D D1 D2 E F K L AC1 AC2 BC1 BC2 CC1 DC1 EC1 KC1 LC1
   do
     printf '%-3s=%s\n' "$x" "${!x}"
   done
