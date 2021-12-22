@@ -1,0 +1,26 @@
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/24_define_validation.sh
+|   goal 'default' ...
+| A  =aaa
+| B  =bbb bbb
+| B1 =bbb # bbb
+| B2 =bbb ; bbb
+| B3 =bbb ; bbb
+| B4 =bbb ; bbb
+| C  =cc'c cc'c
+| C1 =cc'c cc'c
+| D  =a b  c
+| E  =eee eee
+| K  =aaabbbcc'ca b  ceee
+| L  =aaabbb bbb cc'c cc'ca b  c eee eee
+| AC1=aaa
+| AC2=aaa#
+| BC1=bbb bbb
+| BC2=bbb bbb#
+| BC3=bbb bbb
+| BC4=bbb ; bbb
+| CC1=cc'c cc'c
+| DC1=a b c
+| EC1=eee
+| KC1=aaabbbcc'ca b ceee
+| LC1=aaabbb bbbcc'c cc'ca b  ceee eee
