@@ -8,7 +8,7 @@ The simplest way to think of this tool is to have a way to have "shortcuts" (aka
 
 Example `Makesurefile`:
 
-```sh
+```
 @goal downloaded
 @reached_if [[ -f code.tar.gz ]]
   wget http://domain/code.tar.gz
@@ -520,7 +520,7 @@ Available goals:
 ```
 
 Note, how goal names are already escaped in output. This is to make it easier for you to call it directly:
-```
+```sh
 ./makesure $'name that contains \' single quote'
 ```
 
@@ -528,8 +528,10 @@ Same naming rules apply to other directives (like `@doc`).
 
 Usually you won't need this escaping tricks often, but they can be especially in use for `@glob` goals if the relevant files have spaces in them:
 
-```
-@goal @glob 'file with spaces*.txt'
+```sh
+@goal @glob 'file\ with\ spaces*.txt'
+@goal other
+  @depends_on 'file with spaces1.txt'
 ```
 
 More info on this topic is covered in the [issue](https://github.com/xonixx/makesure/issues/63).
