@@ -143,10 +143,19 @@ function handleDefine() {
   handleDefineLine($0)
 }
 function handleDefineLine(line,   kv) {
+  if (!checkValidDefineSyntax(line))
+    return
+
   splitKV(line, kv)
 
   if (!(kv[0] in DefineOverrides))
     DefinesCode = addL(DefinesCode, line "\nexport " kv[0])
+}
+function checkValidDefineSyntax(line) {
+  if (line ~ /[ \t]*[A-Za-z_][A-Za-z0-9_]*=/)
+    return 1
+  addError("Invalid define declaration")
+  return 0
 }
 
 function handleShell() {
