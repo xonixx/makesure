@@ -16,7 +16,7 @@
 @define A=aaa echo 'Hello'        # comment
 @define B=aaa\ aaa echo 'Hello'# comment
 @define C='aaa aaa' echo 'Hello' # comment
-@define C='aaa aaa' echo 'Hello' ; # comment
+@define C1='aaa aaa' echo 'Hello' ; # comment
 
 # Let's disallow ';' for simplicity and unification
 @define B3='bbb ; bbb';
@@ -30,7 +30,8 @@
 @define IL3=a&&b
 @define IL4=a!b
 @define IL5=a-b
-@define IL5=a+b
+@define IL6=a+b
+@define IL7=a;;;b
 
 @goal default
   echo 'Should not show'

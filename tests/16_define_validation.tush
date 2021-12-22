@@ -58,7 +58,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/16_define_validation_error.sh
 @ Invalid define declaration:
 @ tests/16_define_validation_error.sh:18: @define C='aaa aaa' echo 'Hello' # comment
 @ Invalid define declaration:
-@ tests/16_define_validation_error.sh:19: @define C='aaa aaa' echo 'Hello' ; # comment
+@ tests/16_define_validation_error.sh:19: @define C1='aaa aaa' echo 'Hello' ; # comment
 @ Invalid define declaration:
 @ tests/16_define_validation_error.sh:22: @define B3='bbb ; bbb';
 @ Invalid define declaration:
@@ -78,6 +78,8 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/16_define_validation_error.sh
 @ Invalid define declaration:
 @ tests/16_define_validation_error.sh:32: @define IL5=a-b
 @ Invalid define declaration:
-@ tests/16_define_validation_error.sh:33: @define IL5=a+b
+@ tests/16_define_validation_error.sh:33: @define IL6=a+b
+@ Invalid define declaration:
+@ tests/16_define_validation_error.sh:34: @define IL7=a;;;b
 ? 1
 
