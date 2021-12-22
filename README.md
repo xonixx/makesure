@@ -45,7 +45,7 @@ By default, all scripts inside goals are executed with `bash`. If you want to us
 - Very simple, only bare minimum of truly needed features. You don’t need to learn a whole new programming language to use the tool! Literally it’s goals + dependencies + handful of directives + bash/shell.
 - Much saner and simpler `make` analog.
 - A bunch of useful built-in facilities: timing the goal's execution, listing goals in a build file, a [means](#reached_if) to speed-up repeated builds.
-- The syntax of a build file is also a valid bash/shell (though semantics is different). This can to some extent be in use for editing in IDE.
+- The syntax of a build file is also a [valid bash/shell](Makesurefile) (though semantics is different). This can to some extent be in use for editing in IDE.
 
 ## Usage
 
