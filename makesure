@@ -1,6 +1,6 @@
 #!/bin/sh
 if command -v gawk >/dev/null;then makesure_awk='gawk -ltime -v Gawk=1';makesure_pre='';else makesure_awk=awk;makesure_pre='function gettimeofday(){}';fi
-exec $makesure_awk -v "Version=0.9.15" -v "Prog=$0" "$makesure_pre"'
+exec $makesure_awk -v "Version=0.9.16" -v "Prog=$0" "$makesure_pre"'
 BEGIN {
   Shell = "bash"
   SupportedShells["bash"]
@@ -116,9 +116,17 @@ function handleDefine() {
   handleDefineLine($0)
 }
 function handleDefineLine(line,   kv) {
+  if (!checkValidDefineSyntax(line))
+    return
   splitKV(line, kv)
   if (!(kv[0] in DefineOverrides))
     DefinesCode = addL(DefinesCode, line "\nexport " kv[0])
+}
+function checkValidDefineSyntax(line) {
+  if (line ~ /^[ \t]*[A-Za-z_][A-Za-z0-9_]*=(([A-Za-z0-9_]|(\\.))+|('\''[^'\'']*'\'')|("((\\\\)|(\\")|[^"])*")|(\$'\''((\\\\)|(\\'\'')|[^'\''])*'\''))*[ \t]*(#.*)?$/)
+    return 1
+  addError("Invalid define declaration")
+  return 0
 }
 function handleShell() {
   checkPreludeOnly()
@@ -340,8 +348,6 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       addLine(goalBody, definesLine[0])
       if (goalName in GoalToLib)
         addLine(goalBody, Lib[GoalToLib[goalName]])
-      if ("tracing" in Options)
-        addLine(goalBody, "set -x")
       addLine(goalBody, body)
       goalBodies[goalName] = goalBody[0]
     }
@@ -361,7 +367,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
           t1 = t2 ? t2 : currentTimeMillis()
         if (!("silent" in Options))
           print "  goal " quote2(goalName,1) " " (reachedGoals[goalName] ? "[already satisfied]." : emptyGoals[goalName] ? "[empty]." : "...")
-        exitCode = (reachedGoals[goalName] || emptyGoals[goalName]) ? 0 : shellExec(goalBodies[goalName])
+        exitCode = (reachedGoals[goalName] || emptyGoals[goalName]) ? 0 : shellExec(goalBodies[goalName],goalName)
         if (exitCode != 0)
           print "  goal " quote2(goalName,1) " failed"
         if (goalTimed) {
@@ -412,10 +418,14 @@ function checkConditionReached(goalName, definesLine, conditionStr,    script) {
   if (goalName in GoalToLib)
     script = script "\n" Lib[GoalToLib[goalName]]
   script = script "\n" conditionStr
-  return shellExec(script) == 0
+  return shellExec(script, goalName "@reached_if") == 0
 }
-function shellExec(script,   res) {
-  script = Shell " -e -c " quoteArg(script)
+function shellExec(script, comment,   res) {
+  if ("tracing" in Options) {
+    script = ": " quoteArg(comment) "\n" script
+    script = Shell " -x -e -c " quoteArg(script)
+  } else
+    script = Shell " -e -c " quoteArg(script)
   script = "trap '\''exit 7'\'' INT;" script
   res = system(script)
   return res
@@ -534,7 +544,7 @@ function dl(url, dest,    verbose) {
   } else if (commandExists("curl")) {
     if (!ok("curl " (verbose ? "" : "-s") " " quoteArg(url) " -o " quoteArg(dest)))
       return "error with curl"
-  } else return "wget/curl no found"
+  } else return "wget/curl not found"
 }
 function natOrder(s1,s2, i1,i2,   c1, c2, n1,n2) {
   if (_digit(c1 = substr(s1,i1,1)) && _digit(c2 = substr(s2,i2,1))) {
