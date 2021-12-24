@@ -265,7 +265,7 @@ fi
 
 Дело в том, что по моему замыслу должна была быть возможность делать так
 
-```
+```shell
 A=Hello                # invisible to goals
 @define B="$A world"   # visible to goals
 ```
@@ -275,6 +275,14 @@ A=Hello                # invisible to goals
 
 Каково же было моё удивление, когда я [обнаружил](https://github.com/xonixx/makesure/pull/81#issuecomment-974904922), что этот кейс не работает и с моей имплементацией!
 
+Первым моим побуждением было устранить эту проблему и покрыть этот случай недостающими тестами.
+
+Однако, я [крепко призадумался](https://github.com/xonixx/makesure/pull/81#issuecomment-975958930).
+Получается, это та функция которую даже я сам (автор и главный пользователь инструмента) не использую в моих `Makesurefile` файлах. Иначе бы я уже обнаружил эту проблему.
+А что если вообще удалить концепцию prelude как произвольного скрипта перед целями? Оставить только `@define`?
+Почему нет? Ведь [less is more](https://en.wikipedia.org/wiki/Minimalism#Software_and_UI_design), а [worse is better](https://en.wikipedia.org/wiki/Worse_is_better).
+
+После еще некоторого времени на анализ это изменение было [спроектировано](https://github.com/xonixx/makesure/issues/84) и реализовано. 
 
 
 ## 16.
