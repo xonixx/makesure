@@ -360,9 +360,19 @@ H=$'hello world'     ;            # with semicolon, spaces and comment
 
 Идея заманчива, но неприемлема. Потому что привносит усложнение ментальной сложности инструмента. 
 Дело в том, что инструмент спроектирован таким образом, что его синтаксис полностью укладывается в синтаксис shell. Это чрезвычайно удобно, так как вы можете выбрать в своей IDE подсветку shell для `Makesurefile` и [это будет работать](https://github.com/xonixx/makesure/blob/main/Makesurefile)! Но это также значит, что необходимо, чтоб все синтаксические конструкции несли тот же смысл, что и в shell. Очевидно, что логика подстановки значений в гипотетическом облегченном синтаксисе не соответствует модели shell и это нужно будет дополнительно знать пользователю. 
-                                                                                                                                  
-После еще некоторого времени на анализ это изменение было [спроектировано](https://github.com/xonixx/makesure/issues/84) и реализовано.
+     
+Результатом тягостных раздумий явилось компромиссное решение. Мы по прежнему передаём строку на исполнение в shell но перед этим валидируем её бережно написанной [регуляркой](https://github.com/xonixx/makesure/blob/v0.9.16/makesure.awk#L154). Да, я знаю, что [парсить регулярками нельзя](https://stackoverflow.com/questions/1732348/regex-match-open-tags-except-xhtml-self-contained-tags/1732454#1732454). Но мы и не парсим! Мы только отсекаем невалидные варианты, а парсит shell. Интересный момент. На самом деле, эта регулярка более строгая, чем парсер shell:
 
-TODO dogfooding.
+```shell
+@define VERSION=1.2.3    # makesure won't accept
+@define VERSION='1.2.3'  # OK
+
+@define HW=${HELLO}world    # makesure won't accept  
+@define HW="${HELLO}world"  # OK  
+```
+
+Что я нахожу даже плюсом, т.к. это более консистентно.
+
+В остальном эта директива хорошо покрыта тестами как то [что должно парситься](https://github.com/xonixx/makesure/blob/v0.9.16/tests/16_define_validation.sh), так и то, [что не должно](https://github.com/xonixx/makesure/blob/v0.9.16/tests/16_define_validation_error.sh).
 
 ## 16.
