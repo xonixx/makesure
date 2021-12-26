@@ -211,9 +211,9 @@ $ ./makesure                  # по умолчанию будет исполн�
 
 ```shell
 @define VERSION='1.2.3'
-@goal build
+@goal built
   echo "Building $VERSION ..."
-@goal test
+@goal tested
   echo "Testing $VERSION ..."
 ```
 
@@ -228,7 +228,7 @@ else
   @define VERSION='0.0.1'
 fi
 # prelude ends
-@goal build
+@goal built
   echo "Building $VERSION ..."
 ```
 
