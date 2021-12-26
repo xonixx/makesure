@@ -278,7 +278,7 @@ A=Hello                # invisible to goals
 Первым моим побуждением было устранить эту проблему и покрыть этот случай недостающими тестами.
 
 Однако, вместо этого я [крепко призадумался](https://github.com/xonixx/makesure/pull/81#issuecomment-975958930).
-Получается, это та функция которую даже я сам (автор и основной пользователь инструмента) не использую в моих `Makesurefile` файлах. Иначе бы я уже обнаружил эту проблему.
+Получается, это та функция, которую даже я сам (автор и основной пользователь инструмента) не использую в моих `Makesurefile` файлах. Иначе я бы уже обнаружил эту проблему.
 А что если вообще удалить концепцию prelude как произвольного скрипта перед целями? Оставить только `@define`?
 Почему нет? Ведь [less is more](https://en.wikipedia.org/wiki/Minimalism#Software_and_UI_design), а [worse is better](https://en.wikipedia.org/wiki/Worse_is_better).
         
@@ -378,9 +378,11 @@ H=$'hello world'     ;            # with semicolon, spaces and comment
 
 В остальном эта директива хорошо покрыта тестами - как то, [что должно парситься](https://github.com/xonixx/makesure/blob/v0.9.16/tests/16_define_validation.sh), так и то, [что не должно](https://github.com/xonixx/makesure/blob/v0.9.16/tests/16_define_validation_error.sh).
 
+Подытожим. Спроектировали фичу. Потом перепроектировали, при этом смогли упростить и уменьшить код, ускорить его и при этом добавить дополнительные проверки. 
+
 На этом, пожалуй, стоит остановить свое повествование.
 
-Тех, кто заинтересовался, приглашаю опробовать утилиту [makesure](https://github.com/xonixx/makesure) в своих проектах.
+Заинтересовавшихся приглашаю опробовать утилиту [makesure](https://github.com/xonixx/makesure) в своих проектах.
 Тем более, что она не требует инсталляции [(как это?)](https://github.com/xonixx/makesure#installation) и [хорошо портабельна](https://github.com/xonixx/makesure#os).
 
 ## 16.
