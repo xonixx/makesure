@@ -76,6 +76,11 @@ Since `makesure` is a tiny utility represented by a single file, the recommended
 wget "https://raw.githubusercontent.com/xonixx/makesure/main/makesure?token=$(date +%s)" -Omakesure && \
 chmod +x makesure && echo "makesure $(./makesure -v) installed"
 ```
+or
+```sh
+curl "https://raw.githubusercontent.com/xonixx/makesure/main/makesure?token=$(date +%s)" -o makesure && \
+chmod +x makesure && echo "makesure $(./makesure -v) installed"
+```
 
 ### Update
 
