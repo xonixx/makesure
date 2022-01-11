@@ -171,8 +171,6 @@ By default `makesure` logs the goals being executed. Use this option if this is 
 
 ### @define
 
-Only valid: in prelude.
-
 Use this directive to declare global variable (visible to all goals).
 The variable will be declared as environment variable (via `export`).
 
@@ -182,6 +180,10 @@ Example:
 @define A=hello
 @define B="${A} world"
 ```
+
+This directive is valid [in any place](tests/24_define_everywhere.sh) in `Makesurefile`. However, we recommend:
+- place frequently changed variables (like versions) to the top of `Makesurefile`
+- place infrequently changed variables closer to the goals/libs that use them
 
 Variable defined with `@define` can be overridden with a variable passed in invocation via `-D` parameter. 
 

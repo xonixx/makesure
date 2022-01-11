@@ -26,7 +26,7 @@ BEGIN {
   split("",Lib)      # name -> code
   split("",UseLibLineNo)# name -> line no.
   split("",GoalToLib)# goal name -> lib name
-  Mode = "prelude" # prelude|goal|goal_glob|lib
+  Mode = "prelude" # prelude|define|goal|goal_glob|lib
   srand()
   prepareArgs()
   MyDirScript = "MYDIR=" quoteArg(getMyDir(ARGV[1])) ";export MYDIR;cd \"$MYDIR\""
@@ -138,7 +138,7 @@ function handleOptions(   i) {
 }
 
 function handleDefine() {
-  checkPreludeOnly()
+  started("define")
   $1 = ""
   handleDefineLine($0)
 }
@@ -167,13 +167,11 @@ function handleShell() {
     addError("Shell '" Shell "' is not supported")
 }
 
-function adjustOptions() {
-  if ("silent" in Options)
-    delete Options["timing"]
+function timingOn() {
+  return "timing" in Options && !("silent" in Options)
 }
 
 function started(mode) {
-  if (isPrelude()) adjustOptions()
   Mode = mode
 }
 
@@ -390,7 +388,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
         print quote2(goalName)
     }
   } else {
-    if ("timing" in Options)
+    if (timingOn())
       t0 = currentTimeMillis()
 
     addLine(definesLine, MyDirScript)
@@ -438,7 +436,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     } else {
       for (i = 0; i in resolvedGoals; i++) {
         goalName = resolvedGoals[i]
-        goalTimed = "timing" in Options && !reachedGoals[goalName] && !emptyGoals[goalName]
+        goalTimed = timingOn() && !reachedGoals[goalName] && !emptyGoals[goalName]
         if (goalTimed)
           t1 = t2 ? t2 : currentTimeMillis()
 
@@ -455,7 +453,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
         if (exitCode != 0)
           break
       }
-      if ("timing" in Options)
+      if (timingOn())
         print "  total time " renderDuration((t2 ? t2 : currentTimeMillis()) - t0)
       if (exitCode != 0)
         realExit(exitCode)
@@ -480,6 +478,7 @@ function resolveGoalsToRun(result,   i, goalName, loop) {
   }
 }
 
+function isCodeAllowed() { return "goal"==Mode || "goal_glob"==Mode || "lib"==Mode }
 function isPrelude() { return "prelude"==Mode }
 function checkPreludeOnly() { if (!isPrelude()) addError("Only use " $1 " in prelude") }
 function checkGoalOnly() { if ("goal" != Mode && "goal_glob" != Mode) addError("Only use " $1 " in @goal") }
@@ -530,9 +529,9 @@ function getMyDir(makesurefilePath) {
 }
 
 function handleCodeLine(line) {
-  if (isPrelude() && line !~ /^[ \t]*#/ && trim(line) != "") {
+  if (!isCodeAllowed() && line !~ /^[ \t]*#/ && trim(line) != "") {
     if (!ShellInPreludeErrorShown++)
-      addError("Shell code is not allowed in prelude area")
+      addError("Shell code is not allowed outside goals/libs")
   } else
     addCodeLine(line)
 }
