@@ -4,3 +4,9 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/24_define_everywhere.sh
 | a
 | ab
 | abc
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/24_define_everywhere.sh -D B=bbb
+|   goal 'default' ...
+| a
+| bbb
+| bbbc
