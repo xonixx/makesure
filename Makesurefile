@@ -1,11 +1,11 @@
 # vim: syntax=bash
+@options timing
+
 @define NEXT_VERSION='0.9.16'
 @define TUSH_REPO='https://github.com/adolfopa/tush'
 
 @define GOAWK_VERSION='1.13.0'
 @define GOAWK="goawk$GOAWK_VERSION"
-
-@options timing
 
 @goal soft_folder_created @private
 @reached_if [[ -d "soft" ]]
