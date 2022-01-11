@@ -1,0 +1,6 @@
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/24_define_everywhere.sh
+|   goal 'default' ...
+| a
+| ab
+| abc
