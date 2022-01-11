@@ -26,7 +26,7 @@ BEGIN {
   split("",Lib)      # name -> code
   split("",UseLibLineNo)# name -> line no.
   split("",GoalToLib)# goal name -> lib name
-  Mode = "prelude" # prelude|goal|goal_glob|lib
+  Mode = "prelude" # prelude|define|goal|goal_glob|lib
   srand()
   prepareArgs()
   MyDirScript = "MYDIR=" quoteArg(getMyDir(ARGV[1])) ";export MYDIR;cd \"$MYDIR\""
@@ -138,7 +138,7 @@ function handleOptions(   i) {
 }
 
 function handleDefine() {
-  checkPreludeOnly()
+  started("define")
   $1 = ""
   handleDefineLine($0)
 }
@@ -173,7 +173,7 @@ function adjustOptions() {
 }
 
 function started(mode) {
-  if (isPrelude()) adjustOptions()
+  if (isPrelude()) adjustOptions() # TODO
   Mode = mode
 }
 
@@ -480,6 +480,7 @@ function resolveGoalsToRun(result,   i, goalName, loop) {
   }
 }
 
+function isCodeAllowed() { return "goal"==Mode || "goal_glob"==Mode || "lib"==Mode }
 function isPrelude() { return "prelude"==Mode }
 function checkPreludeOnly() { if (!isPrelude()) addError("Only use " $1 " in prelude") }
 function checkGoalOnly() { if ("goal" != Mode && "goal_glob" != Mode) addError("Only use " $1 " in @goal") }
@@ -530,9 +531,9 @@ function getMyDir(makesurefilePath) {
 }
 
 function handleCodeLine(line) {
-  if (isPrelude() && line !~ /^[ \t]*#/ && trim(line) != "") {
+  if (!isCodeAllowed() && line !~ /^[ \t]*#/ && trim(line) != "") {
     if (!ShellInPreludeErrorShown++)
-      addError("Shell code is not allowed in prelude area")
+      addError("Shell code is not allowed outside goals/libs")
   } else
     addCodeLine(line)
 }

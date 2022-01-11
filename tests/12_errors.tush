@@ -1,6 +1,6 @@
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/12_errors.sh
-@ Shell code is not allowed in prelude area:
+@ Shell code is not allowed outside goals/libs:
 @ tests/12_errors.sh:2: echo 'code in prelude'
 @ Only use @reached_if in @goal:
 @ tests/12_errors.sh:5: @reached_if true
@@ -28,8 +28,6 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/12_errors.sh
 @ tests/12_errors.sh:23: @reached_if false
 @ Only use @shell in prelude:
 @ tests/12_errors.sh:28: @shell sh
-@ Only use @define in prelude:
-@ tests/12_errors.sh:29: @define A=1
 @ Multiple @doc not allowed for a goal:
 @ tests/12_errors.sh:34: @doc doc2
 @ Only use @options in prelude:
