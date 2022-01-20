@@ -1,0 +1,51 @@
+## v0.9.16
+Minor improvements and fixes.
+
+## v0.9.15
+The main theme for the release was reconsidering the notion of prelude. See the details in #84.
+
+## v0.9.14
+- Make `@use_lib` apply also to `@reached_if` #76 (thanks @pcrockett)
+- Minor bug fixes
+
+## v0.9.13
+- Improvements to glob goal to support Bash glob features
+
+## v0.9.12
+1. Improve parser to allow spaces in goal names and comments #63 
+2. Fixed bug with natural ordering in `@goal @glob` #64 
+3. Minor improvements/fixes
+
+## v.0.9.11
+1. Improved precision of timings on macOS when using Gawk: #57 
+2. Improved CI setup for runing tests with major Awk implementations: #58 
+3. Updates should be more consistent with #60 
+
+## v.0.9.10
+1. Fixed timings on Mac #50 
+2. Enhanced `@goal @glob` #46 
+3. Improved `./makesure -l` output #47
+
+## v.0.9.9
+1. Improve documentation
+2. Improvements/fixes
+
+## v.0.9.8
+- `@private` goals #31 
+- `@lib`/`@use_lib` for reuse #36
+- `@goal @glob` redesign #34 
+- improvements/fixes 
+
+## v0.9.7.1
+- `@goal_glob`
+- improvements/fixes
+## v.0.9.6.2
+fix for "the input device is not a TTY"
+## v.0.9.6
+1. Allowed define overrides via `-D`
+1. Handled folder for `-f`
+1. Made sure it runs on Win under Git bash
+1. More fixes
+## v.0.9.4
+## v.0.9.2
+## v.0.9.1

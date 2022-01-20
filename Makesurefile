@@ -392,3 +392,12 @@ in_begin && $1 ~ /^split/ { next }
     --draft
 
   echo "Please don't forget to open the release draft, edit it as needed and PUBLISH!"
+
+@goal prepareCHANGELOG @private
+@doc prepares initial version of CHANGELOG.md
+for v in $(gh release list | awk '{ print $1 }')
+do
+    echo "## $v"
+    gh release view "$v" | awk '/--/ { Started=1; next } Started && !/\/milestone\//'
+done
+  
