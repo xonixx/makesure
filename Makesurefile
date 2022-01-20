@@ -370,14 +370,23 @@ in_begin && $1 ~ /^split/ { next }
 
 @goal gh_release
 @doc 'publish Github release (draft)'
-  releaseTag="v$NEXT_VERSION"
-  echo
-  echo "Will publish a draft release for $releaseTag ..."
-  echo
+
   fail () {
     echo >&2 "$@"
     exit 1
   }
+
+  prodVersion="$(./makesure -v)"
+  if [[ "$prodVersion" != "$NEXT_VERSION" ]]
+  then
+    fail "$prodVersion in ./makesure, must be $NEXT_VERSION. Please run './makesure release' and commit first."
+  fi
+
+  releaseTag="v$NEXT_VERSION"
+  echo
+  echo "Will publish a draft release for $releaseTag ..."
+  echo
+
   milestoneId=$(gh api -X GET "repos/xonixx/makesure/milestones" --jq '.[] | select(.title=="'$NEXT_VERSION'").number')
   if [[ -z $milestoneId ]]
   then
