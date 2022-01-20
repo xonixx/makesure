@@ -2,38 +2,38 @@
 Minor improvements and fixes.
 
 ## v0.9.15
-The main theme for the release was reconsidering the notion of prelude. See the details in #84.
+The main theme for the release was reconsidering the notion of prelude. See the details in [#84](https://github.com/xonixx/makesure/issues/84).
 
 ## v0.9.14
-- Make `@use_lib` apply also to `@reached_if` #76 (thanks @pcrockett)
+- Make `@use_lib` apply also to `@reached_if` [#76](https://github.com/xonixx/makesure/issues/76) (thanks @pcrockett)
 - Minor bug fixes
 
 ## v0.9.13
 - Improvements to glob goal to support Bash glob features
 
 ## v0.9.12
-1. Improve parser to allow spaces in goal names and comments #63 
-2. Fixed bug with natural ordering in `@goal @glob` #64 
+1. Improve parser to allow spaces in goal names and comments [#63](https://github.com/xonixx/makesure/issues/63) 
+2. Fixed bug with natural ordering in `@goal @glob` [#64](https://github.com/xonixx/makesure/issues/64) 
 3. Minor improvements/fixes
 
 ## v.0.9.11
-1. Improved precision of timings on macOS when using Gawk: #57 
-2. Improved CI setup for runing tests with major Awk implementations: #58 
-3. Updates should be more consistent with #60 
+1. Improved precision of timings on macOS when using Gawk: [#57](https://github.com/xonixx/makesure/issues/57) 
+2. Improved CI setup for runing tests with major Awk implementations: [#58](https://github.com/xonixx/makesure/issues/58) 
+3. Updates should be more consistent with [#60](https://github.com/xonixx/makesure/issues/60) 
 
 ## v.0.9.10
-1. Fixed timings on Mac #50 
-2. Enhanced `@goal @glob` #46 
-3. Improved `./makesure -l` output #47
+1. Fixed timings on Mac [#50](https://github.com/xonixx/makesure/issues/50) 
+2. Enhanced `@goal @glob` [#46](https://github.com/xonixx/makesure/issues/46) 
+3. Improved `./makesure -l` output [#47](https://github.com/xonixx/makesure/issues/47)
 
 ## v.0.9.9
 1. Improve documentation
 2. Improvements/fixes
 
 ## v.0.9.8
-- `@private` goals #31 
-- `@lib`/`@use_lib` for reuse #36
-- `@goal @glob` redesign #34 
+- `@private` goals [#31](https://github.com/xonixx/makesure/issues/31) 
+- `@lib`/`@use_lib` for reuse [#36](https://github.com/xonixx/makesure/issues/36)
+- `@goal @glob` redesign [#34](https://github.com/xonixx/makesure/issues/34) 
 - improvements/fixes 
 
 ## v0.9.7.1
