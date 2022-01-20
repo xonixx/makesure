@@ -1,3 +1,6 @@
+## v0.9.17
+- Allows `@define` in any position in file [#95](https://github.com/xonixx/makesure/issues/95)
+
 ## v0.9.16
 Minor improvements and fixes.
 

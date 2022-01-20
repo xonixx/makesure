@@ -1,10 +1,11 @@
 # vim: syntax=bash
 @options timing
 
-@define NEXT_VERSION='0.9.16'
+@define NEXT_VERSION='0.9.17'
 @define GOAWK_VERSION='1.13.0'
 @define GOAWK="goawk$GOAWK_VERSION"
 @define TUSH_REPO='https://github.com/adolfopa/tush'
+@define REPO='xonixx/makesure'
 
 @goal soft_folder_created @private
 @reached_if [[ -d "soft" ]]
@@ -367,7 +368,7 @@ in_begin && $1 ~ /^split/ { next }
 
   "./just" --version
 
-@goal gh_release #@private
+@goal gh_release
 @doc 'publish Github release (draft)'
   releaseTag="v$NEXT_VERSION"
   echo
@@ -384,7 +385,25 @@ in_begin && $1 ~ /^split/ { next }
   fi
   echo "Milestone ID : $milestoneId"
 
-  notesStr="Issues in release: https://github.com/xonixx/makesure/milestone/$milestoneId?closed=1"
+  # Let's take for notes the latest record from change log (in CHANGELOG.md)
+  # Let's make sure the version there is correct
+  notesStr=$(awk -v NEXT_VERSION="$NEXT_VERSION" -v REPO="$REPO" -v milestoneId="$milestoneId" '
+  Started && /##/ { exit }
+  /##/ {
+    if (Started=index($0,NEXT_VERSION)>0) {
+      print "v" NEXT_VERSION " <a href=\"https://github.com/" REPO "/milestone/" milestoneId "?closed=1\">GitHub issues</a>"
+      next
+    } else exit
+  }
+  Started
+  ' CHANGELOG.md)
+
+  if [ -z "$notesStr" ]
+  then
+    fail "Make sure you did not forget to add latest change log (for $NEXT_VERSION)!"
+  fi
+
+  echo "Notes: $notesStr"
 
   gh release create "$releaseTag" \
     --title "$releaseTag" \
