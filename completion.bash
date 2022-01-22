@@ -11,6 +11,12 @@ _makesure_completions() {
   # DONE auto-complete options
   # TODO auto-complete goals from correct file (-f)
 
+  if [[ "$prev" == '-f' || "$prev" == '--file' ]]
+  then
+    COMPREPLY=() # use regular completion logic to facilitate file/folder selection
+    return 0
+  fi
+
   COMPREPLY=($(compgen -W "$(./makesure -la | awk -F: '
 BEGIN {
   print "-f --file"
@@ -25,7 +31,7 @@ BEGIN {
   print "-h --help"
   print "-U --selfupdate"
 }
-NR>1 { sub(/^ +/,"",$1);print $1 }
+NR>1 { sub(/^ +/,"",$1); print $1 }
 ')" -- "$cur"))
 }
 
