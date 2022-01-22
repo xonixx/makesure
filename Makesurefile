@@ -3,7 +3,9 @@
 
 @define NEXT_VERSION='0.9.17'
 @define GOAWK_VERSION='1.13.0'
+@define JUST_VERSION='0.10.5'
 @define GOAWK="goawk$GOAWK_VERSION"
+@define JUST="just$JUST_VERSION"
 @define TUSH_REPO='https://github.com/adolfopa/tush'
 @define REPO='xonixx/makesure'
 
@@ -352,21 +354,21 @@ in_begin && $1 ~ /^split/ { next }
   "./$GOAWK" --version
 
 @goal installed_just @private
-@reached_if [[ -f soft/just ]]
+@reached_if [[ -f "soft/$JUST" ]]
 @depends_on soft_folder_created
-  VER="0.10.1"
   echo
-  echo "Fetching Just $VER ..."
+  echo "Fetching Just $JUST_VERSION ..."
   echo
 
   cd "soft"
 
-  F=just-$VER-x86_64-unknown-linux-musl.tar.gz
-  wget "https://github.com/casey/just/releases/download/$VER/$F"
+  F=just-$JUST_VERSION-x86_64-unknown-linux-musl.tar.gz
+  wget "https://github.com/casey/just/releases/download/$JUST_VERSION/$F"
   tar xzvf "$F" just
+  mv just "$JUST"
   rm "$F"
 
-  "./just" --version
+  "./$JUST" --version
 
 @goal gh_release
 @doc 'publish Github release (draft)'
