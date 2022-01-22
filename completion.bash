@@ -1,15 +1,28 @@
 # vim: syntax=bash
 
 _makesure_completions() {
-  local cur prev
+  local i cur prev cnt
   #COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD - 1]}"
-  #echo ">> $cur :: $prev"
+  cnt="${#COMP_WORDS[@]}"
+  #echo ">> $cur :: $prev :: $COMP_CWORD"
 
   # DONE auto-complete goals
   # DONE auto-complete options
   # TODO auto-complete goals from correct file (-f)
+
+#  for ((i=0; i<#COMP_WORDS[@]))
+#  do
+#
+#  done
+
+  echo "@@ ${#COMP_WORDS[@]} @@ $COMP_CWORD"
+  for i in ${COMP_WORDS[@]}
+  do
+    echo ">> $i"
+  done
+  
 
   if [[ "$prev" == '-f' || "$prev" == '--file' ]]
   then
