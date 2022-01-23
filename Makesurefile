@@ -194,6 +194,10 @@ in_begin && $1 ~ /^split/ { next }
 @depends_on installed_goawk
   AWK="$(pwd)/soft/$GOAWK" ./makesure_dev tested
 
+@goal tested_goawk_branch @private
+@depends_on installed_goawk_branch
+  AWK="$(pwd)/soft/$GOAWK_BRANCH_EXE" ./makesure_dev tested
+
 @goal tested_mawk @private
   if [[ -x /usr/bin/mawk ]]
   then
@@ -352,6 +356,29 @@ in_begin && $1 ~ /^split/ { next }
 
   mv goawk $GOAWK
   "./$GOAWK" --version
+
+@define GOAWK_BRANCH='bytecode'
+@define GOAWK_BRANCH_EXE="goawk_$GOAWK_BRANCH"
+
+@goal installed_goawk_branch @private
+@reached_if [[ -f soft/$GOAWK_BRANCH_EXE ]]
+@depends_on soft_folder_created
+  echo
+  echo "Installing GoAWK branch=$GOAWK_BRANCH ..."
+  echo
+
+  cd "soft"
+
+  zip="https://github.com/benhoyt/goawk/archive/refs/heads/$GOAWK_BRANCH.zip"
+  curl -L "$zip" -o "$GOAWK_BRANCH.zip"
+  yes | unzip "$GOAWK_BRANCH.zip"
+  cd "goawk-$GOAWK_BRANCH"
+  go build
+  mv goawk ../"$GOAWK_BRANCH_EXE"
+
+  cd ..
+  ./"$GOAWK_BRANCH_EXE" --version
+  rm -r "goawk-$GOAWK_BRANCH" "$GOAWK_BRANCH.zip"
 
 @goal installed_just @private
 @reached_if [[ -f "soft/$JUST" ]]
