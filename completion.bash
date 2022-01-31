@@ -1,8 +1,8 @@
 # vim: syntax=bash
 
 _makesure_completions() {
-  local i cur prev cnt
-  #COMPREPLY=()
+  local i cur prev cnt makesurefile=Makesurefile
+
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD - 1]}"
   cnt="${#COMP_WORDS[@]}"
@@ -10,19 +10,7 @@ _makesure_completions() {
 
   # DONE auto-complete goals
   # DONE auto-complete options
-  # TODO auto-complete goals from correct file (-f)
-
-#  for ((i=0; i<#COMP_WORDS[@]))
-#  do
-#
-#  done
-
-  echo "@@ ${#COMP_WORDS[@]} @@ $COMP_CWORD"
-  for i in ${COMP_WORDS[@]}
-  do
-    echo ">> $i"
-  done
-  
+  # DONE auto-complete goals from correct file (-f)
 
   if [[ "$prev" == '-f' || "$prev" == '--file' ]]
   then
@@ -30,7 +18,20 @@ _makesure_completions() {
     return 0
   fi
 
-  COMPREPLY=($(compgen -W "$(./makesure -la | awk -F: '
+  # before we scan for targets, see if a Makesurefile name was
+  # specified with -f/--file
+  for ((i = 1; i < ${#COMP_WORDS[@]}; i++)); do
+      if [[ ${COMP_WORDS[i]} == '-f' || ${COMP_WORDS[i]} == '--file' ]]; then
+          # eval for tilde expansion
+          eval "makesurefile=\"${COMP_WORDS[i + 1]}\""
+          break
+      fi
+  done
+
+  echo
+  echo "makesurefile=$makesurefile"
+
+  COMPREPLY=($(compgen -W "$(./makesure --file $makesurefile -la | awk -F: '
 BEGIN {
   print "-f --file"
   print "-l --list"
