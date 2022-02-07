@@ -23,15 +23,17 @@ _makesure_completions() {
   for ((i = 1; i < ${#COMP_WORDS[@]}; i++)); do
       if [[ ${COMP_WORDS[i]} == '-f' || ${COMP_WORDS[i]} == '--file' ]]; then
           # eval for tilde expansion
-          eval "makesurefile=\"${COMP_WORDS[i + 1]}\""
+#          echo
+#          printf 'f=%s\n' "${COMP_WORDS[i + 1]}"
+          eval "makesurefile=${COMP_WORDS[i + 1]}"
           break
       fi
   done
 
-  echo
-  echo "makesurefile=$makesurefile"
+#  echo
+#  echo "makesurefile=$makesurefile"
 
-  COMPREPLY=($(compgen -W "$(./makesure --file $makesurefile -la | awk -F: '
+  COMPREPLY=($(compgen -W "$(./makesure --file "$makesurefile" -la | awk -F: '
 BEGIN {
   print "-f --file"
   print "-l --list"
