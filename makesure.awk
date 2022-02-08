@@ -394,10 +394,35 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     addLine(definesLine, MyDirScript)
     addLine(definesLine, DefinesCode)
 
+    for (i = 0; i in GoalNames; i++) {
+      goalName = GoalNames[i]
+      if (goalName in ReachedIf)
+        NodeCondition[goalName] = checkConditionReachedScript(goalName,definesLine[0],ReachedIf[goalName])
+
+      #    reachedGoals[goalName] = excludeReachedIf ? 0 :
+      #      (reachedIf = ReachedIf[goalName]) ? checkConditionReached(goalName, definesLine[0], reachedIf) : 0
+
+      depCnt = DependenciesCnt[goalName]
+      for (j=0; j < depCnt; j++) {
+        dep = Dependencies[goalName, j]
+#        if (!reachedGoals[goalName]) {
+          # we only add a dependency to this goal if it's not reached
+          #print " [not reached] " goalName " -> " dep
+          topologicalSortAddConnection(goalName, dep)
+#        } else {
+          #print " [    reached] " goalName " -> " dep
+#        }
+      }
+    }
+
+
     # first do topological sort disregarding @reached_if to catch loops
-    resolveGoalsToRun(definesLine,1,GoalNames)
+    resolveGoalsToRun(1,GoalNames)
     # now do topological sort including @reached_if to resolve goals to run
-    resolveGoalsToRun(definesLine,0,ArgGoals,resolvedGoals,reachedGoals)
+    resolveGoalsToRun(0,ArgGoals,resolvedGoals,reachedGoals)
+
+#    dbgAO("resolvedGoals",resolvedGoals)
+#    dbgA("reachedGoals",reachedGoals)
 
     for (i = 0; i in GoalNames; i++) {
       goalName = GoalNames[i]
@@ -450,27 +475,8 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
   }
 }
 
-function resolveGoalsToRun(definesLine,excludeReachedIf,requestedGoals,result,reachedGoals,   i,goalName,loop,reachedIf,depCnt,dep,j) {
+function resolveGoalsToRun(excludeReachedIf,requestedGoals,result,reachedGoals,   i,goalName,loop,reachedIf,depCnt,dep,j) {
   topologicalSortReset()
-
-  for (i = 0; i in GoalNames; i++) {
-    goalName = GoalNames[i]
-
-    reachedGoals[goalName] = excludeReachedIf ? 0 :
-      (reachedIf = ReachedIf[goalName]) ? checkConditionReached(goalName, definesLine[0], reachedIf) : 0
-
-    depCnt = DependenciesCnt[goalName]
-    for (j=0; j < depCnt; j++) {
-      dep = Dependencies[goalName, j]
-      if (!reachedGoals[goalName]) {
-        # we only add a dependency to this goal if it's not reached
-        #print " [not reached] " goalName " -> " dep
-        topologicalSortAddConnection(goalName, dep)
-      } else {
-        #print " [    reached] " goalName " -> " dep
-      }
-    }
-  }
 
   if (arrLen(requestedGoals) == 0)
     arrPush(requestedGoals, "default")
@@ -480,7 +486,7 @@ function resolveGoalsToRun(definesLine,excludeReachedIf,requestedGoals,result,re
     if (!(goalName in GoalsByName)) {
       die("Goal not found: " goalName)
     }
-    topologicalSortPerform(goalName, result, loop)
+    topologicalSortPerform(excludeReachedIf,reachedGoals, goalName, result, loop)
   }
 
   if (loop[0] == 1) {
@@ -514,6 +520,15 @@ function checkConditionReached(goalName, definesLine, conditionStr,    script) {
   script = script "\n" conditionStr
   #print "script: " script
   return shellExec(script, goalName "@reached_if") == 0
+}
+
+function checkConditionReachedScript(goalName, definesLine, conditionStr,    script) {
+  script = definesLine # need this to initialize variables for check conditions
+  if (goalName in GoalToLib)
+    script = script "\n" Lib[GoalToLib[goalName]]
+  script = script "\n" conditionStr
+  #print "script: " script
+  return script
 }
 
 function shellExec(script, comment,   res) {
@@ -567,8 +582,8 @@ function addCodeLineToGoal(name, line) {
 }
 
 function topologicalSortReset() {
-  split("",Slist)
-  split("",Scnt)
+#  split("",Slist)
+#  split("",Scnt)
   split("",Visited)
 }
 function topologicalSortAddConnection(from, to) {
@@ -577,15 +592,24 @@ function topologicalSortAddConnection(from, to) {
   Slist[from, ++Scnt[from]] = to # add 'to' to successors of 'from'
 }
 
-function topologicalSortPerform(node, result, loop,   i, s) {
+function topologicalSortPerform(excludeReachedIf,reachedGoals, node, result, loop,   i, s) {
   if (Visited[node] == 2)
     return
+
+  if (!excludeReachedIf) {
+    if (node in NodeCondition && shellExec(NodeCondition[node], node "@reached_if") == 0){
+      Visited[node] = 2
+      arrPush(result, node)
+      reachedGoals[node]=1
+      return
+    }
+  }
 
   Visited[node] = 1
 
   for (i = 1; i <= Scnt[node]; i++) {
     if (Visited[s = Slist[node, i]] == 0)
-      topologicalSortPerform(s, result, loop)
+      topologicalSortPerform(excludeReachedIf,reachedGoals, s, result, loop)
     else if (Visited[s] == 1) {
       loop[0] = 1
       loop[1] = s

@@ -4,7 +4,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/25_lazy_reached_if_loop.sh a
 ? 1
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/25_lazy_reached_if_loop.sh b
-@ There is a loop in goal dependencies via b -> a
+@ There is a loop in goal dependencies via a -> b
 ? 1
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/25_lazy_reached_if.sh a
