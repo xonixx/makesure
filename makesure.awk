@@ -397,8 +397,6 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     if (timingOn())
       t0 = currentTimeMillis()
 
-    preludeCode = getPreludeCode()
-
     for (i = 0; i in GoalNames; i++) {
       depCnt = DependenciesCnt[goalName = GoalNames[i]]
       for (j=0; j < depCnt; j++) {
@@ -408,9 +406,11 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     }
 
     # first do topological sort disregarding @reached_if to catch loops
-    resolveGoalsToRun(0,GoalNames)
+    topologicalSort(0,GoalNames)
     # now do topological sort including @reached_if to resolve goals to run
-    resolveGoalsToRun(1,ArgGoals,resolvedGoals,reachedGoals)
+    topologicalSort(1,ArgGoals,resolvedGoals,reachedGoals)
+
+    preludeCode = getPreludeCode()
 
     for (i = 0; i in GoalNames; i++) {
       goalName = GoalNames[i]
@@ -463,7 +463,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
   }
 }
 
-function resolveGoalsToRun(includeReachedIf,requestedGoals,result,reachedGoals,   i,goalName,loop) {
+function topologicalSort(includeReachedIf,requestedGoals,result,reachedGoals,   i,goalName,loop) {
   topologicalSortReset()
 
   if (arrLen(requestedGoals) == 0)
@@ -508,15 +508,6 @@ function checkConditionReached(goalName, conditionStr,    script) {
   script = script "\n" conditionStr
   #print "script: " script
   return shellExec(script, goalName "@reached_if") == 0
-}
-
-function checkConditionReachedScript(goalName, definesLine, conditionStr,    script) {
-  script = definesLine # need this to initialize variables for check conditions
-  if (goalName in GoalToLib)
-    script = script "\n" Lib[GoalToLib[goalName]]
-  script = script "\n" conditionStr
-  #print "script: " script
-  return script
 }
 
 function shellExec(script, comment,   res) {
