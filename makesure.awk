@@ -394,26 +394,17 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     addLine(definesLine, MyDirScript)
     addLine(definesLine, DefinesCode)
 
+    # first do topological sort disregarding @reached_if to catch loops
+    resolveGoalsToRun(definesLine,1,GoalNames)
+    # now do topological sort including @reached_if to resolve goals to run
+    resolveGoalsToRun(definesLine,0,ArgGoals,resolvedGoals,reachedGoals)
+
     for (i = 0; i in GoalNames; i++) {
       goalName = GoalNames[i]
 
       body = trim(Code[goalName])
 
-      reachedIf = ReachedIf[goalName]
-      reachedGoals[goalName] = reachedIf ? checkConditionReached(goalName, definesLine[0], reachedIf) : 0
       emptyGoals[goalName] = length(body) == 0
-
-      depCnt = DependenciesCnt[goalName]
-      for (j=0; j < depCnt; j++) {
-        dep = Dependencies[goalName, j]
-        if (!reachedGoals[goalName]) {
-          # we only add a dependency to this goal if it's not reached
-          #print " [not reached] " goalName " -> " dep
-          topologicalSortAddConnection(goalName, dep)
-        } else {
-          #print " [    reached] " goalName " -> " dep
-        }
-      }
 
       goalBody[0] = ""
       addLine(goalBody, definesLine[0])
@@ -423,8 +414,6 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       addLine(goalBody, body)
       goalBodies[goalName] = goalBody[0]
     }
-
-    resolveGoalsToRun(resolvedGoals)
 
     if ("-d" in Args || "--resolved" in Args) {
       printf "Resolved goals to reach for"
@@ -461,12 +450,33 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
   }
 }
 
-function resolveGoalsToRun(result,   i, goalName, loop) {
-  if (arrLen(ArgGoals) == 0)
-    arrPush(ArgGoals, "default")
+function resolveGoalsToRun(definesLine,excludeReachedIf,requestedGoals,result,reachedGoals,   i,goalName,loop,reachedIf,depCnt,dep,j) {
+  topologicalSortReset()
 
-  for (i = 0; i in ArgGoals; i++) {
-    goalName = ArgGoals[i]
+  for (i = 0; i in GoalNames; i++) {
+    goalName = GoalNames[i]
+
+    reachedGoals[goalName] = excludeReachedIf ? 0 :
+      (reachedIf = ReachedIf[goalName]) ? checkConditionReached(goalName, definesLine[0], reachedIf) : 0
+
+    depCnt = DependenciesCnt[goalName]
+    for (j=0; j < depCnt; j++) {
+      dep = Dependencies[goalName, j]
+      if (!reachedGoals[goalName]) {
+        # we only add a dependency to this goal if it's not reached
+        #print " [not reached] " goalName " -> " dep
+        topologicalSortAddConnection(goalName, dep)
+      } else {
+        #print " [    reached] " goalName " -> " dep
+      }
+    }
+  }
+
+  if (arrLen(requestedGoals) == 0)
+    arrPush(requestedGoals, "default")
+
+  for (i = 0; i in requestedGoals; i++) {
+    goalName = requestedGoals[i]
     if (!(goalName in GoalsByName)) {
       die("Goal not found: " goalName)
     }
@@ -556,6 +566,11 @@ function addCodeLineToGoal(name, line) {
   Code[name] = addL(Code[name], line)
 }
 
+function topologicalSortReset() {
+  split("",Slist)
+  split("",Scnt)
+  split("",Visited)
+}
 function topologicalSortAddConnection(from, to) {
   # Slist - list of successors by node
   # Scnt - count of successors by node
