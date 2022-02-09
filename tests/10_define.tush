@@ -64,11 +64,8 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/10_define.sh is_not_reached
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/10_define.sh children_reached_or_not -d
 | Resolved goals to reach for 'children_reached_or_not':
-|   must_be_reached1
-|   must_be_reached2
 |   other_goal_2
 |   is_not_reached
-|   children_reached_or_not
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/10_define.sh test_commented_define
 |   goal 'test_commented_define' ...

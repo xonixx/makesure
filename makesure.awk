@@ -356,8 +356,14 @@ function checkBeforeRun(   i,j,dep,depCnt,goalName,visited) {
   }
 }
 
+function getPreludeCode(   a) {
+  addLine(a, MyDirScript)
+  addLine(a, DefinesCode)
+  return a[0]
+}
+
 function doWork(\
-  i,j,goalName,gnLen,gnMaxLen,depCnt,dep,reachedIf,reachedGoals,emptyGoals,definesLine,
+  i,j,goalName,gnLen,gnMaxLen,depCnt,dep,reachedGoals,emptyGoals,preludeCode,
 body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
   started("end") # end last directive
@@ -391,32 +397,30 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     if (timingOn())
       t0 = currentTimeMillis()
 
-    addLine(definesLine, MyDirScript)
-    addLine(definesLine, DefinesCode)
+    for (i = 0; i in GoalNames; i++) {
+      depCnt = DependenciesCnt[goalName = GoalNames[i]]
+      for (j=0; j < depCnt; j++) {
+        dep = Dependencies[goalName, j]
+        topologicalSortAddConnection(goalName, dep)
+      }
+    }
+
+    # first do topological sort disregarding @reached_if to catch loops
+    topologicalSort(0,GoalNames)
+    # now do topological sort including @reached_if to resolve goals to run
+    topologicalSort(1,ArgGoals,resolvedGoals,reachedGoals)
+
+    preludeCode = getPreludeCode()
 
     for (i = 0; i in GoalNames; i++) {
       goalName = GoalNames[i]
 
       body = trim(Code[goalName])
 
-      reachedIf = ReachedIf[goalName]
-      reachedGoals[goalName] = reachedIf ? checkConditionReached(goalName, definesLine[0], reachedIf) : 0
       emptyGoals[goalName] = length(body) == 0
 
-      depCnt = DependenciesCnt[goalName]
-      for (j=0; j < depCnt; j++) {
-        dep = Dependencies[goalName, j]
-        if (!reachedGoals[goalName]) {
-          # we only add a dependency to this goal if it's not reached
-          #print " [not reached] " goalName " -> " dep
-          topologicalSortAddConnection(goalName, dep)
-        } else {
-          #print " [    reached] " goalName " -> " dep
-        }
-      }
-
       goalBody[0] = ""
-      addLine(goalBody, definesLine[0])
+      addLine(goalBody, preludeCode)
       if (goalName in GoalToLib)
         addLine(goalBody, Lib[GoalToLib[goalName]])
 
@@ -424,15 +428,14 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       goalBodies[goalName] = goalBody[0]
     }
 
-    resolveGoalsToRun(resolvedGoals)
-
     if ("-d" in Args || "--resolved" in Args) {
       printf "Resolved goals to reach for"
       for (i = 0; i in ArgGoals; i++)
         printf " %s", quote2(ArgGoals[i],1)
       print ":"
       for (i = 0; i in resolvedGoals; i++)
-        print "  " quote2(resolvedGoals[i])
+        if (!reachedGoals[goalName=resolvedGoals[i]] && !emptyGoals[goalName])
+          print "  " quote2(goalName)
     } else {
       for (i = 0; i in resolvedGoals; i++) {
         goalName = resolvedGoals[i]
@@ -461,16 +464,18 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
   }
 }
 
-function resolveGoalsToRun(result,   i, goalName, loop) {
-  if (arrLen(ArgGoals) == 0)
-    arrPush(ArgGoals, "default")
+function topologicalSort(includeReachedIf,requestedGoals,result,reachedGoals,   i,goalName,loop) {
+  topologicalSortReset()
 
-  for (i = 0; i in ArgGoals; i++) {
-    goalName = ArgGoals[i]
+  if (arrLen(requestedGoals) == 0)
+    arrPush(requestedGoals, "default")
+
+  for (i = 0; i in requestedGoals; i++) {
+    goalName = requestedGoals[i]
     if (!(goalName in GoalsByName)) {
       die("Goal not found: " goalName)
     }
-    topologicalSortPerform(goalName, result, loop)
+    topologicalSortPerform(includeReachedIf,reachedGoals, goalName, result, loop)
   }
 
   if (loop[0] == 1) {
@@ -497,8 +502,8 @@ function die(msg,    out) {
   realExit(1)
 }
 
-function checkConditionReached(goalName, definesLine, conditionStr,    script) {
-  script = definesLine # need this to initialize variables for check conditions
+function checkConditionReached(goalName, conditionStr,    script) {
+  script = getPreludeCode() # need this to initialize variables for check conditions
   if (goalName in GoalToLib)
     script = script "\n" Lib[GoalToLib[goalName]]
   script = script "\n" conditionStr
@@ -556,21 +561,31 @@ function addCodeLineToGoal(name, line) {
   Code[name] = addL(Code[name], line)
 }
 
+function topologicalSortReset() {
+  split("",Visited)
+}
 function topologicalSortAddConnection(from, to) {
   # Slist - list of successors by node
   # Scnt - count of successors by node
   Slist[from, ++Scnt[from]] = to # add 'to' to successors of 'from'
 }
 
-function topologicalSortPerform(node, result, loop,   i, s) {
+function topologicalSortPerform(includeReachedIf,reachedGoals, node, result, loop,   i, s) {
   if (Visited[node] == 2)
     return
+
+  if (includeReachedIf && node in ReachedIf && checkConditionReached(node, ReachedIf[node])){
+    Visited[node] = 2
+    arrPush(result, node)
+    reachedGoals[node] = 1
+    return
+  }
 
   Visited[node] = 1
 
   for (i = 1; i <= Scnt[node]; i++) {
     if (Visited[s = Slist[node, i]] == 0)
-      topologicalSortPerform(s, result, loop)
+      topologicalSortPerform(includeReachedIf,reachedGoals, s, result, loop)
     else if (Visited[s] == 1) {
       loop[0] = 1
       loop[1] = s

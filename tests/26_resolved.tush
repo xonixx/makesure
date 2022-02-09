@@ -1,0 +1,23 @@
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/26_resolved.sh --resolved a
+| Resolved goals to reach for 'a':
+|   b
+|   c
+|   a
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/26_resolved.sh -D REACHED=c --resolved a
+| Resolved goals to reach for 'a':
+|   b
+|   a
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/26_resolved.sh -D REACHED=b --resolved a
+| Resolved goals to reach for 'a':
+|   c
+|   a
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/26_resolved.sh -D REACHED=bc --resolved a
+| Resolved goals to reach for 'a':
+|   a
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/26_resolved.sh -D REACHED=a --resolved a
+| Resolved goals to reach for 'a':
