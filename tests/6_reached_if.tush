@@ -8,7 +8,6 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/6_reached_if.sh
 $ cd "$MYDIR"; ./$MAKESURE -f tests/6_reached_if.sh -d
 | Resolved goals to reach for 'default':
 |   aaa
-|   default
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/6_reached_if.sh --resolved bbb
 | Resolved goals to reach for 'bbb':

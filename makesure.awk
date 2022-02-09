@@ -434,7 +434,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
         printf " %s", quote2(ArgGoals[i],1)
       print ":"
       for (i = 0; i in resolvedGoals; i++)
-        if (!reachedGoals[goalName=resolvedGoals[i]])
+        if (!reachedGoals[goalName=resolvedGoals[i]] && !emptyGoals[goalName])
           print "  " quote2(goalName)
     } else {
       for (i = 0; i in resolvedGoals; i++) {

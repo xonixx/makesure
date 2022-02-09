@@ -38,7 +38,6 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/1_goals.sh -d
 |   ccc
 |   bbb
 |   aaa
-|   default
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/1_goals.sh fail
 |   goal 'fail' ...
