@@ -1,20 +1,17 @@
 
 set timeout 1
-spawn env PS1=bash#\  bash --norc
-sleep 0.1
-send " cd ../../ ; . completion.bash\r"
-send " ./makesure --sel\t"
 
-expect {
-    "selfupdate" { puts "\nSUCCESS" }
-    timeout { puts "\nERROR" }
+proc checkCompletion { flagPrefix expectedFlag } {
+    spawn env PS1=bash#\  bash --norc
+    sleep 0.1
+    send " cd ../../ ; . completion.bash\r"
+    send " ./makesure $flagPrefix\t"
+
+    expect {
+        "$expectedFlag" { puts "\nSUCCESS" }
+        timeout { puts "\nERROR" }
+    }
 }
 
-spawn env PS1=bash#\  bash --norc
-sleep 0.1
-send " cd ../../ ; . completion.bash\r"
-send " ./makesure --res\t"
-expect {
-    "resolved" { puts "\nSUCCESS" }
-    timeout { puts "\nERROR" }
-}
+checkCompletion "--sel" "selfupdate"
+checkCompletion "--res" "resolved"
