@@ -26,7 +26,6 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh -la
 $ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh -d '11_goal_glob*.txt'
 | Resolved goals to reach for '11_goal_glob*.txt':
 |   11_goal_glob_1.txt
-|   11_goal_glob_2.txt
 |   11_goal_glob_3.txt
 |   11_goal_glob_10.txt
 |   '11_goal_glob*.txt'
