@@ -542,6 +542,16 @@ Usually you won't need this escaping tricks often, but they can be especially in
 ```
 
 More info on this topic is covered in the [issue](https://github.com/xonixx/makesure/issues/63).
+  
+## Bash completion
+        
+Install Bash completion for `./makesure` locally
+```shell
+[[ ! -f ~/.bash_completion ]] && touch ~/.bash_completion
+grep makesure ~/.bash_completion >/dev/null || echo '. ~/.makesure_completion.bash' >> ~/.bash_completion
+curl "https://raw.githubusercontent.com/xonixx/makesure/main/completion.bash?token=$(date +%s)" -o ~/.makesure_completion.bash  
+echo 'Please reopen the shell to activate completion.'
+```
 
 ## Design principles
 
