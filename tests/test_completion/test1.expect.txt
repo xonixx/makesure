@@ -3,7 +3,7 @@ set timeout 1
 
 proc checkCompletion { flagPrefix expectedFlag } {
     spawn env PS1=bash#\  bash --norc
-    sleep 0.1
+    sleep 0.01
     send " . ../../completion.bash\r"
     send " ./makesure $flagPrefix\t"
 
