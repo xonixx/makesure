@@ -15,12 +15,14 @@ proc checkCompletion { flagPrefix expectedFlag } {
 
 checkCompletion "--sel" "selfupdate"
 checkCompletion "--res" "resolved"
+
 checkCompletion "goal" "goalAaa"
 checkCompletion "-f Makesurefile.txt goal" "goalBbb"
 checkCompletion "--file 'Makesurefile with spaces.txt' goal" "goalCcc"
 checkCompletion "--file Makesurefile\\ with\\ spaces.txt goal" "goalCcc"
 
 checkCompletion "-f Makesurefile.t" "Makesurefile.txt"
+checkCompletion "-f ./Makesurefile.t" "Makesurefile.txt"
 checkCompletion "--file Makesurefile.t" "Makesurefile.txt"
 
 checkCompletion "--file Makesurefile\\ w" "spaces.txt"
