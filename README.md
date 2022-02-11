@@ -302,7 +302,7 @@ as equivalent for
 
 So essentially one glob goal declaration expands to multiple goal declarations based on files present in project that match the glob pattern. Shell glob expansion mechanism applies. 
 
-The useful use case here would be to represent a set of test files as a set of goals. The example could be found in the project's own [build file](https://github.com/xonixx/makesure/blob/main/Makesurefile#L99).
+The useful use case here would be to represent a set of test files as a set of goals. The example could be found in the project's own [build file](https://github.com/xonixx/makesure/blob/main/Makesurefile#L108).
 
 Why this may be useful? Imagine in your nodejs application you have `test1.js`, `test2.js`, `test3.js`.
 Now you can use this `Makesurefile`
@@ -453,6 +453,8 @@ If you run `./makesure file_created` the second time:
 ```
 
 It is a good practice to name goals that declare `@reached_if` in past tense.
+
+`@reached_if` should only rely on condition that is changed by the owning goal ([why?](https://github.com/xonixx/makesure/issues/105#issuecomment-1031571263)).
 
 ### @lib
 
