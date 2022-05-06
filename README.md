@@ -594,19 +594,13 @@ Find some contributor instructions in [DEVELOPER.md](docs/DEVELOPER.md).
   - A Taskfile is a bash \[...] script that follows a specific format \[...], sits in the root of your project \[...] and contains the tasks to build your project.
 - **Task** https://github.com/go-task/task `Go`
   - Task is a task runner / build tool that aims to be simpler and easier to use than, for example, GNU Make.
-- **Invoke-Build** https://github.com/nightroman/Invoke-Build `PowerShell`
-  - Build Automation in PowerShell
 - **mmake** https://github.com/tj/mmake `Go`
   - Modern Make is a small program which wraps `make` to provide additional functionality
 - **Robo** https://github.com/tj/robo `Go`
   - Simple Go / YAML-based task runner for the team
 - **haku** https://github.com/VladimirMarkelov/haku `Rust` 
   - A task/command runner inspired by 'make'
-- **gup** https://github.com/timbertson/gup `Python` `OCaml`
-  - Gup is a general purpose, recursive, top down software build system.
-- **redo** https://github.com/apenwarr/redo `Python`
-  - redo - a recursive build system. Smaller, easier, more powerful, and more reliable than make.
-- **Tup** https://github.com/gittup/tup `C`
-  - Tup is a file-based build system for Linux, OSX, and Windows.
-- **Please** https://github.com/thought-machine/please `Go`
-  - Please is a cross-language build system with an emphasis on high performance, extensibility and reproducibility.
+- **Invoke-Build** https://github.com/nightroman/Invoke-Build `PowerShell`
+  - Build Automation in PowerShell
+- **make** https://www.gnu.org/software/make/ `C`
+  - \[...] a tool which controls the generation of executables and other non-source files of a program from the program's source files.
