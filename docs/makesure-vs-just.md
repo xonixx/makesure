@@ -123,3 +123,17 @@ TESTS PASSED : tests/200_update.tush
   total time 6.475 s
 ```
 
+### distinction between doc and non-doc comments
+
+[Problem](https://github.com/casey/just/issues/1273)
+
+Makesure doesn't have such issue because it uses own directive for goal description, which doesn't interfere with regular comments:
+
+```shell
+# some regular comment
+@goal do_it
+# some other comment
+@doc 'This is very useful goal'
+  echo 'Doing...'
+```
+
