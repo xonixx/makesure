@@ -227,14 +227,14 @@ function calcGlob(goalName, pattern,   script, file) {
   GlobCnt = 0
   GlobGoalName = goalName
   split("",GlobFiles)
-  script = MyDirScript ";for f in " pattern ";do test -e \"$f\" && echo \"$f\";done"
+  script = MyDirScript ";for f in " pattern ";do test -e \"$f\"&&echo \"$f\"||:;done"
   if ("sh" != Shell)
     script = Shell " -c " quoteArg(script)
   while ((script | getline file)>0) {
     GlobCnt++
     arrPush(GlobFiles,file)
   }
-  close(script)
+  closeErr(script)
   quicksort(GlobFiles,0,arrLen(GlobFiles)-1)
 }
 
@@ -665,9 +665,10 @@ function renderDuration(deltaMillis,\
 }
 function executeGetLine(script,   res) {
   script | getline res
-  close(script)
+  closeErr(script)
   return res
 }
+function closeErr(script) { if (close(script)!=0) die("Error executing: " script) }
 function dl(url, dest,    verbose) {
   verbose = "VERBOSE" in ENVIRON
   if (commandExists("wget")) {
