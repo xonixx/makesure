@@ -1,0 +1,18 @@
+#!/bin/sh
+
+mydir=$(
+  cd "$(dirname "$0")"
+  pwd
+)
+
+# TODO !!!
+#exec /home/xonix/proj/goawk/goawk \
+#  -covermode=set \
+#  -coverprofile="$mydir/cov.txt" \
+#  -v "Version=$NEXT_VERSION" -v "Prog=$0" -f "$mydir/mawk_ext.awk" -f "$mydir/makesure.awk" Makesurefile "$@"
+
+exec /home/xonix/proj/goawk/goawk \
+  -covermode=set \
+  -coverprofile="$mydir/cov.txt" \
+  -v "Version=$NEXT_VERSION" -v "Prog=$0" -f "$mydir/makesure.awk" -f "$mydir/mawk_ext.awk" -- Makesurefile "$@"
+

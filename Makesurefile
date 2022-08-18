@@ -118,6 +118,20 @@
   MAKESURE=makesure_candidate \
     run_tush_file "$ITEM"
 
+@goal cov_deleted @private
+  echo "!!!RM!!!"
+  rm -f cov.txt
+
+@goal tested_cov
+@depends_on cov_deleted tested_cov_
+
+@goal tested_cov_ @glob tests/*.tush @private
+@depends_on prepared4tests
+@use_lib testing_tush
+  MAKESURE=makesure_cov \
+    run_tush_file "$ITEM"
+#  sleep 1 # hmmmmmm
+
 @goal candidate
 @doc compiles makesure_candidate
 @depends_on tested_candidate
