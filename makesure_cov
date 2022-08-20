@@ -7,6 +7,6 @@ mydir=$(
 
 exec /home/xonix/proj/goawk/goawk \
   -covermode=set \
-  -coverprofile="$mydir/cov.txt" \
+  -coverprofile="/tmp/cov.txt" \
   -v "Version=$NEXT_VERSION" -v "Prog=$0" -f "$mydir/mawk_ext.awk" -f "$mydir/makesure.awk" Makesurefile "$@"
 
