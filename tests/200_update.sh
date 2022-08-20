@@ -8,7 +8,9 @@
 @goal makesure_prepared
   [[ -d "$D" ]] && rm -r "$D"
   mkdir "$D"
-  cp "../$MAKESURE" ../makesure.awk ../mawk_ext.awk "$D"
+  awk '/AWK_DIR=/{ $0 = "AWK_DIR=" ENVIRON["MYDIR"] "/.." } 1' "../$MAKESURE" > "$D/$MAKESURE"
+  chmod +x "$D/$MAKESURE"
+#  cat "$D/$MAKESURE"; exit
 
   export NEXT_VERSION=XXX
   if [[ "$("$D/$MAKESURE" --version)" != "XXX" ]]
