@@ -7,10 +7,12 @@ mydir=$(
 
 export AWK="${AWK:-awk}"
 
+AWK_DIR="$mydir"
+
 if awk 'BEGIN { exit index(ENVIRON["AWK"],"gawk")>0 ? 0 : 1 }'
 then
-  exec $AWK -v "Version=$NEXT_VERSION" -v "Prog=$0" -v Gawk=1 -l time -f "$mydir/makesure.awk" Makesurefile "$@"
+  exec $AWK -v "Version=$NEXT_VERSION" -v "Prog=$0" -v Gawk=1 -l time -f "$AWK_DIR/makesure.awk" Makesurefile "$@"
 else
-  exec $AWK -v "Version=$NEXT_VERSION" -v "Prog=$0" -f "$mydir/mawk_ext.awk" -f "$mydir/makesure.awk" Makesurefile "$@"
+  exec $AWK -v "Version=$NEXT_VERSION" -v "Prog=$0" -f "$AWK_DIR/mawk_ext.awk" -f "$AWK_DIR/makesure.awk" Makesurefile "$@"
 fi
 
