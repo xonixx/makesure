@@ -8,7 +8,7 @@
 @goal makesure_prepared
   [[ -d "$D" ]] && rm -r "$D"
   mkdir "$D"
-  awk -vX="$(cd "$MYDIR/.."; pwd)" '/AWK_DIR=/{ $0 = "AWK_DIR=" X } 1' "../$MAKESURE" > "$D/$MAKESURE"
+  awk -v X="$(cd "$MYDIR/.."; pwd)" '/AWK_DIR=/{ $0 = "AWK_DIR=" X } 1' "../$MAKESURE" > "$D/$MAKESURE"
   chmod +x "$D/$MAKESURE"
 #  cat "$D/$MAKESURE"; exit
 
