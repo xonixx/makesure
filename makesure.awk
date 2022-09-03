@@ -11,6 +11,7 @@ BEGIN {
   split("",Options)
   split("",GoalNames)   # list
   split("",GoalsByName) # name -> private
+  split("",CodePre)     # name -> pre-body (should also go before lib)
   split("",Code)        # name -> body
   split("",DefineOverrides) # k -> ""
   DefinesCode=""
@@ -421,6 +422,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
       goalBody[0] = ""
       addLine(goalBody, preludeCode)
+      addLine(goalBody, CodePre[goalName])
       if (goalName in GoalToLib)
         addLine(goalBody, Lib[GoalToLib[goalName]])
 
@@ -548,8 +550,8 @@ function addCodeLine(line,   goalName, name, i) {
     Lib[name] = addL(Lib[name], line)
   } else if ("goal_glob" == Mode) {
     for (i=0; i < GlobCnt; i++){
-      if (!Code[goalName = globGoal(i)])
-        addCodeLineToGoal(goalName, makeGlobVarsCode(i))
+      if (!CodePre[goalName = globGoal(i)])
+        CodePre[goalName] = makeGlobVarsCode(i)
       addCodeLineToGoal(goalName, line)
     }
   } else

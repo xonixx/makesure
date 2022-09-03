@@ -56,3 +56,33 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob.sh glob_goal_name
 |   goal 'glob_goal_name@11_goal_glob_10.txt' ...
 | glob_goal_name ::: 11_goal_glob_10.txt :: 3 :: 4
 |   goal 'glob_goal_name' [empty].
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob_lib.sh '11_goal_glob*.txt'
+|   goal '11_goal_glob_1.txt' ...
+| Unnamed lib ::: 11_goal_glob_1.txt :: 0 :: 4
+| @glob       ::: 11_goal_glob_1.txt :: 0 :: 4
+|   goal '11_goal_glob_2.txt' ...
+| Unnamed lib ::: 11_goal_glob_2.txt :: 1 :: 4
+| @glob       ::: 11_goal_glob_2.txt :: 1 :: 4
+|   goal '11_goal_glob_3.txt' ...
+| Unnamed lib ::: 11_goal_glob_3.txt :: 2 :: 4
+| @glob       ::: 11_goal_glob_3.txt :: 2 :: 4
+|   goal '11_goal_glob_10.txt' ...
+| Unnamed lib ::: 11_goal_glob_10.txt :: 3 :: 4
+| @glob       ::: 11_goal_glob_10.txt :: 3 :: 4
+|   goal '11_goal_glob*.txt' [empty].
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/11_goal_glob_lib.sh glob_goal_name
+|   goal 'glob_goal_name@11_goal_glob_1.txt' ...
+| lib lib_name   ::: 11_goal_glob_1.txt :: 0 :: 4
+| glob_goal_name ::: 11_goal_glob_1.txt :: 0 :: 4
+|   goal 'glob_goal_name@11_goal_glob_2.txt' ...
+| lib lib_name   ::: 11_goal_glob_2.txt :: 1 :: 4
+| glob_goal_name ::: 11_goal_glob_2.txt :: 1 :: 4
+|   goal 'glob_goal_name@11_goal_glob_3.txt' ...
+| lib lib_name   ::: 11_goal_glob_3.txt :: 2 :: 4
+| glob_goal_name ::: 11_goal_glob_3.txt :: 2 :: 4
+|   goal 'glob_goal_name@11_goal_glob_10.txt' ...
+| lib lib_name   ::: 11_goal_glob_10.txt :: 3 :: 4
+| glob_goal_name ::: 11_goal_glob_10.txt :: 3 :: 4
+|   goal 'glob_goal_name' [empty].
