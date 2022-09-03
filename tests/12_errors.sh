@@ -42,3 +42,5 @@ echo 'more code in prelude'
 
 @goal g14
 @depends_on unknown1
+
+@lib lib2
