@@ -2,7 +2,7 @@
 @options timing
 
 @define NEXT_VERSION='0.9.18'
-@define GOAWK_VERSION='1.20.0'
+@define GOAWK_VERSION='1.21.0'
 @define JUST_VERSION='1.3.0'
 @define GOAWK="goawk$GOAWK_VERSION"
 @define JUST="just$JUST_VERSION"
@@ -118,20 +118,17 @@
   MAKESURE=makesure_candidate \
     run_tush_file "$ITEM"
 
-@define COVERPROFILE="/tmp/cov.txt"
+@goal tested_cov
+  COVERPROFILE="/tmp/cov.txt"
 
-@goal cov_deleted @private
   rm -f "$COVERPROFILE"
 
-@goal tested_cov
-@depends_on cov_deleted tested_cov_
-  go tool cover -html="$COVERPROFILE"
+  AWK="$(pwd)/soft/$GOAWK" \
+  AWK_OPTS="-covermode=set -coverprofile=$COVERPROFILE -coverappend" \
+  MAKESURE=makesure_dev \
+    ./makesure tested
 
-@goal tested_cov_ @glob tests/*.tush @private
-@depends_on prepared4tests
-@use_lib testing_tush
-  MAKESURE=makesure_cov \
-    run_tush_file "$ITEM"
+  go tool cover -html="$COVERPROFILE"
 
 @goal candidate
 @doc compiles makesure_candidate
