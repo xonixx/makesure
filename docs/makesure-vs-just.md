@@ -54,7 +54,7 @@ TESTS PASSED : tests/200_update.tush
   total time 6.475 s
 ```
 
-### distinction between doc and non-doc comments
+### Distinction between doc and non-doc comments
 
 [Problem](https://github.com/casey/just/issues/1273)
 
@@ -68,9 +68,14 @@ Makesure doesn't have such issue because it uses own directive for goal descript
   echo 'Doing...'
 ```
 
-### need to install
+### Need to install
 
 [Problem](https://github.com/casey/just/issues/429#issuecomment-1332682438)
 
 Makesure [doesn't need installation](https://github.com/xonixx/makesure#installation)
 
+### Files as dependency
+
+[Problem](https://github.com/casey/just/issues/867)
+
+[How you do it with makesure](https://github.com/casey/just/issues/867#issuecomment-1344887900)
