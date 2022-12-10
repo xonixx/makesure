@@ -13,6 +13,8 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/6_reached_if.sh --resolved bbb
 | Resolved goals to reach for 'bbb':
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/6_reached_if_issue_113.sh g1
+|   goal 'g1' [already satisfied].
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/6_reached_if_issue_113.sh g2
+|   goal 'g2' ...
 | must show
