@@ -1,6 +1,6 @@
 #!/bin/sh
 if command -v gawk >/dev/null;then makesure_awk='gawk -ltime -v Gawk=1';makesure_pre='';else makesure_awk=awk;makesure_pre='function gettimeofday(){}';fi
-exec $makesure_awk -v "Version=0.9.18" -v "Prog=$0" "$makesure_pre"'
+exec $makesure_awk -v "Version=0.9.19" -v "Prog=$0" "$makesure_pre"'
 BEGIN {
   Shell = "bash"
   SupportedShells["bash"]
@@ -21,7 +21,7 @@ BEGIN {
 function makesure() {
   while (getline > 0) {
     Lines[NR]=$0
-    if ($1 ~ /^@/ && "@define" != $1) reparseCli()
+    if ($1 ~ /^@/ && "@define" != $1 && "@reached_if" != $1) reparseCli()
     if ("@options" == $1) handleOptions()
     else if ("@define" == $1) handleDefine()
     else if ("@shell" == $1) handleShell()
@@ -184,14 +184,14 @@ function calcGlob(goalName, pattern,   script, file) {
   GlobCnt = 0
   GlobGoalName = goalName
   split("",GlobFiles)
-  script = MyDirScript ";for f in " pattern ";do test -e \"$f\" && echo \"$f\";done"
+  script = MyDirScript ";for f in " pattern ";do test -e \"$f\"&&echo \"$f\"||:;done"
   if ("sh" != Shell)
     script = Shell " -c " quoteArg(script)
   while ((script | getline file)>0) {
     GlobCnt++
     arrPush(GlobFiles,file)
   }
-  close(script)
+  closeErr(script)
   quicksort(GlobFiles,0,arrLen(GlobFiles)-1)
 }
 function parseGoalLine(   priv) {
@@ -347,6 +347,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
       emptyGoals[goalName] = length(body) == 0
       goalBody[0] = ""
       addLine(goalBody, preludeCode)
+      addLine(goalBody, CodePre[goalName])
       if (goalName in GoalToLib)
         addLine(goalBody, Lib[GoalToLib[goalName]])
       addLine(goalBody, body)
@@ -449,8 +450,8 @@ function addCodeLine(line,   goalName, name, i) {
     Lib[name] = addL(Lib[name], line)
   } else if ("goal_glob" == Mode) {
     for (i=0; i < GlobCnt; i++){
-      if (!Code[goalName = globGoal(i)])
-        addCodeLineToGoal(goalName, makeGlobVarsCode(i))
+      if (!CodePre[goalName = globGoal(i)])
+        CodePre[goalName] = makeGlobVarsCode(i)
       addCodeLineToGoal(goalName, line)
     }
   } else
@@ -545,9 +546,10 @@ function renderDuration(deltaMillis,\
 }
 function executeGetLine(script,   res) {
   script | getline res
-  close(script)
+  closeErr(script)
   return res
 }
+function closeErr(script) { if (close(script)!=0) die("Error executing: " script) }
 function dl(url, dest,    verbose) {
   verbose = "VERBOSE" in ENVIRON
   if (commandExists("wget")) {

@@ -1,3 +1,7 @@
+## v0.9.19
+- Minor fixes to `@reached_if` in [#113](https://github.com/xonixx/makesure/issues/113)
+- Minor fixes to `@lib` in [#111](https://github.com/xonixx/makesure/issues/111)
+
 ## v0.9.18
 - Optimizations and fixes to `@reached_if` handling in [#104](https://github.com/xonixx/makesure/issues/104) and [#29](https://github.com/xonixx/makesure/issues/29) (thanks @08d2)
 - Added autocompletion script for bash in [#75](https://github.com/xonixx/makesure/issues/75)
