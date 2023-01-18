@@ -5,19 +5,24 @@ BEGIN {
   SupportedOptions["tracing"]
   SupportedOptions["silent"]
   SupportedOptions["timing"]
-  split("",Lines)
+  split("",Lines)# line no. -> line
   split("",Args) # parsed CLI args
   split("",ArgGoals) # invoked goals
   split("",Options)
   split("",GoalNames)   # list
   split("",GoalsByName) # name -> private
+  split("",GoalParamsCnt) # name -> params cnt
+  split("",GoalParams)    # name,paramI -> param name
   split("",CodePre)     # name -> pre-body (should also go before lib)
   split("",Code)        # name -> body
   split("",DefineOverrides) # k -> ""
   DefinesCode=""
   split("",Dependencies)       # name,i -> dep goal
   split("",DependenciesLineNo) # name,i -> line no.
-  split("",DependenciesCnt)    # name   -> dep cnd
+  split("",DependenciesCnt)    # name   -> dep cnt
+  split("",DependencyArgsCnt)  # name,i -> args cnt
+  split("",DependencyArgs)     # name,depI,argI -> val
+  split("",DependencyArgsType) # name,depI,argI -> string|var
   split("",Doc)       # name -> doc str
   split("",ReachedIf) # name -> condition line
   GlobCnt = 0         # count of files for glob
