@@ -215,11 +215,10 @@ function registerUseLib(goalName) {
 function handleGoal(   priv) {
   started("goal")
   priv = parseGoalLine()
-  registerGoal($0, priv)
+  registerGoal(trim($0), priv)
 }
 
 function registerGoal(goalName, priv) {
-  goalName = trim(goalName)
   if (length(goalName) == 0)
     addError("Goal must have a name")
   if (goalName in GoalsByName)

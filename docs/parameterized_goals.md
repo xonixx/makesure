@@ -1,6 +1,6 @@
 # Parameterized goals
-The idea for this is inspired by #112.
-This should be much better and more generic alternative to #96.
+The idea for this is inspired by [#112](https://github.com/xonixx/makesure/issues/112).
+This should be much better and more generic alternative to [#96](https://github.com/xonixx/makesure/issues/96).
 
 This should allow [such rewrite](https://github.com/xonixx/awk_lab/compare/e64437d6199be84bac56bba4d1cfa38ab2f1f5e5...82d272cd0bf01b83f05febe67115c1f59db9b11d#diff-e5d5b21574eca8bd63d8039819c4da3ff78b4c3a2e0a83bc7d406679c5c4f9bf).
 
@@ -25,9 +25,9 @@ No
 
 ## Q. How to pass var argument?
 - `@VAR`
-- Cons: non-uniform syntax
-- Using this form can help getting rid of `@args` and allow mixing dependencies
-- But this needs to disambiguate the case when goal is named `@name`
+  - Cons: non-uniform syntax
+  - Using this form can help getting rid of `@args` and allow mixing dependencies
+  - But this needs to disambiguate the case when goal is named `@name`
 - But not that simple… what about literal values?
 - `"${VAR}"` but only this form, not `"aaa${VAR} bbb"`
 - `VAR`, literal values must be quoted (with single quotes or dollar-single quotes to disallow substitutions)
@@ -88,3 +88,10 @@ Also here. Need to adjust `-d` option. Should list instantiated goals in form
 3. Instantiate. How?
 
 On encounter `@depends_on` generate instantiated? But this needs to go in-depth.
+
+## Parameterized goals vs existing features
+
+### PG + @glob
+TODO
+### PG + @private
+TODO
