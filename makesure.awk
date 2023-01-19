@@ -213,7 +213,7 @@ function handleGoal() {
 }
 
 function registerGoal(goalName, priv) {
-  if (length(goalName) == 0)
+  if (goalName == "")
     addError("Goal must have a name")
   if (goalName in GoalsByName)
     addError("Goal " quote2(goalName,1) " is already defined")
@@ -409,7 +409,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
       body = trim(Code[goalName])
 
-      emptyGoals[goalName] = length(body) == 0
+      emptyGoals[goalName] = body == ""
 
       goalBody[0] = ""
       addLine(goalBody, preludeCode)
