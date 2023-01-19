@@ -192,11 +192,9 @@ function handleUseLib(   i) {
 
   if ("goal" == Mode)
     registerUseLib(currentGoalName())
-  else {
-    for (i=0; i < GlobCnt; i++){
+  else
+    for (i=0; i < GlobCnt; i++)
       registerUseLib(globGoal(i))
-    }
-  }
 }
 
 function registerUseLib(goalName) {
@@ -249,28 +247,25 @@ function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern) {
   calcGlob(goalName, pattern)
   globAllGoal = goalName ? goalName : pattern
   globSingle = GlobCnt == 1 && globAllGoal == globGoal(0)
-  for (i=0; i < GlobCnt; i++){
+  for (i=0; i < GlobCnt; i++)
     registerGoal(globGoal(i), globSingle ? priv : 1)
-  }
   if (!globSingle) { # glob on single file
     registerGoal(globAllGoal, priv)
-    for (i=0; i < GlobCnt; i++){
+    for (i=0; i < GlobCnt; i++)
       registerDependency(globAllGoal, globGoal(i))
-    }
   }
 }
 
 function handleDoc(   i) {
   checkGoalOnly()
 
-  if ("goal" == Mode) {
+  if ("goal" == Mode)
     registerDoc(currentGoalName())
-  } else {
+  else {
     if (!(GlobCnt == 1 && currentGoalName() == globGoal(0))) # glob on single file
       registerDoc(currentGoalName())
-    for (i=0; i < GlobCnt; i++){
+    for (i=0; i < GlobCnt; i++)
       registerDoc(globGoal(i))
-    }
   }
 }
 
@@ -289,11 +284,9 @@ function handleDependsOn(   i) {
 
   if ("goal" == Mode)
     registerDependsOn(currentGoalName())
-  else {
-    for (i=0; i < GlobCnt; i++){
+  else
+    for (i=0; i < GlobCnt; i++)
       registerDependsOn(globGoal(i))
-    }
-  }
 }
 
 function registerDependsOn(goalName,   i) {
@@ -311,11 +304,9 @@ function handleReachedIf(   i) {
 
   if ("goal" == Mode)
     registerReachedIf(currentGoalName())
-  else {
-    for (i=0; i < GlobCnt; i++){
+  else
+    for (i=0; i < GlobCnt; i++)
       registerReachedIf(globGoal(i), makeGlobVarsCode(i))
-    }
-  }
 }
 
 function makeGlobVarsCode(i) {
@@ -336,15 +327,11 @@ function checkBeforeRun(   i,j,dep,depCnt,goalName,visited) {
     if (visited[goalName]++)
       continue
     depCnt = DependenciesCnt[goalName]
-    for (j=0; j < depCnt; j++) {
-      dep = Dependencies[goalName, j]
-      if (!(dep in GoalsByName))
+    for (j=0; j < depCnt; j++)
+      if (!((dep = Dependencies[goalName, j]) in GoalsByName))
         addError("Goal " quote2(goalName,1) " has unknown dependency '" dep "'", DependenciesLineNo[goalName, j])
-    }
-    if (goalName in GoalToLib) {
-      if (!(GoalToLib[goalName] in Lib))
-        addError("Goal " quote2(goalName,1) " uses unknown lib '" GoalToLib[goalName] "'", UseLibLineNo[goalName])
-    }
+    if (goalName in GoalToLib && !(GoalToLib[goalName] in Lib))
+      addError("Goal " quote2(goalName,1) " uses unknown lib '" GoalToLib[goalName] "'", UseLibLineNo[goalName])
   }
 }
 
@@ -391,10 +378,8 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
     for (i = 0; i in GoalNames; i++) {
       depCnt = DependenciesCnt[goalName = GoalNames[i]]
-      for (j=0; j < depCnt; j++) {
-        dep = Dependencies[goalName, j]
-        topologicalSortAddConnection(goalName, dep)
-      }
+      for (j=0; j < depCnt; j++)
+        topologicalSortAddConnection(goalName, Dependencies[goalName, j])
     }
 
     # first do topological sort disregarding @reached_if to catch loops
@@ -464,16 +449,13 @@ function topologicalSort(includeReachedIf,requestedGoals,result,reachedGoals,   
     arrPush(requestedGoals, "default")
 
   for (i = 0; i in requestedGoals; i++) {
-    goalName = requestedGoals[i]
-    if (!(goalName in GoalsByName)) {
+    if (!((goalName = requestedGoals[i]) in GoalsByName))
       die("Goal not found: " goalName)
-    }
     topologicalSortPerform(includeReachedIf,reachedGoals, goalName, result, loop)
   }
 
-  if (loop[0] == 1) {
+  if (loop[0] == 1)
     die("There is a loop in goal dependencies via " loop[1] " -> " loop[2])
-  }
 }
 
 function isCodeAllowed() { return "goal"==Mode || "goal_glob"==Mode || "lib"==Mode }
