@@ -116,7 +116,7 @@ function prepareArgs(   i,arg) {
     Options["timing"]
 }
 
-#function dbgA(name, arr,   i) { print "--- " name ": "; for (i in arr) printf "%2s : %s\n", i, arr[i] }
+function dbgA(name, arr,   i) { print "--- " name ": "; for (i in arr) printf "%2s : %s\n", i, arr[i] }
 #function dbgAO(name, arr,   i) { print "--- " name ": "; for (i=0;i in arr;i++) printf "%2s : %s\n", i, arr[i] }
 
 function splitKV(arg, kv,   n) {
@@ -357,12 +357,18 @@ function getPreludeCode(   a) {
 }
 
 function doWork(\
-  i,j,goalName,gnLen,gnMaxLen,depCnt,dep,reachedGoals,emptyGoals,preludeCode,
+  i,j,goalName,gnLen,gnMaxLen,depCnt,reachedGoals,emptyGoals,preludeCode,
 body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
   started("end") # end last directive
 
   checkBeforeRun()
+
+  dbgA("GoalParamsCnt",GoalParamsCnt)
+  dbgA("GoalParams",GoalParams)
+  dbgA("DependencyArgsCnt",DependencyArgsCnt)
+  dbgA("DependencyArgs",DependencyArgs)
+  dbgA("DependencyArgsType",DependencyArgsType)
 
   if (Error)
     die(Error)
