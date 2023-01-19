@@ -210,13 +210,16 @@ function handleGoal() {
   registerGoal($2, isPriv())
 }
 
-function registerGoal(goalName, priv) {
+function registerGoal(goalName, priv,   i) {
   if (goalName == "")
     addError("Goal must have a name")
   if (goalName in GoalsByName)
     addError("Goal " quote2(goalName,1) " is already defined")
   arrPush(GoalNames, goalName)
   GoalsByName[goalName] = priv
+  if ("@params" == $3)
+    for (i=4; i <= NF; i++)
+      GoalParams[goalName,GoalParamsCnt[goalName]++] = $i # TODO $NF=="@private"?
 }
 
 function globGoal(i) { return (GlobGoalName ? GlobGoalName "@" : "") GlobFiles[i] }
@@ -289,9 +292,21 @@ function handleDependsOn(   i) {
       registerDependsOn(globGoal(i))
 }
 
-function registerDependsOn(goalName,   i) {
-  for (i=2; i<=NF; i++)
-    registerDependency(goalName, $i)
+function registerDependsOn(goalName,   i,dep,x,y) {
+  for (i=2; i<=NF; i++) {
+    dep = $i
+    if ("@args" == dep) {
+      if (i != 3) addError("@args only allowed at position 3") # TODO finalize error msg
+      if (i == NF) addError("must be at least one argument") # TODO finalize error msg
+      while (++i <= NF) {
+        x = goalName SUBSEP DependenciesCnt[goalName]
+        y = x SUBSEP DependencyArgsCnt[x]++
+        DependencyArgs[y] = $i
+        DependencyArgsType[y] = "string" # TODO
+      }
+    } else
+      registerDependency(goalName, dep)
+  }
 }
 
 function registerDependency(goalName, depGoalName,   x) {
