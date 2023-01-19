@@ -166,10 +166,7 @@ function checkValidDefineSyntax(line) {
 
 function handleShell() {
   checkPreludeOnly()
-
-  Shell = trim($2)
-
-  if (!(Shell in SupportedShells))
+  if (!((Shell = $2) in SupportedShells))
     addError("Shell '" Shell "' is not supported")
 }
 
@@ -183,9 +180,7 @@ function started(mode) {
 
 function handleLib(   libName) {
   started("lib")
-
-  libName = trim($2)
-  if (libName in Lib) {
+  if ((libName = $2) in Lib) {
     addError("Lib '" libName "' is already defined")
   }
   arrPush(LibNames, libName)
