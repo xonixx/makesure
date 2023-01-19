@@ -212,10 +212,9 @@ function registerUseLib(goalName) {
   UseLibLineNo[goalName] = NR
 }
 
-function handleGoal(   priv) {
+function handleGoal() {
   started("goal")
-  priv = parseGoalLine()
-  registerGoal(trim($0), priv)
+  registerGoal($2, isPriv())
 }
 
 function registerGoal(goalName, priv) {
@@ -243,23 +242,16 @@ function calcGlob(goalName, pattern,   script, file) {
   quicksort(GlobFiles,0,arrLen(GlobFiles)-1)
 }
 
-function parseGoalLine(   priv) {
-  if ($NF == "@private") {
-    priv=1
-    NF--
-  }
-  $1 = ""
-  return priv
-}
+function isPriv() { return "@private" == $NF }
 
 function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern) {
   started("goal_glob")
-  priv = parseGoalLine()
-  goalName = $2; $2 = ""
+  priv = isPriv()
+  goalName = $2; pattern = $4
   if ("@glob" == goalName) {
-    goalName = ""
-  } else $3 = ""
-  calcGlob(goalName, pattern = trim($0))
+    goalName = ""; pattern = $3
+  }
+  calcGlob(goalName, pattern)
   globAllGoal = goalName ? goalName : pattern
   globSingle = GlobCnt == 1 && globAllGoal == globGoal(0)
   for (i=0; i < GlobCnt; i++){
