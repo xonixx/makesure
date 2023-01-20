@@ -119,6 +119,17 @@ function prepareArgs(   i,arg) {
 
 function dbgA(name, arr,   i) { print "--- " name ": "; for (i in arr) printf "%2s : %s\n", i, arr[i] }
 function dbgAO(name, arr,   i) { print "--- " name ": "; for (i=0;i in arr;i++) printf "%2s : %s\n", i, arr[i] }
+function indent(ind) {
+  printf "%" ind*2 "s", ""
+}
+function printDepsTree(goal,ind,   i) {
+  if (!(goal in GoalsByName)) { die("unknown goal: " goal) }
+  indent(ind)
+  print quote2(goal)
+  for (i=0; i < DependenciesCnt[goal]; i++) {
+    printDepsTree(Dependencies[goal,i],ind+1)
+  }
+}
 
 function splitKV(arg, kv,   n) {
   n = index(arg, "=")
@@ -400,20 +411,19 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     if (timingOn())
       t0 = currentTimeMillis()
 
-    for (i = 0; i in GoalNames; i++) {
-      depCnt = DependenciesCnt[goalName = GoalNames[i]]
-      for (j=0; j < depCnt; j++)
-        topologicalSortAddConnection(goalName, Dependencies[goalName, j])
-    }
-
     topologicalSort(0,GoalNames) # first do topological sort disregarding @reached_if to catch loops
 
     instantiateGoals()
 
+    printDepsTree("a")
+
     topologicalSort(1,ArgGoals,resolvedGoals,reachedGoals) # now do topological sort including @reached_if to resolve goals to run
+
+    printDepsTree("a")
 
     preludeCode = getPreludeCode()
 
+    # TODO looks like this loop should go inside else branch below
     for (i = 0; i in GoalNames; i++) {
       goalName = GoalNames[i]
 
@@ -467,8 +477,14 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
   }
 }
 
-function topologicalSort(includeReachedIf,requestedGoals,result,reachedGoals,   i,goalName,loop) {
+function topologicalSort(includeReachedIf,requestedGoals,result,reachedGoals,   i,j,goalName,loop,depCnt) {
   topologicalSortReset()
+
+  for (i = 0; i in GoalNames; i++) {
+    depCnt = DependenciesCnt[goalName = GoalNames[i]]
+    for (j=0; j < depCnt; j++)
+      topologicalSortAddConnection(goalName, Dependencies[goalName, j])
+  }
 
   if (arrLen(requestedGoals) == 0)
     arrPush(requestedGoals, "default")
@@ -563,6 +579,8 @@ function addCodeLineToGoal(name, line) {
 
 function topologicalSortReset() {
   split("",Visited)
+  split("",Slist)
+  split("",Scnt)
 }
 function topologicalSortAddConnection(from, to) {
   # Slist - list of successors by node

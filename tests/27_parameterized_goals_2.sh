@@ -4,7 +4,8 @@
 
 @goal b @params S
 @depends_on c @args S
+  echo "$S world from b"
 
 @goal c @params S1
-  echo "$S1 world"
+  echo "$S1 world from c"
 
