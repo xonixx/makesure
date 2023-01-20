@@ -604,6 +604,7 @@ function instantiateGoals(   i,goalName) {
       instantiate(goalName)
 }
 function renderArgs(args,   s,k) { s = ""; for (k in args) s = s k "=>" args[k] " "; return s }
+function copyKey(keySrc,keyDst,arr) { if (keySrc in arr) arr[keyDst] = arr[keySrc] }
 #
 # args: { F => "file1" }
 #
@@ -615,14 +616,14 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
   goalNameInstantiated = instantiateGoalName(goal, args)
 
   if (goalNameInstantiated != goal) {
-    GoalsByName[goalNameInstantiated] = GoalsByName[goal]
-    DependenciesCnt[goalNameInstantiated] = DependenciesCnt[goal]
     arrPush(GoalNames, goalNameInstantiated)
-    CodePre[goalNameInstantiated] = CodePre[goal] # TODO attach dependency var values
-    Code[goalNameInstantiated] = Code[goal]
-    Doc[goalNameInstantiated] = Doc[goal]
-    ReachedIf[goalNameInstantiated] = ReachedIf[goal]
-    GoalToLib[goalNameInstantiated] = GoalToLib[goal]
+    copyKey(goal,goalNameInstantiated,GoalsByName)
+    copyKey(goal,goalNameInstantiated,DependenciesCnt)
+    copyKey(goal,goalNameInstantiated,CodePre) # TODO attach dependency var values
+    copyKey(goal,goalNameInstantiated,Code)
+    copyKey(goal,goalNameInstantiated,Doc)
+    copyKey(goal,goalNameInstantiated,ReachedIf)
+    copyKey(goal,goalNameInstantiated,GoalToLib)
   }
 
   for (i=0; i < DependenciesCnt[goal]; i++) {
