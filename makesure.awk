@@ -366,17 +366,18 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
   checkBeforeRun()
 
-  #  dbgA("GoalParamsCnt",GoalParamsCnt)
-  #  dbgA("GoalParams",GoalParams)
-  #  dbgA("DependencyArgsCnt",DependencyArgsCnt)
-  #  dbgA("DependencyArgs",DependencyArgs)
-  #  dbgA("DependencyArgsType",DependencyArgsType)
+    dbgA("GoalParamsCnt",GoalParamsCnt)
+    dbgA("GoalParams",GoalParams)
+    dbgA("DependencyArgsCnt",DependencyArgsCnt)
+    dbgA("DependencyArgs",DependencyArgs)
+    dbgA("DependencyArgsType",DependencyArgsType)
 
   if (Error)
     die(Error)
 
   list="-l" in Args || "--list" in Args
   if (list || "-la" in Args || "--list-all" in Args) {
+    instantiateGoals()
     print "Available goals:"
     for (i = 0; i in GoalNames; i++) {
       goalName = GoalNames[i]
@@ -407,9 +408,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
     topologicalSort(0,GoalNames) # first do topological sort disregarding @reached_if to catch loops
 
-    for (i = 0; i in GoalNames; i++)
-      if (GoalParamsCnt[goalName = GoalNames[i]] == 0)
-        instantiate(goalName)
+    instantiateGoals()
 
     topologicalSort(1,ArgGoals,resolvedGoals,reachedGoals) # now do topological sort including @reached_if to resolve goals to run
 
@@ -599,11 +598,17 @@ function topologicalSortPerform(includeReachedIf,reachedGoals, node, result, loo
   arrPush(result, node)
 }
 
+function instantiateGoals(   i,goalName) {
+  for (i = 0; i in GoalNames; i++)
+    if (GoalParamsCnt[goalName = GoalNames[i]] == 0)
+      instantiate(goalName)
+}
+function renderArgs(args,   s,k) { s = ""; for (k in args) s = s k "=>" args[k] " "; return s }
 #
 # args: { F => "file1" }
 #
 function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt) { # -> goalNameInstantiated
-  #  print ">instantiating " goal " { " renderArgs(args) "} ..."
+    print ">instantiating " goal " { " renderArgs(args) "} ..."
 
   if (!(goal in GoalsByName)) { die("unknown goal: " goal) }
 
