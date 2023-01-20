@@ -221,7 +221,7 @@ function registerGoal(goalName, priv,   i) {
   if ("@params" == $3)
     for (i=4; i <= NF; i++)
       GoalParams[goalName,GoalParamsCnt[goalName]++] = $i # TODO $NF=="@private"?
-  # TODO error if @params on other position
+      # TODO error if @params on other position
 }
 
 function globGoal(i) { return (GlobGoalName ? GlobGoalName "@" : "") GlobFiles[i] }
@@ -366,11 +366,11 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
   checkBeforeRun()
 
-  dbgA("GoalParamsCnt",GoalParamsCnt)
-  dbgA("GoalParams",GoalParams)
-  dbgA("DependencyArgsCnt",DependencyArgsCnt)
-  dbgA("DependencyArgs",DependencyArgs)
-  dbgA("DependencyArgsType",DependencyArgsType)
+#  dbgA("GoalParamsCnt",GoalParamsCnt)
+#  dbgA("GoalParams",GoalParams)
+#  dbgA("DependencyArgsCnt",DependencyArgsCnt)
+#  dbgA("DependencyArgs",DependencyArgs)
+#  dbgA("DependencyArgsType",DependencyArgsType)
 
   if (Error)
     die(Error)
@@ -602,12 +602,15 @@ function topologicalSortPerform(includeReachedIf,reachedGoals, node, result, loo
 function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt) { # -> goalNameInstantiated
   #  print ">instantiating " goal " { " renderArgs(args) "} ..."
 
-  if (!(goal in Goal)) { die("unknown goal: " goal) }
+  if (!(goal in GoalsByName)) { die("unknown goal: " goal) }
 
-  Goal[goalNameInstantiated = instantiateGoalName(goal, args)]
-  DependencyCnt[goalNameInstantiated] = DependencyCnt[goal]
+  if (GoalParamsCnt[goal] > 0) {
+    GoalsByName[goalNameInstantiated = instantiateGoalName(goal, args)] = GoalsByName[goal]
+    DependenciesCnt[goalNameInstantiated] = DependenciesCnt[goal]
+    arrPush(GoalNames, goalNameInstantiated)
+  }
 
-  for (i=0; i < DependencyCnt[goal]; i++) {
+  for (i=0; i < DependenciesCnt[goal]; i++) {
     # TODO goal,i to var
     dep = Dependency[goal,i]
 
@@ -631,7 +634,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
   return goalNameInstantiated
 }
 function instantiateGoalName(goal, args,   res,cnt,i){
-  if ((cnt = GoalParamsCnt[goal]) == 0) { return goal }
+  #  if ((cnt = GoalParamsCnt[goal]) == 0) { return goal }
   res = goal
   for (i=0; i < cnt; i++) {
     res = res "@" args[GoalParams[goal,i]]
