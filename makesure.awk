@@ -118,7 +118,7 @@ function prepareArgs(   i,arg) {
 }
 
 function dbgA(name, arr,   i) { print "--- " name ": "; for (i in arr) printf "%2s : %s\n", i, arr[i] }
-#function dbgAO(name, arr,   i) { print "--- " name ": "; for (i=0;i in arr;i++) printf "%2s : %s\n", i, arr[i] }
+function dbgAO(name, arr,   i) { print "--- " name ": "; for (i=0;i in arr;i++) printf "%2s : %s\n", i, arr[i] }
 
 function splitKV(arg, kv,   n) {
   n = index(arg, "=")
@@ -598,8 +598,9 @@ function topologicalSortPerform(includeReachedIf,reachedGoals, node, result, loo
   arrPush(result, node)
 }
 
-function instantiateGoals(   i,goalName) {
-  for (i = 0; i in GoalNames; i++)
+function instantiateGoals(   i,l,goalName) {
+  l = arrLen(GoalNames)
+  for (i = 0; i < l; i++)
     if (GoalParamsCnt[goalName = GoalNames[i]] == 0)
       instantiate(goalName)
 }
@@ -839,7 +840,7 @@ function addLine(target, line) { target[0] = addL(target[0], line) }
 function addL(s, l) { return s ? s "\n" l : l }
 function arrPush(arr, elt) { arr[arr[-7]++] = elt }
 function arrLen(arr) { return +arr[-7] }
-function arrLast(arr) { return arr[arrLen(arr)-1] }
+function arrLast(arr,   l) { return (l = arrLen(arr))>0 ? arr[l-1] : "" }
 function commandExists(cmd) { return ok("command -v " cmd " >/dev/null") }
 function ok(cmd) { return system(cmd) == 0 }
 function isFile(path) { return ok("test -f " quoteArg(path)) }
