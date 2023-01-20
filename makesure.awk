@@ -22,7 +22,7 @@ BEGIN {
   split("",DependenciesCnt)    # name   -> dep cnt
   split("",DependencyArgsCnt)  # name,i -> args cnt
   split("",DependencyArgs)     # name,depI,argI -> val
-  split("",DependencyArgsType) # name,depI,argI -> string|var
+  split("",DependencyArgsType) # name,depI,argI -> str|var
   split("",Doc)       # name -> doc str
   split("",ReachedIf) # name -> condition line
   GlobCnt = 0         # count of files for glob
@@ -221,6 +221,7 @@ function registerGoal(goalName, priv,   i) {
   if ("@params" == $3)
     for (i=4; i <= NF; i++)
       GoalParams[goalName,GoalParamsCnt[goalName]++] = $i # TODO $NF=="@private"?
+  # TODO error if @params on other position
 }
 
 function globGoal(i) { return (GlobGoalName ? GlobGoalName "@" : "") GlobFiles[i] }
@@ -303,7 +304,7 @@ function registerDependsOn(goalName,   i,dep,x,y) {
         x = goalName SUBSEP DependenciesCnt[goalName]
         y = x SUBSEP DependencyArgsCnt[x]++
         DependencyArgs[y] = $i
-        DependencyArgsType[y] = Quotes[i] ? "string" : "var"
+        DependencyArgsType[y] = Quotes[i] ? "str" : "var"
       }
     } else
       registerDependency(goalName, dep)
@@ -593,6 +594,50 @@ function topologicalSortPerform(includeReachedIf,reachedGoals, node, result, loo
   Visited[node] = 2
 
   arrPush(result, node)
+}
+
+#
+# args: { F => "file1" }
+#
+function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt) { # -> goalNameInstantiated
+  #  print ">instantiating " goal " { " renderArgs(args) "} ..."
+
+  if (!(goal in Goal)) { die("unknown goal: " goal) }
+
+  Goal[goalNameInstantiated = instantiateGoalName(goal, args)]
+  DependencyCnt[goalNameInstantiated] = DependencyCnt[goal]
+
+  for (i=0; i < DependencyCnt[goal]; i++) {
+    # TODO goal,i to var
+    dep = Dependency[goal,i]
+
+    if ((argsCnt = DependencyArgsCnt[goal,i]) != GoalParamsCnt[dep]) { addError("wrong args count", DependenciesLineNo[goal,i]) }
+
+    for (j=0; j < argsCnt; j++) {
+      depArg     = DependencyArgs    [goal,i,j]
+      depArgType = DependencyArgsType[goal,i,j]
+
+      newArgs[GoalParams[dep,j]] = \
+        depArgType == "str" ? \
+          depArg : \
+          depArgType == "var" ? \
+            (depArg in args ? args[depArg] : addError("wrong arg " depArg, DependenciesLineNo[goal,i])) : \
+            die("wrong depArgType: " depArgType)
+    }
+
+    Dependency[goalNameInstantiated,i] = instantiate(dep,newArgs)
+  }
+
+  return goalNameInstantiated
+}
+function instantiateGoalName(goal, args,   res,cnt,i){
+  if ((cnt = GoalParamsCnt[goal]) == 0) { return goal }
+  res = goal
+  for (i=0; i < cnt; i++) {
+    res = res "@" args[GoalParams[goal,i]]
+  }
+  #  print "@@ " res
+  return res
 }
 
 function currentTimeMillis(   res) {
