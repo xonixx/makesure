@@ -301,7 +301,7 @@ function registerDependsOn(goalName,   i,dep,x,y) {
       if (i != 3) addError("@args only allowed at position 3") # TODO finalize error msg
       if (i == NF) addError("must be at least one argument") # TODO finalize error msg
       while (++i <= NF) {
-        x = goalName SUBSEP DependenciesCnt[goalName]
+        x = goalName SUBSEP (DependenciesCnt[goalName]-1)
         y = x SUBSEP DependencyArgsCnt[x]++
         DependencyArgs[y] = $i
         DependencyArgsType[y] = Quotes[i] ? "str" : "var"
@@ -366,11 +366,11 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
   checkBeforeRun()
 
-    dbgA("GoalParamsCnt",GoalParamsCnt)
-    dbgA("GoalParams",GoalParams)
-    dbgA("DependencyArgsCnt",DependencyArgsCnt)
-    dbgA("DependencyArgs",DependencyArgs)
-    dbgA("DependencyArgsType",DependencyArgsType)
+  dbgA("GoalParamsCnt",GoalParamsCnt)
+  dbgA("GoalParams",GoalParams)
+  dbgA("DependencyArgsCnt",DependencyArgsCnt)
+  dbgA("DependencyArgs",DependencyArgs)
+  dbgA("DependencyArgsType",DependencyArgsType)
 
   if (Error)
     die(Error)
@@ -608,12 +608,14 @@ function renderArgs(args,   s,k) { s = ""; for (k in args) s = s k "=>" args[k] 
 # args: { F => "file1" }
 #
 function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt) { # -> goalNameInstantiated
-    print ">instantiating " goal " { " renderArgs(args) "} ..."
+  print ">instantiating " goal " { " renderArgs(args) "} ..."
 
   if (!(goal in GoalsByName)) { die("unknown goal: " goal) }
 
-  if (GoalParamsCnt[goal] > 0) {
-    GoalsByName[goalNameInstantiated = instantiateGoalName(goal, args)] = GoalsByName[goal]
+  goalNameInstantiated = instantiateGoalName(goal, args)
+
+  if (goalNameInstantiated != goal) {
+    GoalsByName[goalNameInstantiated] = GoalsByName[goal]
     DependenciesCnt[goalNameInstantiated] = DependenciesCnt[goal]
     arrPush(GoalNames, goalNameInstantiated)
     CodePre[goalNameInstantiated] = CodePre[goal] # TODO attach dependency var values
@@ -629,9 +631,13 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
 
     if ((argsCnt = DependencyArgsCnt[goal,i]) != GoalParamsCnt[dep]) { addError("wrong args count", DependenciesLineNo[goal,i]) }
 
+    #    print "argsCnt " argsCnt
+
     for (j=0; j < argsCnt; j++) {
       depArg     = DependencyArgs    [goal,i,j]
       depArgType = DependencyArgsType[goal,i,j]
+
+      #      print "@ " depArg " " depArgType
 
       newArgs[GoalParams[dep,j]] = \
         depArgType == "str" ? \
@@ -648,7 +654,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
   return goalNameInstantiated
 }
 function instantiateGoalName(goal, args,   res,cnt,i){
-  #  if ((cnt = GoalParamsCnt[goal]) == 0) { return goal }
+  if ((cnt = GoalParamsCnt[goal]) == 0) { return goal }
   res = goal
   for (i=0; i < cnt; i++) {
     res = res "@" args[GoalParams[goal,i]]
