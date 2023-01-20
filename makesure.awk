@@ -366,11 +366,11 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
   checkBeforeRun()
 
-#  dbgA("GoalParamsCnt",GoalParamsCnt)
-#  dbgA("GoalParams",GoalParams)
-#  dbgA("DependencyArgsCnt",DependencyArgsCnt)
-#  dbgA("DependencyArgs",DependencyArgs)
-#  dbgA("DependencyArgsType",DependencyArgsType)
+  #  dbgA("GoalParamsCnt",GoalParamsCnt)
+  #  dbgA("GoalParams",GoalParams)
+  #  dbgA("DependencyArgsCnt",DependencyArgsCnt)
+  #  dbgA("DependencyArgs",DependencyArgs)
+  #  dbgA("DependencyArgsType",DependencyArgsType)
 
   if (Error)
     die(Error)
@@ -405,10 +405,13 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
         topologicalSortAddConnection(goalName, Dependencies[goalName, j])
     }
 
-    # first do topological sort disregarding @reached_if to catch loops
-    topologicalSort(0,GoalNames)
-    # now do topological sort including @reached_if to resolve goals to run
-    topologicalSort(1,ArgGoals,resolvedGoals,reachedGoals)
+    topologicalSort(0,GoalNames) # first do topological sort disregarding @reached_if to catch loops
+
+    for (i = 0; i in GoalNames; i++)
+      if (GoalParamsCnt[goalName = GoalNames[i]] == 0)
+        instantiate(goalName)
+
+    topologicalSort(1,ArgGoals,resolvedGoals,reachedGoals) # now do topological sort including @reached_if to resolve goals to run
 
     preludeCode = getPreludeCode()
 
@@ -608,11 +611,16 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     GoalsByName[goalNameInstantiated = instantiateGoalName(goal, args)] = GoalsByName[goal]
     DependenciesCnt[goalNameInstantiated] = DependenciesCnt[goal]
     arrPush(GoalNames, goalNameInstantiated)
+    CodePre[goalNameInstantiated] = CodePre[goal] # TODO attach dependency var values
+    Code[goalNameInstantiated] = Code[goal]
+    Doc[goalNameInstantiated] = Doc[goal]
+    ReachedIf[goalNameInstantiated] = ReachedIf[goal]
+    GoalToLib[goalNameInstantiated] = GoalToLib[goal]
   }
 
   for (i=0; i < DependenciesCnt[goal]; i++) {
     # TODO goal,i to var
-    dep = Dependency[goal,i]
+    dep = Dependencies[goal,i]
 
     if ((argsCnt = DependencyArgsCnt[goal,i]) != GoalParamsCnt[dep]) { addError("wrong args count", DependenciesLineNo[goal,i]) }
 
@@ -628,7 +636,8 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
             die("wrong depArgType: " depArgType)
     }
 
-    Dependency[goalNameInstantiated,i] = instantiate(dep,newArgs)
+    Dependencies[goalNameInstantiated,i] = instantiate(dep,newArgs)
+    DependenciesLineNo[goalNameInstantiated,i] = DependenciesLineNo[goal,i]
   }
 
   return goalNameInstantiated
