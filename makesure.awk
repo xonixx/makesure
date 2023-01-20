@@ -32,6 +32,7 @@ BEGIN {
   split("",Lib)      # name -> code
   split("",UseLibLineNo)# name -> line no.
   split("",GoalToLib)# goal name -> lib name
+  split("",Quotes)   # NF -> quote of field ("'"|"$"|"")
   Mode = "prelude" # prelude|define|goal|goal_glob|lib
   srand()
   prepareArgs()
@@ -302,7 +303,7 @@ function registerDependsOn(goalName,   i,dep,x,y) {
         x = goalName SUBSEP DependenciesCnt[goalName]
         y = x SUBSEP DependencyArgsCnt[x]++
         DependencyArgs[y] = $i
-        DependencyArgsType[y] = "string" # TODO
+        DependencyArgsType[y] = Quotes[i] ? "string" : "var"
       }
     } else
       registerDependency(goalName, dep)
@@ -723,6 +724,7 @@ function parseCli(line, res,   pos,c,last,is_doll,c1) {
           pos++
           # consume quoted string
         res[last = res[-7]++] = ""
+        res[last,"quote"] = is_doll ? "$" : "'"
         while((c = substr(line,++pos,1)) != "'") { # closing '
           if (c=="")
             return "unterminated argument"
@@ -736,7 +738,7 @@ function parseCli(line, res,   pos,c,last,is_doll,c1) {
       } else {
         # consume unquoted argument
         res[last = res[-7]++] = c
-        while((c = substr(line,++pos,1)) != "" && c != " " && c != "\t") { # whitespace denotes end of arg
+        while((c = substr(line,++pos,1)) != "" && c != " " && c != "\t") { # whitespace denotes the end of arg
           if(c=="'")
             return "joined arguments"
           res[last] = res[last] c
@@ -751,8 +753,10 @@ function reparseCli(   res,i,err) {
     addError("Syntax error: " err)
     die(Error)
   } else
-    for (i=NF=0; i in res; i++)
+    for (i=NF=0; i in res; i++) {
       $(++NF)=res[i]
+      Quotes[NF]=res[i,"quote"]
+    }
 }
 function quote2(s,force) {
   if (index(s,"'")) {
