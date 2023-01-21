@@ -117,19 +117,19 @@ function prepareArgs(   i,arg) {
     Options["timing"]
 }
 
-function dbgA(name, arr,   i) { print "--- " name ": "; for (i in arr) printf "%2s : %s\n", i, arr[i] }
-function dbgAO(name, arr,   i) { print "--- " name ": "; for (i=0;i in arr;i++) printf "%2s : %s\n", i, arr[i] }
-function indent(ind) {
-  printf "%" ind*2 "s", ""
-}
-function printDepsTree(goal,ind,   i) {
-  if (!(goal in GoalsByName)) { die("unknown goal: " goal) }
-  indent(ind)
-  print quote2(goal)
-  for (i=0; i < DependenciesCnt[goal]; i++) {
-    printDepsTree(Dependencies[goal,i],ind+1)
-  }
-}
+#function dbgA(name, arr,   i) { print "--- " name ": "; for (i in arr) printf "%2s : %s\n", i, arr[i] }
+#function dbgAO(name, arr,   i) { print "--- " name ": "; for (i=0;i in arr;i++) printf "%2s : %s\n", i, arr[i] }
+#function indent(ind) {
+#  printf "%" ind*2 "s", ""
+#}
+#function printDepsTree(goal,ind,   i) {
+#  if (!(goal in GoalsByName)) { die("unknown goal: " goal) }
+#  indent(ind)
+#  print quote2(goal)
+#  for (i=0; i < DependenciesCnt[goal]; i++) {
+#    printDepsTree(Dependencies[goal,i],ind+1)
+#  }
+#}
 
 function splitKV(arg, kv,   n) {
   n = index(arg, "=")
@@ -370,7 +370,7 @@ function getPreludeCode(   a) {
 }
 
 function doWork(\
-  i,j,goalName,gnLen,gnMaxLen,depCnt,reachedGoals,emptyGoals,preludeCode,
+  i,goalName,gnLen,gnMaxLen,reachedGoals,emptyGoals,preludeCode,
 body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
   started("end") # end last directive
@@ -617,7 +617,7 @@ function instantiateGoals(   i,l,goalName) {
     if (GoalParamsCnt[goalName = GoalNames[i]] == 0)
       instantiate(goalName)
 }
-function renderArgs(args,   s,k) { s = ""; for (k in args) s = s k "=>" args[k] " "; return s }
+#function renderArgs(args,   s,k) { s = ""; for (k in args) s = s k "=>" args[k] " "; return s }
 function copyKey(keySrc,keyDst,arr) { if (keySrc in arr) arr[keyDst] = arr[keySrc] }
 #
 # args: { F => "file1" }
