@@ -424,8 +424,8 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     preludeCode = getPreludeCode()
 
     for (i = 0; i in GoalNames; i++) {
-      emptyGoals[goalName] = "" == (body = trim(Code[goalName = GoalNames[i]]))
-
+      body = trim(Code[goalName = GoalNames[i]])
+      emptyGoals[goalName] = "" == body
       goalBody[0] = ""
       addLine(goalBody, preludeCode)
       addLine(goalBody, CodePre[goalName])
