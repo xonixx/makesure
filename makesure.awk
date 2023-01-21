@@ -413,7 +413,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
     topologicalSort(0,GoalNames) # first do topological sort disregarding @reached_if to catch loops
 
-    instantiateGoals()
+#    instantiateGoals()
 
 #    printDepsTree("a")
 

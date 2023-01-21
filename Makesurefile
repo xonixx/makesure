@@ -197,15 +197,15 @@ in_begin && $1 ~ /^split/ { next }
 
 @goal tested_gawk51 @private
 @depends_on installed_gawk51
-  AWKLIBPATH="$(pwd)/soft/gawk51_libs" AWK="$(pwd)/soft/gawk51" ./makesure tested
+  MAKESURE_AWKLIBPATH="$(pwd)/soft/gawk51_libs" AWK="$(pwd)/soft/gawk51" ./makesure tested
 
 @goal tested_gawk511 @private
 @depends_on installed_gawk511
-  AWKLIBPATH="$(pwd)/soft/gawk511_libs" AWK="$(pwd)/soft/gawk511" ./makesure tested
+  MAKESURE_AWKLIBPATH="$(pwd)/soft/gawk511_libs" AWK="$(pwd)/soft/gawk511" ./makesure tested
 
 @goal tested_gawk521 @private
 @depends_on installed_gawk521
-  AWKLIBPATH="$(pwd)/soft/gawk521_libs" AWK="$(pwd)/soft/gawk521" ./makesure tested
+  MAKESURE_AWKLIBPATH="$(pwd)/soft/gawk521_libs" AWK="$(pwd)/soft/gawk521" ./makesure tested
 
 @goal tested_goawk @private
 @depends_on installed_goawk
