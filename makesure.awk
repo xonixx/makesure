@@ -377,11 +377,11 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
   checkBeforeRun()
 
-  dbgA("GoalParamsCnt",GoalParamsCnt)
-  dbgA("GoalParams",GoalParams)
-  dbgA("DependencyArgsCnt",DependencyArgsCnt)
-  dbgA("DependencyArgs",DependencyArgs)
-  dbgA("DependencyArgsType",DependencyArgsType)
+#  dbgA("GoalParamsCnt",GoalParamsCnt)
+#  dbgA("GoalParams",GoalParams)
+#  dbgA("DependencyArgsCnt",DependencyArgsCnt)
+#  dbgA("DependencyArgs",DependencyArgs)
+#  dbgA("DependencyArgsType",DependencyArgsType)
 
   if (Error)
     die(Error)
@@ -415,21 +415,16 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
     instantiateGoals()
 
-    printDepsTree("a")
+#    printDepsTree("a")
 
     topologicalSort(1,ArgGoals,resolvedGoals,reachedGoals) # now do topological sort including @reached_if to resolve goals to run
 
-    printDepsTree("a")
+#    printDepsTree("a")
 
     preludeCode = getPreludeCode()
 
-    # TODO looks like this loop should go inside else branch below
     for (i = 0; i in GoalNames; i++) {
-      goalName = GoalNames[i]
-
-      body = trim(Code[goalName])
-
-      emptyGoals[goalName] = body == ""
+      emptyGoals[goalName] = "" == (body = trim(Code[goalName = GoalNames[i]]))
 
       goalBody[0] = ""
       addLine(goalBody, preludeCode)
@@ -628,7 +623,7 @@ function copyKey(keySrc,keyDst,arr) { if (keySrc in arr) arr[keyDst] = arr[keySr
 # args: { F => "file1" }
 #
 function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt) { # -> goalNameInstantiated
-  print ">instantiating " goal " { " renderArgs(args) "} ..."
+#  print ">instantiating " goal " { " renderArgs(args) "} ..."
 
   if (!(goal in GoalsByName)) { die("unknown goal: " goal) }
 
