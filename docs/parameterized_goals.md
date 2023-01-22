@@ -104,5 +104,6 @@ TODO
 
 # TODOS
 - [x] check loop
+- [ ] -l in presence of loop hangs
 - [ ] check unknown parameterized dep call `@depends_on c @args S`
 - [ ] validate param name (regex)
