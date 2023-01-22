@@ -377,14 +377,17 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
   checkBeforeRun()
 
-#  dbgA("GoalParamsCnt",GoalParamsCnt)
-#  dbgA("GoalParams",GoalParams)
-#  dbgA("DependencyArgsCnt",DependencyArgsCnt)
-#  dbgA("DependencyArgs",DependencyArgs)
-#  dbgA("DependencyArgsType",DependencyArgsType)
+  #  dbgA("GoalParamsCnt",GoalParamsCnt)
+  #  dbgA("GoalParams",GoalParams)
+  #  dbgA("DependencyArgsCnt",DependencyArgsCnt)
+  #  dbgA("DependencyArgs",DependencyArgs)
+  #  dbgA("DependencyArgsType",DependencyArgsType)
 
-  if (Error)
-    die(Error)
+  if (Error) die(Error)
+
+  # First do topological sort disregarding @reached_if to catch loops.
+  # We need to do it before instantiate, because instantiation is recursive and will hang in presence of loop.
+  topologicalSort(0,GoalNames)
 
   list="-l" in Args || "--list" in Args
   if (list || "-la" in Args || "--list-all" in Args) {
@@ -411,9 +414,6 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     if (timingOn())
       t0 = currentTimeMillis()
 
-    topologicalSort(0,GoalNames) # first do topological sort disregarding @reached_if to catch loops
-
-    # we need to instantiate _after_ loops detection, because instantiation is recursive and will hang in presence of loop
     instantiateGoals()
     if (Error)
       die(Error)
@@ -627,7 +627,7 @@ function renderArgs(args,   s,k) { s = ""; for (k in args) s = s k "=>" args[k] 
 # args: { F => "file1" }
 #
 function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,gi,gii) { # -> goalNameInstantiated
-#  print ">instantiating " goal " { " renderArgs(args) "} ..."
+  #  print ">instantiating " goal " { " renderArgs(args) "} ..."
 
   goalNameInstantiated = instantiateGoalName(goal, args)
 
@@ -652,7 +652,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     if ((argsCnt = +DependencyArgsCnt[gi]) != GoalParamsCnt[dep])
       addError("wrong args count", DependenciesLineNo[gi])
 
-#    print "dep=" dep ", argsCnt=" argsCnt
+      #    print "dep=" dep ", argsCnt=" argsCnt
 
     for (j=0; j < argsCnt; j++) {
       depArg     = DependencyArgs    [gi,j]

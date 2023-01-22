@@ -125,6 +125,8 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_4.sh e
 |   goal 'e' [empty].
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_6_loop_err1.sh -l
+@ There is a loop in goal dependencies via a -> c
+? 1
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_6_loop_err1.sh a
 @ There is a loop in goal dependencies via a -> c
