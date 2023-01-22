@@ -310,7 +310,6 @@ function registerDependsOn(goalName,   i,dep,x,y) {
     dep = $i
     if ("@args" == dep) {
       if (i != 3) addError("@args only allowed at position 3") # TODO finalize error msg
-      if (i == NF) addError("must be at least one argument") # TODO finalize error msg
       while (++i <= NF) {
         x = goalName SUBSEP (DependenciesCnt[goalName]-1)
         y = x SUBSEP DependencyArgsCnt[x]++
@@ -383,15 +382,17 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
   #  dbgA("DependencyArgs",DependencyArgs)
   #  dbgA("DependencyArgsType",DependencyArgsType)
 
-  if (Error) die(Error)
-
   # First do topological sort disregarding @reached_if to catch loops.
   # We need to do it before instantiate, because instantiation is recursive and will hang in presence of loop.
   topologicalSort(0,GoalNames)
 
+  instantiateGoals()
+
+  if (Error)
+    die(Error)
+
   list="-l" in Args || "--list" in Args
   if (list || "-la" in Args || "--list-all" in Args) {
-    instantiateGoals()
     print "Available goals:"
     for (i = 0; i in GoalNames; i++) {
       goalName = GoalNames[i]
@@ -413,10 +414,6 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
   } else {
     if (timingOn())
       t0 = currentTimeMillis()
-
-    instantiateGoals()
-    if (Error)
-      die(Error)
 
     topologicalSort(1,ArgGoals,resolvedGoals,reachedGoals) # now do topological sort including @reached_if to resolve goals to run
 
