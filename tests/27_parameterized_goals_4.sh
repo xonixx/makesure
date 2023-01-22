@@ -1,5 +1,5 @@
 
-# testing dependency run-once semantics
+# testing depending on same PG with different args
 
 @goal a
 @depends_on b @args 'hello'
