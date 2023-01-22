@@ -635,7 +635,8 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
   goalNameInstantiated = instantiateGoalName(goal, args)
 
   if (goalNameInstantiated != goal) {
-    arrPush(GoalNames, goalNameInstantiated)
+    if (!(goalNameInstantiated in GoalsByName))
+      arrPush(GoalNames, goalNameInstantiated)
     copyKey(goal,goalNameInstantiated,GoalsByName)
     copyKey(goal,goalNameInstantiated,DependenciesCnt)
     copyKey(goal,goalNameInstantiated,CodePre)
