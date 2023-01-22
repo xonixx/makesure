@@ -414,6 +414,8 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     topologicalSort(0,GoalNames) # first do topological sort disregarding @reached_if to catch loops
 
     instantiateGoals()
+    if (Error)
+      die(Error)
 
 #    printDepsTree("a")
 
@@ -623,7 +625,7 @@ function instantiateGoals(   i,l,goalName) {
       delete GoalsByName[goalName]
     }
 }
-#function renderArgs(args,   s,k) { s = ""; for (k in args) s = s k "=>" args[k] " "; return s }
+function renderArgs(args,   s,k) { s = ""; for (k in args) s = s k "=>" args[k] " "; return s }
 #
 # args: { F => "file1" }
 #
@@ -652,9 +654,10 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
   for (i=0; i < DependenciesCnt[goal]; i++) {
     dep = Dependencies[goalI = goal SUBSEP i]
 
-    if ((argsCnt = DependencyArgsCnt[goalI]) != GoalParamsCnt[dep]) { addError("wrong args count", DependenciesLineNo[goalI]) }
+    if ((argsCnt = +DependencyArgsCnt[goalI]) != GoalParamsCnt[dep])
+      addError("wrong args count", DependenciesLineNo[goalI])
 
-    #    print "argsCnt " argsCnt
+#        print "dep=" dep ", argsCnt=" argsCnt
 
     for (j=0; j < argsCnt; j++) {
       depArg     = DependencyArgs    [goalI,j]
