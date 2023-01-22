@@ -18,6 +18,22 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_1.sh a
 | hello world
 |   goal 'a' [empty].
 
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_1_1.sh -l
+| Available goals:
+|   e
+|   f
+|   b@hello
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_1_1.sh -d e
+| Resolved goals to reach for 'e':
+|   b@hello
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_1_1.sh e
+|   goal 'b@hello' ...
+| hello world
+|   goal 'f' [empty].
+|   goal 'e' [empty].
+
 $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_2.sh -l
 | Available goals:
 |   a
@@ -127,3 +143,6 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_5_err1.sh a
 ? 1
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_5_err2.sh a
+@ wrong args count:
+@ tests/27_parameterized_goals_5_err2.sh:3: @depends_on b         # err missing args
+? 1

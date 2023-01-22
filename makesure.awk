@@ -117,7 +117,7 @@ function prepareArgs(   i,arg) {
     Options["timing"]
 }
 
-function dbgA(name, arr,   i) { print "--- " name ": "; for (i in arr) printf "%2s : %s\n", i, arr[i] }
+function dbgA(name, arr,   i,v) { print "--- " name ": "; for (i in arr) { v=arr[i];gsub(SUBSEP,",",i);printf "%6s : %s\n", i, v }}
 function dbgAO(name, arr,   i) { print "--- " name ": "; for (i=0;i in arr;i++) printf "%2s : %s\n", i, arr[i] }
 #function indent(ind) {
 #  printf "%" ind*2 "s", ""
@@ -417,11 +417,11 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     if (Error)
       die(Error)
 
-#    printDepsTree("a")
+      #    printDepsTree("a")
 
     topologicalSort(1,ArgGoals,resolvedGoals,reachedGoals) # now do topological sort including @reached_if to resolve goals to run
 
-#    printDepsTree("a")
+    #    printDepsTree("a")
 
     preludeCode = getPreludeCode()
 
@@ -618,7 +618,7 @@ function instantiateGoals(   i,l,goalName) {
   for (i = 0; i < l; i++)
     if (GoalParamsCnt[goalName = GoalNames[i]] == 0)
       instantiate(goalName)
-  # should not be possible to list or invoke (non-instantiated) parameterized goals, so let's remove them
+      # should not be possible to list or invoke (non-instantiated) parameterized goals, so let's remove them
   for (goalName in GoalsByName)
     if (GoalParamsCnt[goalName] > 0) {
       arrDel(GoalNames, goalName)
@@ -657,7 +657,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     if ((argsCnt = +DependencyArgsCnt[goalI]) != GoalParamsCnt[dep])
       addError("wrong args count", DependenciesLineNo[goalI])
 
-#        print "dep=" dep ", argsCnt=" argsCnt
+#    print "dep=" dep ", argsCnt=" argsCnt
 
     for (j=0; j < argsCnt; j++) {
       depArg     = DependencyArgs    [goalI,j]
@@ -673,8 +673,10 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
             die("wrong depArgType: " depArgType)
     }
 
+    # TODO g,i
     Dependencies[goalNameInstantiated,i] = instantiate(dep,newArgs)
     DependenciesLineNo[goalNameInstantiated,i] = DependenciesLineNo[goalI]
+    DependencyArgsCnt[goalNameInstantiated,i] = 0
   }
 
   return goalNameInstantiated
