@@ -142,17 +142,17 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_5_ok.sh a
 |   goal 'a' [empty].
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_5_err1.sh a
-@ wrong args count:
+@ wrong args count for 'b':
 @ tests/27_parameterized_goals_5_err1.sh:3: @depends_on b @args   # err missing args
 ? 1
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_5_err2.sh a
-@ wrong args count:
+@ wrong args count for 'b':
 @ tests/27_parameterized_goals_5_err2.sh:3: @depends_on b         # err missing args
 ? 1
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_5_err3.sh a
-@ wrong args count:
+@ wrong args count for 'b':
 @ tests/27_parameterized_goals_5_err3.sh:3: @depends_on b @args 'hello' 'hi' # err more args than params
 ? 1
 
@@ -162,3 +162,11 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_7_err1.sh a
 @ wrong arg 'ARG2':
 @ tests/27_parameterized_goals_7_err1.sh:8: @depends_on c @args ARG2          # err unknown arg
 ? 1
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_8_err1.sh a
+@ @args only allowed at position 3:
+@ tests/27_parameterized_goals_8_err1.sh:3: @depends_on c c @args 'hello'
+@ @args only allowed at position 3:
+@ tests/27_parameterized_goals_8_err1.sh:4: @depends_on @args 'hi'
+? 1
+

@@ -309,7 +309,10 @@ function registerDependsOn(goalName,   i,dep,x,y) {
   for (i=2; i<=NF; i++) {
     dep = $i
     if ("@args" == dep) {
-      if (i != 3) addError("@args only allowed at position 3") # TODO finalize error msg
+      if (i != 3) {
+        addError("@args only allowed at position 3")
+        break
+      }
       while (++i <= NF) {
         x = goalName SUBSEP (DependenciesCnt[goalName]-1)
         y = x SUBSEP DependencyArgsCnt[x]++
@@ -647,7 +650,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     dep = Dependencies[gi = goal SUBSEP i]
 
     if ((argsCnt = +DependencyArgsCnt[gi]) != GoalParamsCnt[dep])
-      addError("wrong args count", DependenciesLineNo[gi])
+      addError("wrong args count for '" dep "'", DependenciesLineNo[gi])
 
       #    print "dep=" dep ", argsCnt=" argsCnt
 
