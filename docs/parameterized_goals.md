@@ -92,18 +92,29 @@ On encounter `@depends_on` generate instantiated? But this needs to go in-depth.
 ## Parameterized goals vs existing features
 
 ### PG + @glob
-TODO
+
+Disallow
+
 ### PG + @private
-TODO
+
+Instantiated goals will be private
+
 ### PG + @lib
-TODO
+
+Should work as expected. PG vars should be accessible in lib code.
+
 ### PG + @reached_if
-TODO
+
+Should work as expected. PG vars should be accessible in `@reached_if` code.
+
 ### PG + @doc
-TODO
+
+Should work as expected. `@doc` should just copy to instantiated goals.
+
 
 # TODOS
 - [x] check loop
 - [x] -l in presence of loop hangs
 - [ ] check unknown parameterized dep call `@depends_on c @args S`
 - [ ] validate param name (regex)
+- [ ] all errors at once

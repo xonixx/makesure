@@ -1,4 +1,6 @@
 
+# TODO all errors at once
+
 @goal a
 @depends_on b                    # err missing args
 #@depends_on b @args              # err missing args

@@ -170,3 +170,24 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_8_err1.sh a
 @ tests/27_parameterized_goals_8_err1.sh:4: @depends_on @args 'hi'
 ? 1
 
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_9.sh -l
+| Available goals:
+|   a
+|   $'greet2@John@\'quoted\''
+|   greet@John
+|   $'greet@\'quoted\''
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_9.sh a
+|   goal 'greet@John' ...
+| hello John
+|   goal $'greet@\'quoted\'' ...
+| hello 'quoted'
+|   goal $'greet2@John@\'quoted\'' [empty].
+|   goal 'a' [empty].
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_9.sh 'greet2@John@'\''quoted'\'
+|   goal 'greet@John' ...
+| hello John
+|   goal $'greet@\'quoted\'' ...
+| hello 'quoted'
+|   goal $'greet2@John@\'quoted\'' [empty].
