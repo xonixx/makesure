@@ -95,3 +95,9 @@ On encounter `@depends_on` generate instantiated? But this needs to go in-depth.
 TODO
 ### PG + @private
 TODO
+### PG + @lib
+TODO
+### PG + @reached_if
+TODO
+### PG + @doc
+TODO

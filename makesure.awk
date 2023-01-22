@@ -616,9 +616,14 @@ function instantiateGoals(   i,l,goalName) {
   for (i = 0; i < l; i++)
     if (GoalParamsCnt[goalName = GoalNames[i]] == 0)
       instantiate(goalName)
+  # should not be possible to list or invoke (non-instantiated) parameterized goals, so let's remove them
+  for (goalName in GoalsByName)
+    if (GoalParamsCnt[goalName] > 0) {
+      arrDel(GoalNames, goalName)
+      delete GoalsByName[goalName]
+    }
 }
 #function renderArgs(args,   s,k) { s = ""; for (k in args) s = s k "=>" args[k] " "; return s }
-function copyKey(keySrc,keyDst,arr) { if (keySrc in arr) arr[keyDst] = arr[keySrc] }
 #
 # args: { F => "file1" }
 #
@@ -856,6 +861,15 @@ function addLine(target, line) { target[0] = addL(target[0], line) }
 function addL(s, l) { return s ? s "\n" l : l }
 function arrPush(arr, elt) { arr[arr[-7]++] = elt }
 function arrLen(arr) { return +arr[-7] }
+function arrDel(arr, v,   l,i,e,resArr) {
+  l = arrLen(arr)
+  for (i=0; i<l; i++)
+    if (v!=(e=arr[i]))
+      arrPush(resArr,e)
+  split("",arr)
+  for (i in resArr)
+    arr[i] = resArr[i]
+}
 function arrLast(arr,   l) { return (l = arrLen(arr))>0 ? arr[l-1] : "" }
 function commandExists(cmd) { return ok("command -v " cmd " >/dev/null") }
 function ok(cmd) { return system(cmd) == 0 }
@@ -863,3 +877,4 @@ function isFile(path) { return ok("test -f " quoteArg(path)) }
 function rm(f) { system("rm " quoteArg(f)) }
 function quoteArg(a) { gsub("'", "'\\''", a); return "'" a "'" }
 function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s }
+function copyKey(keySrc,keyDst,arr) { if (keySrc in arr) arr[keyDst] = arr[keySrc] }

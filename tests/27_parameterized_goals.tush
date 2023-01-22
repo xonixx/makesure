@@ -1,0 +1,22 @@
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_1.sh -l
+| Available goals:
+|   a
+|   b@hello
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_1.sh -la
+| Available goals:
+|   a
+|   b@hello
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_2.sh -l
+| Available goals:
+|   a
+|   b@hello
+|   c@hello
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_2.sh -la
+| Available goals:
+|   a
+|   b@hello
+|   c@hello
