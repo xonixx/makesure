@@ -413,15 +413,12 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
     topologicalSort(0,GoalNames) # first do topological sort disregarding @reached_if to catch loops
 
+    # we need to instantiate _after_ loops detection, because instantiation is recursive and will hang in presence of loop
     instantiateGoals()
     if (Error)
       die(Error)
 
-      #    printDepsTree("a")
-
     topologicalSort(1,ArgGoals,resolvedGoals,reachedGoals) # now do topological sort including @reached_if to resolve goals to run
-
-    #    printDepsTree("a")
 
     preludeCode = getPreludeCode()
 
@@ -629,10 +626,8 @@ function renderArgs(args,   s,k) { s = ""; for (k in args) s = s k "=>" args[k] 
 #
 # args: { F => "file1" }
 #
-function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,goalI) { # -> goalNameInstantiated
+function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,gi,gii) { # -> goalNameInstantiated
 #  print ">instantiating " goal " { " renderArgs(args) "} ..."
-
-  if (!(goal in GoalsByName)) { die("unknown goal: " goal) }
 
   goalNameInstantiated = instantiateGoalName(goal, args)
 
@@ -652,16 +647,16 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
   }
 
   for (i=0; i < DependenciesCnt[goal]; i++) {
-    dep = Dependencies[goalI = goal SUBSEP i]
+    dep = Dependencies[gi = goal SUBSEP i]
 
-    if ((argsCnt = +DependencyArgsCnt[goalI]) != GoalParamsCnt[dep])
-      addError("wrong args count", DependenciesLineNo[goalI])
+    if ((argsCnt = +DependencyArgsCnt[gi]) != GoalParamsCnt[dep])
+      addError("wrong args count", DependenciesLineNo[gi])
 
 #    print "dep=" dep ", argsCnt=" argsCnt
 
     for (j=0; j < argsCnt; j++) {
-      depArg     = DependencyArgs    [goalI,j]
-      depArgType = DependencyArgsType[goalI,j]
+      depArg     = DependencyArgs    [gi,j]
+      depArgType = DependencyArgsType[gi,j]
 
       #      print "@ " depArg " " depArgType
 
@@ -669,14 +664,13 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
         depArgType == "str" ? \
           depArg : \
           depArgType == "var" ? \
-            (depArg in args ? args[depArg] : addError("wrong arg " depArg, DependenciesLineNo[goalI])) : \
+            (depArg in args ? args[depArg] : addError("wrong arg " depArg, DependenciesLineNo[gi])) : \
             die("wrong depArgType: " depArgType)
     }
 
-    # TODO g,i
-    Dependencies[goalNameInstantiated,i] = instantiate(dep,newArgs)
-    DependenciesLineNo[goalNameInstantiated,i] = DependenciesLineNo[goalI]
-    DependencyArgsCnt[goalNameInstantiated,i] = 0
+    Dependencies[gii = goalNameInstantiated SUBSEP i] = instantiate(dep,newArgs)
+    DependenciesLineNo[gii] = DependenciesLineNo[gi]
+    DependencyArgsCnt[gii] = 0
   }
 
   return goalNameInstantiated
