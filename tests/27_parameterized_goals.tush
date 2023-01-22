@@ -146,3 +146,8 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_5_err2.sh a
 @ wrong args count:
 @ tests/27_parameterized_goals_5_err2.sh:3: @depends_on b         # err missing args
 ? 1
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_5_err3.sh a
+@ wrong args count:
+@ tests/27_parameterized_goals_5_err3.sh:3: @depends_on b @args 'hello' 'hi' # err more args than params
+? 1
