@@ -627,7 +627,7 @@ function instantiateGoals(   i,l,goalName) {
 #
 # args: { F => "file1" }
 #
-function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt) { # -> goalNameInstantiated
+function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,goalI) { # -> goalNameInstantiated
 #  print ">instantiating " goal " { " renderArgs(args) "} ..."
 
   if (!(goal in GoalsByName)) { die("unknown goal: " goal) }
@@ -650,16 +650,15 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
   }
 
   for (i=0; i < DependenciesCnt[goal]; i++) {
-    # TODO goal,i to var
-    dep = Dependencies[goal,i]
+    dep = Dependencies[goalI = goal SUBSEP i]
 
-    if ((argsCnt = DependencyArgsCnt[goal,i]) != GoalParamsCnt[dep]) { addError("wrong args count", DependenciesLineNo[goal,i]) }
+    if ((argsCnt = DependencyArgsCnt[goalI]) != GoalParamsCnt[dep]) { addError("wrong args count", DependenciesLineNo[goalI]) }
 
     #    print "argsCnt " argsCnt
 
     for (j=0; j < argsCnt; j++) {
-      depArg     = DependencyArgs    [goal,i,j]
-      depArgType = DependencyArgsType[goal,i,j]
+      depArg     = DependencyArgs    [goalI,j]
+      depArgType = DependencyArgsType[goalI,j]
 
       #      print "@ " depArg " " depArgType
 
@@ -667,12 +666,12 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
         depArgType == "str" ? \
           depArg : \
           depArgType == "var" ? \
-            (depArg in args ? args[depArg] : addError("wrong arg " depArg, DependenciesLineNo[goal,i])) : \
+            (depArg in args ? args[depArg] : addError("wrong arg " depArg, DependenciesLineNo[goalI])) : \
             die("wrong depArgType: " depArgType)
     }
 
     Dependencies[goalNameInstantiated,i] = instantiate(dep,newArgs)
-    DependenciesLineNo[goalNameInstantiated,i] = DependenciesLineNo[goal,i]
+    DependenciesLineNo[goalNameInstantiated,i] = DependenciesLineNo[goalI]
   }
 
   return goalNameInstantiated
