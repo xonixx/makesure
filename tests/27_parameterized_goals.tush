@@ -9,6 +9,15 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_1.sh -la
 |   a
 |   b@hello
 
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_1.sh -d a
+| Resolved goals to reach for 'a':
+|   b@hello
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_1.sh a
+|   goal 'b@hello' ...
+| hello world
+|   goal 'a' [empty].
+
 $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_2.sh -l
 | Available goals:
 |   a
@@ -20,3 +29,30 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_2.sh -la
 |   a
 |   b@hello
 |   c@hello
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_2.sh -d a
+| Resolved goals to reach for 'a':
+|   c@hello
+|   b@hello
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_2.sh -d b@hello
+| Resolved goals to reach for 'b@hello':
+|   c@hello
+|   b@hello
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_2.sh a
+|   goal 'c@hello' ...
+| hello world from c
+|   goal 'b@hello' ...
+| hello world from b
+|   goal 'a' [empty].
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_2.sh b@hello
+|   goal 'c@hello' ...
+| hello world from c
+|   goal 'b@hello' ...
+| hello world from b
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_2.sh c@hello
+|   goal 'c@hello' ...
+| hello world from c
