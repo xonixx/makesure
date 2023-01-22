@@ -115,3 +115,15 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_err_1_loop.sh a
 $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_err_2_loop.sh a
 @ There is a loop in goal dependencies via b -> c
 ? 1
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_5_ok.sh a
+|   goal 'b@' ...
+|  world from b
+|   goal 'a' [empty].
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_5_err1.sh a
+@ must be at least one argument:
+@ tests/27_parameterized_goals_5_err1.sh:3: @depends_on b @args   # err missing args
+? 1
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_5_err2.sh a
