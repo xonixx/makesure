@@ -641,7 +641,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     copyKey(goal,goalNameInstantiated,DependenciesCnt)
     copyKey(goal,goalNameInstantiated,CodePre)
     for (i in args) {
-      CodePre[goalNameInstantiated] = addL(CodePre[goalNameInstantiated], i "=" args[i])
+      CodePre[goalNameInstantiated] = addL(CodePre[goalNameInstantiated], i "=" quoteArg(args[i]))
     }
     copyKey(goal,goalNameInstantiated,Code)
     copyKey(goal,goalNameInstantiated,Doc)

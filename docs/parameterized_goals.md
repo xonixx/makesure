@@ -104,3 +104,4 @@ TODO
 
 # TODOS
 - [ ] check unknown parameterized dep call `@depends_on c @args S`
+- [ ] validate param name (regex)

@@ -74,3 +74,36 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_3.sh e
 | hello world
 |   goal 'f' [empty].
 |   goal 'e' [empty].
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_4.sh -l
+| Available goals:
+|   a
+|   e
+|   f
+|   b@hello
+|   b@hi
+|   'b@hi hi hi'
+|   b@salut
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_4.sh a
+|   goal 'b@hello' ...
+| hello world
+|   goal 'b@hi' ...
+| hi world
+|   goal 'b@hi hi hi' ...
+| hi hi hi world
+|   goal 'b@salut' ...
+| salut world
+|   goal 'a' [empty].
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_4.sh 'b@hi hi hi'
+|   goal 'b@hi hi hi' ...
+| hi hi hi world
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_4.sh e
+|   goal 'b@hello' ...
+| hello world
+|   goal 'b@hi' ...
+| hi world
+|   goal 'f' [empty].
+|   goal 'e' [empty].
