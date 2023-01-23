@@ -116,5 +116,12 @@ Should work as expected. `@doc` should just copy to instantiated goals.
 - [x] check loop
 - [x] -l in presence of loop hangs
 - [x] check unknown parameterized dep call `@depends_on c @args S`
-- [ ] validate param name (regex)
 - [x] all errors at once
+- [ ] TODOS
+- [ ] validate param name (regex)
+- [ ] handle + test w/ `@private`
+- [ ] test w/ `@lib`
+- [ ] test w/ `@doc`
+- [ ] handle + test w/ `@reached_if`
+- [ ] test w/ `@glob` (should be covered by `@params` at pos 3 check)
+- [ ] README.md
