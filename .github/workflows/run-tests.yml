@@ -71,8 +71,12 @@ jobs:
 
       - name: "run tests"
         run: |
-          brew install gawk # TODO understand if this step can be cached
-          ./makesure
+          # we use 5.1.1 since 5.2 warns on time module (https://github.com/xonixx/makesure/issues/118)
+          # TODO understand if this step can be cached
+          brew install gawk@5.1.1
+          
+          PATH="/usr/local/opt/gawk/libexec/gnubin:$PATH" \
+            ./makesure
           
   win:
     name: "Run tests Win"
