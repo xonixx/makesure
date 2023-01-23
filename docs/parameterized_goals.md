@@ -115,6 +115,6 @@ Should work as expected. `@doc` should just copy to instantiated goals.
 # TODOS
 - [x] check loop
 - [x] -l in presence of loop hangs
-- [ ] check unknown parameterized dep call `@depends_on c @args S`
+- [x] check unknown parameterized dep call `@depends_on c @args S`
 - [ ] validate param name (regex)
-- [ ] all errors at once
+- [x] all errors at once

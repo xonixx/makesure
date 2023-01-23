@@ -676,7 +676,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     DependencyArgsCnt[gii] = 0
   }
 
-  IDepth--
+#  IDepth--
   return goalNameInstantiated
 }
 function instantiateGoalName(goal, args,   res,cnt,i){
