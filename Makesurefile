@@ -207,6 +207,10 @@ in_begin && $1 ~ /^split/ { next }
 @depends_on installed_gawk521
   MAKESURE_AWKLIBPATH="$(pwd)/soft/gawk521_libs" AWK="$(pwd)/soft/gawk521" ./makesure tested
 
+@goal tested_gawk52 @private
+@depends_on installed_gawk52
+  MAKESURE_AWKLIBPATH="$(pwd)/soft/gawk52_libs" AWK="$(pwd)/soft/gawk52" ./makesure tested
+
 @goal tested_goawk @private
 @depends_on installed_goawk
   AWK="$(pwd)/soft/$GOAWK" ./makesure tested
@@ -325,6 +329,12 @@ in_begin && $1 ~ /^split/ { next }
 @depends_on soft_folder_created
 @use_lib gawk
   install_gawk 5.2.1 gawk521
+
+@goal installed_gawk52 @private
+@reached_if [[ -f soft/gawk52 ]]
+@depends_on soft_folder_created
+@use_lib gawk
+  install_gawk 5.2-stable gawk52
 
 @goal installed_mawk134 @private
 @reached_if [[ -f soft/mawk134 ]]
