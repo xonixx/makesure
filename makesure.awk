@@ -379,11 +379,11 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
   checkBeforeRun()
 
-  dbgA("GoalParamsCnt",GoalParamsCnt)
-  dbgA("GoalParams",GoalParams)
-  dbgA("DependencyArgsCnt",DependencyArgsCnt)
-  dbgA("DependencyArgs",DependencyArgs)
-  dbgA("DependencyArgsType",DependencyArgsType)
+#  dbgA("GoalParamsCnt",GoalParamsCnt)
+#  dbgA("GoalParams",GoalParams)
+#  dbgA("DependencyArgsCnt",DependencyArgsCnt)
+#  dbgA("DependencyArgs",DependencyArgs)
+#  dbgA("DependencyArgsType",DependencyArgsType)
 
   # First do topological sort disregarding @reached_if to catch loops.
   # We need to do it before instantiate, because instantiation is recursive and will hang in presence of loop.
@@ -505,6 +505,7 @@ function realExit(code) {
   exit code
 }
 function addError(err, n) { if (!n) n=NR; Error=addL(Error, err ":\n" ARGV[1] ":" n ": " Lines[n]) }
+function addErrorDedup(err, n) { if ((err,n) in AddedErrors) return; AddedErrors[err,n]; addError(err,n) }
 function die(msg,    out) {
   out = "cat 1>&2" # trick to write from awk to stderr
   print msg | out
@@ -627,7 +628,7 @@ function renderArgs(args,   s,k) { s = ""; for (k in args) s = s k "=>" args[k] 
 # args: { F => "file1" }
 #
 function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,gi,gii) { # -> goalNameInstantiated
-  indent(IDepth++); print "instantiating " goal " { " renderArgs(args) "} ..."
+#  indent(IDepth++); print "instantiating " goal " { " renderArgs(args) "} ..."
 
   goalNameInstantiated = instantiateGoalName(goal, args)
 
@@ -650,24 +651,23 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     dep = Dependencies[gi = goal SUBSEP i]
     argsCnt = +DependencyArgsCnt[gi]
 
-    # we should not report wrong args count for unknown deps
+    # we do not report wrong args count for unknown deps
     if (dep in GoalsByName && argsCnt != GoalParamsCnt[dep])
-      addError("wrong args count for '" dep "'", DependenciesLineNo[gi])
-      #    dbgA("DependencyArgsCnt",DependencyArgsCnt)
+      addErrorDedup("wrong args count for '" dep "'", DependenciesLineNo[gi])
 
-    indent(IDepth); print ">dep=" dep ", argsCnt[" gi "]=" argsCnt
+#    indent(IDepth); print ">dep=" dep ", argsCnt[" gi "]=" argsCnt
 
     for (j=0; j < argsCnt; j++) {
       depArg     = DependencyArgs    [gi,j]
       depArgType = DependencyArgsType[gi,j]
 
-      indent(IDepth); print ">>@ " depArg " " depArgType
+#      indent(IDepth); print ">>@ " depArg " " depArgType
 
       newArgs[GoalParams[dep,j]] = \
         depArgType == "str" ? \
           depArg : \
           depArgType == "var" ? \
-            (depArg in args ? args[depArg] : addError("wrong arg '" depArg "'", DependenciesLineNo[gi])) : \
+            (depArg in args ? args[depArg] : addErrorDedup("wrong arg '" depArg "'", DependenciesLineNo[gi])) : \
             die("wrong depArgType: " depArgType)
     }
 

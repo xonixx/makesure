@@ -191,3 +191,29 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_9.sh 'greet2@John@'\'
 |   goal $'greet@\'quoted\'' ...
 | hello 'quoted'
 |   goal $'greet2@John@\'quoted\'' [empty].
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_10_errors.sh -l
+@ Goal 'a' has unknown dependency 'unknown1':
+@ tests/27_parameterized_goals_10_errors.sh:10: @depends_on unknown1             # err unknown dep
+@ Goal 'a' has unknown dependency 'unknown2':
+@ tests/27_parameterized_goals_10_errors.sh:11: @depends_on unknown2 @args 'arg2' # err unknown dep
+@ wrong args count for 'b':
+@ tests/27_parameterized_goals_10_errors.sh:5: @depends_on b                    # err missing args
+@ wrong args count for 'e':
+@ tests/27_parameterized_goals_10_errors.sh:19: @depends_on e @args WRONG3 WRONG4 # multiple errors
+@ wrong arg 'WRONG3':
+@ tests/27_parameterized_goals_10_errors.sh:19: @depends_on e @args WRONG3 WRONG4 # multiple errors
+@ wrong arg 'WRONG4':
+@ tests/27_parameterized_goals_10_errors.sh:19: @depends_on e @args WRONG3 WRONG4 # multiple errors
+@ wrong arg 'WRONG2':
+@ tests/27_parameterized_goals_10_errors.sh:15: @depends_on c @args WRONG2       # err unknown arg
+@ wrong args count for 'b':
+@ tests/27_parameterized_goals_10_errors.sh:6: @depends_on b @args              # err missing args
+@ wrong args count for 'b':
+@ tests/27_parameterized_goals_10_errors.sh:7: @depends_on b @args 'hello' 'hi' # err more args than params
+@ wrong arg 'WRONG1':
+@ tests/27_parameterized_goals_10_errors.sh:8: @depends_on b @args WRONG1       # err unknown arg
+@ wrong args count for 'e':
+@ tests/27_parameterized_goals_10_errors.sh:9: @depends_on e @args 'arg1'       # err args for non-PG
+? 1
+
