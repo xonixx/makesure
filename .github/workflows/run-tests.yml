@@ -71,8 +71,11 @@ jobs:
 
       - name: "run tests"
         run: |
-          brew install gawk # TODO understand if this step can be cached
-          ./makesure
+          # TODO understand if this step can be cached
+          brew install gawk
+          
+          PATH="/usr/local/opt/gawk/libexec/gnubin:$PATH" \
+            ./makesure
           
   win:
     name: "Run tests Win"
