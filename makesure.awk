@@ -119,9 +119,9 @@ function prepareArgs(   i,arg) {
 
 function dbgA(name, arr,   i,v) { print "--- " name ": "; for (i in arr) { v=arr[i];gsub(SUBSEP,",",i);printf "%6s : %s\n", i, v }}
 function dbgAO(name, arr,   i) { print "--- " name ": "; for (i=0;i in arr;i++) printf "%2s : %s\n", i, arr[i] }
-#function indent(ind) {
-#  printf "%" ind*2 "s", ""
-#}
+function indent(ind) {
+  printf "%" ind*2 "s", ""
+}
 #function printDepsTree(goal,ind,   i) {
 #  if (!(goal in GoalsByName)) { die("unknown goal: " goal) }
 #  indent(ind)
@@ -379,11 +379,11 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
   checkBeforeRun()
 
-  #  dbgA("GoalParamsCnt",GoalParamsCnt)
-  #  dbgA("GoalParams",GoalParams)
-  #  dbgA("DependencyArgsCnt",DependencyArgsCnt)
-  #  dbgA("DependencyArgs",DependencyArgs)
-  #  dbgA("DependencyArgsType",DependencyArgsType)
+  dbgA("GoalParamsCnt",GoalParamsCnt)
+  dbgA("GoalParams",GoalParams)
+  dbgA("DependencyArgsCnt",DependencyArgsCnt)
+  dbgA("DependencyArgs",DependencyArgs)
+  dbgA("DependencyArgsType",DependencyArgsType)
 
   # First do topological sort disregarding @reached_if to catch loops.
   # We need to do it before instantiate, because instantiation is recursive and will hang in presence of loop.
@@ -627,7 +627,7 @@ function renderArgs(args,   s,k) { s = ""; for (k in args) s = s k "=>" args[k] 
 # args: { F => "file1" }
 #
 function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,gi,gii) { # -> goalNameInstantiated
-  #  print ">instantiating " goal " { " renderArgs(args) "} ..."
+  indent(IDepth++); print ">instantiating " goal " { " renderArgs(args) "} ..."
 
   goalNameInstantiated = instantiateGoalName(goal, args)
 
@@ -649,16 +649,17 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
   for (i=0; i < DependenciesCnt[goal]; i++) {
     dep = Dependencies[gi = goal SUBSEP i]
 
-    if ((argsCnt = +DependencyArgsCnt[gi]) != GoalParamsCnt[dep])
-      addError("wrong args count for '" dep "'", DependenciesLineNo[gi])
+    # we should not report wrong args count for unknown deps
+    if ((dep in GoalsByName) && (argsCnt = +DependencyArgsCnt[gi]) != GoalParamsCnt[dep])
+      addError("wrong args count for '" dep "'" " " (dep in GoalsByName), DependenciesLineNo[gi])
 
-      #    print "dep=" dep ", argsCnt=" argsCnt
+    indent(IDepth); print ">dep=" dep ", argsCnt=" argsCnt
 
     for (j=0; j < argsCnt; j++) {
       depArg     = DependencyArgs    [gi,j]
       depArgType = DependencyArgsType[gi,j]
 
-      #      print "@ " depArg " " depArgType
+      indent(IDepth); print ">>@ " depArg " " depArgType
 
       newArgs[GoalParams[dep,j]] = \
         depArgType == "str" ? \
@@ -673,6 +674,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     DependencyArgsCnt[gii] = 0
   }
 
+  IDepth--
   return goalNameInstantiated
 }
 function instantiateGoalName(goal, args,   res,cnt,i){
