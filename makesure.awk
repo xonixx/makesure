@@ -627,7 +627,7 @@ function renderArgs(args,   s,k) { s = ""; for (k in args) s = s k "=>" args[k] 
 # args: { F => "file1" }
 #
 function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,gi,gii) { # -> goalNameInstantiated
-  indent(IDepth++); print ">instantiating " goal " { " renderArgs(args) "} ..."
+  indent(IDepth++); print "instantiating " goal " { " renderArgs(args) "} ..."
 
   goalNameInstantiated = instantiateGoalName(goal, args)
 
@@ -648,12 +648,14 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
 
   for (i=0; i < DependenciesCnt[goal]; i++) {
     dep = Dependencies[gi = goal SUBSEP i]
+    argsCnt = +DependencyArgsCnt[gi]
 
     # we should not report wrong args count for unknown deps
-    if ((dep in GoalsByName) && (argsCnt = +DependencyArgsCnt[gi]) != GoalParamsCnt[dep])
-      addError("wrong args count for '" dep "'" " " (dep in GoalsByName), DependenciesLineNo[gi])
+    if (dep in GoalsByName && argsCnt != GoalParamsCnt[dep])
+      addError("wrong args count for '" dep "'", DependenciesLineNo[gi])
+      #    dbgA("DependencyArgsCnt",DependencyArgsCnt)
 
-    indent(IDepth); print ">dep=" dep ", argsCnt=" argsCnt
+    indent(IDepth); print ">dep=" dep ", argsCnt[" gi "]=" argsCnt
 
     for (j=0; j < argsCnt; j++) {
       depArg     = DependencyArgs    [gi,j]
