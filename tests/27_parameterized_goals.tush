@@ -217,3 +217,10 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_10_errors.sh -l
 @ tests/27_parameterized_goals_10_errors.sh:9: @depends_on e @args 'arg1'       # err args for non-PG
 ? 1
 
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_11_reached_if.sh a
+|   goal 'b@hi' ...
+| W is hi
+|   goal 'b@hello' [already satisfied].
+|   goal 'b@salut' ...
+| W is salut
+|   goal 'a' [empty].

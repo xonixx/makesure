@@ -627,7 +627,7 @@ function renderArgs(args,   s,k) { s = ""; for (k in args) s = s k "=>" args[k] 
 #
 # args: { F => "file1" }
 #
-function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,gi,gii) { # -> goalNameInstantiated
+function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,gi,gii,argsCode) { # -> goalNameInstantiated
 #  indent(IDepth++); print "instantiating " goal " { " renderArgs(args) "} ..."
 
   goalNameInstantiated = instantiateGoalName(goal, args)
@@ -638,13 +638,17 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     copyKey(goal,goalNameInstantiated,GoalsByName)
     copyKey(goal,goalNameInstantiated,DependenciesCnt)
     copyKey(goal,goalNameInstantiated,CodePre)
-    for (i in args) {
-      CodePre[goalNameInstantiated] = addL(CodePre[goalNameInstantiated], i "=" quoteArg(args[i]))
-    }
     copyKey(goal,goalNameInstantiated,Code)
     copyKey(goal,goalNameInstantiated,Doc)
     copyKey(goal,goalNameInstantiated,ReachedIf)
     copyKey(goal,goalNameInstantiated,GoalToLib)
+
+    for (i in args)
+      argsCode = addL(argsCode, i "=" quoteArg(args[i]))
+
+    CodePre[goalNameInstantiated] = addL(CodePre[goalNameInstantiated], argsCode)
+    if (goalNameInstantiated in ReachedIf)
+      ReachedIf[goalNameInstantiated] = argsCode "\n" ReachedIf[goalNameInstantiated]
   }
 
   for (i=0; i < DependenciesCnt[goal]; i++) {

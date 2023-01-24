@@ -122,6 +122,6 @@ Should work as expected. `@doc` should just copy to instantiated goals.
 - [ ] handle + test w/ `@private`
 - [ ] test w/ `@lib`
 - [ ] test w/ `@doc`
-- [ ] handle + test w/ `@reached_if`
+- [x] handle + test w/ `@reached_if`
 - [ ] test w/ `@glob` (should be covered by `@params` at pos 3 check)
 - [ ] README.md
