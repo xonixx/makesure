@@ -217,22 +217,26 @@ function registerUseLib(goalName) {
   UseLibLineNo[goalName] = NR
 }
 
-function handleGoal() {
+function handleGoal(   i,goalName) {
   started("goal")
-  registerGoal($2, isPriv())
+  if (registerGoal(isPriv(), goalName=$2))
+    if ("@params" == $3) {
+      if (3 == NF) addError("missing parameters")
+      for (i=4; i <= NF; i++)
+        GoalParams[goalName,GoalParamsCnt[goalName]++] = $i
+    } else if (NF > 2) addError("nothing allowed after goal name")
 }
 
-function registerGoal(goalName, priv,   i) {
-  if (goalName == "")
+function registerGoal(priv, goalName,   i) { # -> 1 if no errors, otherwise 0
+  if ("" == goalName || "@params" == goalName)
     addError("Goal must have a name")
-  if (goalName in GoalsByName)
+  else if (goalName in GoalsByName)
     addError("Goal " quote2(goalName,1) " is already defined")
-  arrPush(GoalNames, goalName)
-  GoalsByName[goalName] = priv
-  if ("@params" == $3)
-    for (i=4; i <= NF-priv; i++) # a bit "hacky", but this means that when "@private" == $NF, need to iter till i <= (NF-1)
-      GoalParams[goalName,GoalParamsCnt[goalName]++] = $i
-      # TODO error if @params on other position
+  else {
+    arrPush(GoalNames, goalName)
+    GoalsByName[goalName] = priv
+    return 1
+  }
 }
 
 function globGoal(i) { return (GlobGoalName ? GlobGoalName "@" : "") GlobFiles[i] }
@@ -251,7 +255,7 @@ function calcGlob(goalName, pattern,   script, file) {
   quicksort(GlobFiles,0,arrLen(GlobFiles)-1)
 }
 
-function isPriv() { return "@private" == $NF }
+function isPriv() { if ("@private" != $NF) return 0; NF--; return 1 }
 
 function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern) {
   started("goal_glob")
@@ -264,9 +268,9 @@ function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern) {
   globAllGoal = goalName ? goalName : pattern
   globSingle = GlobCnt == 1 && globAllGoal == globGoal(0)
   for (i=0; i < GlobCnt; i++)
-    registerGoal(globGoal(i), globSingle ? priv : 1)
+    registerGoal(globSingle ? priv : 1, globGoal(i))
   if (!globSingle) { # glob on single file
-    registerGoal(globAllGoal, priv)
+    registerGoal(priv, globAllGoal)
     for (i=0; i < GlobCnt; i++)
       registerDependency(globAllGoal, globGoal(i))
   }
@@ -379,11 +383,11 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
   checkBeforeRun()
 
-#  dbgA("GoalParamsCnt",GoalParamsCnt)
-#  dbgA("GoalParams",GoalParams)
-#  dbgA("DependencyArgsCnt",DependencyArgsCnt)
-#  dbgA("DependencyArgs",DependencyArgs)
-#  dbgA("DependencyArgsType",DependencyArgsType)
+  #  dbgA("GoalParamsCnt",GoalParamsCnt)
+  #  dbgA("GoalParams",GoalParams)
+  #  dbgA("DependencyArgsCnt",DependencyArgsCnt)
+  #  dbgA("DependencyArgs",DependencyArgs)
+  #  dbgA("DependencyArgsType",DependencyArgsType)
 
   # First do topological sort disregarding @reached_if to catch loops.
   # We need to do it before instantiate, because instantiation is recursive and will hang in presence of loop.
@@ -628,7 +632,7 @@ function renderArgs(args,   s,k) { s = ""; for (k in args) s = s k "=>" args[k] 
 # args: { F => "file1" }
 #
 function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,gi,gii,argsCode) { # -> goalNameInstantiated
-#  indent(IDepth++); print "instantiating " goal " { " renderArgs(args) "} ..."
+  #  indent(IDepth++); print "instantiating " goal " { " renderArgs(args) "} ..."
 
   goalNameInstantiated = instantiateGoalName(goal, args)
 
@@ -659,13 +663,13 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     if (dep in GoalsByName && argsCnt != GoalParamsCnt[dep])
       addErrorDedup("wrong args count for '" dep "'", DependenciesLineNo[gi])
 
-#    indent(IDepth); print ">dep=" dep ", argsCnt[" gi "]=" argsCnt
+      #    indent(IDepth); print ">dep=" dep ", argsCnt[" gi "]=" argsCnt
 
     for (j=0; j < argsCnt; j++) {
       depArg     = DependencyArgs    [gi,j]
       depArgType = DependencyArgsType[gi,j]
 
-#      indent(IDepth); print ">>@ " depArg " " depArgType
+      #      indent(IDepth); print ">>@ " depArg " " depArgType
 
       newArgs[GoalParams[dep,j]] = \
         depArgType == "str" ? \
@@ -680,7 +684,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     DependencyArgsCnt[gii] = 0
   }
 
-#  IDepth--
+  #  IDepth--
   return goalNameInstantiated
 }
 function instantiateGoalName(goal, args,   res,cnt,i){
