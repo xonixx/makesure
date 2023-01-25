@@ -230,8 +230,8 @@ function registerGoal(goalName, priv,   i) {
   arrPush(GoalNames, goalName)
   GoalsByName[goalName] = priv
   if ("@params" == $3)
-    for (i=4; i <= NF; i++)
-      GoalParams[goalName,GoalParamsCnt[goalName]++] = $i # TODO $NF=="@private"?
+    for (i=4; i <= NF-priv; i++) # a bit "hacky", but this means that when "@private" == $NF, need to iter till i <= (NF-1)
+      GoalParams[goalName,GoalParamsCnt[goalName]++] = $i
       # TODO error if @params on other position
 }
 
@@ -251,7 +251,7 @@ function calcGlob(goalName, pattern,   script, file) {
   quicksort(GlobFiles,0,arrLen(GlobFiles)-1)
 }
 
-function isPriv() { if ("@private" != $NF) return 0; NF--; return 1 }
+function isPriv() { return "@private" == $NF }
 
 function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern) {
   started("goal_glob")
