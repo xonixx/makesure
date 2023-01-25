@@ -192,6 +192,20 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_9.sh 'greet2@John@'\'
 |   goal $'greet2@John@\'quoted\'' [empty].
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_10_errors.sh -l
+@ missing parameters:
+@ tests/27_parameterized_goals_10_errors.sh:25: @goal f @params                   # zero params is invalid
+@ missing parameters:
+@ tests/27_parameterized_goals_10_errors.sh:28: @goal f1 @params @private         # zero params is invalid
+@ Goal must have a name:
+@ tests/27_parameterized_goals_10_errors.sh:31: @goal @params A                   # goal without name
+@ Goal must have a name:
+@ tests/27_parameterized_goals_10_errors.sh:34: @goal @params                     # goal without name and zero params
+@ Goal must have a name:
+@ tests/27_parameterized_goals_10_errors.sh:37: @goal @params @private            # goal without name and zero params
+@ Goal must have a name:
+@ tests/27_parameterized_goals_10_errors.sh:40: @goal @params @glob '*.txt'       # goal without name
+@ nothing allowed after goal name:
+@ tests/27_parameterized_goals_10_errors.sh:43: @goal a7 b7 c7 @params D          # wrong goal name / @params in wrong pos
 @ Goal 'a' has unknown dependency 'unknown1':
 @ tests/27_parameterized_goals_10_errors.sh:10: @depends_on unknown1             # err unknown dep
 @ Goal 'a' has unknown dependency 'unknown2':

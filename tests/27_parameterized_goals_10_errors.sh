@@ -21,3 +21,25 @@
 
 @goal e
   echo "e"
+
+@goal f @params                   # zero params is invalid
+  echo "f"
+
+@goal f1 @params @private         # zero params is invalid
+  echo "f1"
+
+@goal @params A                   # goal without name
+  echo "$A"
+
+@goal @params                     # goal without name and zero params
+  echo ""
+
+@goal @params @private            # goal without name and zero params
+  echo ""
+
+@goal @params @glob '*.txt'       # goal without name
+  echo ""
+
+@goal a7 b7 c7 @params D          # wrong goal name / @params in wrong pos
+  echo ""
+
