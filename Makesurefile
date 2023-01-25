@@ -193,7 +193,7 @@ in_begin && $1 ~ /^split/ { next }
 
 @goal tested_mawk133 @private
 @depends_on installed_mawk133
-  AWK="$(pwd)/soft/mawk133" ./makesure_dev tested
+  AWK="$(pwd)/soft/mawk133" ./makesure tested
 
 @goal tested_mawk134 @private
 @depends_on installed_mawk134
