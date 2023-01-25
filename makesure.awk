@@ -219,7 +219,7 @@ function registerUseLib(goalName) {
 
 function handleGoal(   i,goalName) {
   started("goal")
-  if (registerGoal(isPriv(), goalName=$2))
+  if (registerGoal(parsePriv(), goalName=$2))
     if ("@params" == $3) {
       if (3 == NF) addError("missing parameters")
       for (i=4; i <= NF; i++)
@@ -255,14 +255,18 @@ function calcGlob(goalName, pattern,   script, file) {
   quicksort(GlobFiles,0,arrLen(GlobFiles)-1)
 }
 
-function isPriv() { if ("@private" != $NF) return 0; NF--; return 1 }
+function parsePriv() { if ("@private" != $NF) return 0; NF--; return 1 }
 
-function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern) {
+function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax) {
   started("goal_glob")
-  priv = isPriv()
-  goalName = $2; pattern = $4
-  if ("@glob" == goalName) {
-    goalName = ""; pattern = $3
+  priv = parsePriv()
+  if ("@glob" == goalName = $2) {
+    goalName = ""; pattern = $(nfMax=3)
+  } else
+    pattern = $(nfMax=4)
+  if (NF > nfMax) {
+    addError("nothing allowed after glob pattern")
+    return
   }
   calcGlob(goalName, pattern)
   globAllGoal = goalName ? goalName : pattern
