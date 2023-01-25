@@ -36,14 +36,14 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_1_1.sh e
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_2.sh -l
 | Available goals:
-|   a
-|   c@hello
+|   a       : doc a
+|   c@hello : doc c
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_2.sh -la
 | Available goals:
-|   a
-|   b@hello
-|   c@hello
+|   a       : doc a
+|   b@hello : doc b
+|   c@hello : doc c
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_2.sh -d a
 | Resolved goals to reach for 'a':
