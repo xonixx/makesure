@@ -120,7 +120,7 @@ Should work as expected. `@doc` should just copy to instantiated goals.
 - [ ] TODOS
 - [ ] validate param name (regex)
 - [x] handle + test w/ `@private`
-- [ ] test w/ `@lib`
+- [x] test w/ `@lib`
 - [x] test w/ `@doc`
 - [x] handle + test w/ `@reached_if`
 - [ ] test w/ `@glob` (should be covered by `@params` at pos 3 check)

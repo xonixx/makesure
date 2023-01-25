@@ -223,3 +223,10 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_11_reached_if.sh a
 |   goal 'b@salut' ...
 | W is salut
 |   goal 'a' [empty].
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_12_lib.sh a
+|   goal 'b@hi' ...
+| in lib W=hi
+|   goal 'b@hello' ...
+| in lib W=hello
+|   goal 'a' [empty].
