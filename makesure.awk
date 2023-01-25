@@ -251,7 +251,7 @@ function calcGlob(goalName, pattern,   script, file) {
   quicksort(GlobFiles,0,arrLen(GlobFiles)-1)
 }
 
-function isPriv() { return "@private" == $NF }
+function isPriv() { if ("@private" != $NF) return 0; NF--; return 1 }
 
 function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern) {
   started("goal_glob")

@@ -119,7 +119,7 @@ Should work as expected. `@doc` should just copy to instantiated goals.
 - [x] all errors at once
 - [ ] TODOS
 - [ ] validate param name (regex)
-- [ ] handle + test w/ `@private`
+- [x] handle + test w/ `@private`
 - [ ] test w/ `@lib`
 - [ ] test w/ `@doc`
 - [x] handle + test w/ `@reached_if`

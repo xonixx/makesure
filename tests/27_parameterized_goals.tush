@@ -37,7 +37,6 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_1_1.sh e
 $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_2.sh -l
 | Available goals:
 |   a
-|   b@hello
 |   c@hello
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_2.sh -la
