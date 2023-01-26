@@ -1,2 +1,3 @@
-@goal @private
-  echo 'private goal without name'
+
+
+@goal @glob '*.txt' # but comment is OK

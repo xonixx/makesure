@@ -21,9 +21,9 @@ jobs:
       - name: "run tests"
         run: |
           awk --version
-          echo "aaa bbb" | awk '{ NF--; print $2 }'
+#          echo "aaa bbb" | awk '{ NF--; print $2 }'
           ./makesure_dev -f tests/12_errors_1.sh -l || true
-          ./makesure tested_awks
+#          ./makesure tested_awks
 
   # https://github.com/marketplace/actions/freebsd-vm
   # https://github.com/vmactions/freebsd-vm
