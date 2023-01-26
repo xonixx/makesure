@@ -41,10 +41,10 @@ BEGIN {
   makesure()
 }
 
-function makesure() {
+function makesure(   i) {
   while (getline > 0) {
-    $1=$1
-    if ($1 ~ /^@/ && "@define" != $1 && "@reached_if" != $1) reparseCli();  #print NF
+#    print ">>"$0", NF="NF", $1="$1
+    if ($1 ~ /^@/ && "@define" != $1 && "@reached_if" != $1) reparseCli()
     if ("@options" == $1) handleOptions()
     else if ("@define" == $1) handleDefine()
     else if ("@shell" == $1) handleShell()
@@ -56,6 +56,8 @@ function makesure() {
     else if ("@use_lib" == $1) handleUseLib()
     else if ($1 ~ /^@/) addError("Unknown directive: " $1)
     else handleCodeLine($0)
+#    $0="" #; NF=0
+#    for (i=1;i<10;i++) $i=""
   }
   doWork()
   realExit(0)
@@ -259,7 +261,7 @@ function calcGlob(goalName, pattern,   script, file) {
 function parsePriv() { if ("@private" != $NF) return 0; $NF=""; NF--; return 1 }
 
 function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax) {
-  print "handleGoalGlob, NR=" NR ", NF="NF": '" $0 "', $1=" $1 ", $2=" $2
+#  print "handleGoalGlob, NR=" NR ", NF="NF": '" $0 "', $1=" $1 ", $2=" $2", $3=" $3
   started("goal_glob")
   priv = parsePriv()
   if ("@glob" == (goalName = $2)) {
@@ -860,7 +862,7 @@ function reparseCli(   res,i,err) {
     addError("Syntax error: " err)
     die(Error)
   } else
-    $0=""
+#    $0=""
     for (i=NF=0; i in res; i++) {
       $(++NF)=res[i]
       Quotes[NF]=res[i,"quote"]
