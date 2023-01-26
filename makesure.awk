@@ -41,7 +41,7 @@ BEGIN {
   makesure()
 }
 
-function makesure() {
+function makesure(   i) {
   while (getline > 0) {
     Lines[NR]=$0
     if ($1 ~ /^@/ && "@define" != $1 && "@reached_if" != $1) reparseCli()
@@ -56,6 +56,7 @@ function makesure() {
     else if ("@use_lib" == $1) handleUseLib()
     else if ($1 ~ /^@/) addError("Unknown directive: " $1)
     else handleCodeLine($0)
+    for (i=1;i<10;i++) $i=""
   }
   doWork()
   realExit(0)
@@ -857,11 +858,13 @@ function reparseCli(   res,i,err) {
   if (err) {
     addError("Syntax error: " err)
     die(Error)
-  } else
+  } else {
+    $0=""
     for (i=NF=0; i in res; i++) {
       $(++NF)=res[i]
       Quotes[NF]=res[i,"quote"]
     }
+  }
 }
 function quote2(s,force) {
   if (index(s,"'")) {
