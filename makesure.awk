@@ -260,7 +260,7 @@ function calcGlob(goalName, pattern,   script, file) {
 function parsePriv() { if ("@private" != $NF) return 0; $NF=""; NF--; return 1 }
 
 function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax) {
-  print "handleGoalGlob, NR=" NR ", NF="NF": " $0
+  print "handleGoalGlob, NR=" NR ", NF="NF": '" $0 "', $1=" $1 ", $2=" $2
   started("goal_glob")
   priv = parsePriv()
   if ("@glob" == (goalName = $2)) {
