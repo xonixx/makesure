@@ -228,7 +228,7 @@ function handleGoal(   i,goalName) {
 }
 
 function registerGoal(priv, goalName) { # -> 1 if no errors, otherwise 0
-  print "priv="priv", goalName="goalName
+#  print "priv="priv", goalName="goalName
   if ("" == goalName || "@params" == goalName)
     addError("Goal must have a name")
   else if (goalName in GoalsByName)
@@ -256,7 +256,7 @@ function calcGlob(goalName, pattern,   script, file) {
   quicksort(GlobFiles,0,arrLen(GlobFiles)-1)
 }
 
-function parsePriv() { if ("@private" != $NF) return 0; NF--; return 1 }
+function parsePriv() { if ("@private" != $NF) return 0; $NF=""; NF--; return 1 }
 
 function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax) {
   started("goal_glob")
