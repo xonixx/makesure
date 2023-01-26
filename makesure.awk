@@ -260,23 +260,25 @@ function parsePriv() { if ("@private" != $NF) return 0; NF--; return 1 }
 function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax) {
   started("goal_glob")
   priv = parsePriv()
-  if ("@glob" == goalName = $2) {
+  if ("@glob" == (goalName = $2)) {
     goalName = ""; pattern = $(nfMax=3)
   } else
     pattern = $(nfMax=4)
-  if (NF > nfMax) {
+  if (NF > nfMax)
     addError("nothing allowed after glob pattern")
-    return
-  }
-  calcGlob(goalName, pattern)
-  globAllGoal = goalName ? goalName : pattern
-  globSingle = GlobCnt == 1 && globAllGoal == globGoal(0)
-  for (i=0; i < GlobCnt; i++)
-    registerGoal(globSingle ? priv : 1, globGoal(i))
-  if (!globSingle) { # glob on single file
-    registerGoal(priv, globAllGoal)
+  else if (pattern=="")
+    addError("absent glob pattern")
+  else {
+    calcGlob(goalName, pattern)
+    globAllGoal = goalName ? goalName : pattern
+    globSingle = GlobCnt == 1 && globAllGoal == globGoal(0)
     for (i=0; i < GlobCnt; i++)
-      registerDependency(globAllGoal, globGoal(i))
+      registerGoal(globSingle ? priv : 1, globGoal(i))
+    if (!globSingle) { # glob on single file
+      registerGoal(priv, globAllGoal)
+      for (i=0; i < GlobCnt; i++)
+        registerDependency(globAllGoal, globGoal(i))
+    }
   }
 }
 
