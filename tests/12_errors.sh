@@ -46,7 +46,7 @@ echo 'more code in prelude'
 @lib lib2
 
 @goal @private
-  echo 'private goal without name'
+  echo 'private goal without name' #
 
 @goal g15 should not have anything after goal name
 @goal g16 # but comment is OK
