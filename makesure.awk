@@ -227,7 +227,7 @@ function handleGoal(   i,goalName) {
     } else if (NF > 2) addError("nothing allowed after goal name")
 }
 
-function registerGoal(priv, goalName,   i) { # -> 1 if no errors, otherwise 0
+function registerGoal(priv, goalName) { # -> 1 if no errors, otherwise 0
   if ("" == goalName || "@params" == goalName)
     addError("Goal must have a name")
   else if (goalName in GoalsByName)
@@ -395,7 +395,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
   # First do topological sort disregarding @reached_if to catch loops.
   # We need to do it before instantiate, because instantiation is recursive and will hang in presence of loop.
-  topologicalSort(0,GoalNames)
+  if (arrLen(GoalNames)) topologicalSort(0,GoalNames)
 
   instantiateGoals()
 
