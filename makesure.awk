@@ -44,6 +44,7 @@ BEGIN {
 function makesure(   i) {
   while (getline > 0) {
 #    print ">>"$0", NF="NF", $1="$1
+    Lines[NR]=$0
     if ($1 ~ /^@/ && "@define" != $1 && "@reached_if" != $1) reparseCli()
     if ("@options" == $1) handleOptions()
     else if ("@define" == $1) handleDefine()
@@ -57,7 +58,7 @@ function makesure(   i) {
     else if ($1 ~ /^@/) addError("Unknown directive: " $1)
     else handleCodeLine($0)
 #    $0="" #; NF=0
-#    for (i=1;i<10;i++) $i=""
+    for (i=1;i<10;i++) $i=""
   }
   doWork()
   realExit(0)
@@ -862,7 +863,7 @@ function reparseCli(   res,i,err) {
     addError("Syntax error: " err)
     die(Error)
   } else
-#    $0=""
+    $0=""
     for (i=NF=0; i in res; i++) {
       $(++NF)=res[i]
       Quotes[NF]=res[i,"quote"]
