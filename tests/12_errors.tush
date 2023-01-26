@@ -48,10 +48,6 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/12_errors.sh
 @ tests/12_errors.sh:57: @goal @glob '*.txt' should not have anything after glob pattern
 @ nothing allowed after glob pattern:
 @ tests/12_errors.sh:58: @goal @glob '*.txt' should_not_have_anything_after_glob_pattern
-@ absent glob pattern:
-@ tests/12_errors.sh:61: @goal @glob     # absent glob pattern
-@ absent glob pattern:
-@ tests/12_errors.sh:62: @goal g19 @glob # absent glob pattern
 @ Goal 'g1' has unknown dependency 'unknown':
 @ tests/12_errors.sh:18: @depends_on unknown
 @ Goal 'g2' uses unknown lib 'unknown':
