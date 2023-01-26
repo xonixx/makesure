@@ -56,7 +56,7 @@ function makesure(   i) {
     else if ("@use_lib" == $1) handleUseLib()
     else if ($1 ~ /^@/) addError("Unknown directive: " $1)
     else handleCodeLine($0)
-    for (i=1;i<10;i++) $i=""
+    for (i=1;i<10;i++) $i="" # only for macos 10.15 awk version 20070501
   }
   doWork()
   realExit(0)
@@ -256,7 +256,11 @@ function calcGlob(goalName, pattern,   script, file) {
   quicksort(GlobFiles,0,arrLen(GlobFiles)-1)
 }
 
-function parsePriv() { if ("@private" != $NF) return 0; $NF=""; NF--; return 1 }
+function parsePriv() {
+  if ("@private" != $NF) return 0
+  $NF="" # only for macos 10.15 awk version 20070501
+  NF--
+  return 1 }
 
 function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax) {
   started("goal_glob")
@@ -859,7 +863,7 @@ function reparseCli(   res,i,err) {
     addError("Syntax error: " err)
     die(Error)
   } else {
-    $0=""
+    $0="" # only for macos 10.15 awk version 20070501
     for (i=NF=0; i in res; i++) {
       $(++NF)=res[i]
       Quotes[NF]=res[i,"quote"]
