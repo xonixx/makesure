@@ -20,6 +20,7 @@ jobs:
 
       - name: "run tests"
         run: |
+          echo "aaa bbb" | awk '{ NF--; print $2 }'
           ./makesure_dev -f tests/12_errors_1.sh -l || true
 #          ./makesure tested_awks
 
