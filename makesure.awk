@@ -43,8 +43,8 @@ BEGIN {
 
 function makesure() {
   while (getline > 0) {
-    Lines[NR]=$0
-    if ($1 ~ /^@/ && "@define" != $1 && "@reached_if" != $1) reparseCli()
+    $1=$1
+    if ($1 ~ /^@/ && "@define" != $1 && "@reached_if" != $1) reparseCli();  #print NF
     if ("@options" == $1) handleOptions()
     else if ("@define" == $1) handleDefine()
     else if ("@shell" == $1) handleShell()
