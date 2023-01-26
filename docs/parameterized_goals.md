@@ -117,7 +117,7 @@ Should work as expected. `@doc` should just copy to instantiated goals.
 - [x] -l in presence of loop hangs
 - [x] check unknown parameterized dep call `@depends_on c @args S`
 - [x] all errors at once
-- [ ] TODOS
+- [x] TODOS
 - [ ] validate param name (regex)
 - [x] handle + test w/ `@private`
 - [x] test w/ `@lib`

@@ -117,11 +117,11 @@ function prepareArgs(   i,arg) {
     Options["timing"]
 }
 
-function dbgA(name, arr,   i,v) { print "--- " name ": "; for (i in arr) { v=arr[i];gsub(SUBSEP,",",i);printf "%6s : %s\n", i, v }}
-function dbgAO(name, arr,   i) { print "--- " name ": "; for (i=0;i in arr;i++) printf "%2s : %s\n", i, arr[i] }
-function indent(ind) {
-  printf "%" ind*2 "s", ""
-}
+#function dbgA(name, arr,   i,v) { print "--- " name ": "; for (i in arr) { v=arr[i];gsub(SUBSEP,",",i);printf "%6s : %s\n", i, v }}
+#function dbgAO(name, arr,   i) { print "--- " name ": "; for (i=0;i in arr;i++) printf "%2s : %s\n", i, arr[i] }
+#function indent(ind) {
+#  printf "%" ind*2 "s", ""
+#}
 #function printDepsTree(goal,ind,   i) {
 #  if (!(goal in GoalsByName)) { die("unknown goal: " goal) }
 #  indent(ind)
@@ -361,12 +361,9 @@ function registerReachedIf(goalName, preScript) {
   ReachedIf[goalName] = preScript trim($0)
 }
 
-function checkBeforeRun(   i,j,dep,depCnt,goalName,visited) {
+function checkBeforeRun(   i,j,dep,depCnt,goalName) {
   for (i = 0; i in GoalNames; i++) {
-    goalName = GoalNames[i]
-    if (visited[goalName]++)
-      continue
-    depCnt = DependenciesCnt[goalName]
+    depCnt = DependenciesCnt[goalName = GoalNames[i]]
     for (j=0; j < depCnt; j++)
       if (!((dep = Dependencies[goalName, j]) in GoalsByName))
         addError("Goal " quote2(goalName,1) " has unknown dependency '" dep "'", DependenciesLineNo[goalName, j])
@@ -633,7 +630,7 @@ function instantiateGoals(   i,l,goalName) {
       delete GoalsByName[goalName]
     }
 }
-function renderArgs(args,   s,k) { s = ""; for (k in args) s = s k "=>" args[k] " "; return s }
+#function renderArgs(args,   s,k) { s = ""; for (k in args) s = s k "=>" args[k] " "; return s }
 #
 # args: { F => "file1" }
 #
