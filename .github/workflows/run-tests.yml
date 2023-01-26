@@ -21,8 +21,8 @@ jobs:
       - name: "run tests"
         run: |
           awk --version | head -n 1
-#          ./makesure_dev -f tests/12_errors_1.sh -l || true
           ./makesure tested_awks
+#          ./makesure_dev -f tests/12_errors_1.sh -l || true
 
   # https://github.com/marketplace/actions/freebsd-vm
   # https://github.com/vmactions/freebsd-vm
