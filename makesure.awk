@@ -859,6 +859,7 @@ function reparseCli(   res,i,err) {
     addError("Syntax error: " err)
     die(Error)
   } else
+    $0=""
     for (i=NF=0; i in res; i++) {
       $(++NF)=res[i]
       Quotes[NF]=res[i,"quote"]
