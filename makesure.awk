@@ -228,6 +228,7 @@ function handleGoal(   i,goalName) {
 }
 
 function registerGoal(priv, goalName) { # -> 1 if no errors, otherwise 0
+  print "priv="priv", goalName="goalName
   if ("" == goalName || "@params" == goalName)
     addError("Goal must have a name")
   else if (goalName in GoalsByName)
