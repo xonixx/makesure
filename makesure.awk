@@ -692,7 +692,8 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
             die("wrong depArgType: " depArgType)
     }
 
-    Dependencies[gii = goalNameInstantiated SUBSEP i] = instantiate(dep,newArgs)
+    gii = goalNameInstantiated SUBSEP i
+    Dependencies[gii] = instantiate(dep,newArgs)
     DependenciesLineNo[gii] = DependenciesLineNo[gi]
     DependencyArgsCnt[gii] = 0
   }
