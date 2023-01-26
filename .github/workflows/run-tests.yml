@@ -20,7 +20,7 @@ jobs:
 
       - name: "run tests"
         run: |
-          awk --version
+          awk --version | head -n 1
           ./makesure_dev -f tests/12_errors_1.sh -l || true
 #          ./makesure tested_awks
 
