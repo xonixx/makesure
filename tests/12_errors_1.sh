@@ -11,7 +11,7 @@
 #
 
 @goal @glob     # absent glob pattern
-
+@goal zzz
 
 
 
