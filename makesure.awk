@@ -224,8 +224,13 @@ function handleGoal(   i,goalName) {
     if ("@params" == $3) {
       if (3 == NF) addError("missing parameters")
       for (i=4; i <= NF; i++)
-        GoalParams[goalName,GoalParamsCnt[goalName]++] = $i
+        GoalParams[goalName,GoalParamsCnt[goalName]++] = validateParamName($i)
     } else if (NF > 2) addError("nothing allowed after goal name")
+}
+
+function validateParamName(p) {
+  if (p !~ /^[A-Z_][A-Z0-9_]*$/) addError("@param name should match /^[A-Z_][A-Z0-9_]*$/: '" p "'")
+  return p
 }
 
 function registerGoal(priv, goalName) { # -> 1 if no errors, otherwise 0

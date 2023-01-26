@@ -206,6 +206,16 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/27_parameterized_goals_10_errors.sh -l
 @ tests/27_parameterized_goals_10_errors.sh:40: @goal @params @glob '*.txt'       # goal without name
 @ nothing allowed after goal name:
 @ tests/27_parameterized_goals_10_errors.sh:43: @goal a7 b7 c7 @params D          # wrong goal name / @params in wrong pos
+@ @param name should match /^[A-Z_][A-Z0-9_]*$/: 'a':
+@ tests/27_parameterized_goals_10_errors.sh:46: @goal g  @params a hello 1A A-B _A %& # wrong param names
+@ @param name should match /^[A-Z_][A-Z0-9_]*$/: 'hello':
+@ tests/27_parameterized_goals_10_errors.sh:46: @goal g  @params a hello 1A A-B _A %& # wrong param names
+@ @param name should match /^[A-Z_][A-Z0-9_]*$/: '1A':
+@ tests/27_parameterized_goals_10_errors.sh:46: @goal g  @params a hello 1A A-B _A %& # wrong param names
+@ @param name should match /^[A-Z_][A-Z0-9_]*$/: 'A-B':
+@ tests/27_parameterized_goals_10_errors.sh:46: @goal g  @params a hello 1A A-B _A %& # wrong param names
+@ @param name should match /^[A-Z_][A-Z0-9_]*$/: '%&':
+@ tests/27_parameterized_goals_10_errors.sh:46: @goal g  @params a hello 1A A-B _A %& # wrong param names
 @ Goal 'a' has unknown dependency 'unknown1':
 @ tests/27_parameterized_goals_10_errors.sh:10: @depends_on unknown1             # err unknown dep
 @ Goal 'a' has unknown dependency 'unknown2':

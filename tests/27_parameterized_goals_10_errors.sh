@@ -43,3 +43,5 @@
 @goal a7 b7 c7 @params D          # wrong goal name / @params in wrong pos
   echo ""
 
+@goal g  @params a hello 1A A-B _A %& # wrong param names
+@goal g1 @params GOOD _GOOD_ GOOD_123 GOOD123 _1 _ ___
