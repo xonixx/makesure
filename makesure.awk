@@ -5,34 +5,34 @@ BEGIN {
   SupportedOptions["tracing"]
   SupportedOptions["silent"]
   SupportedOptions["timing"]
-  split("",Lines)# line no. -> line
-  split("",Args) # parsed CLI args
-  split("",ArgGoals) # invoked goals
-  split("",Options)
-  split("",GoalNames)   # list
-  split("",GoalsByName) # name -> private
-  split("",GoalParamsCnt) # name -> params cnt
-  split("",GoalParams)    # name,paramI -> param name
-  split("",CodePre)     # name -> pre-body (should also go before lib)
-  split("",Code)        # name -> body
-  split("",DefineOverrides) # k -> ""
+  delete Lines# line no. -> line
+  delete Args # parsed CLI args
+  delete ArgGoals # invoked goals
+  delete Options
+  delete GoalNames     # list
+  delete GoalsByName   # name -> private
+  delete GoalParamsCnt # name -> params cnt
+  delete GoalParams    # name,paramI -> param name
+  delete CodePre       # name -> pre-body (should also go before lib)
+  delete Code          # name -> body
+  delete DefineOverrides # k -> ""
   DefinesCode=""
-  split("",Dependencies)       # name,i -> dep goal
-  split("",DependenciesLineNo) # name,i -> line no.
-  split("",DependenciesCnt)    # name   -> dep cnt
-  split("",DependencyArgsCnt)  # name,i -> args cnt
-  split("",DependencyArgs)     # name,depI,argI -> val
-  split("",DependencyArgsType) # name,depI,argI -> str|var
-  split("",Doc)       # name -> doc str
-  split("",ReachedIf) # name -> condition line
+  delete Dependencies       # name,i -> dep goal
+  delete DependenciesLineNo # name,i -> line no.
+  delete DependenciesCnt    # name   -> dep cnt
+  delete DependencyArgsCnt  # name,i -> args cnt
+  delete DependencyArgs     # name,depI,argI -> val
+  delete DependencyArgsType # name,depI,argI -> str|var
+  delete Doc       # name -> doc str
+  delete ReachedIf # name -> condition line
   GlobCnt = 0         # count of files for glob
   GlobGoalName = ""
-  split("",GlobFiles) # list
-  split("",LibNames) # list
-  split("",Lib)      # name -> code
-  split("",UseLibLineNo)# name -> line no.
-  split("",GoalToLib)# goal name -> lib name
-  split("",Quotes)   # NF -> quote of field ("'"|"$"|"")
+  delete GlobFiles # list
+  delete LibNames  # list
+  delete Lib       # name -> code
+  delete UseLibLineNo# name -> line no.
+  delete GoalToLib # goal name -> lib name
+  delete Quotes    # NF -> quote of field ("'"|"$"|"")
   Mode = "prelude" # prelude|define|goal|goal_glob|lib
   srand()
   prepareArgs()
@@ -249,7 +249,7 @@ function globGoal(i) { return (GlobGoalName ? GlobGoalName "@" : "") GlobFiles[i
 function calcGlob(goalName, pattern,   script, file) {
   GlobCnt = 0
   GlobGoalName = goalName
-  split("",GlobFiles)
+  delete GlobFiles
   script = MyDirScript ";for f in " pattern ";do test -e \"$f\"&&echo \"$f\"||:;done"
   if ("sh" != Shell)
     script = Shell " -c " quoteArg(script)
@@ -590,9 +590,9 @@ function addCodeLineToGoal(name, line) {
 }
 
 function topologicalSortReset() {
-  split("",Visited)
-  split("",Slist)
-  split("",Scnt)
+  delete Visited
+  delete Slist
+  delete Scnt
 }
 function topologicalSortAddConnection(from, to) {
   # Slist - list of successors by node
@@ -893,7 +893,7 @@ function arrDel(arr, v,   l,i,e,resArr) {
   for (i=0; i<l; i++)
     if (v!=(e=arr[i]))
       arrPush(resArr,e)
-  split("",arr)
+  delete arr
   for (i in resArr)
     arr[i] = resArr[i]
 }
