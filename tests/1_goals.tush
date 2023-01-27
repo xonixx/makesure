@@ -76,3 +76,6 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/1_goals_multi_reached_if.sh
 @ Multiple @reached_if not allowed for a goal:
 @ tests/1_goals_multi_reached_if.sh:4: @reached_if false
 ? 1
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/1_empty.sh -l
+| Available goals:

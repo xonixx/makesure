@@ -189,38 +189,42 @@ in_begin && $1 ~ /^split/ { next }
 
 @goal tested_bwk @private
 @depends_on installed_bwk
-  AWK="$(pwd)/soft/bwk" ./makesure_dev tested
+  AWK="$(pwd)/soft/bwk" ./makesure tested
 
 @goal tested_mawk133 @private
 @depends_on installed_mawk133
-  AWK="$(pwd)/soft/mawk133" ./makesure_dev tested
+  AWK="$(pwd)/soft/mawk133" ./makesure tested
 
 @goal tested_mawk134 @private
 @depends_on installed_mawk134
-  AWK="$(pwd)/soft/mawk134" ./makesure_dev tested
+  AWK="$(pwd)/soft/mawk134" ./makesure tested
 
 @goal tested_gawk51 @private
 @depends_on installed_gawk51
-  AWKLIBPATH="$(pwd)/soft/gawk51_libs" AWK="$(pwd)/soft/gawk51" ./makesure_dev tested
+  MAKESURE_AWKLIBPATH="$(pwd)/soft/gawk51_libs" AWK="$(pwd)/soft/gawk51" ./makesure tested
 
 @goal tested_gawk511 @private
 @depends_on installed_gawk511
-  AWKLIBPATH="$(pwd)/soft/gawk511_libs" AWK="$(pwd)/soft/gawk511" ./makesure_dev tested
+  MAKESURE_AWKLIBPATH="$(pwd)/soft/gawk511_libs" AWK="$(pwd)/soft/gawk511" ./makesure tested
 
 @goal tested_gawk521 @private
 @depends_on installed_gawk521
-  AWKLIBPATH="$(pwd)/soft/gawk521_libs" AWK="$(pwd)/soft/gawk521" ./makesure_dev tested
+  MAKESURE_AWKLIBPATH="$(pwd)/soft/gawk521_libs" AWK="$(pwd)/soft/gawk521" ./makesure tested
+
+@goal tested_gawk52 @private
+@depends_on installed_gawk52
+  MAKESURE_AWKLIBPATH="$(pwd)/soft/gawk52_libs" AWK="$(pwd)/soft/gawk52" ./makesure tested
 
 @goal tested_goawk @private
 @depends_on installed_goawk
-  AWK="$(pwd)/soft/$GOAWK" ./makesure_dev tested
+  AWK="$(pwd)/soft/$GOAWK" ./makesure tested
 
 @goal tested_goawk_branch @private
 @depends_on installed_goawk_branch
-  AWK="$(pwd)/soft/$GOAWK_BRANCH_EXE" ./makesure_dev tested
+  AWK="$(pwd)/soft/$GOAWK_BRANCH_EXE" ./makesure tested
 
 #@goal tested_busybox
-#  AWK="busybox awk" ./makesure_dev tested
+#  AWK="busybox awk" ./makesure tested
 
 @goal installed_awks
 @doc installs all awks into ./soft
@@ -354,6 +358,12 @@ in_begin && $1 ~ /^split/ { next }
 @depends_on soft_folder_created
 @use_lib gawk
   install_gawk 5.2.1 gawk521
+
+@goal installed_gawk52 @private
+@reached_if [[ -f soft/gawk52 ]]
+@depends_on soft_folder_created
+@use_lib gawk
+  install_gawk 5.2-stable gawk52
 
 @goal installed_mawk133 @private
 @reached_if [[ -f soft/mawk133 ]]
