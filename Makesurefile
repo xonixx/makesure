@@ -523,4 +523,3 @@ do
       print gensub(/#([0-9]+)/,"[\\0](https://github.com/xonixx/makesure/issues/\\1)", "g")
     }'
 done
-  
