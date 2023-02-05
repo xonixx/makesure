@@ -227,6 +227,7 @@ in_begin && $1 ~ /^split/ { next }
   AWK="$(pwd)/soft/$GOAWK_BRANCH_EXE" ./makesure tested
 
 @goal tested_busybox
+@reached_if [[ "$OSTYPE" != "linux-gnu"* ]] # only test busybox awk on linux
 @depends_on installed_busybox
   AWK="$(pwd)/soft/busybox awk" ./makesure tested
 
