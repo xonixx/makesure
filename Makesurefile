@@ -56,6 +56,8 @@
   AWK="${AWK:-awk}"
   printf "%s: " "$AWK"
   case "$AWK" in
+    *busybox*) $AWK --help 2>&1 | head -n 1
+            ;;
     *mawk*) "$AWK" -W version 2>&1 | head -n 1
             ;;
          *) "$AWK" --version | head -n 1
