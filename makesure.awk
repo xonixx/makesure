@@ -320,7 +320,7 @@ function registerDependsOn(goalName,   i,dep,x,y) {
         break
       }
       while (++i <= NF) {
-        x = goalName SUBSEP (DependenciesCnt[goalName]-1)
+        x = goalName SUBSEP DependenciesCnt[goalName]-1
         y = x SUBSEP DependencyArgsCnt[x]++
         DependencyArgs[y] = $i
         DependencyArgsType[y] = Quotes[i] ? "str" : "var"
