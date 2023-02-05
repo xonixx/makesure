@@ -21,13 +21,13 @@
     rm "$D/$MAKESURE"_1
   fi
 
-  for cmd in awk mktemp rm cp dirname cat chmod busybox
+  for cmd in awk mktemp rm cp dirname cat chmod
   do
     if [[ $cmd == 'awk' && $AWK != 'awk' ]]
     then
       cmd1=$AWK
     else
-      cmd1=`command -v $cmd`
+      cmd1=$(command -v $cmd)
     fi
     {
       echo "#!/bin/sh"
