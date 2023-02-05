@@ -223,8 +223,8 @@ in_begin && $1 ~ /^split/ { next }
 @depends_on installed_goawk_branch
   AWK="$(pwd)/soft/$GOAWK_BRANCH_EXE" ./makesure tested
 
-#@goal tested_busybox
-#  AWK="busybox awk" ./makesure tested
+@goal tested_busybox
+  AWK="busybox awk" ./makesure tested
 
 @goal installed_awks
 @doc installs all awks into ./soft
