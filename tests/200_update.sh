@@ -21,7 +21,7 @@
     rm "$D/$MAKESURE"_1
   fi
 
-  for cmd in awk mktemp rm cp dirname cat chmod
+  for cmd in awk mktemp rm cp dirname cat chmod busybox
   do
     if [[ $cmd == 'awk' && $AWK != 'awk' ]]
     then
