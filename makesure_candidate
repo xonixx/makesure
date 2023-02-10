@@ -185,7 +185,7 @@ function registerGoal(priv,goalName){
     return 1
   }
 }
-function globGoal(i){return (GlobGoalName?GlobGoalName "@":"")GlobFiles[i] }
+function globGoal(i){return (GlobGoalName?GlobGoalName "@":"")GlobFiles[i]}
 function calcGlob(goalName,pattern,script,file){
   GlobCnt=0
   GlobGoalName=goalName
@@ -204,7 +204,7 @@ function parsePriv(){
   if("@private"!=$NF)return 0
   $NF=""
   NF--
-  return 1 }
+  return 1}
 function handleGoalGlob(goalName,globAllGoal,globSingle,priv,i,pattern,nfMax){
   started("goal_glob")
   priv=parsePriv()
@@ -405,8 +405,8 @@ function topologicalSort(includeReachedIf,requestedGoals,result,reachedGoals,i,j
   if(loop[0]==1)
     die("There is a loop in goal dependencies via " loop[1] " -> " loop[2])
 }
-function isCodeAllowed(){return "goal"==Mode||"goal_glob"==Mode||"lib"==Mode }
-function isPrelude(){return "prelude"==Mode }
+function isCodeAllowed(){return "goal"==Mode||"goal_glob"==Mode||"lib"==Mode}
+function isPrelude(){return "prelude"==Mode}
 function checkPreludeOnly(){if(!isPrelude())addError("Only use " $1 " in prelude")}
 function checkGoalOnly(){if("goal"!=Mode&&"goal_glob"!=Mode)addError("Only use " $1 " in @goal")}
 function currentGoalName(){return arrLast(GoalNames)}
@@ -547,7 +547,7 @@ function instantiate(goal,args,newArgs,i,j,depArg,depArgType,dep,goalNameInstant
   return goalNameInstantiated
 }
 function instantiateGoalName(goal,args,res,cnt,i){
-  if((cnt=GoalParamsCnt[goal])==0){return goal }
+  if((cnt=GoalParamsCnt[goal])==0)return goal
   res=goal
   for(i=0;i<cnt;i++){
     res=res "@" args[GoalParams[goal,i]]
@@ -628,8 +628,8 @@ function dl(url,dest,verbose){
 }
 function natOrder(s1,s2,i1,i2,c1,c2,n1,n2){
   if(_digit(c1=substr(s1,i1,1))&&_digit(c2=substr(s2,i2,1))){
-    n1=+c1;while(_digit(c1=substr(s1,++i1,1))){n1=n1*10+c1 }
-    n2=+c2;while(_digit(c2=substr(s2,++i2,1))){n2=n2*10+c2 }
+    n1=+c1;while(_digit(c1=substr(s1,++i1,1))){n1=n1*10+c1}
+    n2=+c2;while(_digit(c2=substr(s2,++i2,1))){n2=n2*10+c2}
     return n1==n2?natOrder(s1,s2,i1,i2):_cmp(n1,n2)
   }
   while((c1=substr(s1,i1,1))==(c2=substr(s2,i2,1))&&c1!=""&&!_digit(c1)){
@@ -637,8 +637,8 @@ function natOrder(s1,s2,i1,i2,c1,c2,n1,n2){
   }
   return _digit(c1)&&_digit(c2)?natOrder(s1,s2,i1,i2):_cmp(c1,c2)
 }
-function _cmp(v1,v2){return v1>v2?1:v1<v2?-1:0 }
-function _digit(c){return c>="0"&&c<="9" }
+function _cmp(v1,v2){return v1>v2?1:v1<v2?-1:0}
+function _digit(c){return c>="0"&&c<="9"}
 function quicksort(data,left,right,i,last){
   if(left>=right)
     return
@@ -710,9 +710,9 @@ function quote2(s,force){
     return force||s~/[^a-zA-Z0-9.,@_\/=+-]/?"'\''" s "'\''":s
 }
 function addLine(target,line){target[0]=addL(target[0],line)}
-function addL(s,l){return s?s "\n" l:l }
-function arrPush(arr,elt){arr[arr[-7]++]=elt }
-function arrLen(arr){return +arr[-7] }
+function addL(s,l){return s?s "\n" l:l}
+function arrPush(arr,elt){arr[arr[-7]++]=elt}
+function arrLen(arr){return +arr[-7]}
 function arrDel(arr,v,l,i,e,resArr){
   l=arrLen(arr)
   for(i=0;i<l;i++)
@@ -722,12 +722,12 @@ function arrDel(arr,v,l,i,e,resArr){
   for(i in resArr)
     arr[i]=resArr[i]
 }
-function arrLast(arr,l){return (l=arrLen(arr))>0?arr[l-1]:"" }
+function arrLast(arr,l){return (l=arrLen(arr))>0?arr[l-1]:""}
 function commandExists(cmd){return ok("command -v " cmd " >/dev/null")}
-function ok(cmd){return system(cmd)==0 }
+function ok(cmd){return system(cmd)==0}
 function isFile(path){return ok("test -f " quoteArg(path))}
 function rm(f){system("rm " quoteArg(f))}
-function quoteArg(a){gsub("'\''","'\''\\'\'''\''",a);return "'\''" a "'\''" }
-function trim(s){sub(/^[ \t\r\n]+/,"",s);sub(/[ \t\r\n]+$/,"",s);return s }
-function copyKey(keySrc,keyDst,arr){if(keySrc in arr)arr[keyDst]=arr[keySrc] }
+function quoteArg(a){gsub("'\''","'\''\\'\'''\''",a);return "'\''" a "'\''"}
+function trim(s){sub(/^[ \t\r\n]+/,"",s);sub(/[ \t\r\n]+$/,"",s);return s}
+function copyKey(keySrc,keyDst,arr){if(keySrc in arr)arr[keyDst]=arr[keySrc]}
 ' Makesurefile "$@"
