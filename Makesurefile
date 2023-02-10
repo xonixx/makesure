@@ -120,7 +120,7 @@
   MAKESURE=makesure_candidate \
     run_tush_file "$ITEM"
 
-@goal tested_cov
+@goal coverage
 @doc 'prepares code coverage report'
   COVERPROFILE="/tmp/cov.txt"
 
@@ -226,7 +226,7 @@ in_begin && $1 ~ /^delete/{ next }
 @depends_on installed_goawk_branch
   AWK="$(pwd)/soft/$GOAWK_BRANCH_EXE" ./makesure tested
 
-@goal tested_busybox
+@goal tested_busybox @private
 @reached_if [[ "$OSTYPE" != "linux-gnu"* ]] # only test busybox awk on linux
 @depends_on installed_busybox
   AWK="$(pwd)/soft/busybox awk" ./makesure tested
