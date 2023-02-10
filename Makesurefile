@@ -192,6 +192,7 @@ in_begin && $1 ~ /^delete/{ next }
   gsub(/for \(/, "for(")
   gsub(/while \(/, "while(")
   gsub(/ && /, "\\&\\&")
+  gsub(/) {/, "){")
   ##gsub(/" in/, "\"in")
   gsub(Q, Q "\\" Q Q)
   if (trim($0)) print
