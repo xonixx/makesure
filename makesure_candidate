@@ -185,7 +185,7 @@ function registerGoal(priv, goalName) {
     return 1
   }
 }
-function globGoal(i) { return (GlobGoalName?GlobGoalName "@" : "") GlobFiles[i] }
+function globGoal(i) { return (GlobGoalName?GlobGoalName "@":"") GlobFiles[i] }
 function calcGlob(goalName, pattern,   script, file) {
   GlobCnt=0
   GlobGoalName=goalName
@@ -218,10 +218,10 @@ function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax)
     addError("absent glob pattern")
   else {
     calcGlob(goalName, pattern)
-    globAllGoal=goalName?goalName : pattern
+    globAllGoal=goalName?goalName:pattern
     globSingle=GlobCnt==1&&globAllGoal==globGoal(0)
     for(i=0;i<GlobCnt;i++)
-      registerGoal(globSingle?priv : 1, globGoal(i))
+      registerGoal(globSingle?priv:1, globGoal(i))
     if(!globSingle) {
       registerGoal(priv, globAllGoal)
       for(i=0;i<GlobCnt;i++)
@@ -268,7 +268,7 @@ function registerDependsOn(goalName,   i,dep,x,y) {
         x=goalName SUBSEP DependenciesCnt[goalName]-1
         y=x SUBSEP DependencyArgsCnt[x]++
         DependencyArgs[y]=$i
-        DependencyArgsType[y]=Quotes[i]?"str" : "var"
+        DependencyArgsType[y]=Quotes[i]?"str":"var"
       }
     } else
       registerDependency(goalName, dep)
@@ -368,10 +368,10 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
         goalName=resolvedGoals[i]
         goalTimed=timingOn()&&!reachedGoals[goalName]&&!emptyGoals[goalName]
         if(goalTimed)
-          t1=t2?t2 : currentTimeMillis()
+          t1=t2?t2:currentTimeMillis()
         if(!("silent" in Options))
-          print "  goal " quote2(goalName,1) " " (reachedGoals[goalName]?"[already satisfied]." : emptyGoals[goalName]?"[empty]." : "...")
-        exitCode=(reachedGoals[goalName]||emptyGoals[goalName])?0 : shellExec(goalBodies[goalName],goalName)
+          print "  goal " quote2(goalName,1) " " (reachedGoals[goalName]?"[already satisfied].":emptyGoals[goalName]?"[empty].":"...")
+        exitCode=(reachedGoals[goalName]||emptyGoals[goalName])?0:shellExec(goalBodies[goalName],goalName)
         if(exitCode!=0)
           print "  goal " quote2(goalName,1) " failed"
         if(goalTimed) {
@@ -382,7 +382,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
           break
       }
       if(timingOn())
-        print "  total time " renderDuration((t2?t2 : currentTimeMillis()) - t0)
+        print "  total time " renderDuration((t2?t2:currentTimeMillis()) - t0)
       if(exitCode!=0)
         realExit(exitCode)
     }
@@ -536,7 +536,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
         depArgType=="str"?\
           depArg : \
           depArgType=="var"?\
-            (depArg in args?args[depArg] : addErrorDedup("wrong arg '\''" depArg "'\''", DependenciesLineNo[gi])) : \
+            (depArg in args?args[depArg]:addErrorDedup("wrong arg '\''" depArg "'\''", DependenciesLineNo[gi])):\
             die("wrong depArgType: " depArgType)
     }
     gii=goalNameInstantiated SUBSEP i
@@ -595,19 +595,19 @@ function renderDuration(deltaMillis,\
     deltaDay=int(deltaHr/24)
     deltaHr=deltaHr - deltaDay*24
   }
-  dayS=deltaDay>0?deltaDay " d" : ""
-  hrS=deltaHr>0?deltaHr " h" : ""
-  minS=deltaMin>0?deltaMin " m" : ""
-  secS=deltaSec>0?deltaSec " s" : ""
-  secSI=deltaSec>0?int(deltaSec) " s" : ""
+  dayS=deltaDay>0?deltaDay " d":""
+  hrS=deltaHr>0?deltaHr " h":""
+  minS=deltaMin>0?deltaMin " m":""
+  secS=deltaSec>0?deltaSec " s":""
+  secSI=deltaSec>0?int(deltaSec) " s":""
   if(dayS!="")
-    res=dayS " " (hrS==""?"0 h" : hrS)
+    res=dayS " " (hrS==""?"0 h":hrS)
   else if(deltaHr>0)
-    res=hrS " " (minS==""?"0 m" : minS)
+    res=hrS " " (minS==""?"0 m":minS)
   else if(deltaMin>0)
-    res=minS " " (secSI==""?"0 s" : secSI)
+    res=minS " " (secSI==""?"0 s":secSI)
   else
-    res=deltaSec>0?secS : "0 s"
+    res=deltaSec>0?secS:"0 s"
   return res
 }
 function executeGetLine(script,   res) {
@@ -619,10 +619,10 @@ function closeErr(script) { if(close(script)!=0) die("Error executing: " script)
 function dl(url, dest,    verbose) {
   verbose="VERBOSE" in ENVIRON
   if(commandExists("wget")) {
-    if(!ok("wget " (verbose?"" : "-q") " " quoteArg(url) " -O" quoteArg(dest)))
+    if(!ok("wget " (verbose?"":"-q") " " quoteArg(url) " -O" quoteArg(dest)))
       return "error with wget"
   } else if(commandExists("curl")) {
-    if(!ok("curl " (verbose?"" : "-s") " " quoteArg(url) " -o " quoteArg(dest)))
+    if(!ok("curl " (verbose?"":"-s") " " quoteArg(url) " -o " quoteArg(dest)))
       return "error with curl"
   } else return "wget/curl not found"
 }
@@ -630,14 +630,14 @@ function natOrder(s1,s2, i1,i2,   c1, c2, n1,n2) {
   if(_digit(c1=substr(s1,i1,1))&&_digit(c2=substr(s2,i2,1))) {
     n1=+c1;while(_digit(c1=substr(s1,++i1,1))) { n1=n1*10+c1 }
     n2=+c2;while(_digit(c2=substr(s2,++i2,1))) { n2=n2*10+c2 }
-    return n1==n2?natOrder(s1, s2, i1, i2) : _cmp(n1, n2)
+    return n1==n2?natOrder(s1, s2, i1, i2):_cmp(n1, n2)
   }
   while((c1=substr(s1,i1,1))==(c2=substr(s2,i2,1))&&c1!=""&&!_digit(c1)) {
     i1++;i2++
   }
-  return _digit(c1)&&_digit(c2)?natOrder(s1, s2, i1, i2) : _cmp(c1, c2)
+  return _digit(c1)&&_digit(c2)?natOrder(s1, s2, i1, i2):_cmp(c1, c2)
 }
-function _cmp(v1, v2) { return v1>v2?1 : v1<v2?-1 : 0 }
+function _cmp(v1, v2) { return v1>v2?1:v1<v2?-1:0 }
 function _digit(c) { return c>="0"&&c<="9" }
 function quicksort(data, left, right,   i, last) {
   if(left>=right)
@@ -666,7 +666,7 @@ function parseCli(line, res,   pos,c,last,is_doll,c1) {
         if(is_doll)
           pos++
         res[last=res[-7]++]=""
-        res[last,"quote"]=is_doll?"$" : "'\''"
+        res[last,"quote"]=is_doll?"$":"'\''"
         while((c=substr(line,++pos,1))!="'\''") {
           if(c=="")
             return "unterminated argument"
@@ -707,10 +707,10 @@ function quote2(s,force) {
     gsub(/'\''/,"\\'\''",s)
     return "$'\''" s "'\''"
   } else
-    return force||s~/[^a-zA-Z0-9.,@_\/=+-]/?"'\''" s "'\''" : s
+    return force||s~/[^a-zA-Z0-9.,@_\/=+-]/?"'\''" s "'\''":s
 }
 function addLine(target, line) { target[0]=addL(target[0], line) }
-function addL(s, l) { return s?s "\n" l : l }
+function addL(s, l) { return s?s "\n" l:l }
 function arrPush(arr, elt) { arr[arr[-7]++]=elt }
 function arrLen(arr) { return +arr[-7] }
 function arrDel(arr, v,   l,i,e,resArr) {
@@ -722,7 +722,7 @@ function arrDel(arr, v,   l,i,e,resArr) {
   for(i in resArr)
     arr[i]=resArr[i]
 }
-function arrLast(arr,   l) { return (l=arrLen(arr))>0?arr[l-1] : "" }
+function arrLast(arr,   l) { return (l=arrLen(arr))>0?arr[l-1]:"" }
 function commandExists(cmd) { return ok("command -v " cmd " >/dev/null") }
 function ok(cmd) { return system(cmd)==0 }
 function isFile(path) { return ok("test -f " quoteArg(path)) }
