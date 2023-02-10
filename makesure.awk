@@ -64,9 +64,7 @@ function makesure(   i) {
 
 function prepareArgs(   i,arg) {
   for (i = 2; i < ARGC; i++) {
-    arg = ARGV[i]
-    #print i " " arg
-    if (substr(arg,1,1) == "-") {
+    if (substr(arg = ARGV[i],1,1) == "-") {
       if (arg == "-f" || arg == "--file") {
         delete ARGV[i]
         ARGV[1] = ARGV[++i]
