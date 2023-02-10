@@ -21,7 +21,7 @@ BEGIN {
 function makesure(   i) {
   while(getline>0) {
     Lines[NR]=$0
-    if($1~/^@/ && "@define"!=$1 && "@reached_if"!=$1) reparseCli()
+    if($1~/^@/&&"@define"!=$1&&"@reached_if"!=$1) reparseCli()
     if("@options"==$1) handleOptions()
     else if("@define"==$1) handleDefine()
     else if("@shell"==$1) handleShell()
@@ -134,7 +134,7 @@ function handleShell() {
     addError("Shell '\''" Shell "'\'' is not supported")
 }
 function timingOn() {
-  return "timing" in Options && !("silent" in Options)
+  return "timing" in Options&&!("silent" in Options)
 }
 function started(mode) {
   Mode=mode
@@ -219,7 +219,7 @@ function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax)
   else {
     calcGlob(goalName, pattern)
     globAllGoal=goalName?goalName : pattern
-    globSingle=GlobCnt==1 && globAllGoal==globGoal(0)
+    globSingle=GlobCnt==1&&globAllGoal==globGoal(0)
     for(i=0; i<GlobCnt; i++)
       registerGoal(globSingle?priv : 1, globGoal(i))
     if(!globSingle) {
@@ -234,7 +234,7 @@ function handleDoc(   i) {
   if("goal"==Mode)
     registerDoc(currentGoalName())
   else {
-    if(!(GlobCnt==1 && currentGoalName()==globGoal(0)))
+    if(!(GlobCnt==1&&currentGoalName()==globGoal(0)))
       registerDoc(currentGoalName())
     for(i=0; i<GlobCnt; i++)
       registerDoc(globGoal(i))
@@ -301,7 +301,7 @@ function checkBeforeRun(   i,j,dep,depCnt,goalName) {
     for(j=0; j<depCnt; j++)
       if(!((dep=Dependencies[goalName, j]) in GoalsByName))
         addError("Goal " quote2(goalName,1) " has unknown dependency '\''" dep "'\''", DependenciesLineNo[goalName, j])
-    if(goalName in GoalToLib && !(GoalToLib[goalName] in Lib))
+    if(goalName in GoalToLib&&!(GoalToLib[goalName] in Lib))
       addError("Goal " quote2(goalName,1) " uses unknown lib '\''" GoalToLib[goalName] "'\''", UseLibLineNo[goalName])
   }
 }
@@ -324,14 +324,14 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     print "Available goals:"
     for(i=0; i in GoalNames; i++) {
       goalName=GoalNames[i]
-      if(list && GoalsByName[goalName])
+      if(list&&GoalsByName[goalName])
         continue
-      if((gnLen=length(quote2(goalName)))>gnMaxLen && gnLen <= 30)
+      if((gnLen=length(quote2(goalName)))>gnMaxLen&&gnLen <= 30)
         gnMaxLen=gnLen
     }
     for(i=0; i in GoalNames; i++) {
       goalName=GoalNames[i]
-      if(list && GoalsByName[goalName])
+      if(list&&GoalsByName[goalName])
         continue
       printf "  "
       if(goalName in Doc)
@@ -361,12 +361,12 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
         printf " %s", quote2(ArgGoals[i],1)
       print ":"
       for(i=0; i in resolvedGoals; i++)
-        if(!reachedGoals[goalName=resolvedGoals[i]] && !emptyGoals[goalName])
+        if(!reachedGoals[goalName=resolvedGoals[i]]&&!emptyGoals[goalName])
           print "  " quote2(goalName)
     } else {
       for(i=0; i in resolvedGoals; i++) {
         goalName=resolvedGoals[i]
-        goalTimed=timingOn() && !reachedGoals[goalName] && !emptyGoals[goalName]
+        goalTimed=timingOn()&&!reachedGoals[goalName]&&!emptyGoals[goalName]
         if(goalTimed)
           t1=t2?t2 : currentTimeMillis()
         if(!("silent" in Options))
@@ -408,7 +408,7 @@ function topologicalSort(includeReachedIf,requestedGoals,result,reachedGoals,   
 function isCodeAllowed() { return "goal"==Mode||"goal_glob"==Mode||"lib"==Mode }
 function isPrelude() { return "prelude"==Mode }
 function checkPreludeOnly() { if(!isPrelude()) addError("Only use " $1 " in prelude") }
-function checkGoalOnly() { if("goal"!=Mode && "goal_glob"!=Mode) addError("Only use " $1 " in @goal") }
+function checkGoalOnly() { if("goal"!=Mode&&"goal_glob"!=Mode) addError("Only use " $1 " in @goal") }
 function currentGoalName() { return arrLast(GoalNames) }
 function currentLibName() { return arrLast(LibNames) }
 function realExit(code) {
@@ -443,7 +443,7 @@ function getMyDir(makesurefilePath) {
   return executeGetLine("cd \"$(dirname " quoteArg(makesurefilePath) ")\";pwd")
 }
 function handleCodeLine(line) {
-  if(!isCodeAllowed() && line !~ /^[ \t]*#/ && trim(line)!="") {
+  if(!isCodeAllowed()&&line !~ /^[ \t]*#/&&trim(line)!="") {
     if(!ShellInPreludeErrorShown++)
       addError("Shell code is not allowed outside goals/libs")
   } else
@@ -476,7 +476,7 @@ function topologicalSortAddConnection(from, to) {
 function topologicalSortPerform(includeReachedIf,reachedGoals, node, result, loop,   i, s) {
   if(Visited[node]==2)
     return
-  if(includeReachedIf && node in ReachedIf && checkConditionReached(node, ReachedIf[node])){
+  if(includeReachedIf&&node in ReachedIf&&checkConditionReached(node, ReachedIf[node])){
     Visited[node]=2
     arrPush(result, node)
     reachedGoals[node]=1
@@ -527,7 +527,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
   for(i=0; i<DependenciesCnt[goal]; i++) {
     dep=Dependencies[gi=goal SUBSEP i]
     argsCnt=+DependencyArgsCnt[gi]
-    if(dep in GoalsByName && argsCnt!=GoalParamsCnt[dep])
+    if(dep in GoalsByName&&argsCnt!=GoalParamsCnt[dep])
       addErrorDedup("wrong args count for '\''" dep "'\''", DependenciesLineNo[gi])
     for(j=0; j<argsCnt; j++) {
       depArg    =DependencyArgs    [gi,j]
@@ -565,7 +565,7 @@ function selfUpdate(   url, tmp, err, newVer) {
   url="https://raw.githubusercontent.com/xonixx/makesure/main/makesure?token=" rand()
   tmp=executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX")
   err=dl(url, tmp)
-  if(!err && !ok("chmod +x " tmp)) err="can'\''t chmod +x " tmp
+  if(!err&&!ok("chmod +x " tmp)) err="can'\''t chmod +x " tmp
   if(!err) {
     newVer=executeGetLine(tmp " -v")
     if(Version!=newVer) {
@@ -627,18 +627,18 @@ function dl(url, dest,    verbose) {
   } else return "wget/curl not found"
 }
 function natOrder(s1,s2, i1,i2,   c1, c2, n1,n2) {
-  if(_digit(c1=substr(s1,i1,1)) && _digit(c2=substr(s2,i2,1))) {
+  if(_digit(c1=substr(s1,i1,1))&&_digit(c2=substr(s2,i2,1))) {
     n1=+c1; while(_digit(c1=substr(s1,++i1,1))) { n1=n1 * 10 + c1 }
     n2=+c2; while(_digit(c2=substr(s2,++i2,1))) { n2=n2 * 10 + c2 }
     return n1==n2?natOrder(s1, s2, i1, i2) : _cmp(n1, n2)
   }
-  while((c1=substr(s1,i1,1))==(c2=substr(s2,i2,1)) && c1!="" && !_digit(c1)) {
+  while((c1=substr(s1,i1,1))==(c2=substr(s2,i2,1))&&c1!=""&&!_digit(c1)) {
     i1++; i2++
   }
-  return _digit(c1) && _digit(c2)?natOrder(s1, s2, i1, i2) : _cmp(c1, c2)
+  return _digit(c1)&&_digit(c2)?natOrder(s1, s2, i1, i2) : _cmp(c1, c2)
 }
 function _cmp(v1, v2) { return v1>v2?1 : v1<v2?-1 : 0 }
-function _digit(c) { return c >= "0" && c <= "9" }
+function _digit(c) { return c >= "0"&&c <= "9" }
 function quicksort(data, left, right,   i, last) {
   if(left >= right)
     return
@@ -662,7 +662,7 @@ function parseCli(line, res,   pos,c,last,is_doll,c1) {
     if((c=substr(line,pos,1))=="#"||c=="")
       return
     else {
-      if((is_doll=c=="$") && substr(line,pos+1,1)=="'\''"||c=="'\''") {
+      if((is_doll=c=="$")&&substr(line,pos+1,1)=="'\''"||c=="'\''") {
         if(is_doll)
           pos++
         res[last=res[-7]++]=""
@@ -670,16 +670,16 @@ function parseCli(line, res,   pos,c,last,is_doll,c1) {
         while((c=substr(line,++pos,1))!="'\''") {
           if(c=="")
             return "unterminated argument"
-          else if(is_doll && c=="\\" && ((c1=substr(line,pos+1,1))=="'\''"||c1==c)) {
+          else if(is_doll&&c=="\\"&&((c1=substr(line,pos+1,1))=="'\''"||c1==c)) {
             c=c1; pos++
           }
           res[last]=res[last] c
         }
-        if((c=substr(line,++pos,1))!="" && c!=" " && c!="\t")
+        if((c=substr(line,++pos,1))!=""&&c!=" "&&c!="\t")
           return "joined arguments"
       } else {
         res[last=res[-7]++]=c
-        while((c=substr(line,++pos,1))!="" && c!=" " && c!="\t") {
+        while((c=substr(line,++pos,1))!=""&&c!=" "&&c!="\t") {
           if(c=="'\''")
             return "joined arguments"
           res[last]=res[last] c
