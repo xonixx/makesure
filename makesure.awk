@@ -5,7 +5,9 @@ BEGIN {
   SupportedOptions["tracing"]
   SupportedOptions["silent"]
   SupportedOptions["timing"]
-  delete L    # reparsed $0
+  LL = 0       # reparsed NF
+  delete L     # reparsed $0
+  delete Quotes# LL -> quote of field ("'"|"$"|"")
   delete Lines# line no. -> line
   delete Args # parsed CLI args
   delete ArgGoals # invoked goals
@@ -33,7 +35,6 @@ BEGIN {
   delete Lib       # name -> code
   delete UseLibLineNo# name -> line no.
   delete GoalToLib # goal name -> lib name
-  delete Quotes    # NF -> quote of field ("'"|"$"|"")
   Mode = "prelude" # prelude|define|goal|goal_glob|lib
   srand()
   prepareArgs()
@@ -130,16 +131,16 @@ function handleOptionDefineOverride(arg,   kv) {
   DefineOverrides[kv[0]]
 }
 
-function handleOptions(   i) {
+function handleOptions(   i,o) {
   checkPreludeOnly()
 
-  if (NF<2)
+  if (LL<2)
     addError("Provide at least one option")
 
-  for (i=2; i<=NF; i++) {
-    if (!($i in SupportedOptions))
-      addError("Option '" $i "' is not supported")
-    Options[$i]
+  for (i=2; i<=LL; i++) {
+    if (!((o=L[i]) in SupportedOptions))
+      addError("Option '" o "' is not supported")
+    Options[o]
   }
 }
 
@@ -166,7 +167,7 @@ function checkValidDefineSyntax(line) {
 
 function handleShell() {
   checkPreludeOnly()
-  if (!((Shell = $2) in SupportedShells))
+  if (!((Shell = L[2]) in SupportedShells))
     addError("Shell '" Shell "' is not supported")
 }
 
@@ -207,12 +208,12 @@ function registerUseLib(goalName) {
 
 function handleGoal(   i,goalName) {
   started("goal")
-  if (registerGoal(parsePriv(), goalName=$2))
-    if ("@params" == $3) {
-      if (3 == NF) addError("missing parameters")
-      for (i=4; i <= NF; i++)
-        GoalParams[goalName,GoalParamsCnt[goalName]++] = validateParamName($i)
-    } else if (NF > 2) addError("nothing allowed after goal name")
+  if (registerGoal(parsePriv(), goalName=L[2]))
+    if ("@params" == L[3]) {
+      if (3 == LL) addError("missing parameters")
+      for (i=4; i <= LL; i++)
+        GoalParams[goalName,GoalParamsCnt[goalName]++] = validateParamName(L[i])
+    } else if (LL > 2) addError("nothing allowed after goal name")
 }
 
 function validateParamName(p) {
@@ -257,11 +258,11 @@ function parsePriv() {
 function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax) {
   started("goal_glob")
   priv = parsePriv()
-  if ("@glob" == (goalName = $2)) {
+  if ("@glob" == (goalName = L[2])) {
     goalName = ""; pattern = $(nfMax=3)
   } else
-    pattern = $(nfMax=4)
-  if (NF > nfMax)
+    pattern = L[nfMax=4]
+  if (LL > nfMax)
     addError("nothing allowed after glob pattern")
   else if (pattern=="")
     addError("absent glob pattern")
@@ -849,16 +850,22 @@ function parseCli(line, res,   pos,c,last,is_doll,c1) {
     }
   }
 }
-function reparseCli(   err) {
-  if (err = parseCli($0, L)) {
+function reparseCli(   i,res,err) {
+  if (err = parseCli($0, res)) {
     addError("Syntax error: " err)
     die(Error)
-  } else {
-#    $0="" # only for macos 10.15 awk version 20070501
-#    for (i=NF=0; i in res; i++) {
-#      $(++NF)=res[i]
-#      Quotes[NF]=res[i,"quote"]
-#    }
+  } #else {
+    #    $0="" # only for macos 10.15 awk version 20070501
+    #    for (i=NF=0; i in res; i++) {
+    #      $(++NF)=res[i]
+    #      Quotes[NF]=res[i,"quote"]
+    #    }
+  #}
+  delete L
+  delete Quotes
+  for (i=LL=0; i in res; i++) {
+    L[++LL]=res[i]
+    Quotes[LL]=res[i,"quote"]
   }
 }
 function quote2(s,force) {
