@@ -5,6 +5,7 @@ BEGIN {
   SupportedOptions["tracing"]
   SupportedOptions["silent"]
   SupportedOptions["timing"]
+  delete L    # reparsed $0
   delete Lines# line no. -> line
   delete Args # parsed CLI args
   delete ArgGoals # invoked goals
@@ -848,17 +849,16 @@ function parseCli(line, res,   pos,c,last,is_doll,c1) {
     }
   }
 }
-function reparseCli(   res,i,err) {
-  err = parseCli($0, res)
-  if (err) {
+function reparseCli(   err) {
+  if (err = parseCli($0, L)) {
     addError("Syntax error: " err)
     die(Error)
   } else {
-    $0="" # only for macos 10.15 awk version 20070501
-    for (i=NF=0; i in res; i++) {
-      $(++NF)=res[i]
-      Quotes[NF]=res[i,"quote"]
-    }
+#    $0="" # only for macos 10.15 awk version 20070501
+#    for (i=NF=0; i in res; i++) {
+#      $(++NF)=res[i]
+#      Quotes[NF]=res[i,"quote"]
+#    }
   }
 }
 function quote2(s,force) {
