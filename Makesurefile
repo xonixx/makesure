@@ -175,6 +175,7 @@ in_begin && $1 ~ /^delete/{ next }
   gsub(/ != /, "!=")
   gsub(/ >= /, ">=")
   gsub(/ <= /, "<=")
+  gsub(/; +/, ";")
   gsub(/ ~ /, "~")
   gsub(/ > /, ">")
   gsub(/ < /, "<")
