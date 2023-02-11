@@ -201,7 +201,7 @@ in_begin && $1 ~ /^delete/{ next }
   if (!/^ +}/) gsub(/ +}/, "}")
   ##gsub(/" in/, "\"in")
   gsub(Q, Q "\\" Q Q)
-  if (l=trim($0)) { printf "%s", (l=="}" ? l : "\n" $0) }
+  if (l=trim($0)) { printf "%s", (l=="}" ? l : (NR==1 ? "" : "\n") $0) }
 }' makesure.awk
     echo \'' Makesurefile "$@"'
   } > "$F"
