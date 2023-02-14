@@ -317,6 +317,79 @@ to be able to run each test individually (`./makesure test2.js` for example) and
 
 In case if you need to glob the files with spaces in their names, please check the [naming rules section](#naming-rules) below.
 
+### Parameterized goals
+
+Make code easier to reuse.
+
+<ins>Declaration syntax (using `@params`):</ins>
+```shell
+@goal goal_name @params A B C
+```
+<ins>Usage syntax (using `@args`):</ins>
+```shell
+@goal other_goal @params PARAM
+@depends_on goal_name @args 'value1' 'value 2' PARAM
+```
+                           
+The idea of using two complementary keywords `@params` + `@args` was inspired by `async` + `await` from JavaScript.
+
+Example:
+
+```shell
+@goal file_downloaded @params FILE_NAME
+  echo "Downloading $FILE_NAME..."
+  
+@goal file_processed @params FILE_NAME
+@depends_on file_downloaded @args FILE_NAME
+  echo "Processing $FILE_NAME..."
+  
+@goal all_files_processed
+@depends_on file_processed @args 'file1' 
+@depends_on file_processed @args 'file2' 
+@depends_on file_processed @args 'file3' 
+```
+
+Having the above in `Makesurefile` will produce next output when ran with `./makesure all_files_processed`
+```
+  goal 'file_downloaded@file1' ...
+Downloading file1...
+  goal 'file_processed@file1' ...
+Processing file1...
+  goal 'file_downloaded@file2' ...
+Downloading file2...
+  goal 'file_processed@file2' ...
+Processing file2...
+  goal 'file_downloaded@file3' ...
+Downloading file3...
+  goal 'file_processed@file3' ...
+Processing file3...
+  goal 'all_files_processed' [empty].
+```
+
+When listing goals, you'll see "instantiated" goals there:
+```
+$ ./makesure -l
+Available goals:
+  all_files_processed
+  file_processed@file1
+  file_downloaded@file1
+  file_processed@file2
+  file_downloaded@file2
+  file_processed@file3
+  file_downloaded@file3
+```
+
+And you can even call such "instantiated" goal: 
+```
+$ ./makesure file_processed@file2
+  goal 'file_downloaded@file2' ...
+Downloading file2...
+  goal 'file_processed@file2' ...
+Processing file2...
+```
+
+You can take a look at an example from a real project here TODO.
+
 ### @doc
 
 Only valid: inside `@goal`.
