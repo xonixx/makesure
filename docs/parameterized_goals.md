@@ -46,7 +46,7 @@ No. `@args` will be only allowed in pos=3. All items afterwards are considered a
 
 ## Q. Shall we restrict the param name to Name123? `[A-Z][A-Za-z0-9_]*`
 
-This might be good idea / convention.
+Yes, this is a good idea / convention.
 
 ## Q. Can we make parameterized goals resolution during parsing? We might need to know the number of params for a goal which is not available yet, since goal may come later.
 
@@ -63,31 +63,29 @@ I.e. when `@args` is at pos=3
 No
 
 ## Q. Allow listing PG?
-No.
-What about “instantiated” goals?
+No. But we list “instantiated” goals instead.
 
 ## Q. Loops detection.
-Based on goal name only? I.e. disallow depending PG on itself in any way.
+Based on goal name only. I.e. disallow depending PG on itself in any way.
 
 ## Q. What can be `@args VAR`?
 Only:
-- what’s in `@define`
+- what’s in `@define` (not now, maybe in future)
 - any VAR in `@params` of this goal
-  All other cases must cause error.
+- All other cases must cause error.
 
 ## Q. Mechanism for "instantiation"
 
 Also here. Need to adjust `-d` option. Should list instantiated goals in form
 
-- `pg1 @args 'hello'`
-- `pg2 @args 'hello' $'with \''`
+- `pg1@hello`
+- `$'pg2@hello@with \''`
 - `nonpg`
 
 1. Build tree no-params : detect loops
 2. Build tree non-instantiated
 3. Instantiate. How?
-
-On encounter `@depends_on` generate instantiated? But this needs to go in-depth.
+   - On encounter `@depends_on` generate instantiated. This needs to go in-depth.
 
 ## Parameterized goals vs existing features
 
