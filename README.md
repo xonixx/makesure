@@ -569,8 +569,8 @@ echo 'Please reopen the shell to activate completion.'
 
 ## Omitted features
 
-- Goals with parameters, like in [just](https://github.com/casey/just#recipe-parameters) 
-  - We deliberately don't support this feature. The idea is that the build file should be self-contained, so have all the information to run in it, no external parameters should be required. This should be much easier for the final user to run a build. The other reason is that the idea of goal parameterization doesn't play well with dependencies. The tool however has limited parameterization capabilities via `./makesure -D VAR=value`.
+- Calling goals with arguments, like in [just](https://github.com/casey/just#recipe-parameters) 
+  - We deliberately don't support this feature. The idea is that the build file should be self-contained, so have all the information to run in it, no external arguments should be required. It should be much easier for the final user to run a build. The tool however has limited parameterization capabilities via `./makesure -D VAR=value`.
 - Includes
   - This is a considerable complication to the tool. Also, it makes the build file not self-contained.  
 - Shells other than `bash`/`sh`
@@ -579,7 +579,7 @@ echo 'Please reopen the shell to activate completion.'
 - Custom own programming language, like `make` has
   - We think that this would be unjustified complexity.
   - We believe that the power of shell is enough.
-- parallel execution
+- Parallel execution
   - `makesure` is a task runner, not a full-fledged build tool, like `make`, `ninja` or `bazel`. So if you need one, just use a proper build tool of your choice. 
 
 ## Developer notes
