@@ -388,7 +388,7 @@ Downloading file2...
 Processing file2...
 ```
 
-You can take a look at an example from a real project here TODO.
+You can also take a look at an [example from a real project](https://github.com/xonixx/intellij-awk/blob/68bd7c5eaa5fefbd7eaa9f5f5a4b77b69dcd8779/Makesurefile#L126).
 
 For more technical consideration regarding this feature see [parameterized_goals.md](docs/parameterized_goals.md).
 
