@@ -1,3 +1,7 @@
+## v0.9.20
+- Parameterized goals [#115](https://github.com/xonixx/makesure/issues/115).
+- Fixes and refactorings.
+
 ## v0.9.19
 - Minor fixes to `@reached_if` in [#113](https://github.com/xonixx/makesure/issues/113)
 - Minor fixes to `@lib` in [#111](https://github.com/xonixx/makesure/issues/111)
