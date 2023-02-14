@@ -7,10 +7,10 @@ This should allow [such rewrite](https://github.com/xonixx/awk_lab/compare/e6443
 Related to [this](https://github.com/xonixx/makesure#omitted-features). Obviously this is being revised.
 ```shell
 @goal files_created @params A B
-@depends_on file_created @args $A
-@depends_on file_created @args $B
+@depends_on file_created @args A
+@depends_on file_created @args B
 @depends_on file_created @args '/tmp/file'
-@depends_on goal_3_args @args $A '/tmp/file' $B
+@depends_on goal_3_args @args A '/tmp/file' B
 
 @goal file_created @params F
 @reached_if [[ -f "$F" ]]
@@ -110,18 +110,3 @@ Should work as expected. PG vars should be accessible in `@reached_if` code.
 ### PG + @doc
 
 Should work as expected. `@doc` should just copy to instantiated goals.
-
-
-# TODOS
-- [x] check loop
-- [x] -l in presence of loop hangs
-- [x] check unknown parameterized dep call `@depends_on c @args S`
-- [x] all errors at once
-- [x] TODOS
-- [x] validate param name (regex)
-- [x] handle + test w/ `@private`
-- [x] test w/ `@lib`
-- [x] test w/ `@doc`
-- [x] handle + test w/ `@reached_if`
-- [ ] test w/ `@glob` (should be covered by `@params` at pos 3 check)
-- [ ] README.md

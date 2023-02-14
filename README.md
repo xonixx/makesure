@@ -390,6 +390,8 @@ Processing file2...
 
 You can take a look at an example from a real project here TODO.
 
+For more technical consideration regarding this feature see [parameterized_goals.md](docs/parameterized_goals.md).
+
 ### @doc
 
 Only valid: inside `@goal`.
