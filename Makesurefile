@@ -285,7 +285,7 @@ in_begin && $1 ~ /^delete/{ next }
     local version="$1"
     local tgz="$2"
 
-    local EXE_NAME="mawk${version//./}"
+    local exeName="mawk${version//./}"
 
     echo
     echo "Fetching Mawk $version..."
@@ -305,10 +305,10 @@ in_begin && $1 ~ /^delete/{ next }
 
     ./configure && make
 
-    mv mawk ../$EXE_NAME
+    mv mawk ../$exeName
 
     cd ..
-    ./$EXE_NAME -W version
+    ./$exeName -W version
     rm -r mawk-"$version"-*
   }
 
