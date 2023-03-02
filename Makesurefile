@@ -217,8 +217,7 @@ in_begin && $1 ~ /^delete/{ next }
 @depends_on tested_bwk
 @depends_on tested_mawk133
 @depends_on tested_mawk134
-@depends_on tested_gawk51
-@depends_on tested_gawk511
+@depends_on tested_all_gawks
 @depends_on tested_goawk
 @depends_on tested_busybox
 
@@ -234,21 +233,12 @@ in_begin && $1 ~ /^delete/{ next }
 @depends_on installed_mawk134
   AWK="$(pwd)/soft/mawk134" ./makesure tested
 
-@goal tested_gawk51 @private
-@depends_on installed_gawk51
-  MAKESURE_AWKLIBPATH="$(pwd)/soft/gawk51_libs" AWK="$(pwd)/soft/gawk51" ./makesure tested
-
-@goal tested_gawk511 @private
-@depends_on installed_gawk511
-  MAKESURE_AWKLIBPATH="$(pwd)/soft/gawk511_libs" AWK="$(pwd)/soft/gawk511" ./makesure tested
-
-@goal tested_gawk521 @private
-@depends_on installed_gawk521
-  MAKESURE_AWKLIBPATH="$(pwd)/soft/gawk521_libs" AWK="$(pwd)/soft/gawk521" ./makesure tested
-
-@goal tested_gawk52 @private
-@depends_on installed_gawk52
-  MAKESURE_AWKLIBPATH="$(pwd)/soft/gawk52_libs" AWK="$(pwd)/soft/gawk52" ./makesure tested
+@goal tested_all_gawks
+@doc 'tests with all Gawk-s'
+@depends_on tested_gawk @args '5.1.0' 'gawk51'
+@depends_on tested_gawk @args '5.1.1' 'gawk511'
+#@depends_on tested_gawk @args '5.2.1' 'gawk521'
+@depends_on tested_gawk @args '5.2-stable' 'gawk52'
 
 @goal tested_goawk @private
 @depends_on installed_goawk
@@ -262,15 +252,6 @@ in_begin && $1 ~ /^delete/{ next }
 @reached_if [[ "$OSTYPE" != "linux-gnu"* ]] # only test busybox awk on linux
 @depends_on installed_busybox
   AWK="$(pwd)/soft/busybox awk" ./makesure tested
-
-@goal installed_awks
-@doc installs all awks into ./soft
-@depends_on installed_bwk
-@depends_on installed_gawk51
-@depends_on installed_gawk511
-@depends_on installed_mawk133
-@depends_on installed_mawk134
-@depends_on installed_goawk
 
 @goal installed_bwk @private
 @reached_if [[ -f soft/bwk ]]
@@ -304,7 +285,7 @@ in_begin && $1 ~ /^delete/{ next }
     local version="$1"
     local tgz="$2"
 
-    local exeName="mawk${version//./}"
+    local EXE_NAME="mawk${version//./}"
 
     echo
     echo "Fetching Mawk $version..."
@@ -324,35 +305,37 @@ in_begin && $1 ~ /^delete/{ next }
 
     ./configure && make
 
-    mv mawk ../$exeName
+    mv mawk ../$EXE_NAME
 
     cd ..
-    ./$exeName -W version
+    ./$EXE_NAME -W version
     rm -r mawk-"$version"-*
   }
 
-@lib gawk
-  install_gawk() {
-    local version="$1"
-    local exeName="$2"
+@goal tested_gawk @params VERSION EXE_NAME @private
+@depends_on installed_gawk @args VERSION EXE_NAME
+  MAKESURE_AWKLIBPATH="$(pwd)/soft/${EXE_NAME}_libs" AWK="$(pwd)/soft/${EXE_NAME}" ./makesure tested
 
+@goal installed_gawk @params VERSION EXE_NAME @private
+@reached_if [[ -f soft/"$EXE_NAME" ]]
+@depends_on soft_folder_created
     echo
-    echo "Fetching Gawk-$version..."
+    echo "Fetching Gawk-$VERSION..."
     echo
 
     cd "soft"
 
-    G=gawk-$version.tar.gz
+    G=gawk-$VERSION.tar.gz
     dlUrl="http://git.savannah.gnu.org/cgit/gawk.git/snapshot/$G"
-    dlFolder="gawk-$version"
-#    if [[ $version == '5.1.1' ]]
+    dlFolder="gawk-$VERSION"
+#    if [[ $VERSION == '5.1.1' ]]
 #    then
 #      G='master.tar.gz'
 #      dlUrl="https://github.com/gnu-mirror-unofficial/gawk/archive/refs/heads/$G"
 #      dlFolder='gawk-master'
-#      G="gawk-$version.tar.xz"
+#      G="gawk-$VERSION.tar.xz"
 #      dlUrl="https://fossies.org/linux/misc/$G"
-#      dlFolder="gawk-$version"
+#      dlFolder="gawk-$VERSION"
 #      tarOpts="xvf"
 #    fi
     wget "$dlUrl"
@@ -360,7 +343,7 @@ in_begin && $1 ~ /^delete/{ next }
     rm "$G"
 
     echo
-    echo "Compile Gawk-$version..."
+    echo "Compile Gawk-$VERSION..."
     echo
 
     cd "$dlFolder"
@@ -369,38 +352,13 @@ in_begin && $1 ~ /^delete/{ next }
     make
     # make check
 
-    mv gawk ../$exeName
-    mkdir ../${exeName}_libs
-    mv extension/.libs/*.so ../"${exeName}"_libs # for AWKLIBPATH
+    mv gawk ../$EXE_NAME
+    mkdir ../${EXE_NAME}_libs
+    mv extension/.libs/*.so ../"${EXE_NAME}"_libs # for AWKLIBPATH
 
     cd ..
-    ./$exeName --version
+    ./$EXE_NAME --version
     rm -r "$dlFolder"
-  }
-
-@goal installed_gawk51 @private
-@reached_if [[ -f soft/gawk51 ]]
-@depends_on soft_folder_created
-@use_lib gawk
-  install_gawk 5.1.0 gawk51
-
-@goal installed_gawk511 @private
-@reached_if [[ -f soft/gawk511 ]]
-@depends_on soft_folder_created
-@use_lib gawk
-  install_gawk 5.1.1 gawk511
-
-@goal installed_gawk521 @private
-@reached_if [[ -f soft/gawk521 ]]
-@depends_on soft_folder_created
-@use_lib gawk
-  install_gawk 5.2.1 gawk521
-
-@goal installed_gawk52 @private
-@reached_if [[ -f soft/gawk52 ]]
-@depends_on soft_folder_created
-@use_lib gawk
-  install_gawk 5.2-stable gawk52
 
 @goal installed_mawk133 @private
 @reached_if [[ -f soft/mawk133 ]]
