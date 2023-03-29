@@ -120,10 +120,9 @@
   MAKESURE=makesure_candidate \
     run_tush_file "$ITEM"
 
-@goal coverage
-@doc 'prepares code coverage report'
-  COVERPROFILE="/tmp/cov.txt"
+@define COVERPROFILE="/tmp/cov.txt"
 
+@goal _cover_profile_prepared @private
   rm -f "$COVERPROFILE"
 
   AWK="$(pwd)/soft/$GOAWK" \
@@ -131,7 +130,18 @@
   MAKESURE=makesure_dev \
     ./makesure tested
 
+@goal coverage
+@doc 'prepares code coverage report'
+@depends_on _cover_profile_prepared
   go tool cover -html="$COVERPROFILE"
+
+@goal coverage_badge
+@doc 'prepares code coverage badge'
+@depends_on _cover_profile_prepared
+  html='/tmp/cov.html'
+  go tool cover -html="$COVERPROFILE" -o "$html"
+  awk '/makesure\.awk/ { if (match($0,/\(.+\)/)) print substr($0,RSTART+1,RLENGTH-2) }' "$html"
+  rm "$html"
 
 @goal candidate
 @doc compiles makesure_candidate
