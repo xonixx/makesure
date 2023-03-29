@@ -140,7 +140,9 @@
 @depends_on _cover_profile_prepared
   html='/tmp/cov.html'
   go tool cover -html="$COVERPROFILE" -o "$html"
-  awk '/makesure\.awk/ { if (match($0,/\(.+\)/)) print substr($0,RSTART+1,RLENGTH-2) }' "$html"
+  coverage="$(awk '/makesure\.awk/ { if (match($0,/\(.+\)/)) print substr($0,RSTART+1,RLENGTH-2) }' "$html")"
+  echo "coverage: $coverage"
+  awk -v coverage="$coverage" '{ gsub(/\$COVERAGE/,coverage) } 1' coverage.tpl.svg > coverage.svg
   rm "$html"
 
 @goal candidate
