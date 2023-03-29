@@ -12,7 +12,7 @@ jobs:
       matrix:
         os: [ ubuntu-18.04, ubuntu-20.04, ubuntu-22.04, macos-10.15, macos-11.0, macos-12 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: actions/cache@v3
         id: cache-soft
@@ -30,7 +30,7 @@ jobs:
     runs-on: macos-12
     name: "Run tests on FreeBSD"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Tests in FreeBSD
         id: test
         uses: vmactions/freebsd-vm@v0.3.0
@@ -62,7 +62,7 @@ jobs:
       matrix:
         os: [ macos-10.15, macos-11.0, macos-12 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: actions/cache@v3
         id: cache-soft
@@ -85,7 +85,7 @@ jobs:
       matrix:
         os: [ windows-2019, windows-2022 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: actions/cache@v3
         id: cache-soft
