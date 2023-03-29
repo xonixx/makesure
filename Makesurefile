@@ -120,10 +120,9 @@
   MAKESURE=makesure_candidate \
     run_tush_file "$ITEM"
 
-@goal coverage
-@doc 'prepares code coverage report'
-  COVERPROFILE="/tmp/cov.txt"
+@define COVERPROFILE="/tmp/cov.txt"
 
+@goal _cover_profile_prepared @private
   rm -f "$COVERPROFILE"
 
   AWK="$(pwd)/soft/$GOAWK" \
@@ -131,10 +130,23 @@
   MAKESURE=makesure_dev \
     ./makesure tested
 
+@goal coverage
+@doc 'prepares code coverage report'
+@depends_on _cover_profile_prepared
   go tool cover -html="$COVERPROFILE"
 
+@goal coverage_badge_updated
+@doc 'updates code coverage badge'
+@depends_on _cover_profile_prepared
+  html='/tmp/cov.html'
+  go tool cover -html="$COVERPROFILE" -o "$html"
+  coverage="$(awk '/makesure\.awk/ { if (match($0,/\(.+\)/)) print substr($0,RSTART+1,RLENGTH-2) }' "$html")"
+  echo "coverage: $coverage"
+  awk -v coverage="$coverage" '{ gsub(/\$COVERAGE/,coverage) } 1' coverage.tpl.svg > coverage.svg
+  rm "$html"
+
 @goal candidate
-@doc compiles makesure_candidate
+@doc 'compiles makesure_candidate'
 @depends_on tested_candidate
 
 @goal release
@@ -142,13 +154,14 @@
 @depends_on candidate
 @depends_on release_makesure
 @depends_on README.md
+@depends_on coverage_badge_updated
 # @depends_on gh_release TODO we can't just do it since we need to commit first
 
 @goal release_makesure @private
   cp makesure_candidate makesure
 
 @goal README.md @private
-@doc compiles release version of README.md
+@doc 'compiles release version of README.md'
   awk '
     /^\$ \.\/makesure -h$/ { print; stop=1; system("./makesure -h") }
     /^```$/ { stop=0 }
