@@ -2,7 +2,7 @@
 @options timing
 
 @define NEXT_VERSION='0.9.20'
-@define GOAWK_VERSION='1.21.0'
+@define GOAWK_VERSION='1.23.1'
 @define JUST_VERSION='1.3.0'
 @define GOAWK="goawk$GOAWK_VERSION"
 @define JUST="just$JUST_VERSION"
@@ -250,7 +250,7 @@ in_begin && $1 ~ /^delete/{ next }
 @doc 'tests with all Gawk-s'
 @depends_on tested_gawk @args '5.1.0' 'gawk51'
 @depends_on tested_gawk @args '5.1.1' 'gawk511'
-#@depends_on tested_gawk @args '5.2.1' 'gawk521'
+@depends_on tested_gawk @args '5.2.2' 'gawk522'
 @depends_on tested_gawk @args '5.2-stable' 'gawk52'
 
 @goal tested_goawk @private
