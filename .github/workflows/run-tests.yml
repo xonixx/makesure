@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-18.04, ubuntu-20.04, ubuntu-22.04, macos-10.15, macos-11.0, macos-12 ]
+        os: [ ubuntu-20.04, ubuntu-22.04, macos-11, macos-12, macos-13 ]
     steps:
       - uses: actions/checkout@v3
 
@@ -60,7 +60,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ macos-10.15, macos-11.0, macos-12 ]
+        os: [ macos-11, macos-12, macos-13 ]
     steps:
       - uses: actions/checkout@v3
 
