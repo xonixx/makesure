@@ -129,7 +129,7 @@
 @goal fhtagn
 @doc 'runs all *.tush tests with fhtagn'
 @depends_on fhtagn_installed
-  ./soft/fhtagn.awk tests/*.tush
+  MAKESURE=makesure_dev ALL=1 ./soft/fhtagn.awk tests/*.tush
 
 @goal @glob tests/*.tush @private
 @depends_on prepared4tests
