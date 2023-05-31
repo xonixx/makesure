@@ -85,46 +85,42 @@
   bash --version| head -n 1
 
 @goal prepared4tests @private
-@depends_on tush_installed debug
+@depends_on tush_installed fhtagn_installed debug
 
-@lib testing_tush
-  function run_tush_file() {
+@lib testing
+  run1() {
     local f="$1"
 
-#    before_count=$(calc_temp_files)
+    if [[ $TOOL == 'tush' ]]
+    then
+      DIFF="diff --strip-trailing-cr" tush-check "$f"
+    else # fhtagn
+      echo "running fhtagn..."
+      ./soft/fhtagn.awk "$f"
+    fi
+  }
+  run_tush_file() {
+    local f="$1"
 
     export PATH="$PATH:$MYDIR/soft/tush/bin"
     export NEXT_VERSION
 
-    if DIFF="diff --strip-trailing-cr" tush-check "$f"
+    if run1 "$f"
     then
       echo "TESTS PASSED : $f"
     else
       echo >&2 "!!! TESTS FAILED !!! : $f"
       exit 1
     fi
-#    after_count=$(calc_temp_files)
-#    if (( before_count != after_count ))
-#    then
-#      echo >&2 "!!! temp file not deleted !!!"
-#      exit 1
-#    fi
-  }
-  function calc_temp_files {
-    local tmp_count=$(find /tmp -maxdepth 1 -type f -name 'makesure.*' | wc -l)
-    local cnt
-    (( cnt = tmp_count ))
-    if [[ -d "/dev/shm" ]]
-    then
-      local shm_count=$(find /dev/shm -maxdepth 1 -type f -name 'makesure.*' | wc -l)
-      (( cnt += shm_count ))
-    fi
-    echo $cnt
   }
 
 @goal tested
 @doc 'runs all *.tush tests'
 @depends_on tests/*.tush
+
+@goal tush
+@doc 'runs all *.tush tests with tush'
+  TOOL=tush ./makesure tested
 
 @goal fhtagn
 @doc 'runs all *.tush tests with fhtagn'
@@ -133,14 +129,14 @@
 
 @goal @glob tests/*.tush @private
 @depends_on prepared4tests
-@use_lib testing_tush
+@use_lib testing
   MAKESURE=makesure_dev \
     run_tush_file "$ITEM"
 
 @goal tested_candidate @glob tests/*.tush @private
 @depends_on tested
 @depends_on candidate_version_prepared
-@use_lib testing_tush
+@use_lib testing
   MAKESURE=makesure_candidate \
     run_tush_file "$ITEM"
 
@@ -249,46 +245,55 @@ in_begin && $1 ~ /^delete/{ next }
 @depends_on tested
 
 @goal tested_awks
-@doc tests with all awks
+@doc 'tests with all awks'
+@depends_on tested_awks_by @args 'fhtagn'
+
+@goal tested_awks_by          @params TOOL
+@doc 'tests with all awks'
+#@depends_on tested            @args TOOL # TODO can we make parameterized?
 @depends_on tested
-@depends_on tested_bwk
-@depends_on tested_mawk133
-@depends_on tested_mawk134
-@depends_on tested_all_gawks
-@depends_on tested_goawk
-@depends_on tested_busybox
+@depends_on tested_bwk        @args TOOL
+@depends_on tested_mawk133    @args TOOL
+@depends_on tested_mawk134    @args TOOL
+@depends_on tested_all_gawks  @args TOOL
+@depends_on tested_goawk      @args TOOL
+@depends_on tested_busybox    @args TOOL
 
-@goal tested_bwk @private
+@goal tested_bwk @params TOOL @private
 @depends_on installed_bwk
-  AWK="$(pwd)/soft/bwk" ./makesure tested
+  AWK="$(pwd)/soft/bwk" ./makesure "$TOOL"
 
-@goal tested_mawk133 @private
+@goal tested_mawk133 @params TOOL @private
 @depends_on installed_mawk133
-  AWK="$(pwd)/soft/mawk133" ./makesure tested
+  AWK="$(pwd)/soft/mawk133" ./makesure "$TOOL"
 
-@goal tested_mawk134 @private
+@goal tested_mawk134 @params TOOL @private
 @depends_on installed_mawk134
-  AWK="$(pwd)/soft/mawk134" ./makesure tested
+  AWK="$(pwd)/soft/mawk134" ./makesure "$TOOL"
 
-@goal tested_all_gawks
+@goal tested_all_gawks @params TOOL
 @doc 'tests with all Gawk-s'
-@depends_on tested_gawk @args '5.1.0' 'gawk51'
-@depends_on tested_gawk @args '5.1.1' 'gawk511'
-@depends_on tested_gawk @args '5.2.2' 'gawk522'
-@depends_on tested_gawk @args '5.2-stable' 'gawk52'
+@depends_on tested_gawk @args TOOL '5.1.0' 'gawk51'
+@depends_on tested_gawk @args TOOL '5.1.1' 'gawk511'
+@depends_on tested_gawk @args TOOL '5.2.2' 'gawk522'
+@depends_on tested_gawk @args TOOL '5.2-stable' 'gawk52'
 
-@goal tested_goawk @private
+@goal tested_gawk @params TOOL VERSION EXE_NAME @private
+@depends_on installed_gawk @args VERSION EXE_NAME
+  MAKESURE_AWKLIBPATH="$(pwd)/soft/${EXE_NAME}_libs" AWK="$(pwd)/soft/${EXE_NAME}" ./makesure "$TOOL"
+
+@goal tested_goawk @params TOOL @private
 @depends_on installed_goawk
-  AWK="$(pwd)/soft/$GOAWK" ./makesure tested
+  AWK="$(pwd)/soft/$GOAWK" ./makesure "$TOOL"
 
 @goal tested_goawk_branch @private
 @depends_on installed_goawk_branch
   AWK="$(pwd)/soft/$GOAWK_BRANCH_EXE" ./makesure tested
 
-@goal tested_busybox @private
+@goal tested_busybox @params TOOL @private
 @reached_if [[ "$OSTYPE" != "linux-gnu"* ]] # only test busybox awk on linux
 @depends_on installed_busybox
-  AWK="$(pwd)/soft/busybox awk" ./makesure tested
+  AWK="$(pwd)/soft/busybox awk" ./makesure "$TOOL"
 
 @goal installed_bwk @private
 @reached_if [[ -f soft/bwk ]]
@@ -348,10 +353,6 @@ in_begin && $1 ~ /^delete/{ next }
     ./$exeName -W version
     rm -r mawk-"$version"-*
   }
-
-@goal tested_gawk @params VERSION EXE_NAME @private
-@depends_on installed_gawk @args VERSION EXE_NAME
-  MAKESURE_AWKLIBPATH="$(pwd)/soft/${EXE_NAME}_libs" AWK="$(pwd)/soft/${EXE_NAME}" ./makesure tested
 
 @goal installed_gawk @params VERSION EXE_NAME @private
 @reached_if [[ -f soft/"$EXE_NAME" ]]
