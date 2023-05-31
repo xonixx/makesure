@@ -7,6 +7,8 @@
 @define GOAWK="goawk$GOAWK_VERSION"
 @define JUST="just$JUST_VERSION"
 @define TUSH_REPO='https://github.com/adolfopa/tush'
+@define FHTAGN_VERSION='520262aa81bdd22f75ae0c93fe99acbbb5ae92c4'
+@define FHTAGN_URL="https://github.com/xonixx/fhtagn/raw/$FHTAGN_VERSION/fhtagn.awk"
 @define REPO='xonixx/makesure'
 
 @goal soft_folder_created @private
@@ -38,6 +40,23 @@
     git clone --depth 1 $TUSH_REPO.git
     rm -r tush/.git
   fi
+
+@define FHTAGN="soft/fhtagn.awk"
+
+@goal fhtagn_installed @private
+@depends_on soft_folder_created
+@reached_if [[ -x "$FHTAGN" ]]
+  if command -v wget >/dev/null
+  then
+    wget "$FHTAGN_URL" -O"$FHTAGN"
+  elif command -v curl >/dev/null
+  then
+    curl -L "$FHTAGN_URL" -o "$FHTAGN"
+  else
+    echo "can't dl fhtagn"
+    exit 2
+  fi
+  chmod +x "$FHTAGN"
 
 @goal soft_installed @private
 @depends_on tush_installed
@@ -104,8 +123,13 @@
   }
 
 @goal tested
-@doc runs all *.tush tests
+@doc 'runs all *.tush tests'
 @depends_on tests/*.tush
+
+@goal fhtagn
+@doc 'runs all *.tush tests with fhtagn'
+@depends_on fhtagn_installed
+  ./soft/fhtagn.awk tests/*.tush
 
 @goal @glob tests/*.tush @private
 @depends_on prepared4tests
