@@ -79,3 +79,9 @@ Makesure [doesn't need installation](https://github.com/xonixx/makesure#installa
 [Problem](https://github.com/casey/just/issues/867)
 
 [How you do it with makesure](https://github.com/casey/just/issues/867#issuecomment-1344887900)
+
+### Default target doesn't play well with !include
+
+[Problem](https://github.com/casey/just/issues/1557)
+
+By default, `just` invokes the first recipe. Makesure by default invokes the goal named `default`. So, although makesure doesn't have includes, if it had, the issue would not happen.  
