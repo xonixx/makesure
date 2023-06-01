@@ -6,7 +6,6 @@
 @define JUST_VERSION='1.3.0'
 @define GOAWK="goawk$GOAWK_VERSION"
 @define JUST="just$JUST_VERSION"
-@define TUSH_REPO='https://github.com/adolfopa/tush'
 @define FHTAGN_VERSION='520262aa81bdd22f75ae0c93fe99acbbb5ae92c4'
 @define FHTAGN_URL="https://github.com/xonixx/fhtagn/raw/$FHTAGN_VERSION/fhtagn.awk"
 @define REPO='xonixx/makesure'
@@ -14,32 +13,6 @@
 @goal soft_folder_created @private
 @reached_if [[ -d "soft" ]]
   mkdir soft
-
-@goal tush_installed @private
-@depends_on soft_folder_created
-@reached_if [[ -f "soft/tush/bin/tush-check" ]]
-  echo
-  echo "Fetching tush..."
-  echo
-
-  cd "soft"
-
-  if command -v wget >/dev/null
-  then
-    wget $TUSH_REPO/archive/master.tar.gz -O./tush.tar.gz
-    tar xzvf ./tush.tar.gz
-    rm ./tush.tar.gz
-    mv tush-master tush
-  elif command -v curl >/dev/null
-  then
-    curl -L $TUSH_REPO/archive/master.tar.gz -o ./tush.tar.gz
-    tar xzvf ./tush.tar.gz
-    rm ./tush.tar.gz
-    mv tush-master tush
-  else
-    git clone --depth 1 $TUSH_REPO.git
-    rm -r tush/.git
-  fi
 
 @define FHTAGN="soft/fhtagn.awk"
 
@@ -57,9 +30,6 @@
     exit 2
   fi
   chmod +x "$FHTAGN"
-
-@goal soft_installed @private
-@depends_on tush_installed
 
 @goal cleaned @private
 
@@ -85,27 +55,15 @@
   bash --version| head -n 1
 
 @goal prepared4tests @private
-@depends_on tush_installed fhtagn_installed debug
+@depends_on fhtagn_installed debug
 
 @lib testing
-  run1() {
-    local f="$1"
-
-    if [[ $TOOL == 'tush' ]]
-    then
-      DIFF="diff --strip-trailing-cr" tush-check "$f"
-    else # fhtagn
-      echo "running fhtagn..."
-      ./soft/fhtagn.awk "$f"
-    fi
-  }
   run_tush_file() {
     local f="$1"
 
-    export PATH="$PATH:$MYDIR/soft/tush/bin"
     export NEXT_VERSION
 
-    if run1 "$f"
+    if ./soft/fhtagn.awk "$f"
     then
       echo "TESTS PASSED : $f"
     else
@@ -117,10 +75,6 @@
 @goal tested
 @doc 'runs all *.tush tests'
 @depends_on tests/*.tush
-
-@goal tush
-@doc 'runs all *.tush tests with tush'
-  TOOL=tush ./makesure tested
 
 @goal fhtagn
 @doc 'runs all *.tush tests with fhtagn'
@@ -208,54 +162,49 @@
 
 @goal tested_awks
 @doc 'tests with all awks'
-@depends_on tested_awks_by @args 'fhtagn'
+@depends_on fhtagn
+@depends_on tested_bwk
+@depends_on tested_mawk133
+@depends_on tested_mawk134
+@depends_on tested_all_gawks
+@depends_on tested_goawk
+@depends_on tested_busybox
 
-@goal tested_awks_by          @params TOOL
-@doc 'tests with all awks'
-#@depends_on tested            @args TOOL # TODO can we make parameterized?
-@depends_on tested
-@depends_on tested_bwk        @args TOOL
-@depends_on tested_mawk133    @args TOOL
-@depends_on tested_mawk134    @args TOOL
-@depends_on tested_all_gawks  @args TOOL
-@depends_on tested_goawk      @args TOOL
-@depends_on tested_busybox    @args TOOL
-
-@goal tested_bwk @params TOOL @private
+@goal tested_bwk @private
 @depends_on installed_bwk
-  AWK="$(pwd)/soft/bwk" ./makesure "$TOOL"
+  AWK="$(pwd)/soft/bwk" ./makesure fhtagn
 
-@goal tested_mawk133 @params TOOL @private
+@goal tested_mawk133 @private
 @depends_on installed_mawk133
-  AWK="$(pwd)/soft/mawk133" ./makesure "$TOOL"
+  AWK="$(pwd)/soft/mawk133" ./makesure fhtagn
 
-@goal tested_mawk134 @params TOOL @private
+@goal tested_mawk134 @private
 @depends_on installed_mawk134
-  AWK="$(pwd)/soft/mawk134" ./makesure "$TOOL"
+  AWK="$(pwd)/soft/mawk134" ./makesure fhtagn
 
-@goal tested_all_gawks @params TOOL
+@goal tested_all_gawks
 @doc 'tests with all Gawk-s'
-@depends_on tested_gawk @args TOOL '5.1.0' 'gawk51'
-@depends_on tested_gawk @args TOOL '5.1.1' 'gawk511'
-@depends_on tested_gawk @args TOOL '5.2.2' 'gawk522'
-@depends_on tested_gawk @args TOOL '5.2-stable' 'gawk52'
+@depends_on tested_gawk @args '5.1.0' 'gawk51'
+@depends_on tested_gawk @args '5.1.1' 'gawk511'
+@depends_on tested_gawk @args '5.2.2' 'gawk522'
+@depends_on tested_gawk @args '5.2-stable' 'gawk52'
 
-@goal tested_gawk @params TOOL VERSION EXE_NAME @private
+@goal tested_gawk @params VERSION EXE_NAME @private
 @depends_on installed_gawk @args VERSION EXE_NAME
-  MAKESURE_AWKLIBPATH="$(pwd)/soft/${EXE_NAME}_libs" AWK="$(pwd)/soft/${EXE_NAME}" ./makesure "$TOOL"
+  MAKESURE_AWKLIBPATH="$(pwd)/soft/${EXE_NAME}_libs" AWK="$(pwd)/soft/${EXE_NAME}" ./makesure fhtagn
 
-@goal tested_goawk @params TOOL @private
+@goal tested_goawk @private
 @depends_on installed_goawk
-  AWK="$(pwd)/soft/$GOAWK" ./makesure "$TOOL"
+  AWK="$(pwd)/soft/$GOAWK" ./makesure fhtagn
 
 @goal tested_goawk_branch @private
 @depends_on installed_goawk_branch
   AWK="$(pwd)/soft/$GOAWK_BRANCH_EXE" ./makesure tested
 
-@goal tested_busybox @params TOOL @private
+@goal tested_busybox @private
 @reached_if [[ "$OSTYPE" != "linux-gnu"* ]] # only test busybox awk on linux
 @depends_on installed_busybox
-  AWK="$(pwd)/soft/busybox awk" ./makesure "$TOOL"
+  AWK="$(pwd)/soft/busybox awk" ./makesure fhtagn
 
 @goal installed_bwk @private
 @reached_if [[ -f soft/bwk ]]
