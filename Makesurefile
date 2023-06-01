@@ -77,7 +77,7 @@
 @depends_on tests/*.tush
 
 @goal fhtagn
-@doc 'runs all *.tush tests with fhtagn'
+@doc 'runs all *.tush tests (fail at end)'
 @depends_on fhtagn_installed
   MAKESURE=makesure_dev ALL=1 ./soft/fhtagn.awk tests/*.tush
 
