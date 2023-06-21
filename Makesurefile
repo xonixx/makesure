@@ -6,7 +6,7 @@
 @define JUST_VERSION='1.3.0'
 @define GOAWK="goawk$GOAWK_VERSION"
 @define JUST="just$JUST_VERSION"
-@define FHTAGN_VERSION='764f6ecf600944ef043de3774a67478350740049'
+@define FHTAGN_VERSION='v0.1.0'
 @define FHTAGN_URL="https://github.com/xonixx/fhtagn/raw/$FHTAGN_VERSION/fhtagn.awk"
 @define REPO='xonixx/makesure'
 
