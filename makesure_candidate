@@ -456,7 +456,7 @@ function instantiate(goal,args,newArgs,i,j,depArg,depArgType,dep,goalNameInstant
     if(dep in GoalsByName&&argsCnt!=GoalParamsCnt[dep])
       addErrorDedup("wrong args count for '\''" dep "'\''",DependenciesLineNo[gi])
     for(j=0;j<argsCnt;j++){
-      depArg    =DependencyArgs    [gi,j]
+      depArg=DependencyArgs[gi,j]
       depArgType=DependencyArgsType[gi,j]
       newArgs[GoalParams[dep,j]]=\
         depArgType=="str"?\
@@ -503,13 +503,13 @@ function renderDuration(deltaMillis,\
   deltaDay=0
   if(deltaSec>=60){
     deltaMin=int(deltaSec/60)
-    deltaSec=deltaSec - deltaMin*60}
+    deltaSec=deltaSec-deltaMin*60}
   if(deltaMin>=60){
     deltaHr=int(deltaMin/60)
-    deltaMin=deltaMin - deltaHr*60}
+    deltaMin=deltaMin-deltaHr*60}
   if(deltaHr>=24){
     deltaDay=int(deltaHr/24)
-    deltaHr=deltaHr - deltaDay*24}
+    deltaHr=deltaHr-deltaDay*24}
   dayS=deltaDay>0?deltaDay " d":""
   hrS=deltaHr>0?deltaHr " h":""
   minS=deltaMin>0?deltaMin " m":""
@@ -557,7 +557,7 @@ function quicksort(data,left,right,i,last){
     if(natOrder(data[i],data[left],1,1)<0)
       quicksortSwap(data,++last,i)
   quicksortSwap(data,left,last)
-  quicksort(data,left,last - 1)
+  quicksort(data,left,last-1)
   quicksort(data,last+1,right)}
 function quicksortSwap(data,i,j,temp){
   temp=data[i]
@@ -617,7 +617,7 @@ function arrDel(arr,v,l,i,e,resArr){
   delete arr
   for(i in resArr)
     arr[i]=resArr[i]}
-function arrLast(arr,l){return (l=arrLen(arr))>0?arr[l-1]:""}
+function arrLast(arr,l){return (l=arrLen(arr))>0?arr[l - 1]:""}
 function commandExists(cmd){return ok("command -v " cmd " >/dev/null")}
 function ok(cmd){return system(cmd)==0}
 function isFile(path){return ok("test -f " quoteArg(path))}

@@ -17,7 +17,7 @@ in_begin && $1 ~ /^delete/{ next }
   gsub(/ \/ /, "/")
   gsub(/ \* /, "*")
   gsub(/ \+ /, "+")
-  ##gsub(/ - /, "-")
+  if (!/"/) gsub(/ - /, "-") # don't change strings
   gsub(/ \|\| /, "||")
   gsub(/ \| /, "|")
   if (/ \? /) gsub(/ : /, ":")
