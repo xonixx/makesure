@@ -9,6 +9,7 @@
 @define FHTAGN_VERSION='v0.1.0'
 @define FHTAGN_URL="https://github.com/xonixx/fhtagn/raw/$FHTAGN_VERSION/fhtagn.awk"
 @define REPO='xonixx/makesure'
+@define AWK="${AWK:-awk}"
 
 @goal soft_folder_created @private
 @reached_if [[ -d "soft" ]]
@@ -41,17 +42,23 @@
 @depends_on cleaned cleaned_soft
 
 @goal debug @private
-@doc shows software versions
-  AWK="${AWK:-awk}"
-  printf "%s: " "$AWK"
-  case "$AWK" in
-    *busybox*) $AWK --help 2>&1 | head -n 1
-            ;;
-    *mawk*) "$AWK" -W version 2>&1 | head -n 1
-            ;;
-         *) "$AWK" --version | head -n 1
-            ;;
-  esac
+@doc 'shows software versions'
+  awk_ver() {
+    local key="$1"
+    local value="$2"
+    local AWK="${value:-awk}"
+    printf "[%12s] %s: " "$key" "$AWK"
+    case "$AWK" in
+      *busybox*) $AWK --help 2>&1 | head -n 1
+              ;;
+      *mawk*) "$AWK" -W version 2>&1 | head -n 1
+              ;;
+           *) "$AWK" --version | head -n 1
+              ;;
+    esac
+  }
+  awk_ver 'AWK' "$AWK"
+  awk_ver 'MAKESURE_AWK' "$MAKESURE_AWK"
   bash --version| head -n 1
 
 @goal prepared4tests @private
@@ -78,7 +85,7 @@
 
 @goal fhtagn
 @doc 'runs all *.tush tests (fail at end)'
-@depends_on fhtagn_installed
+@depends_on prepared4tests
   MAKESURE=makesure_dev ALL=1 ./soft/fhtagn.awk tests/*.tush
 
 @goal @glob tests/*.tush @private
@@ -99,8 +106,8 @@
 @goal _cover_profile_prepared @private
   rm -f "$COVERPROFILE"
 
-  AWK="$(pwd)/soft/$GOAWK" \
-  AWK_OPTS="-covermode=set -coverprofile=$COVERPROFILE -coverappend" \
+  MAKESURE_AWK="$(pwd)/soft/$GOAWK" \
+  MAKESURE_AWK_OPTS="-covermode=set -coverprofile=$COVERPROFILE -coverappend" \
   MAKESURE=makesure_dev \
     ./makesure tested
 
@@ -114,9 +121,9 @@
 @depends_on _cover_profile_prepared
   html='/tmp/cov.html'
   go tool cover -html="$COVERPROFILE" -o "$html"
-  coverage="$(awk '/makesure\.awk/ { if (match($0,/\(.+\)/)) print substr($0,RSTART+1,RLENGTH-2) }' "$html")"
+  coverage="$($AWK '/makesure\.awk/ { if (match($0,/\(.+\)/)) print substr($0,RSTART+1,RLENGTH-2) }' "$html")"
   echo "coverage: $coverage"
-  awk -v coverage="$coverage" '{ gsub(/\$COVERAGE/,coverage) } 1' coverage.tpl.svg > coverage.svg
+  $AWK -v coverage="$coverage" '{ gsub(/\$COVERAGE/,coverage) } 1' coverage.tpl.svg > coverage.svg
   rm "$html"
 
 @goal candidate
@@ -136,7 +143,7 @@
 
 @goal README.md @private
 @doc 'compiles release version of README.md'
-  awk '
+  $AWK '
     /^\$ \.\/makesure -h$/ { print; stop=1; system("./makesure -h") }
     /^```$/ { stop=0 }
     !stop' README.md > README.md.1
@@ -151,7 +158,7 @@
     # Since in Posix sh there is no way to declare local var, let's just make names more specific.
     echo "if command -v gawk >/dev/null;then makesure_awk='gawk -ltime -v Gawk=1';makesure_pre='';else makesure_awk=awk;makesure_pre='function gettimeofday(){}';fi"
     echo 'exec $makesure_awk -v "Version='$NEXT_VERSION'" -v "Prog=$0" "$makesure_pre"'\'
-    awk -f minify.awk makesure.awk
+    $AWK -f minify.awk makesure.awk
     echo \'' Makesurefile "$@"'
   } > "$F"
   chmod +x "$F"
@@ -172,15 +179,15 @@
 
 @goal tested_bwk @private
 @depends_on installed_bwk
-  AWK="$(pwd)/soft/bwk" ./makesure fhtagn
+  ./makesure -D MAKESURE_AWK="$(pwd)/soft/bwk" fhtagn
 
 @goal tested_mawk133 @private
 @depends_on installed_mawk133
-  AWK="$(pwd)/soft/mawk133" ./makesure fhtagn
+  ./makesure -D MAKESURE_AWK="$(pwd)/soft/mawk133" fhtagn
 
 @goal tested_mawk134 @private
 @depends_on installed_mawk134
-  AWK="$(pwd)/soft/mawk134" ./makesure fhtagn
+  ./makesure -D MAKESURE_AWK="$(pwd)/soft/mawk134" fhtagn
 
 @goal tested_all_gawks
 @doc 'tests with all Gawk-s'
@@ -191,20 +198,20 @@
 
 @goal tested_gawk @params VERSION EXE_NAME @private
 @depends_on installed_gawk @args VERSION EXE_NAME
-  MAKESURE_AWKLIBPATH="$(pwd)/soft/${EXE_NAME}_libs" AWK="$(pwd)/soft/${EXE_NAME}" ./makesure fhtagn
+  ./makesure -D MAKESURE_AWKLIBPATH="$(pwd)/soft/${EXE_NAME}_libs" -D MAKESURE_AWK="$(pwd)/soft/${EXE_NAME}" fhtagn
 
 @goal tested_goawk @private
 @depends_on installed_goawk
-  AWK="$(pwd)/soft/$GOAWK" ./makesure fhtagn
+  ./makesure -D MAKESURE_AWK="$(pwd)/soft/$GOAWK" fhtagn
 
 @goal tested_goawk_branch @private
 @depends_on installed_goawk_branch
-  AWK="$(pwd)/soft/$GOAWK_BRANCH_EXE" ./makesure tested
+  ./makesure -D MAKESURE_AWK="$(pwd)/soft/$GOAWK_BRANCH_EXE" tested
 
 @goal tested_busybox @private
 @reached_if [[ "$OSTYPE" != "linux-gnu"* ]] # only test busybox awk on linux
 @depends_on installed_busybox
-  AWK="$(pwd)/soft/busybox awk" ./makesure fhtagn
+  ./makesure -D MAKESURE_AWK="$(pwd)/soft/busybox awk" fhtagn
 
 @goal installed_bwk @private
 @reached_if [[ -f soft/bwk ]]
@@ -428,7 +435,7 @@
 
   # Let's take for notes the latest record from change log (in CHANGELOG.md)
   # Let's make sure the version there is correct
-  notesStr=$(awk -v NEXT_VERSION="$NEXT_VERSION" -v REPO="$REPO" -v milestoneId="$milestoneId" '
+  notesStr=$($AWK -v NEXT_VERSION="$NEXT_VERSION" -v REPO="$REPO" -v milestoneId="$milestoneId" '
   Started && /##/ { exit }
   /##/ {
     if (Started=index($0,NEXT_VERSION)>0) {
@@ -455,7 +462,7 @@
 
 @goal prepareCHANGELOG @private
 @doc prepares initial version of CHANGELOG.md
-for v in $(gh release list | awk '{ print $1 }')
+for v in $(gh release list | $AWK '{ print $1 }')
 do
     echo "## $v"
     gh release view "$v" | gawk '/--/ { Started=1; next } Started && !/\/milestone\// {

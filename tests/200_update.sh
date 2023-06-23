@@ -1,7 +1,7 @@
 
 #@options tracing
 
-@define AWK="${AWK:-awk}"
+@define MAKESURE_AWK="${MAKESURE_AWK:-awk}"
 @define D='/tmp/dirXXX with spaces'
 #@define D='/tmp/dirXXX'
 
@@ -23,9 +23,9 @@
 
   for cmd in awk mktemp rm cp dirname cat chmod
   do
-    if [[ $cmd == 'awk' && $AWK != 'awk' ]]
+    if [[ $cmd == 'awk' && $MAKESURE_AWK != 'awk' ]]
     then
-      cmd1=$AWK
+      cmd1=$MAKESURE_AWK
     else
       cmd1=$(command -v $cmd)
     fi

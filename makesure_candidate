@@ -107,7 +107,7 @@ function handleDefineLine(line,kv){
   if(!checkValidDefineSyntax(line))
     return
   splitKV(line,kv)
-  if(!(kv[0] in DefineOverrides))
+  if(!(kv[0]in DefineOverrides))
     DefinesCode=addL(DefinesCode,line "\nexport " kv[0])}
 function checkValidDefineSyntax(line){
   if(line~/^[ \t]*[A-Za-z_][A-Za-z0-9_]*=(([A-Za-z0-9_]|(\\.))+|('\''[^'\'']*'\'')|("((\\\\)|(\\")|[^"])*")|(\$'\''((\\\\)|(\\'\'')|[^'\''])*'\''))*[ \t]*(#.*)?$/)
@@ -259,7 +259,7 @@ function checkBeforeRun(i,j,dep,depCnt,goalName){
     for(j=0;j<depCnt;j++)
       if(!((dep=Dependencies[goalName,j])in GoalsByName))
         addError("Goal " quote2(goalName,1)" has unknown dependency '\''" dep "'\''",DependenciesLineNo[goalName,j])
-    if(goalName in GoalToLib&&!(GoalToLib[goalName] in Lib))
+    if(goalName in GoalToLib&&!(GoalToLib[goalName]in Lib))
       addError("Goal " quote2(goalName,1)" uses unknown lib '\''" GoalToLib[goalName] "'\''",UseLibLineNo[goalName])}}
 function getPreludeCode(a){
   addLine(a,MyDirScript)
@@ -456,7 +456,7 @@ function instantiate(goal,args,newArgs,i,j,depArg,depArgType,dep,goalNameInstant
     if(dep in GoalsByName&&argsCnt!=GoalParamsCnt[dep])
       addErrorDedup("wrong args count for '\''" dep "'\''",DependenciesLineNo[gi])
     for(j=0;j<argsCnt;j++){
-      depArg    =DependencyArgs    [gi,j]
+      depArg=DependencyArgs[gi,j]
       depArgType=DependencyArgsType[gi,j]
       newArgs[GoalParams[dep,j]]=\
         depArgType=="str"?\
@@ -503,13 +503,13 @@ function renderDuration(deltaMillis,\
   deltaDay=0
   if(deltaSec>=60){
     deltaMin=int(deltaSec/60)
-    deltaSec=deltaSec - deltaMin*60}
+    deltaSec=deltaSec-deltaMin*60}
   if(deltaMin>=60){
     deltaHr=int(deltaMin/60)
-    deltaMin=deltaMin - deltaHr*60}
+    deltaMin=deltaMin-deltaHr*60}
   if(deltaHr>=24){
     deltaDay=int(deltaHr/24)
-    deltaHr=deltaHr - deltaDay*24}
+    deltaHr=deltaHr-deltaDay*24}
   dayS=deltaDay>0?deltaDay " d":""
   hrS=deltaHr>0?deltaHr " h":""
   minS=deltaMin>0?deltaMin " m":""
@@ -557,7 +557,7 @@ function quicksort(data,left,right,i,last){
     if(natOrder(data[i],data[left],1,1)<0)
       quicksortSwap(data,++last,i)
   quicksortSwap(data,left,last)
-  quicksort(data,left,last - 1)
+  quicksort(data,left,last-1)
   quicksort(data,last+1,right)}
 function quicksortSwap(data,i,j,temp){
   temp=data[i]
@@ -579,7 +579,7 @@ function parseCli(line,res,pos,c,last,is_doll,c1){
             return "unterminated argument"
           else if(is_doll&&c=="\\"&&((c1=substr(line,pos+1,1))=="'\''"||c1==c)){
             c=c1;pos++}
-          res[last]=res[last] c}
+          res[last]=res[last]c}
         if((c=substr(line,++pos,1))!=""&&c!=" "&&c!="\t")
           return "joined arguments"
       }else {
@@ -587,7 +587,7 @@ function parseCli(line,res,pos,c,last,is_doll,c1){
         while((c=substr(line,++pos,1))!=""&&c!=" "&&c!="\t"){
           if(c=="'\''")
             return "joined arguments"
-          res[last]=res[last] c}}}}}
+          res[last]=res[last]c}}}}}
 function reparseCli(res,i,err){
   err=parseCli($0,res)
   if(err){
@@ -617,7 +617,7 @@ function arrDel(arr,v,l,i,e,resArr){
   delete arr
   for(i in resArr)
     arr[i]=resArr[i]}
-function arrLast(arr,l){return (l=arrLen(arr))>0?arr[l-1]:""}
+function arrLast(arr,l){return (l=arrLen(arr))>0?arr[l - 1]:""}
 function commandExists(cmd){return ok("command -v " cmd " >/dev/null")}
 function ok(cmd){return system(cmd)==0}
 function isFile(path){return ok("test -f " quoteArg(path))}
