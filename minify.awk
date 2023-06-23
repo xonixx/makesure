@@ -3,7 +3,7 @@ function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return 
 /^BEGIN/                  { in_begin = 1 }
 in_begin && /^}/          { in_begin = 0 }
 in_begin && $1 ~ /^delete/{ next }
-{ if (!/"#"/ && !/\*#\// && !/\*\(#/) gsub("\\s*#.*$", "")
+{ if (!/"#"/ && !/\*#\// && !/\*\(#/) gsub("[ \t\r\n]*#.*$", "")
   gsub(/ == /, "==")
   gsub(/ = /, "=")
   gsub(/ != /, "!=")
