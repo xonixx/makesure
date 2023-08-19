@@ -8,14 +8,14 @@
 ```
 
 ## Goals
-- Change the syntax to `@define VAR 'value'` to be more consistent
+- Change the syntax to `@define VAR 'value'` to be more consistent (current `@define VAR='value'`)
 - Be able to implement [#139](https://github.com/xonixx/makesure/issues/139) "Ability to reference `@define`d variables in parameterized dependencies"
   - this requires switching to ad-hoc parsing to be able to get final variable values before goals evaluation
-    - Problem: 1-pass parsing may be not enough, because we allow `@define` and `@goal` inter-mixed
+    - Problem: 1-pass parsing may be not enough, because we allow `@define` and `@goal` inter-mixed (since [#95](https://github.com/xonixx/makesure/issues/95))
 
 ## Constraints
-- Keep semantics compatibility with shell?
-- Don't introduce new directives or modifiers
+- Keep semantics compatibility with shell
+- It's desirable to not introduce new directives or modifiers
 - Make sure interpolation keeps working `@define VAR "hello $WORLD"`
 
 
@@ -32,13 +32,13 @@
 ```
 
 2. Worse is better violation
-3. Maybe have modifier `@required`
-4. This goes against the default semantics of shell
+3. Maybe have modifier `@required` instead?
+4. This goes against the default semantics of shell (to treat unset as empty string)
 
 ## Q. Protect from accidental variable redefinition by environment?
 
 
-## Q. Adjust semantics & priority
+## Q. Adjust semantics & priority?
 
 ## Q. Be able to setup value on different levels, [see the ansible approach](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable)
 
