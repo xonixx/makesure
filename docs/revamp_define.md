@@ -7,6 +7,9 @@
 
 ## Goals
 - Change the syntax to `@define VAR 'value'` to be more consistent
+- Be able to implement [#139](https://github.com/xonixx/makesure/issues/139) "Ability to reference `@define`d variables in parameterized dependencies"
+  - this requires switching to ad-hoc parsing to be able to get final variable values before goals evaluation
+    - Problem: 1-pass parsing may be not enough, because we allow `@define` and `@goal` inter-mixed
 - Adjust semantics & priority
 - Interpolate values `@define VAR "hello $WORLD"`
 - Be able to setup value on different levels, [see the ansible approach](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable)
