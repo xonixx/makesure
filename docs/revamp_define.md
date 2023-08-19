@@ -29,5 +29,21 @@
 
 - How can we redo current such usages?
 
-## Q. 
+## Q. Be able to set variable globally (via environment, not cli)
+
+Now this is achieved by 
+
+```shell
+# Makesurefile
+
+@define VAR="${VAR}"
+
+@goa default
+  echo "$VAR"
+```
+
+```
+$ export VAR=hello
+$ ./makesure 
+```
         
