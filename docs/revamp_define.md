@@ -1,8 +1,10 @@
 # revamp `@define`
 
 ```shell
-@define HELLO 'hello'
-@define HW    "$HELLO world"
+@define ENV_VAR              "$ENV_VAR"
+@define ENV_VAR_WITH_DEFAULT "${ENV_VAR:-default_val}"
+@define HELLO                'hello'
+@define HW                   "$HELLO world"
 ```
 
 ## Goals
@@ -18,6 +20,21 @@
 
 
 ## Q. Detect unset variable as an error?
+    
+### Cons
+        
+1. Custom check gives more fine-grained error                                                         
+```shell
+@goal env_is_set @private
+@reached_if [[ -n "$ENV" ]]
+  >&2 echo "ENV is not set, please use -D ENV=test or -D ENV=prod"
+  exit 1
+```
+
+2. Worse is better violation
+3. Maybe have modifier `@required`
+4. This goes against the default semantics of shell
+
 ## Q. Protect from accidental variable redefinition by environment?
 
 
@@ -25,9 +42,27 @@
 
 ## Q. Be able to setup value on different levels, [see the ansible approach](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable)
 
-## Q. Do we allow default values `@define A="${VAR:-default_val}"`?
+## Q. Can we disallow default values `@define A="${VAR:-default_val}"`?
 
-- How can we redo current such usages?
+How can we redo current such usages?
+
+If we want to allow `@define A='default_val'` instead of `@define A="${A:-default_val}"` we need to adjust the **current** priorities (higher priority top):
+
+- `./makesure -D VAR=1`
+- `@define VAR=2` in `Makesurefile`
+- `VAR=3 ./makesure`
+
+**updated**:
+
+- `./makesure -D VAR=1`
+- `VAR=3 ./makesure`
+- `@define VAR=2` in `Makesurefile`
+
+### Cons
+
+Now we open the door for accidental env variable clash to override the value.
+The explicit way of `@define A="${A:-default_val}` is safer. Say, if it clashes, just change to `@define A="${A_THAT_DONT_CLASH:-default_val}`.  
+
 
 ## Q. Be able to set variable globally (via environment, not cli)
 
