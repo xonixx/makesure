@@ -17,7 +17,19 @@
 - Keep semantics compatibility with shell
 - It's desirable to not introduce new directives or modifiers
 - Make sure interpolation keeps working `@define VAR "hello $WORLD"`
-
+- Make sure run-once semantics is not violated:
+  - ```shell
+    @defile HELLO 'Hello'
+    @defile WORLD 'World'
+    
+    @goal pg @params P
+      echo "$P"                        
+    
+    # should echo only once
+    @goal default
+    @depends_on pg @args 'Hello World'
+    @depends_on pg @args '$HELLO World'
+    @depends_on pg @args '$HELLO $WORLD'
 
 ## Q. Detect unset variable as an error?
     
