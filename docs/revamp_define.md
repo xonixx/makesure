@@ -28,8 +28,8 @@
     # should echo only once
     @goal default
     @depends_on pg @args 'Hello World'
-    @depends_on pg @args '$HELLO World'
-    @depends_on pg @args '$HELLO $WORLD'
+    @depends_on pg @args "$HELLO World"
+    @depends_on pg @args "$HELLO $WORLD"
 
 ## Q. Detect unset variable as an error?
     
