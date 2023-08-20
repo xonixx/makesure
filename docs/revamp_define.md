@@ -20,16 +20,36 @@
 - Make sure run-once semantics is not violated:
   - ```shell
     @defile HELLO 'Hello'
-    @defile WORLD 'World'
+    @defile WORLD 'world'
     
     @goal pg @params P
       echo "$P"                        
     
     # should echo only once
     @goal default
-    @depends_on pg @args 'Hello World'
-    @depends_on pg @args "$HELLO World"
+    @depends_on pg @args 'Hello world'
+    @depends_on pg @args "$HELLO world"
     @depends_on pg @args "$HELLO $WORLD"
+ 
+## Q. What about mixing parameterized goal param with `@define` var?
+   
+If we support this it means 
+- we need to defer `"String with $VAR"` parsing for `@args` till the instantiation.
+- we need to support parsing + variables substitution as separate step.
+
+```shell
+@define VAR 'world'
+
+@goal pg1 @params P
+  echo "$P"
+
+@goal pg2 @params X
+@depends_on pg1 @args "$X $VAR"  
+
+@goal default
+@depends_on pg2 @args "Hello"
+# should output 'Hello world'
+```
 
 ## Q. Detect unset variable as an error?
     
