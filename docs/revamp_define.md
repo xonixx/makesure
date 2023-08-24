@@ -32,6 +32,8 @@
     @depends_on pg @args "$HELLO $WORLD"
  
 ## Q. What about mixing parameterized goal param with `@define` var?
+
+### Analysis
    
 If we support this it means 
 - we need to defer `"String with $VAR"` parsing for `@args` till the instantiation.
@@ -51,6 +53,17 @@ If we support this it means
 # should output 'Hello world'
 ```
 
+### Resolution
+
+We won't support interpolation for `@args` values. That is we only support:
+
+```shell
+@define VAR 'value'
+
+@goal pg1 PARAM
+@depends_on pg2 @args PARAM VAR 'literal1' $'literal2' 
+```
+
 ## Q. Detect unset variable as an error?
     
 ### Cons
@@ -65,14 +78,24 @@ If we support this it means
 
 2. Worse is better violation
 3. Maybe have modifier `@required` instead?
-4. This goes against the default semantics of shell (to treat unset as empty string)
+4. _This goes against the default semantics of shell (to treat unset as empty string)_
+
+### Resolution
+
+- we will not error
+- we will resolve to empty string
 
 ## Q. Protect from accidental variable redefinition by environment?
-
+ 
+We will not change the current resolution priority. It has sufficient protection from accidental redefinition, because `@define A 'value'` have priority over environment variable `A`.
 
 ## Q. Adjust semantics & priority?
 
+No, see above.
+
 ## Q. Be able to setup value on different levels, [see the ansible approach](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable)
+
+We are not changing the priorities or adding new ways to define a variable.
 
 ## Q. Can we disallow default values `@define A="${VAR:-default_val}"`?
 
@@ -93,7 +116,11 @@ If we want to allow `@define A='default_val'` instead of `@define A="${A:-defaul
 ### Cons
 
 Now we open the door for accidental env variable clash to override the value.
-The explicit way of `@define A="${A:-default_val}` is safer. Say, if it clashes, just change to `@define A="${A_THAT_DONT_CLASH:-default_val}`.  
+The explicit way of `@define A="${A:-default_val}` is safer. Say, if it clashes, just change to `@define A="${A_THAT_DONT_CLASH:-default_val}`.
+
+### Resolution
+
+No, we won't disallow.
 
 
 ## Q. Be able to set variable globally (via environment, not cli)
