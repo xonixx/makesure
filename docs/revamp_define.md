@@ -4,6 +4,7 @@
 @define ENV_VAR              "$ENV_VAR"
 @define ENV_VAR_WITH_DEFAULT "${ENV_VAR:-default_val}"
 @define HELLO                'hello'
+@define HELLO1               $'hello'
 @define HW                   "$HELLO world"
 ```
 
@@ -140,4 +141,26 @@ Now this is achieved by
 $ export VAR=hello
 $ ./makesure 
 ```
+
+## Q. How do we know when to parse with `'`/`$'`/`"` - quoted strings or unquoted?
+     
+Lets defile string quoting types:
+
+- `u` for `string`
+- `'` for `'string'`
+- `$` for `$'string'`
+- `"` for `"string"`
+
+
+We need to parse two cases separately
+
+- `@define VAR "value"`
+  - allowing only unquoted in 1st and 2nd position and any quote in 3rd
+- All others re-parsed cases like 
+  - `@goal $'goal name' @params A B @private`
+    - `u'$` in 2nd, `u` in all other pos
+  - `@depends_on $'goal name' 'goal name2'`
+    - `u'$` in 2+ pos
+  - `@depends_on $'goal name' @args A 'literal' $'literal2'`
+    - `u'$` in 2nd, `u'$` in 4+
         
