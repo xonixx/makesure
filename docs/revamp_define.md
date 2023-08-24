@@ -143,8 +143,10 @@ $ ./makesure
 ```
 
 ## Q. How do we know when to parse with `'`/`$'`/`"` - quoted strings or unquoted?
-     
-Lets defile string quoting types:
+                    
+Need to come up with the simplest approach to parse and error on wrong quoting of particular word.
+
+Lets define string quoting types:
 
 - `u` for `string`
 - `'` for `'string'`
