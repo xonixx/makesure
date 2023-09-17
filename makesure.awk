@@ -321,7 +321,7 @@ function registerDependsOn(goalName,   i,dep,x,y) {
         x = goalName SUBSEP DependenciesCnt[goalName] - 1
         y = x SUBSEP DependencyArgsCnt[x]++
         DependencyArgs[y] = $i
-        DependencyArgsType[y] = Quotes[i] ? "str" : "var"
+        DependencyArgsType[y] = "u" == Quotes[i] ? "var" : "str"
       }
     } else
       registerDependency(goalName, dep)
