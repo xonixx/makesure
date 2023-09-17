@@ -5,7 +5,7 @@
   # comment with whitespaces before it
 
 @shell bash
-@define A=B
+@define A B
 
 @goal a
 @depends_on b

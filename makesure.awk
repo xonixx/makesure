@@ -15,6 +15,7 @@ BEGIN {
   delete GoalParams    # name,paramI -> param name
   delete CodePre       # name -> pre-body (should also go before lib)
   delete Code          # name -> body
+  delete Vars            # k -> "val"
   delete DefineOverrides # k -> ""
   DefinesCode = ""
   delete Dependencies       # name,i -> dep goal
@@ -32,7 +33,7 @@ BEGIN {
   delete Lib       # name -> code
   delete UseLibLineNo# name -> line no.
   delete GoalToLib # goal name -> lib name
-  delete Quotes    # NF -> quote of field ("'"|"$"|"")
+  delete Quotes    # NF -> quote of field ("'"|"$"|"u"|"\"")
   Mode = "prelude" # prelude|define|goal|goal_glob|lib
   srand()
   prepareArgs()
@@ -123,7 +124,8 @@ function splitKV(arg, kv,   n) {
 }
 function handleOptionDefineOverride(arg,   kv) {
   splitKV(arg, kv)
-  handleDefineLine(kv[0] "=" quoteArg(kv[1]))
+  #  handleDefineLine(kv[0] "=" quoteArg(kv[1]))
+  Vars[kv[0]] = kv[1]
   DefineOverrides[kv[0]]
 }
 
@@ -142,8 +144,14 @@ function handleOptions(   i) {
 
 function handleDefine() {
   started("define")
-  $1 = ""
-  handleDefineLine($0)
+  #  $1 = ""
+  #  handleDefineLine($0)
+  if (NF != 3) {
+    addError("@define NF != 3") # TODO better error msg
+    return
+  }
+  if (!($2 in DefineOverrides))
+    Vars[$2] = $3
 }
 function handleDefineLine(line,   kv) {
   if (!checkValidDefineSyntax(line))
@@ -366,9 +374,12 @@ function checkBeforeRun(   i,j,dep,depCnt,goalName) {
   }
 }
 
-function getPreludeCode(   a) {
+function getPreludeCode(   a,k) {
   addLine(a, MyDirScript)
-  addLine(a, DefinesCode)
+  #  addLine(a, DefinesCode)
+  for (k in Vars) {
+    addLine(a, k "=" quoteArg(Vars[k]) ";export " k)
+  }
   return a[0]
 }
 
@@ -850,7 +861,7 @@ function parseCli_2(line, vars, res,   pos,c,c1,isDoll,q,var,inDef,defVal,val,w,
                 if (inDef) {
                   if ("}" == c)
                     break
-                  if ("\\" == c && ((c1 = substr(line,pos+1,1)) == "$" || c1 == "\\" || c1 == "}" || c1 == "\"")) {
+                  if ("\\" == c && ((c1 = substr(line,pos + 1,1)) == "$" || c1 == "\\" || c1 == "}" || c1 == "\"")) {
                     c = c1; pos++
                   }
                   defVal = defVal c
@@ -868,7 +879,7 @@ function parseCli_2(line, vars, res,   pos,c,c1,isDoll,q,var,inDef,defVal,val,w,
           }
           w = w c
         }
-        res[i=+res[-7]++,"quote"] = isDoll ? "$" : q
+        res[i = +res[-7]++,"quote"] = isDoll ? "$" : q
         res[i] = w
         if ((c = substr(line,++pos,1)) != "" && c != " " && c != "\t")
           return "joined arguments"
@@ -880,14 +891,14 @@ function parseCli_2(line, vars, res,   pos,c,c1,isDoll,q,var,inDef,defVal,val,w,
         }
         if (w !~ /^[_A-Za-z0-9@.]+$/)
           return "wrong unquoted: '" w "'"
-        res[i=+res[-7]++,"quote"] = "u"
+        res[i = +res[-7]++,"quote"] = "u"
         res[i] = w
       }
     }
   }
 }
-function reparseCli(   todo,res,i,err) {
-  err = parseCli_2($0, todo, res)
+function reparseCli(   res,i,err) {
+  err = parseCli_2($0, Vars, res)
   if (err) {
     addError("Syntax error: " err)
     die(Error)
