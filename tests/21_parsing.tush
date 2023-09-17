@@ -84,6 +84,6 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_err1.sh
 ? 1
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_err2.sh
-@ Syntax error: joined arguments:
+@ Syntax error: wrong unquoted: 'doc'text':
 @ tests/21_parsing_err2.sh:4: @doc doc'text
 ? 1

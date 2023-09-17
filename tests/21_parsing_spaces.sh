@@ -1,6 +1,6 @@
 
 
-@goal @glob 21_parsing*.txt
+@goal @glob '21_parsing*.txt'
   echo "$ITEM"
   cat "$ITEM"
 
