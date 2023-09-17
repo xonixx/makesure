@@ -1,0 +1,15 @@
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh -l
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g1
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g2
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g3
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g4
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g5
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g6
+
