@@ -77,7 +77,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/10_define_in_goal.sh
 @ tests/10_define_in_goal.sh:4:   echo "$0"
 ? 1
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/10_define.sh issue142
+$ cd "$MYDIR"; ./$MAKESURE -f tests/10_define_issue_142.sh issue142
 |   goal 'issue142' ...
 | a     b
 

@@ -18,3 +18,8 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/6_reached_if_issue_113.sh g1
 $ cd "$MYDIR"; ./$MAKESURE -f tests/6_reached_if_issue_113.sh g2
 |   goal 'g2' ...
 | must show
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/6_reached_if_issue_142.sh g
+| a     b
+|   goal 'g' [already satisfied].
+
