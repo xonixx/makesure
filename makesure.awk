@@ -45,7 +45,7 @@ BEGIN {
 function makesure(   i) {
   while (getline > 0) {
     Lines[NR] = $0
-    if ($1 ~ /^@/ && "@define" != $1 && "@reached_if" != $1) reparseCli()
+    if ($1 ~ /^@/ && "@reached_if" != $1) reparseCli()
     if ("@options" == $1) handleOptions()
     else if ("@define" == $1) handleDefine()
     else if ("@shell" == $1) handleShell()

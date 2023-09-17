@@ -1,5 +1,5 @@
 
-@define HELLO="Hello"
+@define HELLO "Hello"
 
 @lib
   f1 () {
