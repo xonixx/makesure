@@ -863,7 +863,7 @@ function parseCli_2(line, vars, res,   pos,c,c1,isDoll,q,var,inDef,defVal,val,w,
             #            print "var="var
             if (var !~ /^[_A-Za-z][_A-Za-z0-9]*$/)
               return "wrong var: '" var "'"
-            w = w ((val = vars[var]) != "" ? val : defVal)
+            w = (w) ((val = vars[var]) != "" ? val : defVal)
             continue
           }
           w = w c
@@ -891,13 +891,13 @@ function reparseCli(   res,i,err) {
   if (err) {
     addError("Syntax error: " err)
     return -1
-  } else {
-    $0 = "" # only for macos 10.15 awk version 20070501
-    for (i = NF = 0; i in res; i++) {
-      $(++NF) = res[i]
-      Quotes[NF] = res[i,"quote"]
-    }
   }
+  $0 = "" # only for macos 10.15 awk version 20070501
+  for (i = NF = 0; i in res; i++) {
+    $(++NF) = res[i]
+    Quotes[NF] = res[i,"quote"]
+  }
+  return 0
 }
 function quote2(s,force) {
   if (index(s,"'")) {
