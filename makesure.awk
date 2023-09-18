@@ -359,8 +359,12 @@ function registerReachedIf(goalName, preScript) {
   if (goalName in ReachedIf)
     addError("Multiple " $1 " not allowed for a goal")
 
-  $1 = ""
+  trimDirective()
   ReachedIf[goalName] = preScript trim($0)
+}
+# remove the @directive at the start of the line
+function trimDirective() {
+  sub(/^[ \t]*@[a-z_]+/,"")
 }
 
 function checkBeforeRun(   i,j,dep,depCnt,goalName) {

@@ -23,3 +23,11 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/6_reached_if_issue_142.sh g
 | a     b
 |   goal 'g' [already satisfied].
 
+$ cd "$MYDIR"; ./$MAKESURE -f tests/6_reached_if_issue_142.sh g1
+| a     b
+|   goal 'g1' [already satisfied].
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/6_reached_if_issue_142.sh g2
+| a     b
+|   goal 'g2' [already satisfied].
+
