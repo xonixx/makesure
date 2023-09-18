@@ -1,15 +1,60 @@
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh -l
+| Available goals:
+|   g1
+|   g2
+|   g3
+|   g4
+|   g5
+|   g6
+|   pg@Value
+|   pg@Str1
+|   pg2@Str1
+|   pg@Str
+|   pg2@Value
+|   pg2@Str
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g1
+|   goal 'pg@Value' ...
+| A=Value
+|   goal 'g1' [empty].
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g2
+|   goal 'pg@Str1' ...
+| A=Str1
+|   goal 'g2' [empty].
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g3
+|   goal 'pg@Str1' ...
+| A=Str1
+|   goal 'pg@Value' ...
+| A=Value
+|   goal 'pg@Str' ...
+| A=Str
+|   goal 'pg2@Str1' [empty].
+|   goal 'g3' [empty].
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g4
+|   goal 'pg@Value' ...
+| A=Value
+|   goal 'pg@Str' ...
+| A=Str
+|   goal 'pg2@Value' [empty].
+|   goal 'g4' [empty].
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g5
+|   goal 'pg@Value' ...
+| A=Value
+|   goal 'pg@Str' ...
+| A=Str
+|   goal 'pg2@Value' [empty].
+|   goal 'g5' [empty].
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g6
+|   goal 'pg@Str' ...
+| A=Str
+|   goal 'pg@Value' ...
+| A=Value
+|   goal 'pg2@Str' [empty].
+|   goal 'g6' [empty].
 

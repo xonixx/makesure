@@ -690,7 +690,8 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
         depArgType == "str" ? \
           depArg : \
           depArgType == "var" ? \
-            (depArg in args ? args[depArg] : addErrorDedup("wrong arg '" depArg "'", DependenciesLineNo[gi])) : \
+            (depArg in args ? args[depArg] : \
+             depArg in Vars ? Vars[depArg] : addErrorDedup("wrong arg '" depArg "'", DependenciesLineNo[gi])) : \
             die("wrong depArgType: " depArgType)
     }
 
