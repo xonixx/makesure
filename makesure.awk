@@ -45,7 +45,7 @@ BEGIN {
 function makesure(   i) {
   while (getline > 0) {
     Lines[NR] = $0
-    if ($1 ~ /^@/ && "@reached_if" != $1) reparseCli()
+    if ($1 ~ /^@/ && "@reached_if" != $1) if (reparseCli() < 0) continue
     if ("@options" == $1) handleOptions()
     else if ("@define" == $1) handleDefine()
     else if ("@shell" == $1) handleShell()
@@ -147,7 +147,11 @@ function handleDefine() {
   #  $1 = ""
   #  handleDefineLine($0)
   if (NF != 3) {
-    addError("@define NF != 3") # TODO better error msg
+    addError("Invalid @define syntax, should be @define VAR_NAME 'value'")
+    return
+  }
+  if ($2 !~ /^[A-Za-z_][A-Za-z0-9_]*$/) {
+    addError("Wrong variable name: '" $2 "'")
     return
   }
   if (!($2 in DefineOverrides))
@@ -905,7 +909,8 @@ function reparseCli(   res,i,err) {
   err = parseCli_2($0, Vars, res)
   if (err) {
     addError("Syntax error: " err)
-    die(Error)
+    #    die(Error)
+    return -1
   } else {
     $0 = "" # only for macos 10.15 awk version 20070501
     for (i = NF = 0; i in res; i++) {

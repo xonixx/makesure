@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/16_define_validation.sh
+$ cd "$MYDIR"; ./$MAKESURE -f tests/16_define_validation_pass.sh
 |   goal 'default' ...
 | EMPTY=
 | EMPTY1=
@@ -31,67 +31,67 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/16_define_validation.sh
 | LC1=aaabbb bbbcc'c  cc'ca b  ceee eee
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/16_define_validation_error.sh
-@ Invalid define declaration:
+@ Invalid @define syntax, should be @define VAR_NAME 'value':
 @ tests/16_define_validation_error.sh:2: @define echo
-@ Invalid define declaration:
+@ Syntax error: wrong unquoted: 'echo;':
 @ tests/16_define_validation_error.sh:3: @define echo;
-@ Invalid define declaration:
+@ Syntax error: wrong unquoted: 'echo;echo':
 @ tests/16_define_validation_error.sh:4: @define echo;echo
-@ Invalid define declaration:
+@ Syntax error: wrong unquoted: ';':
 @ tests/16_define_validation_error.sh:5: @define echo ; echo
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:6: @define echo 'Hello'
-@ Invalid define declaration:
+@ Syntax error: wrong unquoted: 'echo='Hello'':
+@ tests/16_define_validation_error.sh:6: @define echo='Hello'
+@ Syntax error: joined arguments:
 @ tests/16_define_validation_error.sh:7: @define echo 'Hello';
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:8: @define A=aaa echo 'Hello'
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:9: @define B=aaa\ aaa echo 'Hello'
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:10: @define C='aaa aaa' echo 'Hello'
-@ Invalid define declaration:
+@ Invalid @define syntax, should be @define VAR_NAME 'value':
+@ tests/16_define_validation_error.sh:8: @define A aaa echo 'Hello'
+@ Syntax error: wrong unquoted: 'aaa\':
+@ tests/16_define_validation_error.sh:9: @define B aaa\ aaa echo 'Hello'
+@ Invalid @define syntax, should be @define VAR_NAME 'value':
+@ tests/16_define_validation_error.sh:10: @define C 'aaa aaa' echo 'Hello'
+@ Invalid @define syntax, should be @define VAR_NAME 'value':
 @ tests/16_define_validation_error.sh:12: @define echo                       # comment
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:13: @define echo 'Hello'           # comment
-@ Invalid define declaration:
+@ Syntax error: wrong unquoted: 'echo='Hello'':
+@ tests/16_define_validation_error.sh:13: @define echo='Hello'           # comment
+@ Syntax error: joined arguments:
 @ tests/16_define_validation_error.sh:14: @define echo 'Hello';           # comment
-@ Invalid define declaration:
+@ Syntax error: wrong unquoted: ';#':
 @ tests/16_define_validation_error.sh:15: @define echo 'Hello'  ;# comment
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:16: @define A=aaa echo 'Hello'        # comment
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:17: @define B=aaa\ aaa echo 'Hello'# comment
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:18: @define C='aaa aaa' echo 'Hello' # comment
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:19: @define C1='aaa aaa' echo 'Hello' ; # comment
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:22: @define B3='bbb ; bbb';
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:23: @define B4='bbb ; bbb'    ;
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:24: @define BC3='bbb bbb';  # comment
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:25: @define BC4='bbb ; bbb'   ;  # comment
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:28: @define IL1=a||b
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:29: @define IL2=a&b
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:30: @define IL3=a&&b
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:31: @define IL4=a!b
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:32: @define IL5=a-b
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:33: @define IL6=a+b
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:34: @define IL7=a;;;b
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:36: @define 0wrong_name=123
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:37: @define wrong,name=123
-@ Invalid define declaration:
-@ tests/16_define_validation_error.sh:38: @define wrong-name=123
+@ Invalid @define syntax, should be @define VAR_NAME 'value':
+@ tests/16_define_validation_error.sh:16: @define A aaa echo 'Hello'        # comment
+@ Syntax error: wrong unquoted: 'aaa\':
+@ tests/16_define_validation_error.sh:17: @define B aaa\ aaa echo 'Hello'# comment
+@ Invalid @define syntax, should be @define VAR_NAME 'value':
+@ tests/16_define_validation_error.sh:18: @define C 'aaa aaa' echo 'Hello' # comment
+@ Syntax error: wrong unquoted: ';':
+@ tests/16_define_validation_error.sh:19: @define C1 'aaa aaa' echo 'Hello' ; # comment
+@ Syntax error: joined arguments:
+@ tests/16_define_validation_error.sh:22: @define B3 'bbb ; bbb';
+@ Syntax error: wrong unquoted: ';':
+@ tests/16_define_validation_error.sh:23: @define B4 'bbb ; bbb'    ;
+@ Syntax error: joined arguments:
+@ tests/16_define_validation_error.sh:24: @define BC3 'bbb bbb';  # comment
+@ Syntax error: wrong unquoted: ';':
+@ tests/16_define_validation_error.sh:25: @define BC4 'bbb ; bbb'   ;  # comment
+@ Syntax error: wrong unquoted: 'a||b':
+@ tests/16_define_validation_error.sh:28: @define IL1 a||b
+@ Syntax error: wrong unquoted: 'a&b':
+@ tests/16_define_validation_error.sh:29: @define IL2 a&b
+@ Syntax error: wrong unquoted: 'a&&b':
+@ tests/16_define_validation_error.sh:30: @define IL3 a&&b
+@ Syntax error: wrong unquoted: 'a!b':
+@ tests/16_define_validation_error.sh:31: @define IL4 a!b
+@ Syntax error: wrong unquoted: 'a-b':
+@ tests/16_define_validation_error.sh:32: @define IL5 a-b
+@ Syntax error: wrong unquoted: 'a+b':
+@ tests/16_define_validation_error.sh:33: @define IL6 a+b
+@ Syntax error: wrong unquoted: 'a;;;b':
+@ tests/16_define_validation_error.sh:34: @define IL7 a;;;b
+@ Wrong variable name: '0wrong_name':
+@ tests/16_define_validation_error.sh:36: @define 0wrong_name 123
+@ Syntax error: wrong unquoted: 'wrong,name':
+@ tests/16_define_validation_error.sh:37: @define wrong,name 123
+@ Syntax error: wrong unquoted: 'wrong-name':
+@ tests/16_define_validation_error.sh:38: @define wrong-name 123
 ? 1
 
