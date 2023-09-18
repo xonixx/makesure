@@ -17,7 +17,6 @@ BEGIN {
   delete Code          # name -> body
   delete Vars            # k -> "val"
   delete DefineOverrides # k -> ""
-  DefinesCode = ""
   delete Dependencies       # name,i -> dep goal
   delete DependenciesLineNo # name,i -> line no.
   delete DependenciesCnt    # name   -> dep cnt
@@ -124,7 +123,6 @@ function splitKV(arg, kv,   n) {
 }
 function handleOptionDefineOverride(arg,   kv) {
   splitKV(arg, kv)
-  #  handleDefineLine(kv[0] "=" quoteArg(kv[1]))
   Vars[kv[0]] = kv[1]
   DefineOverrides[kv[0]]
 }
@@ -144,8 +142,6 @@ function handleOptions(   i) {
 
 function handleDefine() {
   started("define")
-  #  $1 = ""
-  #  handleDefineLine($0)
   if (NF != 3) {
     addError("Invalid @define syntax, should be @define VAR_NAME 'value'")
     return
@@ -156,21 +152,6 @@ function handleDefine() {
   }
   if (!($2 in DefineOverrides))
     Vars[$2] = $3
-}
-function handleDefineLine(line,   kv) {
-  if (!checkValidDefineSyntax(line))
-    return
-
-  splitKV(line, kv)
-
-  if (!(kv[0] in DefineOverrides))
-    DefinesCode = addL(DefinesCode, line "\nexport " kv[0])
-}
-function checkValidDefineSyntax(line) {
-  if (line ~ /^[ \t]*[A-Za-z_][A-Za-z0-9_]*=(([A-Za-z0-9_]|(\\.))+|('[^']*')|("((\\\\)|(\\")|[^"])*")|(\$'((\\\\)|(\\')|[^'])*'))*[ \t]*(#.*)?$/)
-    return 1
-  addError("Invalid define declaration")
-  return 0
 }
 
 function handleShell() {
@@ -384,7 +365,6 @@ function checkBeforeRun(   i,j,dep,depCnt,goalName) {
 
 function getPreludeCode(   a,k) {
   addLine(a, MyDirScript)
-  #  addLine(a, DefinesCode)
   for (k in Vars) {
     addLine(a, k "=" quoteArg(Vars[k]) ";export " k)
   }
@@ -910,7 +890,6 @@ function reparseCli(   res,i,err) {
   err = parseCli_2($0, Vars, res)
   if (err) {
     addError("Syntax error: " err)
-    #    die(Error)
     return -1
   } else {
     $0 = "" # only for macos 10.15 awk version 20070501
