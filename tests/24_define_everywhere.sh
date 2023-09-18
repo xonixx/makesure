@@ -1,5 +1,5 @@
 
-@define A=a
+@define A a
 
 @goal default
 @use_lib
@@ -7,11 +7,11 @@
   f
   echo "$C"
 
-@define B="${A}b"
+@define B "${A}b"
 
 @lib
   f() {
     echo "$B"
   }
 
-@define C="${B}c"
+@define C "${B}c"

@@ -1,5 +1,5 @@
 
-@define V="V_prelude"
+@define V "V_prelude"
 
 @goal default
   echo "A=$A"
