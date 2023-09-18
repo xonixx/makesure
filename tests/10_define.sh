@@ -1,8 +1,9 @@
 
 
-@define A=aaa
-@define B="${A}bbb"
-@define Commented=value # just a comment
+@define A aaa
+@define B "${A}bbb"
+@define Commented value # just a comment
+@define echo   'Hello'
 
 @goal testA
 echo A=$A
@@ -42,3 +43,6 @@ echo C=$C
 @goal test_commented_define
   echo "in goal: $Commented"
   sh -c 'echo in child process: $Commented'
+
+@goal echo
+echo "$echo"

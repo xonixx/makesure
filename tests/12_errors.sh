@@ -26,7 +26,7 @@ echo 'more code in prelude'
 @goal g2
 @use_lib unknown
 @shell sh
-@define A=1
+@define A 1
 @lib lib2
 
 @goal g3

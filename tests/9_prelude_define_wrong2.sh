@@ -1,5 +1,5 @@
 
-@define A=aaa echo 'Hello'
+@define A aaa echo 'Hello'
 
 @goal default
   echo "$0"

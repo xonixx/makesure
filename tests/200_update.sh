@@ -1,9 +1,9 @@
 
 #@options tracing
 
-@define MAKESURE_AWK="${MAKESURE_AWK:-awk}"
-@define D='/tmp/dirXXX with spaces'
-#@define D='/tmp/dirXXX'
+@define MAKESURE_AWK "${MAKESURE_AWK:-awk}"
+@define D            '/tmp/dirXXX with spaces'
+#@define D '/tmp/dirXXX'
 
 @goal makesure_prepared
   [[ -d "$D" ]] && rm -r "$D"

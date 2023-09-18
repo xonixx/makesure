@@ -15,8 +15,8 @@ BEGIN {
   delete GoalParams    # name,paramI -> param name
   delete CodePre       # name -> pre-body (should also go before lib)
   delete Code          # name -> body
+  delete Vars            # k -> "val"
   delete DefineOverrides # k -> ""
-  DefinesCode = ""
   delete Dependencies       # name,i -> dep goal
   delete DependenciesLineNo # name,i -> line no.
   delete DependenciesCnt    # name   -> dep cnt
@@ -32,7 +32,7 @@ BEGIN {
   delete Lib       # name -> code
   delete UseLibLineNo# name -> line no.
   delete GoalToLib # goal name -> lib name
-  delete Quotes    # NF -> quote of field ("'"|"$"|"")
+  delete Quotes    # NF -> quote of field ("'"|"$"|"u"|"\"")
   Mode = "prelude" # prelude|define|goal|goal_glob|lib
   srand()
   prepareArgs()
@@ -44,7 +44,7 @@ BEGIN {
 function makesure(   i) {
   while (getline > 0) {
     Lines[NR] = $0
-    if ($1 ~ /^@/ && "@define" != $1 && "@reached_if" != $1) reparseCli()
+    if ($1 ~ /^@/ && "@reached_if" != $1) if (reparseCli() < 0) continue
     if ("@options" == $1) handleOptions()
     else if ("@define" == $1) handleDefine()
     else if ("@shell" == $1) handleShell()
@@ -123,7 +123,7 @@ function splitKV(arg, kv,   n) {
 }
 function handleOptionDefineOverride(arg,   kv) {
   splitKV(arg, kv)
-  handleDefineLine(kv[0] "=" quoteArg(kv[1]))
+  Vars[kv[0]] = kv[1]
   DefineOverrides[kv[0]]
 }
 
@@ -142,23 +142,16 @@ function handleOptions(   i) {
 
 function handleDefine() {
   started("define")
-  $1 = ""
-  handleDefineLine($0)
-}
-function handleDefineLine(line,   kv) {
-  if (!checkValidDefineSyntax(line))
+  if (NF != 3) {
+    addError("Invalid @define syntax, should be @define VAR_NAME 'value'")
     return
-
-  splitKV(line, kv)
-
-  if (!(kv[0] in DefineOverrides))
-    DefinesCode = addL(DefinesCode, line "\nexport " kv[0])
-}
-function checkValidDefineSyntax(line) {
-  if (line ~ /^[ \t]*[A-Za-z_][A-Za-z0-9_]*=(([A-Za-z0-9_]|(\\.))+|('[^']*')|("((\\\\)|(\\")|[^"])*")|(\$'((\\\\)|(\\')|[^'])*'))*[ \t]*(#.*)?$/)
-    return 1
-  addError("Invalid define declaration")
-  return 0
+  }
+  if ($2 !~ /^[A-Za-z_][A-Za-z0-9_]*$/) {
+    addError("Wrong variable name: '" $2 "'")
+    return
+  }
+  if (!($2 in DefineOverrides))
+    Vars[$2] = $3
 }
 
 function handleShell() {
@@ -321,7 +314,7 @@ function registerDependsOn(goalName,   i,dep,x,y) {
         x = goalName SUBSEP DependenciesCnt[goalName] - 1
         y = x SUBSEP DependencyArgsCnt[x]++
         DependencyArgs[y] = $i
-        DependencyArgsType[y] = Quotes[i] ? "str" : "var"
+        DependencyArgsType[y] = "u" == Quotes[i] ? "var" : "str"
       }
     } else
       registerDependency(goalName, dep)
@@ -351,8 +344,12 @@ function registerReachedIf(goalName, preScript) {
   if (goalName in ReachedIf)
     addError("Multiple " $1 " not allowed for a goal")
 
-  $1 = ""
+  trimDirective()
   ReachedIf[goalName] = preScript trim($0)
+}
+# remove the @directive at the start of the line
+function trimDirective() {
+  sub(/^[ \t]*@[a-z_]+/,"")
 }
 
 function checkBeforeRun(   i,j,dep,depCnt,goalName) {
@@ -366,9 +363,11 @@ function checkBeforeRun(   i,j,dep,depCnt,goalName) {
   }
 }
 
-function getPreludeCode(   a) {
+function getPreludeCode(   a,k) {
   addLine(a, MyDirScript)
-  addLine(a, DefinesCode)
+  for (k in Vars) {
+    addLine(a, k "=" quoteArg(Vars[k]) ";export " k)
+  }
   return a[0]
 }
 
@@ -671,7 +670,8 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
         depArgType == "str" ? \
           depArg : \
           depArgType == "var" ? \
-            (depArg in args ? args[depArg] : addErrorDedup("wrong arg '" depArg "'", DependenciesLineNo[gi])) : \
+            (depArg in args ? args[depArg] : \
+             depArg in Vars ? Vars[depArg] : addErrorDedup("wrong arg '" depArg "'", DependenciesLineNo[gi])) : \
             die("wrong depArgType: " depArgType)
     }
 
@@ -812,52 +812,92 @@ function quicksortSwap(data, i, j,   temp) {
   data[i] = data[j]
   data[j] = temp
 }
-function parseCli(line, res,   pos,c,last,is_doll,c1) {
+#
+# parses: arg 'arg with spaces' $'arg with \' single quote' "arg ${WITH} $VARS"
+#
+## res[-7] = res len
+## res - 0-based
+## returns error if any
+function parseCli_2(line, vars, res,   pos,c,c1,isDoll,q,var,inDef,defVal,val,w,i) {
   for (pos = 1; ;) {
     while ((c = substr(line,pos,1)) == " " || c == "\t") pos++ # consume spaces
-    if ((c = substr(line,pos,1)) == "#" || c == "")
+    if (c == "#" || c == "")
       return
     else {
-      if ((is_doll = c == "$") && substr(line,pos + 1,1) == "'" || c == "'") { # start of string
-        if (is_doll)
+      if ((isDoll = substr(line,pos,2) == "$'") || c == "'" || c == "\"") { # start of string
+        if (isDoll)
           pos++
+        q = isDoll ? "'" : c # quote
         # consume quoted string
-        res[last = res[-7]++] = ""
-        res[last,"quote"] = is_doll ? "$" : "'"
-        while ((c = substr(line,++pos,1)) != "'") { # closing '
+        w = ""
+        while ((c = substr(line,++pos,1)) != q) { # closing ' or "
           if (c == "")
             return "unterminated argument"
-          else if (is_doll && c == "\\" && ((c1 = substr(line,pos + 1,1)) == "'" || c1 == c)) { # escaped ' or \
+          else if (c == "\\" && ((c1 = substr(line,pos + 1,1)) == "'" && isDoll || c1 == c || q == "\"" && (c1 == q || c1 == "$"))) { # escaped ' or \ or "
             c = c1; pos++
+          } else if (c == "$" && q == "\"") {
+            var = ""
+            inDef = 0
+            defVal = ""
+            if ((c1 = substr(line,pos + 1,1)) == "{") {
+              for (pos++; (c = substr(line,++pos,1)) != "}";) { # till closing '}'
+                if (c == "")
+                  return "unterminated argument"
+                if (!inDef && ":" == c && "-" == substr(line,pos + 1,1)) {
+                  inDef = 1
+                  c = substr(line,pos += 2,1)
+                }
+                if (inDef) {
+                  if ("}" == c)
+                    break
+                  if ("\\" == c && ((c1 = substr(line,pos + 1,1)) == "$" || c1 == "\\" || c1 == "}" || c1 == "\"")) {
+                    c = c1; pos++
+                  }
+                  defVal = defVal c
+                } else
+                  var = var c
+              }
+            } else
+              for (; (c = substr(line,pos + 1,1)) ~ /[_A-Za-z0-9]/; pos++)
+                var = var c
+            #            print "var="var
+            if (var !~ /^[_A-Za-z][_A-Za-z0-9]*$/)
+              return "wrong var: '" var "'"
+            w = (w) ((val = vars[var]) != "" ? val : defVal)
+            continue
           }
-          res[last] = res[last] c
+          w = w c
         }
+        res[i = +res[-7]++,"quote"] = isDoll ? "$" : q
+        res[i] = w
         if ((c = substr(line,++pos,1)) != "" && c != " " && c != "\t")
           return "joined arguments"
       } else {
         # consume unquoted argument
-        res[last = res[-7]++] = c
+        w = c
         while ((c = substr(line,++pos,1)) != "" && c != " " && c != "\t") { # whitespace denotes the end of arg
-          if (c == "'")
-            return "joined arguments"
-          res[last] = res[last] c
+          w = w c
         }
+        if (w !~ /^[_A-Za-z0-9@.]+$/)
+          return "wrong unquoted: '" w "'"
+        res[i = +res[-7]++,"quote"] = "u"
+        res[i] = w
       }
     }
   }
 }
 function reparseCli(   res,i,err) {
-  err = parseCli($0, res)
+  err = parseCli_2($0, Vars, res)
   if (err) {
     addError("Syntax error: " err)
-    die(Error)
-  } else {
-    $0 = "" # only for macos 10.15 awk version 20070501
-    for (i = NF = 0; i in res; i++) {
-      $(++NF) = res[i]
-      Quotes[NF] = res[i,"quote"]
-    }
+    return -1
   }
+  $0 = "" # only for macos 10.15 awk version 20070501
+  for (i = NF = 0; i in res; i++) {
+    $(++NF) = res[i]
+    Quotes[NF] = res[i,"quote"]
+  }
+  return 0
 }
 function quote2(s,force) {
   if (index(s,"'")) {
