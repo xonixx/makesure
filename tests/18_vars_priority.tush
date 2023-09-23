@@ -33,3 +33,15 @@ $ cd "$MYDIR"; V=V_env ./$MAKESURE -f tests/18_vars_priority.sh -D V=V_D
 | V=V_D
 | in child: A=
 | in child: V=V_D
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/18_vars_priority.sh g
+|   goal 'g' ...
+| E=defaultVal
+
+$ cd "$MYDIR"; E=fromEnv ./$MAKESURE -f tests/18_vars_priority.sh g
+|   goal 'g' ...
+| E=fromEnv
+
+$ cd "$MYDIR"; E=fromEnv ./$MAKESURE -f tests/18_vars_priority.sh -D E=fromD g
+|   goal 'g' ...
+| E=fromD
