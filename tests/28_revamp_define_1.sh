@@ -27,4 +27,5 @@
 @goal g6
 @depends_on pg2 @args 'Str'
 
-
+@goal g7
+@depends_on pg @args "the $VAR"
