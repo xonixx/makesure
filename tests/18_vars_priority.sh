@@ -7,7 +7,7 @@
   sh -c 'echo "in child: A=$A"'
   sh -c 'echo "in child: V=$V"'
 
-@define E="${E:-defaultVal}"
+@define E "${E:-defaultVal}"
 
 @goal g
   echo "E=$E"

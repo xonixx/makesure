@@ -863,7 +863,7 @@ function parseCli_2(line, vars, res,   pos,c,c1,isDoll,q,var,inDef,defVal,val,w,
             #            print "var="var
             if (var !~ /^[_A-Za-z][_A-Za-z0-9]*$/)
               return "wrong var: '" var "'"
-            w = (w) ((val = vars[var]) != "" ? val : defVal)
+            w = (w) ((val = var in vars ? vars[var] : ENVIRON[var]) != "" ? val : defVal)
             continue
           }
           w = w c
