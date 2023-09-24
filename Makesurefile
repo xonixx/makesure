@@ -135,6 +135,7 @@
 @depends_on candidate
 @depends_on release_makesure
 @depends_on README.md
+@depends_on checkREADME.md
 @depends_on coverage_badge_updated
 # @depends_on gh_release TODO we can't just do it since we need to commit first
 
@@ -148,6 +149,10 @@
     /^```$/ { stop=0 }
     !stop' README.md > README.md.1
   mv README.md.1 README.md
+
+@goal checkREADME.md
+@doc 'check all samples in README.md are correct'
+  awk -f check_samples_in_README.awk README.md
 
 @goal candidate_version_prepared @private
   F=makesure_candidate
