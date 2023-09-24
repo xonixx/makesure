@@ -1,21 +1,21 @@
 # vim: syntax=bash
 @options timing
 
-@define NEXT_VERSION='0.9.20'
-@define GOAWK_VERSION='1.23.1'
-@define JUST_VERSION='1.3.0'
-@define GOAWK="goawk$GOAWK_VERSION"
-@define JUST="just$JUST_VERSION"
-@define FHTAGN_VERSION='v0.1.0'
-@define FHTAGN_URL="https://github.com/xonixx/fhtagn/raw/$FHTAGN_VERSION/fhtagn.awk"
-@define REPO='xonixx/makesure'
-@define AWK="${AWK:-awk}"
+@define NEXT_VERSION   '0.9.20'
+@define GOAWK_VERSION  '1.23.1'
+@define JUST_VERSION   '1.3.0'
+@define FHTAGN_VERSION 'v0.1.0'
+@define GOAWK "goawk$GOAWK_VERSION"
+@define JUST "just$JUST_VERSION"
+@define FHTAGN_URL "https://github.com/xonixx/fhtagn/raw/$FHTAGN_VERSION/fhtagn.awk"
+@define REPO 'xonixx/makesure'
+@define AWK "${AWK:-awk}"
 
 @goal soft_folder_created @private
 @reached_if [[ -d "soft" ]]
   mkdir soft
 
-@define FHTAGN="soft/fhtagn.awk"
+@define FHTAGN "soft/fhtagn.awk"
 
 @goal fhtagn_installed @private
 @depends_on soft_folder_created
@@ -81,27 +81,27 @@
 
 @goal tested
 @doc 'runs all *.tush tests'
-@depends_on tests/*.tush
+@depends_on 'tests/*.tush'
 
 @goal fhtagn
 @doc 'runs all *.tush tests (fail at end)'
 @depends_on prepared4tests
   MAKESURE=makesure_dev ALL=1 ./soft/fhtagn.awk tests/*.tush
 
-@goal @glob tests/*.tush @private
+@goal @glob 'tests/*.tush' @private
 @depends_on prepared4tests
 @use_lib testing
   MAKESURE=makesure_dev \
     run_tush_file "$ITEM"
 
-@goal tested_candidate @glob tests/*.tush @private
+@goal tested_candidate @glob 'tests/*.tush' @private
 @depends_on tested
 @depends_on candidate_version_prepared
 @use_lib testing
   MAKESURE=makesure_candidate \
     run_tush_file "$ITEM"
 
-@define COVERPROFILE="/tmp/cov.txt"
+@define COVERPROFILE "/tmp/cov.txt"
 
 @goal _cover_profile_prepared @private
   rm -f "$COVERPROFILE"
@@ -372,8 +372,8 @@
   mv goawk $GOAWK
   "./$GOAWK" --version
 
-@define GOAWK_BRANCH='bytecode'
-@define GOAWK_BRANCH_EXE="goawk_$GOAWK_BRANCH"
+@define GOAWK_BRANCH     'bytecode'
+@define GOAWK_BRANCH_EXE "goawk_$GOAWK_BRANCH"
 
 @goal installed_goawk_branch @private
 @reached_if [[ -f soft/$GOAWK_BRANCH_EXE ]]
