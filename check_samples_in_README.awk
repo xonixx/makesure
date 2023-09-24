@@ -29,11 +29,12 @@ function fixLine() {
 function checkSample(   tmp,out) {
   #  print "\n-------- checking: " Sample
   if (isMakesureSample()) {
+    Samples++
     fixSample()
 #    print "\n------- Makesurefile: " Sample
     print Sample > (tmp = "/tmp/makesuresample1.txt")
     close(tmp)
-    if (system("./makesure_dev -f " tmp " -l >" (out="/tmp/makesuresample1_out.txt") " 2>&1") > 0) {
+    if (system("./makesure_dev -f " tmp " -l >" (out="/tmp/makesuresample1_out.txt") " 2>&1") > 0 && !isExpectedError(out)) {
       ErrorsCnt++
       print "\n===== PROBLEM WITH SAMPLE:"
       print Sample
@@ -41,6 +42,11 @@ function checkSample(   tmp,out) {
       system("cat " out)
     }
   }
+}
+function isExpectedError(out,   s,l) {
+  (s = ("cat " out)) | getline l
+  close(s)
+  return l == "There is a loop in goal dependencies via a -> c"
 }
 function fixSample() {
   if (Sample ~ /@reached_if/) {
@@ -58,6 +64,7 @@ function isMakesureSample() {
 
 BEGIN { system("touch '/tmp/file with spaces1.txt'") }
 END {
-  print "\nTotal errors: " ErrorsCnt
+  print "\nTotal samples: " (+Samples)
+  print "Total errors : " (+ErrorsCnt)
   exit ErrorsCnt > 0
 }
