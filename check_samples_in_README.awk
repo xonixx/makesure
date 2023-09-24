@@ -8,8 +8,20 @@
 }
 
 InSample {
-  Sample = Sample $0 "\n"
+  if (!skipLine()) {
+    fixLine()
+    Sample = Sample $0 "\n"
+  }
   next
+}
+function skipLine() {
+  return /makesure won't accept/
+}
+function fixLine() {
+  sub(/\[ @private \]/,"@private")
+  sub(/\[ goal_name \]/,"goal_name")
+  sub(/\[ lib_name \]/,"lib_name")
+  sub("<glob pattern>","'*.*'")
 }
 
 function checkSample(   tmp,out) {
@@ -20,7 +32,7 @@ function checkSample(   tmp,out) {
     close(tmp)
     if (system("./makesure_dev -f " tmp " -l >" (out="/tmp/makesuresample1_out.txt") " 2>&1") > 0) {
       ErrorsCnt++
-      print "\n===== WRONG SYNTAX FOR:"
+      print "\n===== PROBLEM WITH SAMPLE:"
       print Sample
       print "----- ERROR: "
       system("cat " out)
@@ -31,4 +43,4 @@ function isMakesureSample() {
   return Sample ~ /(^|\n)@[a-z]+/
 }
 
-END { print "Total errors: " ErrorsCnt }
+END { print "\nTotal errors: " ErrorsCnt }

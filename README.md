@@ -257,7 +257,7 @@ Invoking `./makesure` without arguments will attempt to call the goal named `def
 This one is easy to illustrate with an example:
 
 ```sh
-@goal process_file @glob *.txt 
+@goal process_file @glob '*.txt' 
  echo $ITEM $INDEX $TOTAL
 ```
 
@@ -282,7 +282,7 @@ a.txt b.txt
 
 For convenience, you can omit name in case of glob goal:
 ```sh
-@goal @glob *.txt
+@goal @glob '*.txt'
  echo $ITEM $INDEX $TOTAL
 ```
 as equivalent for
@@ -293,7 +293,7 @@ as equivalent for
 @goal b.txt @private
  echo b.txt 1 2
  
-@goal *.txt
+@goal '*.txt'
 @depends_on a.txt 
 @depends_on b.txt 
 ```
@@ -306,7 +306,7 @@ Why this may be useful? Imagine in your nodejs application you have `test1.js`, 
 Now you can use this `Makesurefile`
 
 ```sh
-@goal @glob test*.js
+@goal @glob 'test*.js'
   echo "running test file $INDEX out of $TOTAL ..."
   node $ITEM
 ```
