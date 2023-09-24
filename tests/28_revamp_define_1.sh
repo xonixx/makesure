@@ -32,6 +32,8 @@
 
 @define V1 1.2.3
 @define V2 email@example.com
+@define V3 "${UNSET:-default\\\}\$\"}"
+@define V4 "${UNSET:-}"
 
 @goal g8
-echo "$V1 $V2"
+echo "$V1 ${V2} ${V3}${V4}"
