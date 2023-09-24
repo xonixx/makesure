@@ -11,14 +11,14 @@ in_begin && $1 ~ /^delete/{ next }
   gsub(/ >= /, ">=")
   gsub(/ <= /, "<=")
   gsub(/; +/, ";")
-  gsub(/, +/, ",")
+  if (notAString) gsub(/, +/, ",") # don't change strings
   gsub(/ ~ /, "~")
   gsub(/ > /, ">")
   gsub(/ < /, "<")
   gsub(/ \/ /, "/")
   gsub(/ \* /, "*")
   gsub(/ \+ /, "+")
-  if (notAString) gsub(/ - /, "-") # don't change strings
+  if (notAString) gsub(/ - /, "-")
   gsub(/ \|\| /, "||")
   gsub(/ \| /, "|")
   if (/ \? /) gsub(/ : /, ":")
