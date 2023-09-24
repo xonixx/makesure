@@ -37,7 +37,11 @@ in_begin && $1 ~ /^delete/{ next }
   if (!/^ +}/) gsub(/ +}/, "}")
   ##gsub(/" in/, "\"in")
   gsub(Q, Q "\\" Q Q)
-  if (l = trim($0)) { printf "%s", (l == "}" ? l : (NR == 1 ? "" : "\n") $0) }
+  if (l = trim($0)) { decreaseIndent(); printf "%s", (l == "}" ? l : (NR == 1 ? "" : "\n") $0) }
+}
+function decreaseIndent() {
+  match($0,/^ */)
+  $0 = sprintf("%" (RLENGTH-1)/2 "s","") substr($0,RLENGTH)
 }
 function gsubKeepStrings(regex, replacement,   cnt,parts,i,s) {
   if ((cnt = split($0,parts,"\"")) == 1) {
