@@ -8,6 +8,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh -l
 |   g5
 |   g6
 |   g7
+|   g8
 |   pg@Value
 |   pg@Str1
 |   pg2@Str1
@@ -64,3 +65,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g7
 |   goal 'pg@the Value' ...
 | A=the Value
 |   goal 'g7' [empty].
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g8
+|   goal 'g8' ...
+| 1.2.3 email@example.com

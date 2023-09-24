@@ -178,8 +178,8 @@ The variable will be declared as environment variable (via `export`).
 Example:
 
 ```sh
-@define A=hello
-@define B="${A} world"
+@define A hello
+@define B "${A} world"
 ```
 
 This directive is valid [in any place](tests/24_define_everywhere.sh) in `Makesurefile`. However, we recommend:
@@ -191,16 +191,13 @@ Variable defined with `@define` can be overridden with a variable passed in invo
 Overall the precedence for variables resolution is (higher priority top):
 
 - `./makesure -D VAR=1`
-- `@define VAR=2` in `Makesurefile`
+- `@define VAR 2` in `Makesurefile`
 - `VAR=3 ./makesure`
 
 Please note, the parser of `makesure` is somewhat stricter here than shell's one:
 ```sh
-@define VERSION=1.2.3    # makesure won't accept
-@define VERSION='1.2.3'  # OK
-
-@define HW=${HELLO}world    # makesure won't accept  
-@define HW="${HELLO}world"  # OK  
+@define HW  ${HELLO}world    # makesure won't accept  
+@define HW "${HELLO}world"   # OK  
 ```
 
 ### @shell

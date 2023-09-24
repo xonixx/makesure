@@ -29,3 +29,9 @@
 
 @goal g7
 @depends_on pg @args "the $VAR"
+
+@define V1 1.2.3
+@define V2 email@example.com
+
+@goal g8
+echo "$V1 $V2"
