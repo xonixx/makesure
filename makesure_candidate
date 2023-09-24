@@ -49,21 +49,21 @@ function prepareArgs(i,arg){
       arrPush(ArgGoals,arg)
     delete ARGV[i]}
   if("-h" in Args||"--help" in Args){
-    print "makesure ver. " Version
-    print "Usage: makesure [options...] [-f buildfile] [goals...]"
-    print " -f,--file buildfile"
-    print "                 set buildfile to use (default Makesurefile)"
-    print " -l,--list       list all available non-@private goals"
-    print " -la,--list-all  list all available goals"
-    print " -d,--resolved   list resolved dependencies to reach given goals"
-    print " -D \"var=val\",--define \"var=val\""
-    print "                 override @define values"
-    print " -s,--silent     silent mode - only output what goals output"
-    print " -t,--timing     display execution times for goals and total"
-    print " -x,--tracing    enable tracing in bash/sh via `set -x`"
-    print " -v,--version    print version and exit"
-    print " -h,--help       print help and exit"
-    print " -U,--selfupdate update makesure to latest version"
+    print"makesure ver. " Version
+    print"Usage: makesure [options...] [-f buildfile] [goals...]"
+    print" -f,--file buildfile"
+    print"                 set buildfile to use (default Makesurefile)"
+    print" -l,--list       list all available non-@private goals"
+    print" -la,--list-all  list all available goals"
+    print" -d,--resolved   list resolved dependencies to reach given goals"
+    print" -D \"var=val\",--define \"var=val\""
+    print"                 override @define values"
+    print" -s,--silent     silent mode - only output what goals output"
+    print" -t,--timing     display execution times for goals and total"
+    print" -x,--tracing    enable tracing in bash/sh via `set -x`"
+    print" -v,--version    print version and exit"
+    print" -h,--help       print help and exit"
+    print" -U,--selfupdate update makesure to latest version"
     realExit(0)
   }else if("-v" in Args||"--version" in Args){
     print Version
@@ -273,7 +273,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode,t0,t1,t2,goalTimed,list){
     die(Error)
   list="-l" in Args||"--list" in Args
   if(list||"-la" in Args||"--list-all" in Args){
-    print "Available goals:"
+    print"Available goals:"
     for(i=0;i in GoalNames;i++){
       goalName=GoalNames[i]
       if(list&&GoalsByName[goalName])
@@ -284,9 +284,9 @@ body,goalBody,goalBodies,resolvedGoals,exitCode,t0,t1,t2,goalTimed,list){
       goalName=GoalNames[i]
       if(list&&GoalsByName[goalName])
         continue
-      printf "  "
+      printf"  "
       if(goalName in Doc)
-        printf "%-" gnMaxLen "s : %s\n",quote2(goalName),Doc[goalName]
+        printf"%-" gnMaxLen "s : %s\n",quote2(goalName),Doc[goalName]
       else
         print quote2(goalName)}
   }else {
@@ -305,13 +305,13 @@ body,goalBody,goalBodies,resolvedGoals,exitCode,t0,t1,t2,goalTimed,list){
       addLine(goalBody,body)
       goalBodies[goalName]=goalBody[0]}
     if("-d" in Args||"--resolved" in Args){
-      printf "Resolved goals to reach for"
+      printf"Resolved goals to reach for"
       for(i=0;i in ArgGoals;i++)
-        printf " %s",quote2(ArgGoals[i],1)
-      print ":"
+        printf" %s",quote2(ArgGoals[i],1)
+      print":"
       for(i=0;i in resolvedGoals;i++)
         if(!reachedGoals[goalName=resolvedGoals[i]]&&!emptyGoals[goalName])
-          print "  " quote2(goalName)
+          print"  " quote2(goalName)
     }else {
       for(i=0;i in resolvedGoals;i++){
         goalName=resolvedGoals[i]
@@ -319,17 +319,17 @@ body,goalBody,goalBodies,resolvedGoals,exitCode,t0,t1,t2,goalTimed,list){
         if(goalTimed)
           t1=t2?t2:currentTimeMillis()
         if(!("silent" in Options))
-          print "  goal " quote2(goalName,1)" " (reachedGoals[goalName]?"[already satisfied].":emptyGoals[goalName]?"[empty].":"...")
+          print"  goal " quote2(goalName,1)" " (reachedGoals[goalName]?"[already satisfied].":emptyGoals[goalName]?"[empty].":"...")
         exitCode=(reachedGoals[goalName]||emptyGoals[goalName])?0:shellExec(goalBodies[goalName],goalName)
         if(exitCode!=0)
-          print "  goal " quote2(goalName,1)" failed"
+          print"  goal " quote2(goalName,1)" failed"
         if(goalTimed){
           t2=currentTimeMillis()
-          print "  goal " quote2(goalName,1)" took " renderDuration(t2-t1)}
+          print"  goal " quote2(goalName,1)" took " renderDuration(t2-t1)}
         if(exitCode!=0)
           break}
       if(timingOn())
-        print "  total time " renderDuration((t2?t2:currentTimeMillis())-t0)
+        print"  total time " renderDuration((t2?t2:currentTimeMillis())-t0)
       if(exitCode!=0)
         realExit(exitCode)}}}
 function topologicalSort(includeReachedIf,requestedGoals,result,reachedGoals,i,j,goalName,loop,depCnt){
@@ -489,8 +489,8 @@ function selfUpdate(url,tmp,err,newVer){
     if(Version!=newVer){
       if(!ok("cp " tmp " " quoteArg(Prog)))
         err="can'\''t overwrite " Prog
-      else print "updated " Version " -> " newVer
-    }else print "you have latest version " Version " installed"}
+      else print"updated " Version " -> " newVer
+    }else print"you have latest version " Version " installed"}
   rm(tmp)
   if(err)die(err)}
 function renderDuration(deltaMillis,\

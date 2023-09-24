@@ -32,6 +32,8 @@ in_begin && $1 ~ /^delete/{ next }
   gsub(/} +/, "}")
   gsub(/[)] +/, ")")
   gsubKeepStrings("] +", "]")
+  gsub(/print +"/,"print\"")
+  gsub(/printf +"/,"printf\"")
   if (!/^ +}/) gsub(/ +}/, "}")
   ##gsub(/" in/, "\"in")
   gsub(Q, Q "\\" Q Q)
