@@ -60,3 +60,8 @@ echo 'more code in prelude'
 
 @goal @glob     # absent glob pattern
 @goal g19 @glob # absent glob pattern
+
+@define X "$777"
+@define X1 'unterminated
+@define X2 "${unterminated
+
