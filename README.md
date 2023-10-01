@@ -173,6 +173,7 @@ Example:
 ```sh
 @define A hello
 @define B "${A} world"
+@define C 'hello world'
 ```
 
 This directive is valid [in any place](tests/24_define_everywhere.sh) in `Makesurefile`. However, we recommend:
@@ -186,6 +187,16 @@ Overall the precedence for variables resolution is (higher priority top):
 - `./makesure -D VAR=1`
 - `@define VAR 2` in `Makesurefile`
 - `VAR=3 ./makesure`
+
+The precedence priorities are designed like this on purpose, to prevent accidental override of `@define VAR='value'` definition in file by the environment variable with the same name. However, sometime this is the desired behavior. In this case you can use:
+
+```sh
+@define VAR  "${VAR}"                      # using the same name, or
+@define VAR1 "${ENV_VAR}"                  # using different name, or
+@define VAR2 "${VAR_NAME:-default_value}"  # if need the default value when not set  
+```
+
+This allows to use environment variables `VAR`, `ENV_VAR`, and `VAR_NAME` to set the value of `VAR`, `VAR1` and `VAR2`. 
 
 Please note, the parser of `makesure` is somewhat stricter here than shell's one:
 ```sh
