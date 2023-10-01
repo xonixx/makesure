@@ -103,13 +103,6 @@ Updates `makesure` executable to latest available version in-place:
 - MacOS
 - Windows (via Git Bash)
       
-#### AWK
-
-The core of this tool is implemented in [AWK](https://en.wikipedia.org/wiki/AWK).
-Almost all major implementations of AWK will work. Tested and officially supported are [Gawk](https://www.gnu.org/software/gawk/), [BWK](https://github.com/onetrueawk/awk), [mawk](https://invisible-island.net/mawk/). This means that the default AWK implementation in your OS will work.
-
-Developed in [xonixx/intellij-awk](https://github.com/xonixx/intellij-awk).
-
 ## Concepts
 
 - Build file is a text file named `Makesurefile`.
@@ -658,6 +651,13 @@ echo 'Please reopen the shell to activate completion.'
 ## Developer notes
 
 Find some contributor instructions in [DEVELOPER.md](docs/DEVELOPER.md).
+
+#### AWK
+
+The core of this tool is implemented in [AWK](https://en.wikipedia.org/wiki/AWK).
+Almost all major implementations of AWK will work. Tested and officially supported are [Gawk](https://www.gnu.org/software/gawk/), [BWK](https://github.com/onetrueawk/awk), [mawk](https://invisible-island.net/mawk/). This means that the default AWK implementation in your OS will work.
+
+Developed in [xonixx/intellij-awk](https://github.com/xonixx/intellij-awk).
 
 ## Similar tools
 
