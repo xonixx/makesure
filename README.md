@@ -392,8 +392,6 @@ Processing file2...
 
 You can also take a look at an [example from a real project](https://github.com/xonixx/intellij-awk/blob/68bd7c5eaa5fefbd7eaa9f5f5a4b77b69dcd8779/Makesurefile#L126).
 
-For more technical consideration regarding this feature see [parameterized_goals.md](docs/parameterized_goals.md).
-
 Note, you can reference the `@define`-ed variables in the arguments of the parameterized goals:
 
 ```shell
@@ -417,6 +415,8 @@ ARG=hello world
 ```
 
 Please find a more real-world example [here](https://github.com/xonixx/fhtagn/blob/e7161f92731c13b5afbc09c7d738c1ff4882906f/Makesurefile#L70).
+
+For more technical consideration regarding this feature see [parameterized_goals.md](docs/parameterized_goals.md).
 
 ### @doc
 
