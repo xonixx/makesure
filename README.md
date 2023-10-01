@@ -659,6 +659,12 @@ Almost all major implementations of AWK will work. Tested and officially support
 
 Developed in [xonixx/intellij-awk](https://github.com/xonixx/intellij-awk).
 
+## Articles
+
+- [Adding parameterized goals to makesure](https://maximullaris.com/parameterized_goals.html) (March 2023)
+- [makesure vs make](https://maximullaris.com/makesure-vs-make.html) (March 2023)
+- [makesure – make with a human face](https://maximullaris.com/makesure.html) (February 2023)
+
 ## Similar tools
 
 - **just** https://github.com/casey/just `Rust`
