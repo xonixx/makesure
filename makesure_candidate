@@ -1,6 +1,6 @@
 #!/bin/sh
 if command -v gawk >/dev/null;then makesure_awk='gawk -ltime -v Gawk=1';makesure_pre='';else makesure_awk=awk;makesure_pre='function gettimeofday(){}';fi
-exec $makesure_awk -v "Version=0.9.20" -v "Prog=$0" "$makesure_pre"'
+exec $makesure_awk -v "Version=0.9.21" -v "Prog=$0" "$makesure_pre"'
 BEGIN {
  Shell="bash"
  SupportedShells["bash"]
