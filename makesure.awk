@@ -365,9 +365,8 @@ function checkBeforeRun(   i,j,dep,depCnt,goalName) {
 
 function getPreludeCode(   a,k) {
   addLine(a, MyDirScript)
-  for (k in Vars) {
+  for (k in Vars)
     addLine(a, k "=" quoteArg(Vars[k]) ";export " k)
-  }
   return a[0]
 }
 
@@ -687,9 +686,8 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
 function instantiateGoalName(goal, args,   res,cnt,i) {
   if ((cnt = GoalParamsCnt[goal]) == 0) return goal
   res = goal
-  for (i = 0; i < cnt; i++) {
+  for (i = 0; i < cnt; i++)
     res = res "@" args[GoalParams[goal,i]]
-  }
   #  print "@@ " res
   return res
 }
@@ -898,12 +896,11 @@ function reparseCli(   res,i,err) {
     Quotes[NF] = res[i,"quote"]
   }
   # validation according to https://github.com/xonixx/makesure/issues/141
-  for (i = 2; i <= NF; i++) {
+  for (i = 2; i <= NF; i++)
     if ("\"" == Quotes[i] && !("@define" == $1 && 3 == i || "@depends_on" == $1 && "@args" == $3 && i > 3)) {
       addError("Wrong quoting: " $i)
       return -1
     }
-  }
   return 0
 }
 function quote2(s,force) {
