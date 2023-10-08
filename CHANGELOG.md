@@ -1,3 +1,8 @@
+## v0.9.21
+- Main theme of this release is revamping `@define` [#140](https://github.com/xonixx/makesure/issues/140)
+- Ability to reference `@define`-d variables in parameterized dependencies [#139](https://github.com/xonixx/makesure/issues/139)
+- Fixes and refactorings.
+
 ## v0.9.20
 - Parameterized goals [#115](https://github.com/xonixx/makesure/issues/115).
 - Fixes and refactorings.
