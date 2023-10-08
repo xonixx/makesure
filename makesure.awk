@@ -899,9 +899,7 @@ function reparseCli(   res,i,err) {
   }
   # validation according to https://github.com/xonixx/makesure/issues/141
   for (i = 2; i <= NF; i++) {
-    if ("@define" == $1 && 3 == i || "@depends_on" == $1 && "@args" == $3 && i > 3)
-      continue
-    if ("\"" == Quotes[i]) {
+    if ("\"" == Quotes[i] && !("@define" == $1 && 3 == i || "@depends_on" == $1 && "@args" == $3 && i > 3)) {
       addError("Wrong quoting: " $i)
       return -1
     }
