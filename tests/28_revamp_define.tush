@@ -69,3 +69,6 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g7
 $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g8
 |   goal 'g8' ...
 | 1.2.3 email@example.com default\}$"
+
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_2_err_quoting.sh -l
