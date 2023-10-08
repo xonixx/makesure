@@ -11,7 +11,7 @@
 @goal "g1"
 @doc "doc"
 @depends_on "goal_name"
-@depends_on goal_name "goal_name"
+@depends_on goal_name1 "goal_name"
 
 @goal goal_name
 @goal goal_name1
@@ -25,7 +25,9 @@
 @goal gg2 @glob   "*.tush"
 
 @goal pg "@params" P
+
 @goal pg1 @params "P"
+@depends_on pg "@args" 'value'
 
 # GOOD:
 

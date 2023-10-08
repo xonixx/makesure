@@ -897,6 +897,15 @@ function reparseCli(   res,i,err) {
     $(++NF) = res[i]
     Quotes[NF] = res[i,"quote"]
   }
+  # validation according to https://github.com/xonixx/makesure/issues/141
+  for (i = 2; i <= NF; i++) {
+    if ("@define" == $1 && 3 == i || "@depends_on" == $1 && "@args" == $3 && i > 3)
+      continue
+    if ("\"" == Quotes[i]) {
+      addError("Wrong quoting: " $i)
+      return -1
+    }
+  }
   return 0
 }
 function quote2(s,force) {
