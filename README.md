@@ -54,7 +54,7 @@ By default, all scripts inside goals are executed with `bash`. If you want to us
 
 ```
 $ ./makesure -h
-makesure ver. 0.9.20
+makesure ver. 0.9.21
 Usage: makesure [options...] [-f buildfile] [goals...]
  -f,--file buildfile
                  set buildfile to use (default Makesurefile)
@@ -103,13 +103,6 @@ Updates `makesure` executable to latest available version in-place:
 - MacOS
 - Windows (via Git Bash)
       
-#### AWK
-
-The core of this tool is implemented in [AWK](https://en.wikipedia.org/wiki/AWK).
-Almost all major implementations of AWK will work. Tested and officially supported are [Gawk](https://www.gnu.org/software/gawk/), [BWK](https://github.com/onetrueawk/awk), [mawk](https://invisible-island.net/mawk/). This means that the default AWK implementation in your OS will work.
-
-Developed in [xonixx/intellij-awk](https://github.com/xonixx/intellij-awk).
-
 ## Concepts
 
 - Build file is a text file named `Makesurefile`.
@@ -180,6 +173,7 @@ Example:
 ```sh
 @define A hello
 @define B "${A} world"
+@define C 'hello world'
 ```
 
 This directive is valid [in any place](tests/24_define_everywhere.sh) in `Makesurefile`. However, we recommend:
@@ -193,6 +187,16 @@ Overall the precedence for variables resolution is (higher priority top):
 - `./makesure -D VAR=1`
 - `@define VAR 2` in `Makesurefile`
 - `VAR=3 ./makesure`
+
+The precedence priorities are designed like this on purpose, to prevent accidental override of `@define VAR='value'` definition in file by the environment variable with the same name. However, sometimes this is the desired behavior. In this case you can use:
+
+```sh
+@define VAR  "${VAR}"                      # using the same name, or
+@define VAR1 "${ENV_VAR}"                  # using different name, or
+@define VAR2 "${VAR_NAME:-default_value}"  # if need the default value when not set  
+```
+
+This allows to use environment variables `VAR`, `ENV_VAR`, and `VAR_NAME` to set the value of `VAR`, `VAR1` and `VAR2`. 
 
 Please note, the parser of `makesure` is somewhat stricter here than shell's one:
 ```sh
@@ -300,7 +304,7 @@ as equivalent for
 
 So essentially one glob goal declaration expands to multiple goal declarations based on files present in project that match the glob pattern. Shell glob expansion mechanism applies. 
 
-The useful use case here would be to represent a set of test files as a set of goals. The example could be found in the project's own [build file](https://github.com/xonixx/makesure/blob/main/Makesurefile#L108).
+The useful use case here would be to represent a set of test files as a set of goals. The example could be found in the project's own [build file](https://github.com/xonixx/makesure/blob/3be738d771bf855b5a6d3cd08cbc38dc977bed76/Makesurefile#L91).
 
 Why this may be useful? Imagine in your nodejs application you have `test1.js`, `test2.js`, `test3.js`.
 Now you can use this `Makesurefile`
@@ -347,7 +351,7 @@ Example:
 @depends_on file_processed @args 'file3' 
 ```
 
-Having the above in `Makesurefile` will produce next output when ran with `./makesure all_files_processed`
+Having the above in `Makesurefile` will produce next output when ran with `./makesure all_files_processed`:
 ```
   goal 'file_downloaded@file1' ...
 Downloading file1...
@@ -387,6 +391,30 @@ Processing file2...
 ```
 
 You can also take a look at an [example from a real project](https://github.com/xonixx/intellij-awk/blob/68bd7c5eaa5fefbd7eaa9f5f5a4b77b69dcd8779/Makesurefile#L126).
+
+Note, you can reference the `@define`-ed variables in the arguments of the parameterized goals:
+
+```shell
+@define HELLO 'hello'
+
+@goal parameterized_goal @params ARG
+  echo "ARG=$ARG"
+  
+@goal goal1
+@depends_on parameterized_goal @args HELLO          # reference by name
+@depends_on parameterized_goal @args "$HELLO world" # interpolated inside string
+```
+
+Having the above in `Makesurefile` will produce next output when ran with `./makesure goal1`:
+```
+  goal 'parameterized_goal@hello' ...
+ARG=hello
+  goal 'parameterized_goal@hello world' ...
+ARG=hello world
+  goal 'goal1' [empty].
+```
+
+Please find a more real-world example [here](https://github.com/xonixx/fhtagn/blob/e7161f92731c13b5afbc09c7d738c1ff4882906f/Makesurefile#L70).
 
 For more technical consideration regarding this feature see [parameterized_goals.md](docs/parameterized_goals.md).
 
@@ -658,6 +686,19 @@ echo 'Please reopen the shell to activate completion.'
 ## Developer notes
 
 Find some contributor instructions in [DEVELOPER.md](docs/DEVELOPER.md).
+
+#### AWK
+
+The core of this tool is implemented in [AWK](https://en.wikipedia.org/wiki/AWK).
+Almost all major implementations of AWK will work. Tested and officially supported are [Gawk](https://www.gnu.org/software/gawk/), [BWK](https://github.com/onetrueawk/awk), [mawk](https://invisible-island.net/mawk/). This means that the default AWK implementation in your OS will work.
+
+Developed in [xonixx/intellij-awk](https://github.com/xonixx/intellij-awk).
+
+## Articles
+
+- [Adding parameterized goals to makesure](https://maximullaris.com/parameterized_goals.html) (March 2023)
+- [makesure vs make](https://maximullaris.com/makesure-vs-make.html) (March 2023)
+- [makesure – make with a human face](https://maximullaris.com/makesure.html) (February 2023)
 
 ## Similar tools
 

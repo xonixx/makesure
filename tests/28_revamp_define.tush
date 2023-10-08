@@ -68,4 +68,38 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g7
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g8
 |   goal 'g8' ...
-| 1.2.3 email@example.com
+| 1.2.3 email@example.com default\}$"
+
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_2_err_quoting.sh -l
+@ Wrong quoting: sh:
+@ tests/28_revamp_define_2_err_quoting.sh:6: @shell "sh"
+@ Wrong quoting: tracing:
+@ tests/28_revamp_define_2_err_quoting.sh:7: @options "tracing"
+@ Wrong quoting: NAME:
+@ tests/28_revamp_define_2_err_quoting.sh:9: @define "NAME" 'value'
+@ Wrong quoting: g1:
+@ tests/28_revamp_define_2_err_quoting.sh:11: @goal "g1"
+@ Wrong quoting: doc:
+@ tests/28_revamp_define_2_err_quoting.sh:12: @doc "doc"
+@ Wrong quoting: goal_name:
+@ tests/28_revamp_define_2_err_quoting.sh:13: @depends_on "goal_name"
+@ Wrong quoting: goal_name:
+@ tests/28_revamp_define_2_err_quoting.sh:14: @depends_on goal_name1 "goal_name"
+@ Wrong quoting: @private:
+@ tests/28_revamp_define_2_err_quoting.sh:19: @goal g2 "@private"
+@ Wrong quoting: lib_name:
+@ tests/28_revamp_define_2_err_quoting.sh:20: @use_lib "lib_name"
+@ Wrong quoting: lib_name:
+@ tests/28_revamp_define_2_err_quoting.sh:22: @lib "lib_name"
+@ Wrong quoting: @glob:
+@ tests/28_revamp_define_2_err_quoting.sh:24: @goal gg1 "@glob" '*.tush'
+@ Wrong quoting: *.tush:
+@ tests/28_revamp_define_2_err_quoting.sh:25: @goal gg2 @glob   "*.tush"
+@ Wrong quoting: @params:
+@ tests/28_revamp_define_2_err_quoting.sh:27: @goal pg "@params" P
+@ Wrong quoting: P:
+@ tests/28_revamp_define_2_err_quoting.sh:29: @goal pg1 @params "P"
+@ Wrong quoting: @args:
+@ tests/28_revamp_define_2_err_quoting.sh:30: @depends_on pg "@args" 'value'
+? 1
