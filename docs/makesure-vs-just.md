@@ -4,7 +4,7 @@
 
 [Problem](https://github.com/casey/just/issues/1292#issuecomment-1197748631)
 
-Makesure doesn't suffer from this issue and has idiomatic solution:
+Since Makesure doesn't have its own programming language, it doesn't suffer from this issue and has idiomatic solution:
 
 ```shell
 @lib
@@ -84,4 +84,10 @@ Makesure [doesn't need installation](https://github.com/xonixx/makesure#installa
 
 [Problem](https://github.com/casey/just/issues/1557)
 
-By default, `just` invokes the first recipe. Makesure by default invokes the goal named `default`. So, although makesure doesn't have includes, if it had, the issue would not happen.  
+By default, `just` invokes the first recipe. Makesure by default invokes the goal named `default`. So, although makesure doesn't have includes, if it had, the issue would not happen.
+
+### `just` can fail to execute shebang-recipes due to 'Permission denied'
+
+[Problem](https://github.com/casey/just/issues/1611)
+                                                                         
+Makesure doesn't produce temp files during goal execution, so it's not susceptible to this problem.
