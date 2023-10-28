@@ -100,7 +100,8 @@ Updates `makesure` executable to latest available version in-place:
 `makesure` will run on any environment with POSIX shell available. [Tested](https://github.com/xonixx/makesure/actions) and officially supported are:
  
 - Linux
-- MacOS
+- macOS
+- FreeBSD
 - Windows (via Git Bash)
       
 ## Concepts
