@@ -24,8 +24,8 @@ jobs:
         run: |
           ./makesure tested_awks
 
-  # https://github.com/marketplace/actions/freebsd-vm
-  # https://github.com/vmactions/freebsd-vm
+  # https://github.com/cross-platform-actions/action
+  # https://github.com/marketplace/actions/cross-platform-action
   freebsd:
     runs-on: macos-12
     name: "Tests on FreeBSD"
@@ -33,15 +33,16 @@ jobs:
       - uses: actions/checkout@v3
       - name: Tests in FreeBSD
         id: test
-        uses: vmactions/freebsd-vm@v0.3.0
+        uses: cross-platform-actions/action@v0.21.0
         with:
-          usesh: true
-          prepare: |
-            pkg install -y curl
-            # pkg install -y wget
-            pkg install -y bash
-            # pkg install -y gawk
+          operating_system: freebsd
+          version: '13.2'
+          shell: sh
           run: |
+            sudo pkg install -y curl
+            # sudo pkg install -y wget
+            sudo pkg install -y bash
+            # sudo pkg install -y gawk
             echo "---------------------------------------"
             freebsd-version
             pwd
