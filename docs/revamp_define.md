@@ -65,6 +65,20 @@ We won't support interpolation for `@args` values. That is we only support:
 @depends_on pg2 @args PARAM VAR 'literal1' $'literal2' 
 ```
 
+### Upd. Resolution
+
+We **will** only support interpolating the `@define`-d vars, not PG params to allow this:
+
+```shell
+@define GOAWK_VERSION '1.24.0'
+@define GOAWK         "./soft/goawk$GOAWK_VERSION"
+
+@goal tested_by_goawk
+@depends_on installed_goawk
+@depends_on tested_by @args 'tush'   "$GOAWK -f ./fhtagn.awk"
+@depends_on tested_by @args 'fhtagn' "$GOAWK -f ./fhtagn.awk"
+```
+
 ## Q. Detect unset variable as an error?
     
 ### Cons
@@ -142,6 +156,8 @@ $ export VAR=hello
 $ ./makesure 
 ```
 
+This behavior will be preserved.
+
 ## Q. How do we know when to parse with `'`/`$'`/`"` - quoted strings or unquoted?
                     
 Need to come up with the simplest approach to parse and error on wrong quoting of particular word.
@@ -154,15 +170,16 @@ Lets define string quoting types:
 - `"` for `"string"`
 
 
-We need to parse two cases separately
+We need to limit parsing to these cases:
 
-- `@define VAR "value"`
-  - allowing only unquoted in 1st and 2nd position and any quote in 3rd
-- All others re-parsed cases like 
-  - `@goal $'goal name' @params A B @private`
-    - `u'$` in 2nd, `u` in all other pos
-  - `@depends_on $'goal name' 'goal name2'`
-    - `u'$` in 2+ pos
-  - `@depends_on $'goal name' @args A 'literal' $'literal2'`
-    - `u'$` in 2nd, `u'$` in 4+
+1. `@define VAR "value"`
+   - allowing only unquoted in 1st and 2nd position and **any quote** in 3rd
+2. `@depends_on $'goal name' @args A "str $VAR1 ${VAR2}" 'literal'`
+   - `u'$` in 2nd, **any quote** in 4+ 
+3. All others re-parsed cases like 
+   - `@goal $'goal name' @params A B @private`
+     - `u'$` in 2nd, `u` in all other pos
+   - `@depends_on $'goal name' 'goal name2'`
+     - `u'$` in 2+ pos
+
         
