@@ -54,7 +54,7 @@ If we support this it means
 # should output 'Hello world'
 ```
 
-### Resolution
+### ~~Resolution~~
 
 We won't support interpolation for `@args` values. That is we only support:
 
