@@ -91,3 +91,55 @@ By default, `just` invokes the first recipe. Makesure by default invokes the goa
 [Problem](https://github.com/casey/just/issues/1611)
                                                                          
 Makesure doesn't produce temp files during goal execution, so it's not susceptible to this problem.
+
+### Need for custom functions for string manipulation
+
+[Problem](...)
+  
+Makesure uses shell (instead of own programming language) and relies on shell variables (instead of own kind of variables).
+
+The idiomatic solution to the described problem using [parameterized goals](https://maximullaris.com/parameterized_goals.html):
+
+```shell
+@define BUILD_DIR  'build'
+@define FILE_NAME  'out'
+
+@goal pandoc @params ARG EXT @private
+    echo pandoc input.md -o "$BUILD_DIR/$ARG/$FILE_NAME.$EXT"
+
+@goal html @params ARG
+@depends_on pandoc @args ARG 'html'
+
+@goal pdf @params ARG
+@depends_on pandoc @args ARG 'pdf'
+
+@goal foo
+@depends_on html @args 'foo'
+@depends_on pdf  @args 'foo'
+```
+
+Calling:
+```
+$ ./makesure -l
+Available goals:
+  foo
+  html@foo
+  pdf@foo
+
+$ ./makesure foo
+  goal 'pandoc@foo@html' ...
+pandoc input.md -o build/foo/out.html
+  goal 'html@foo' [empty].
+  goal 'pandoc@foo@pdf' ...
+pandoc input.md -o build/foo/out.pdf
+  goal 'pdf@foo' [empty].
+  goal 'foo' [empty].
+
+$ ./makesure html@foo
+  goal 'pandoc@foo@html' ...
+pandoc input.md -o build/foo/out.html
+  goal 'html@foo' [empty].
+
+```
+
+
