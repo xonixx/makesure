@@ -15,7 +15,7 @@
 @reached_if [[ -d "soft" ]]
   mkdir soft
 
-@define FHTAGN "./soft/fhtagn.awk"
+@define FHTAGN "./soft/fhtagn$FHTAGN_VERSION.awk"
 
 @goal fhtagn_installed @private
 @depends_on soft_folder_created
