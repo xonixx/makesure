@@ -64,7 +64,7 @@ function makesure(   i) {
 
 function prepareArgs(   i,arg) {
   for (i = 2; i < ARGC; i++) {
-    if (substr(arg = ARGV[i],1,1) == "-") {
+    if (substr(arg = ARGV[i], 1, 1) == "-") {
       if (arg == "-f" || arg == "--file") {
         delete ARGV[i]
         ARGV[1] = ARGV[++i]
@@ -118,8 +118,8 @@ function prepareArgs(   i,arg) {
 
 function splitKV(arg, kv,   n) {
   n = index(arg, "=")
-  kv[0] = trim(substr(arg,1,n - 1))
-  kv[1] = trim(substr(arg,n + 1))
+  kv[0] = trim(substr(arg, 1, n - 1))
+  kv[1] = trim(substr(arg, n + 1))
 }
 function handleOptionDefineOverride(arg,   kv) {
   splitKV(arg, kv)
@@ -201,7 +201,7 @@ function handleGoal(   i,goalName) {
     if ("@params" == $3) {
       if (3 == NF) addError("missing parameters")
       for (i = 4; i <= NF; i++)
-        GoalParams[goalName,GoalParamsCnt[goalName]++] = validateParamName($i)
+        GoalParams[goalName, GoalParamsCnt[goalName]++] = validateParamName($i)
     } else if (NF > 2) addError("nothing allowed after goal name")
 }
 
@@ -214,7 +214,7 @@ function registerGoal(priv, goalName) { # -> 1 if no errors, otherwise 0
   if ("" == goalName || "@params" == goalName)
     addError("Goal must have a name")
   else if (goalName in GoalsByName)
-    addError("Goal " quote2(goalName,1) " is already defined")
+    addError("Goal " quote2(goalName, 1) " is already defined")
   else {
     arrPush(GoalNames, goalName)
     GoalsByName[goalName] = priv
@@ -232,10 +232,10 @@ function calcGlob(goalName, pattern,   script, file) {
     script = Shell " -c " quoteArg(script)
   while ((script | getline file) > 0) {
     GlobCnt++
-    arrPush(GlobFiles,file)
+    arrPush(GlobFiles, file)
   }
   closeErr(script)
-  quicksort(GlobFiles,0,arrLen(GlobFiles) - 1)
+  quicksort(GlobFiles, 0, arrLen(GlobFiles) - 1)
 }
 
 function parsePriv() {
@@ -349,7 +349,7 @@ function registerReachedIf(goalName, preScript) {
 }
 # remove the @directive at the start of the line
 function trimDirective() {
-  sub(/^[ \t]*@[a-z_]+/,"")
+  sub(/^[ \t]*@[a-z_]+/, "")
 }
 
 function checkBeforeRun(   i,j,dep,depCnt,goalName) {
@@ -357,9 +357,9 @@ function checkBeforeRun(   i,j,dep,depCnt,goalName) {
     depCnt = DependenciesCnt[goalName = GoalNames[i]]
     for (j = 0; j < depCnt; j++)
       if (!((dep = Dependencies[goalName, j]) in GoalsByName))
-        addError("Goal " quote2(goalName,1) " has unknown dependency '" dep "'", DependenciesLineNo[goalName, j])
+        addError("Goal " quote2(goalName, 1) " has unknown dependency '" dep "'", DependenciesLineNo[goalName, j])
     if (goalName in GoalToLib && !(GoalToLib[goalName] in Lib))
-      addError("Goal " quote2(goalName,1) " uses unknown lib '" GoalToLib[goalName] "'", UseLibLineNo[goalName])
+      addError("Goal " quote2(goalName, 1) " uses unknown lib '" GoalToLib[goalName] "'", UseLibLineNo[goalName])
   }
 }
 
@@ -386,7 +386,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
 
   # First do topological sort disregarding @reached_if to catch loops.
   # We need to do it before instantiate, because instantiation is recursive and will hang in presence of loop.
-  if (arrLen(GoalNames)) topologicalSort(0,GoalNames)
+  if (arrLen(GoalNames)) topologicalSort(0, GoalNames)
 
   instantiateGoals()
 
@@ -417,7 +417,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     if (timingOn())
       t0 = currentTimeMillis()
 
-    topologicalSort(1,ArgGoals,resolvedGoals,reachedGoals) # now do topological sort including @reached_if to resolve goals to run
+    topologicalSort(1, ArgGoals, resolvedGoals, reachedGoals) # now do topological sort including @reached_if to resolve goals to run
 
     preludeCode = getPreludeCode()
 
@@ -437,7 +437,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
     if ("-d" in Args || "--resolved" in Args) {
       printf "Resolved goals to reach for"
       for (i = 0; i in ArgGoals; i++)
-        printf " %s", quote2(ArgGoals[i],1)
+        printf " %s", quote2(ArgGoals[i], 1)
       print ":"
       for (i = 0; i in resolvedGoals; i++)
         if (!reachedGoals[goalName = resolvedGoals[i]] && !emptyGoals[goalName])
@@ -450,14 +450,14 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
           t1 = t2 ? t2 : currentTimeMillis()
 
         if (!("silent" in Options))
-          print "  goal " quote2(goalName,1) " " (reachedGoals[goalName] ? "[already satisfied]." : emptyGoals[goalName] ? "[empty]." : "...")
+          print "  goal " quote2(goalName, 1) " " (reachedGoals[goalName] ? "[already satisfied]." : emptyGoals[goalName] ? "[empty]." : "...")
 
-        exitCode = (reachedGoals[goalName] || emptyGoals[goalName]) ? 0 : shellExec(goalBodies[goalName],goalName)
+        exitCode = (reachedGoals[goalName] || emptyGoals[goalName]) ? 0 : shellExec(goalBodies[goalName], goalName)
         if (exitCode != 0)
-          print "  goal " quote2(goalName,1) " failed"
+          print "  goal " quote2(goalName, 1) " failed"
         if (goalTimed) {
           t2 = currentTimeMillis()
-          print "  goal " quote2(goalName,1) " took " renderDuration(t2 - t1)
+          print "  goal " quote2(goalName, 1) " took " renderDuration(t2 - t1)
         }
         if (exitCode != 0)
           break
@@ -485,7 +485,7 @@ function topologicalSort(includeReachedIf,requestedGoals,result,reachedGoals,   
   for (i = 0; i in requestedGoals; i++) {
     if (!((goalName = requestedGoals[i]) in GoalsByName))
       die("Goal not found: " goalName)
-    topologicalSortPerform(includeReachedIf,reachedGoals, goalName, result, loop)
+    topologicalSortPerform(includeReachedIf, reachedGoals, goalName, result, loop)
   }
 
   if (loop[0] == 1)
@@ -504,7 +504,7 @@ function realExit(code) {
   exit code
 }
 function addError(err, n) { if (!n) n = NR; Error = addL(Error, err ":\n" ARGV[1] ":" n ": " Lines[n]) }
-function addErrorDedup(err, n) { if ((err,n) in AddedErrors) return; AddedErrors[err,n]; addError(err,n) }
+function addErrorDedup(err, n) { if ((err, n) in AddedErrors) return; AddedErrors[err, n]; addError(err, n) }
 function die(msg,    out) {
   out = "cat 1>&2" # trick to write from awk to stderr
   print msg | out
@@ -597,7 +597,7 @@ function topologicalSortPerform(includeReachedIf,reachedGoals, node, result, loo
 
   for (i = 1; i <= Scnt[node]; i++) {
     if (Visited[s = Slist[node, i]] == 0)
-      topologicalSortPerform(includeReachedIf,reachedGoals, s, result, loop)
+      topologicalSortPerform(includeReachedIf, reachedGoals, s, result, loop)
     else if (Visited[s] == 1) {
       loop[0] = 1
       loop[1] = s
@@ -633,13 +633,13 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
   if (goalNameInstantiated != goal) {
     if (!(goalNameInstantiated in GoalsByName))
       arrPush(GoalNames, goalNameInstantiated)
-    copyKey(goal,goalNameInstantiated,GoalsByName)
-    copyKey(goal,goalNameInstantiated,DependenciesCnt)
-    copyKey(goal,goalNameInstantiated,CodePre)
-    copyKey(goal,goalNameInstantiated,Code)
-    copyKey(goal,goalNameInstantiated,Doc)
-    copyKey(goal,goalNameInstantiated,ReachedIf)
-    copyKey(goal,goalNameInstantiated,GoalToLib)
+    copyKey(goal, goalNameInstantiated, GoalsByName)
+    copyKey(goal, goalNameInstantiated, DependenciesCnt)
+    copyKey(goal, goalNameInstantiated, CodePre)
+    copyKey(goal, goalNameInstantiated, Code)
+    copyKey(goal, goalNameInstantiated, Doc)
+    copyKey(goal, goalNameInstantiated, ReachedIf)
+    copyKey(goal, goalNameInstantiated, GoalToLib)
 
     for (i in args)
       argsCode = addL(argsCode, i "=" quoteArg(args[i]))
@@ -660,12 +660,12 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     #    indent(IDepth); print ">dep=" dep ", argsCnt[" gi "]=" argsCnt
 
     for (j = 0; j < argsCnt; j++) {
-      depArg = DependencyArgs[gi,j]
-      depArgType = DependencyArgsType[gi,j]
+      depArg = DependencyArgs[gi, j]
+      depArgType = DependencyArgsType[gi, j]
 
       #      indent(IDepth); print ">>@ " depArg " " depArgType
 
-      newArgs[GoalParams[dep,j]] = \
+      newArgs[GoalParams[dep, j]] = \
         depArgType == "str" ? \
           depArg : \
           depArgType == "var" ? \
@@ -675,7 +675,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     }
 
     gii = goalNameInstantiated SUBSEP i
-    Dependencies[gii] = instantiate(dep,newArgs)
+    Dependencies[gii] = instantiate(dep, newArgs)
     DependenciesLineNo[gii] = DependenciesLineNo[gi]
     DependencyArgsCnt[gii] = 0
   }
@@ -687,7 +687,7 @@ function instantiateGoalName(goal, args,   res,cnt,i) {
   if ((cnt = GoalParamsCnt[goal]) == 0) return goal
   res = goal
   for (i = 0; i < cnt; i++)
-    res = res "@" args[GoalParams[goal,i]]
+    res = res "@" args[GoalParams[goal, i]]
   #  print "@@ " res
   return res
 }
@@ -777,15 +777,15 @@ function dl(url, dest,    verbose) {
 # s1== s2 -> 0
 # s1 < s2 -> -1
 function natOrder(s1,s2, i1,i2,   c1, c2, n1,n2) {
-  if (_digit(c1 = substr(s1,i1,1)) && _digit(c2 = substr(s2,i2,1))) {
-    n1 = +c1; while (_digit(c1 = substr(s1,++i1,1))) { n1 = n1 * 10 + c1 }
-    n2 = +c2; while (_digit(c2 = substr(s2,++i2,1))) { n2 = n2 * 10 + c2 }
+  if (_digit(c1 = substr(s1, i1, 1)) && _digit(c2 = substr(s2, i2, 1))) {
+    n1 = +c1; while (_digit(c1 = substr(s1, ++i1, 1))) { n1 = n1 * 10 + c1 }
+    n2 = +c2; while (_digit(c2 = substr(s2, ++i2, 1))) { n2 = n2 * 10 + c2 }
 
     return n1 == n2 ? natOrder(s1, s2, i1, i2) : _cmp(n1, n2)
   }
 
   # consume till equal substrings
-  while ((c1 = substr(s1,i1,1)) == (c2 = substr(s2,i2,1)) && c1 != "" && !_digit(c1)) {
+  while ((c1 = substr(s1, i1, 1)) == (c2 = substr(s2, i2, 1)) && c1 != "" && !_digit(c1)) {
     i1++; i2++
   }
 
@@ -799,7 +799,7 @@ function quicksort(data, left, right,   i, last) {
   quicksortSwap(data, left, int((left + right) / 2))
   last = left
   for (i = left + 1; i <= right; i++)
-    if (natOrder(data[i], data[left],1,1) < 0)
+    if (natOrder(data[i], data[left], 1, 1) < 0)
       quicksortSwap(data, ++last, i)
   quicksortSwap(data, left, last)
   quicksort(data, left, last - 1)
@@ -818,37 +818,37 @@ function quicksortSwap(data, i, j,   temp) {
 ## returns error if any
 function parseCli_2(line, vars, res,   pos,c,c1,isDoll,q,var,inDef,defVal,val,w,i) {
   for (pos = 1; ;) {
-    while ((c = substr(line,pos,1)) == " " || c == "\t") pos++ # consume spaces
+    while ((c = substr(line, pos, 1)) == " " || c == "\t") pos++ # consume spaces
     if (c == "#" || c == "")
       return
     else {
-      if ((isDoll = substr(line,pos,2) == "$'") || c == "'" || c == "\"") { # start of string
+      if ((isDoll = substr(line, pos, 2) == "$'") || c == "'" || c == "\"") { # start of string
         if (isDoll)
           pos++
         q = isDoll ? "'" : c # quote
         # consume quoted string
         w = ""
-        while ((c = substr(line,++pos,1)) != q) { # closing ' or "
+        while ((c = substr(line, ++pos, 1)) != q) { # closing ' or "
           if (c == "")
             return "unterminated argument"
-          else if (c == "\\" && ((c1 = substr(line,pos + 1,1)) == "'" && isDoll || c1 == c || q == "\"" && (c1 == q || c1 == "$"))) { # escaped ' or \ or "
+          else if (c == "\\" && ((c1 = substr(line, pos + 1, 1)) == "'" && isDoll || c1 == c || q == "\"" && (c1 == q || c1 == "$"))) { # escaped ' or \ or "
             c = c1; pos++
           } else if (c == "$" && q == "\"") {
             var = ""
             inDef = 0
             defVal = ""
-            if ((c1 = substr(line,pos + 1,1)) == "{") {
-              for (pos++; (c = substr(line,++pos,1)) != "}";) { # till closing '}'
+            if ((c1 = substr(line, pos + 1, 1)) == "{") {
+              for (pos++; (c = substr(line, ++pos, 1)) != "}";) { # till closing '}'
                 if (c == "")
                   return "unterminated argument"
-                if (!inDef && ":" == c && "-" == substr(line,pos + 1,1)) {
+                if (!inDef && ":" == c && "-" == substr(line, pos + 1, 1)) {
                   inDef = 1
-                  c = substr(line,pos += 2,1)
+                  c = substr(line, pos += 2, 1)
                 }
                 if (inDef) {
                   if ("}" == c)
                     break
-                  if ("\\" == c && ((c1 = substr(line,pos + 1,1)) == "$" || c1 == "\\" || c1 == "}" || c1 == "\"")) {
+                  if ("\\" == c && ((c1 = substr(line, pos + 1, 1)) == "$" || c1 == "\\" || c1 == "}" || c1 == "\"")) {
                     c = c1; pos++
                   }
                   defVal = defVal c
@@ -856,7 +856,7 @@ function parseCli_2(line, vars, res,   pos,c,c1,isDoll,q,var,inDef,defVal,val,w,
                   var = var c
               }
             } else
-              for (; (c = substr(line,pos + 1,1)) ~ /[_A-Za-z0-9]/; pos++)
+              for (; (c = substr(line, pos + 1, 1)) ~ /[_A-Za-z0-9]/; pos++)
                 var = var c
             #            print "var="var
             if (var !~ /^[_A-Za-z][_A-Za-z0-9]*$/)
@@ -866,19 +866,19 @@ function parseCli_2(line, vars, res,   pos,c,c1,isDoll,q,var,inDef,defVal,val,w,
           }
           w = w c
         }
-        res[i = +res[-7]++,"quote"] = isDoll ? "$" : q
+        res[i = +res[-7]++, "quote"] = isDoll ? "$" : q
         res[i] = w
-        if ((c = substr(line,++pos,1)) != "" && c != " " && c != "\t")
+        if ((c = substr(line, ++pos, 1)) != "" && c != " " && c != "\t")
           return "joined arguments"
       } else {
         # consume unquoted argument
         w = c
-        while ((c = substr(line,++pos,1)) != "" && c != " " && c != "\t") { # whitespace denotes the end of arg
+        while ((c = substr(line, ++pos, 1)) != "" && c != " " && c != "\t") { # whitespace denotes the end of arg
           w = w c
         }
         if (w !~ /^[_A-Za-z0-9@.]+$/)
           return "wrong unquoted: '" w "'"
-        res[i = +res[-7]++,"quote"] = "u"
+        res[i = +res[-7]++, "quote"] = "u"
         res[i] = w
       }
     }
@@ -893,7 +893,7 @@ function reparseCli(   res,i,err) {
   $0 = "" # only for macos 10.15 awk version 20070501
   for (i = NF = 0; i in res; i++) {
     $(++NF) = res[i]
-    Quotes[NF] = res[i,"quote"]
+    Quotes[NF] = res[i, "quote"]
   }
   # validation according to https://github.com/xonixx/makesure/issues/141
   for (i = 2; i <= NF; i++)
@@ -904,9 +904,9 @@ function reparseCli(   res,i,err) {
   return 0
 }
 function quote2(s,force) {
-  if (index(s,"'")) {
-    gsub(/\\/,"\\\\",s)
-    gsub(/'/,"\\'",s)
+  if (index(s, "'")) {
+    gsub(/\\/, "\\\\", s)
+    gsub(/'/, "\\'", s)
     return "$'" s "'"
   } else
     return force || s ~ /[^a-zA-Z0-9.,@_\/=+-]/ ? "'" s "'" : s
@@ -919,7 +919,7 @@ function arrDel(arr, v,   l,i,e,resArr) {
   l = arrLen(arr)
   for (i = 0; i < l; i++)
     if (v != (e = arr[i]))
-      arrPush(resArr,e)
+      arrPush(resArr, e)
   delete arr
   for (i in resArr)
     arr[i] = resArr[i]
