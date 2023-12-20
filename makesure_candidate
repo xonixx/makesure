@@ -256,7 +256,7 @@ function checkBeforeRun(i,j,dep,depCnt,goalName){
    if(!((dep=Dependencies[goalName,j])in GoalsByName))
     addError("Goal " quote2(goalName,1)" has unknown dependency '\''" dep "'\''",DependenciesLineNo[goalName,j])
   if(goalName in GoalToLib&&!(GoalToLib[goalName]in Lib))
-   addError("Goal " quote2(goalName,1)" uses unknown lib '\''" GoalToLib[goalName] "'\''",UseLibLineNo[goalName])}}
+   addError("Goal " quote2(goalName,1)" uses unknown lib '\''" GoalToLib[goalName]"'\''",UseLibLineNo[goalName])}}
 function getPreludeCode(a,k){
  addLine(a,MyDirScript)
  for(k in Vars)
@@ -345,7 +345,7 @@ function topologicalSort(includeReachedIf,requestedGoals,result,reachedGoals,i,j
    die("Goal not found: " goalName)
   topologicalSortPerform(includeReachedIf,reachedGoals,goalName,result,loop)}
  if(loop[0]==1)
-  die("There is a loop in goal dependencies via " loop[1] " -> " loop[2])}
+  die("There is a loop in goal dependencies via " loop[1]" -> " loop[2])}
 function isCodeAllowed(){return "goal"==Mode||"goal_glob"==Mode||"lib"==Mode}
 function isPrelude(){return "prelude"==Mode}
 function checkPreludeOnly(){if(!isPrelude())addError("Only use " $1 " in prelude")}
@@ -354,7 +354,7 @@ function currentGoalName(){return arrLast(GoalNames)}
 function currentLibName(){return arrLast(LibNames)}
 function realExit(code){
  exit code}
-function addError(err,n){if(!n)n=NR;Error=addL(Error,err ":\n" ARGV[1] ":" n ": " Lines[n])}
+function addError(err,n){if(!n)n=NR;Error=addL(Error,err ":\n" ARGV[1]":" n ": " Lines[n])}
 function addErrorDedup(err,n){if((err,n)in AddedErrors)return;AddedErrors[err,n];addError(err,n)}
 function die(msg,out){
  out="cat 1>&2"
@@ -654,6 +654,6 @@ function commandExists(cmd){return ok("command -v " cmd " >/dev/null")}
 function ok(cmd){return system(cmd)==0}
 function isFile(path){return ok("test -f " quoteArg(path))}
 function rm(f){system("rm " quoteArg(f))}
-function quoteArg(a){gsub("'\''", "'\''\\'\'''\''", a);return "'\''" a "'\''"}
-function trim(s){sub(/^[ \t\r\n]+/,"", s);sub(/[ \t\r\n]+$/, "",s);return s}
+function quoteArg(a){gsub("'\''","'\''\\'\'''\''",a);return "'\''" a "'\''"}
+function trim(s){sub(/^[ \t\r\n]+/,"",s);sub(/[ \t\r\n]+$/,"",s);return s}
 function copyKey(keySrc,keyDst,arr){if(keySrc in arr)arr[keyDst]=arr[keySrc]}' Makesurefile "$@"
