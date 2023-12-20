@@ -36,6 +36,7 @@ in_begin && $1 ~ /^delete/{ next }
   gsub(/printf +"/, "printf\"")
   if (!/^ +}/) gsub(/ +}/, "}")
   gsubKeepStrings("^ +in ", "in ")
+  gsubKeepStrings(" +$", "")
   gsub(Q, Q "\\" Q Q)
   if (l = trim($0)) { decreaseIndent(); printf "%s", (l == "}" ? l : (NR == 1 ? "" : "\n") $0) }
 }
@@ -49,8 +50,7 @@ function gsubKeepStrings(regex, replacement,   nonString,s,isString,i,c) {
   isString = 0
   for (i=1;(c=substr($0,i,1))!="";i++) {
 #    print "> " i " " c
-    if ("\"" == c) {
-      # TODO escaped "
+    if ("\"" == c && (substr($0,i-1,1) != "\\" || substr($0,i-2,1) == "\\")) {
       if (!isString) {
         gsub(regex, replacement, nonString)
         s = s nonString
@@ -69,4 +69,5 @@ function gsubKeepStrings(regex, replacement,   nonString,s,isString,i,c) {
   $0 = s
 }
 #BEGIN { $0 = "aaa\"aaa\"bbbaaa"; gsubKeepStrings("aaa","AAA"); print }
+#BEGIN { $0 = "aaa\"aaa\\\"aaa\"bbbaaa"; gsubKeepStrings("aaa","AAA"); print }
 #BEGIN { $0 = "if (\"-h\" in Args || \"--help\" in Args) {"; gsubKeepStrings("^ +in", "in"); print }
