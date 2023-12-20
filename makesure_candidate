@@ -48,7 +48,7 @@ function prepareArgs(i,arg){
   }else
    arrPush(ArgGoals,arg)
   delete ARGV[i]}
- if("-h" in Args||"--help" in Args){
+ if("-h"in Args||"--help"in Args){
   print"makesure ver. " Version
   print"Usage: makesure [options...] [-f buildfile] [goals...]"
   print" -f,--file buildfile"
@@ -65,10 +65,10 @@ function prepareArgs(i,arg){
   print" -h,--help       print help and exit"
   print" -U,--selfupdate update makesure to latest version"
   realExit(0)
- }else if("-v" in Args||"--version" in Args){
+ }else if("-v"in Args||"--version"in Args){
   print Version
   realExit(0)
- }else if("-U" in Args||"--selfupdate" in Args){
+ }else if("-U"in Args||"--selfupdate"in Args){
   selfUpdate()
   realExit(0)}
  if(!isFile(ARGV[1])){
@@ -76,11 +76,11 @@ function prepareArgs(i,arg){
    ARGV[1]=ARGV[1]"/Makesurefile"
   else
    die("makesure file not found: " ARGV[1])}
- if("-s" in Args||"--silent" in Args)
+ if("-s"in Args||"--silent"in Args)
   Options["silent"]
- if("-x" in Args||"--tracing" in Args)
+ if("-x"in Args||"--tracing"in Args)
   Options["tracing"]
- if("-t" in Args||"--timing" in Args)
+ if("-t"in Args||"--timing"in Args)
   Options["timing"]}
 function splitKV(arg,kv,n){
  n=index(arg,"=")
@@ -113,7 +113,7 @@ function handleShell(){
  if(!((Shell=$2)in SupportedShells))
   addError("Shell '\''" Shell "'\'' is not supported")}
 function timingOn(){
- return "timing" in Options&&!("silent" in Options)}
+ return "timing"in Options&&!("silent"in Options)}
 function started(mode){
  Mode=mode}
 function handleLib(libName){
@@ -271,8 +271,8 @@ body,goalBody,goalBodies,resolvedGoals,exitCode,t0,t1,t2,goalTimed,list){
  instantiateGoals()
  if(Error)
   die(Error)
- list="-l" in Args||"--list" in Args
- if(list||"-la" in Args||"--list-all" in Args){
+ list="-l"in Args||"--list"in Args
+ if(list||"-la"in Args||"--list-all"in Args){
   print"Available goals:"
   for(i=0;i in GoalNames;i++){
    goalName=GoalNames[i]
@@ -304,7 +304,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode,t0,t1,t2,goalTimed,list){
     addLine(goalBody,Lib[GoalToLib[goalName]])
    addLine(goalBody,body)
    goalBodies[goalName]=goalBody[0]}
-  if("-d" in Args||"--resolved" in Args){
+  if("-d"in Args||"--resolved"in Args){
    printf"Resolved goals to reach for"
    for(i=0;i in ArgGoals;i++)
     printf" %s",quote2(ArgGoals[i],1)
@@ -318,7 +318,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode,t0,t1,t2,goalTimed,list){
     goalTimed=timingOn()&&!reachedGoals[goalName]&&!emptyGoals[goalName]
     if(goalTimed)
      t1=t2?t2:currentTimeMillis()
-    if(!("silent" in Options))
+    if(!("silent"in Options))
      print"  goal " quote2(goalName,1)" " (reachedGoals[goalName]?"[already satisfied].":emptyGoals[goalName]?"[empty].":"...")
     exitCode=(reachedGoals[goalName]||emptyGoals[goalName])?0:shellExec(goalBodies[goalName],goalName)
     if(exitCode!=0)
@@ -368,7 +368,7 @@ function checkConditionReached(goalName,conditionStr,script){
  script=script "\n" conditionStr
  return shellExec(script,goalName "@reached_if")==0}
 function shellExec(script,comment,res){
- if("tracing" in Options){
+ if("tracing"in Options){
   script=": " quoteArg(comment)"\n" script
   script=Shell " -x -e -c " quoteArg(script)
  }else
@@ -528,7 +528,7 @@ function executeGetLine(script,res){
  return res}
 function closeErr(script){if(close(script)!=0)die("Error executing: " script)}
 function dl(url,dest,verbose){
- verbose="VERBOSE" in ENVIRON
+ verbose="VERBOSE"in ENVIRON
  if(commandExists("wget")){
   if(!ok("wget " (verbose?"":"-q")" " quoteArg(url)" -O" quoteArg(dest)))
    return "error with wget"
