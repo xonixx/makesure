@@ -1,23 +1,24 @@
 BEGIN { Q = "'" }
-function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s }
+
 /^BEGIN/                  { in_begin = 1 }
 in_begin && /^}/          { in_begin = 0 }
 in_begin && $1 ~ /^delete/{ next }
-{ if (!/"#"/ && !/\*#\// && !/\*\(#/) gsub("[ \t\r\n]*#.*$", "")
+{ minifyLine() }
+
+function minifyLine(   l) {
+  if (!/"#"/ && !/\*#\// && !/\*\(#/) gsub("[ \t\r\n]*#.*$", "")
   gsub(/ == /, "==")
   gsub(/ = /, "=")
   gsub(/ != /, "!=")
   gsub(/ >= /, ">=")
   gsub(/ <= /, "<=")
   gsub(/; +/, ";")
-  gsubKeepStrings(", +", ",")
   gsub(/ ~ /, "~")
   gsub(/ > /, ">")
   gsub(/ < /, "<")
   gsub(/ \/ /, "/")
   gsub(/ \* /, "*")
   gsub(/ \+ /, "+")
-  gsubKeepStrings(" - ", "-")
   gsub(/ \|\| /, "||")
   gsub(/ \| /, "|")
   if (/ \? /) gsub(/ : /, ":")
@@ -31,10 +32,12 @@ in_begin && $1 ~ /^delete/{ next }
   gsub(/[{] +/, "{")
   gsub(/} +/, "}")
   gsub(/[)] +/, ")")
-  gsubKeepStrings("] +", "]")
   gsub(/print +"/, "print\"")
   gsub(/printf +"/, "printf\"")
   if (!/^ +}/) gsub(/ +}/, "}")
+  gsubKeepStrings(", +", ",")
+  gsubKeepStrings(" *- ", "-")
+  gsubKeepStrings("] +", "]")
   gsubKeepStrings("^ +in ", "in ")
   gsubKeepStrings(" +$", "")
   gsub(Q, Q "\\" Q Q)
@@ -55,6 +58,9 @@ function gsubKeepStrings(regex, replacement,   nonString,s,isString,i,c) {
         gsub(regex, replacement, nonString)
         s = s nonString
         nonString = ""
+      } else {
+        # skip whitespaces after "
+        while (substr($0,i+1,1) == " ") i++
       }
       s = s c # append this "
       isString = !isString
@@ -68,6 +74,10 @@ function gsubKeepStrings(regex, replacement,   nonString,s,isString,i,c) {
   s = s nonString
   $0 = s
 }
+function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s }
 #BEGIN { $0 = "aaa\"aaa\"bbbaaa"; gsubKeepStrings("aaa","AAA"); print }
 #BEGIN { $0 = "aaa\"aaa\\\"aaa\"bbbaaa"; gsubKeepStrings("aaa","AAA"); print }
 #BEGIN { $0 = "if (\"-h\" in Args || \"--help\" in Args) {"; gsubKeepStrings("^ +in", "in"); print }
+#BEGIN { $0 = "      if (arg == \"-f\" || arg == \"--file\") {"; minifyLine() }
+#BEGIN { $0 = "    res = dayS \" \" (hrS == \"\" ? \"0 h\" : hrS)"; minifyLine() }
+#BEGIN { $0 = "  quicksort(GlobFiles, 0, arrLen(GlobFiles) - 1)"; minifyLine() }
