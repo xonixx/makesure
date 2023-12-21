@@ -5,7 +5,7 @@ in_begin && /^}/          { in_begin = 0 }
 in_begin && $1 ~ /^delete/{ next }
 { minifyLine() }
 
-function minifyLine(   l) {
+function minifyLine(   l,subs) {
   if (!/"#"/ && !/\*#\// && !/\*\(#/) gsub("[ \t\r\n]*#.*$", "")
   gsub(/ == /, "==")
   gsub(/ = /, "=")
@@ -35,11 +35,14 @@ function minifyLine(   l) {
   gsub(/print +"/, "print\"")
   gsub(/printf +"/, "printf\"")
   if (!/^ +}/) gsub(/ +}/, "}")
-  gsubKeepStrings(", +", ",")
-  gsubKeepStrings(" *- ", "-")
-  gsubKeepStrings("] +", "]")
-  gsubKeepStrings("^ +in ", "in ")
-  gsubKeepStrings(" +$", "")
+
+  subs[", +"] = ","
+  subs[" *- "] = "-"
+  subs["] +"] = "]"
+  subs["^ +in "] = "in "
+  subs[" +$"] = ""
+  gsubKeepStrings(subs)
+
   gsub(Q, Q "\\" Q Q)
   if (l = trim($0)) { decreaseIndent(); printf "%s", (l == "}" ? l : (NR == 1 ? "" : "\n") $0) }
 }
@@ -47,7 +50,7 @@ function decreaseIndent() {
   match($0, /^ */)
   $0 = sprintf("%" (RLENGTH - 1) / 2 "s", "") substr($0, RLENGTH)
 }
-function gsubKeepStrings(regex, replacement,   nonString,s,isString,i,c) {
+function gsubKeepStrings(subs,   nonString,s,isString,i,c,regex) {
   nonString = ""
   s = ""
   isString = 0
@@ -55,7 +58,8 @@ function gsubKeepStrings(regex, replacement,   nonString,s,isString,i,c) {
 #    print "> " i " " c
     if ("\"" == c && (substr($0,i-1,1) != "\\" || substr($0,i-2,1) == "\\")) {
       if (!isString) {
-        gsub(regex, replacement, nonString)
+        for (regex in subs)
+          gsub(regex, subs[regex], nonString)
         s = s nonString
         nonString = ""
       } else {
@@ -70,7 +74,8 @@ function gsubKeepStrings(regex, replacement,   nonString,s,isString,i,c) {
       nonString = nonString c
     }
   }
-  gsub(regex, replacement, nonString)
+  for (regex in subs)
+    gsub(regex, subs[regex], nonString)
   s = s nonString
   $0 = s
 }
