@@ -103,3 +103,9 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_2_err_quoting.sh -l
 @ Wrong quoting: @args:
 @ tests/28_revamp_define_2_err_quoting.sh:30: @depends_on pg "@args" 'value'
 ? 1
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_3_issue152.sh -l
+| Available goals:
+|   g
+|   pg@aaa
+|   pg@bbb
