@@ -41,8 +41,7 @@
 @goal cleaned_all @private
 @depends_on cleaned cleaned_soft
 
-@goal debug @private
-@doc 'shows software versions'
+@lib awk_ver
   awk_ver() {
     local key="$1"
     local value="$2"
@@ -57,6 +56,10 @@
               ;;
     esac
   }
+
+@goal debug @private
+@doc 'shows software versions'
+@use_lib awk_ver
   awk_ver 'AWK' "$AWK"
   awk_ver 'MAKESURE_AWK' "$MAKESURE_AWK"
   bash --version| head -n 1
@@ -81,12 +84,18 @@
   }
 
 @goal tested
-@doc 'runs all *.tush tests'
+@doc 'runs all *.tush tests (stop at 1st error)'
 @depends_on 'tests/*.tush'
 
-@goal fhtagn
-@doc 'runs all *.tush tests (fail at end)'
-@depends_on prepared4tests
+@goal fhtagn @params EXE_NAME
+@doc 'runs all *.tush tests'
+@depends_on fhtagn_installed
+@use_lib awk_ver
+  [[ $EXE_NAME == 'awk' ]] && MAKESURE_AWK="/usr/bin/awk" || MAKESURE_AWK="$(pwd)/soft/${EXE_NAME}"
+  export MAKESURE_AWK
+#  [[ ! -e $MAKESURE_AWK ]] && echo "not found: $MAKESURE_AWK" && exit 1
+  awk_ver 'MAKESURE_AWK' "$MAKESURE_AWK"
+  [[ $EXE_NAME == "gawk"* ]] && export MAKESURE_AWKLIBPATH="$(pwd)/soft/${EXE_NAME}_libs"
   [[ "$OSTYPE" == "linux-gnu"* ]] && [[ -d /dev/shm ]] && export TMPDIR="/dev/shm"
   MAKESURE=makesure_dev ALL=1 "$FHTAGN" tests/*.tush
 
@@ -176,7 +185,7 @@
 
 @goal tested_awks
 @doc 'tests with all awks'
-@depends_on fhtagn
+@depends_on fhtagn @args 'awk'
 @depends_on tested_bwk
 @depends_on tested_mawk133
 @depends_on tested_mawk134
@@ -186,15 +195,15 @@
 
 @goal tested_bwk @private
 @depends_on installed_bwk
-  ./makesure -D MAKESURE_AWK="$(pwd)/soft/bwk" fhtagn
+@depends_on fhtagn @args 'bwk'
 
 @goal tested_mawk133 @private
 @depends_on installed_mawk133
-  ./makesure -D MAKESURE_AWK="$(pwd)/soft/mawk133" fhtagn
+@depends_on fhtagn @args 'mawk133'
 
 @goal tested_mawk134 @private
 @depends_on installed_mawk134
-  ./makesure -D MAKESURE_AWK="$(pwd)/soft/mawk134" fhtagn
+@depends_on fhtagn @args 'mawk134'
 
 @goal tested_all_gawks
 @doc 'tests with all Gawk-s'
@@ -205,11 +214,12 @@
 
 @goal tested_gawk @params VERSION EXE_NAME @private
 @depends_on installed_gawk @args VERSION EXE_NAME
-  ./makesure -D MAKESURE_AWKLIBPATH="$(pwd)/soft/${EXE_NAME}_libs" -D MAKESURE_AWK="$(pwd)/soft/${EXE_NAME}" fhtagn
+@depends_on fhtagn @args EXE_NAME
 
 @goal tested_goawk @private
 @depends_on installed_goawk
-  ./makesure -D MAKESURE_AWK="$(pwd)/soft/$GOAWK" fhtagn
+@depends_on fhtagn @args "$GOAWK"
+
 
 @goal tested_goawk_branch @private
 @depends_on installed_goawk_branch
@@ -218,7 +228,7 @@
 @goal tested_busybox @private
 @reached_if [[ "$OSTYPE" != "linux-gnu"* ]] # only test busybox awk on linux
 @depends_on installed_busybox
-  ./makesure -D MAKESURE_AWK="$(pwd)/soft/busybox awk" fhtagn
+@depends_on fhtagn @args 'busybox awk'
 
 @goal installed_bwk @private
 @reached_if [[ -f soft/bwk ]]
