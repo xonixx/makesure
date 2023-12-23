@@ -220,11 +220,6 @@
 @depends_on installed_goawk
 @depends_on fhtagn @args "$GOAWK"
 
-
-@goal tested_goawk_branch @private
-@depends_on installed_goawk_branch
-  ./makesure -D MAKESURE_AWK="$(pwd)/soft/$GOAWK_BRANCH_EXE" tested
-
 @goal tested_busybox @private
 @reached_if [[ "$OSTYPE" != "linux-gnu"* ]] # only test busybox awk on linux
 @depends_on installed_busybox
@@ -384,8 +379,12 @@
   mv goawk $GOAWK
   "./$GOAWK" --version
 
-@define GOAWK_BRANCH     'bytecode'
+@define GOAWK_BRANCH     'length-array'
 @define GOAWK_BRANCH_EXE "goawk_$GOAWK_BRANCH"
+
+@goal tested_goawk_branch @private
+@depends_on installed_goawk_branch
+@depends_on fhtagn @args "$GOAWK_BRANCH_EXE"
 
 @goal installed_goawk_branch @private
 @reached_if [[ -f soft/$GOAWK_BRANCH_EXE ]]
