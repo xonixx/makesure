@@ -1,5 +1,11 @@
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/12_errors.sh
+@ Syntax error: wrong var: '777':
+@ tests/12_errors.sh:64: @define X "$777"
+@ Syntax error: unterminated argument:
+@ tests/12_errors.sh:65: @define X1 'unterminated
+@ Syntax error: unterminated argument:
+@ tests/12_errors.sh:66: @define X2 "${unterminated
 @ Shell code is not allowed outside goals/libs:
 @ tests/12_errors.sh:2: echo 'code in prelude'
 @ Only use @reached_if in @goal:
@@ -52,12 +58,6 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/12_errors.sh
 @ tests/12_errors.sh:61: @goal @glob     # absent glob pattern
 @ absent glob pattern:
 @ tests/12_errors.sh:62: @goal g19 @glob # absent glob pattern
-@ Syntax error: wrong var: '777':
-@ tests/12_errors.sh:64: @define X "$777"
-@ Syntax error: unterminated argument:
-@ tests/12_errors.sh:65: @define X1 'unterminated
-@ Syntax error: unterminated argument:
-@ tests/12_errors.sh:66: @define X2 "${unterminated
 @ Goal 'g1' has unknown dependency 'unknown':
 @ tests/12_errors.sh:18: @depends_on unknown
 @ Goal 'g2' uses unknown lib 'unknown':
