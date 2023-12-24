@@ -41,11 +41,11 @@ BEGIN {
   makesure()
 }
 
-function makesure(   i,j) {
+function makesure(   i) {
   while (getline > 0) { # 1st pass - defines
     Lines[NR] = $0
     if ("@define" == $1 && reparseCli() >= 0) handleDefine()
-    for (j = 1; j < 10; j++) $j = "" # only for macos 10.15 awk version 20070501
+    _reset()
   }
   Mode = "prelude"
   for (i = 1; i in Lines; i++) { # 2nd pass - all the rest
@@ -62,10 +62,13 @@ function makesure(   i,j) {
     else if ("@use_lib" == $1) handleUseLib()
     else if ($1 ~ /^@/) addError("Unknown directive: " $1)
     else handleCodeLine($0)
-    for (j = 1; j < 10; j++) $j = "" # only for macos 10.15 awk version 20070501
+    _reset()
   }
   doWork()
   realExit(0)
+}
+function _reset(   j) {
+  for (j = 1; j < 10; j++) $j = "" # only for macos 10.15 awk version 20070501
 }
 
 function prepareArgs(   i,arg) {
