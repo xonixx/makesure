@@ -44,13 +44,13 @@ BEGIN {
 function makesure(   i) {
   while (getline > 0) { # 1st pass - defines
     Lines[NR] = $0
-    if ("@define" == $1 && reparseCli() >= 0) handleDefine()
+    if ("@define" == $1 && reparseCli()) handleDefine()
     _reset()
   }
   Mode = "prelude"
   for (i = 1; i in Lines; i++) { # 2nd pass - all the rest
     $0 = Lines[NR = i]
-    if ($1 ~ /^@/ && "@reached_if" != $1 && "@define" != $1) if (reparseCli() < 0) continue
+    if ($1 ~ /^@/ && "@reached_if" != $1 && "@define" != $1 && !reparseCli()) continue
     if ("@options" == $1) handleOptions()
     else if ("@define" == $1) { Mode = "define" }
     else if ("@shell" == $1) handleShell()
@@ -897,7 +897,7 @@ function reparseCli(   res,i,err) {
   err = parseCli_2($0, Vars, res)
   if (err) {
     addError("Syntax error: " err)
-    return -1
+    return 0
   }
   $0 = "" # only for macos 10.15 awk version 20070501
   for (i = NF = 0; i in res; i++) {
@@ -908,9 +908,9 @@ function reparseCli(   res,i,err) {
   for (i = 2; i <= NF; i++)
     if ("\"" == Quotes[i] && !("@define" == $1 && 3 == i || "@depends_on" == $1 && "@args" == $3 && i > 3)) {
       addError("Wrong quoting: " $i)
-      return -1
+      return 0
     }
-  return 0
+  return 1
 }
 function quote2(s,force) {
   if (index(s, "'")) {
