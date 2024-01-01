@@ -805,16 +805,16 @@ function _digit(c) { return c >= "0" && c <= "9" }
 function quicksort(data, left, right,   i, last) {
   if (left >= right)
     return
-  quicksortSwap(data, left, int((left + right) / 2))
+  swap(data, left, int((left + right) / 2))
   last = left
   for (i = left + 1; i <= right; i++)
     if (natOrder(data[i], data[left], 1, 1) < 0)
-      quicksortSwap(data, ++last, i)
-  quicksortSwap(data, left, last)
+      swap(data, ++last, i)
+  swap(data, left, last)
   quicksort(data, left, last - 1)
   quicksort(data, last + 1, right)
 }
-function quicksortSwap(data, i, j,   temp) {
+function swap(data, i, j,   temp) {
   temp = data[i]
   data[i] = data[j]
   data[j] = temp
