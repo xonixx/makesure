@@ -17,10 +17,10 @@ BEGIN {
   delete Code          # name -> body
   delete Vars            # k -> "val"
   delete DefineOverrides # k -> ""
-  delete Dependencies       # name,i -> dep goal
-  delete DependenciesLineNo # name,i -> line no.
-  delete DependenciesCnt    # name   -> dep cnt
-  delete DependencyArgsCnt  # name,i -> args cnt
+  delete Dependencies       # name,depI -> dep goal
+  delete DependenciesLineNo # name,depI -> line no.
+  delete DependenciesCnt    # name      -> dep cnt
+  delete DependencyArgsCnt  # name,depI -> args cnt
   delete DependencyArgs     # name,depI,argI -> val
   delete DependencyArgsType # name,depI,argI -> str|var
   delete Doc       # name -> doc str
@@ -321,8 +321,7 @@ function registerDependsOn(goalName,   i,dep,x,y) {
       }
       while (++i <= NF) {
         x = goalName SUBSEP DependenciesCnt[goalName] - 1
-        y = x SUBSEP DependencyArgsCnt[x]++
-        DependencyArgs[y] = $i
+        DependencyArgs[y = x SUBSEP DependencyArgsCnt[x]++] = $i
         DependencyArgsType[y] = "u" == Quotes[i] ? "var" : "str"
       }
     } else
