@@ -637,7 +637,7 @@ function instantiateGoals(   i,l,goalName) {
 # args: { F => "file1" }
 #
 function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,gi,gii,argsCode,a) { # -> goalNameInstantiated
-  indent(IDepth++); print "instantiating " goal " { " renderArgs(args) "} ..."
+#  indent(IDepth++); print "instantiating " goal " { " renderArgs(args) "} ..."
 
   goalNameInstantiated = instantiateGoalName(goal, args)
 
@@ -668,15 +668,16 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     argsCnt = 0
     if (gi in DependencyArgsNR) {
       # already should not fails syntax - we don't check result code
+      delete a
       parseCli_2(Lines[DependencyArgsNR[gi]],args,Vars,a)
 #      print "$$ "Lines[DependencyArgsNR[gi]]
       #    print "## "(a[-7]-3)", "argsCnt
-      #    dbgA("a",a)
+#          dbgAS("a",a)
 
       argsCnt = a[-7]-3 # TODO comment
     }
 
-    print "## "argsCnt","GoalParamsCnt[dep]
+#    print "## "argsCnt","GoalParamsCnt[dep]
     # we do not report wrong args count for unknown deps
     if (dep in GoalsByName && argsCnt != GoalParamsCnt[dep])
       addErrorDedup("wrong args count for '" dep "'", DependenciesLineNo[gi])
@@ -705,10 +706,11 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     gii = goalNameInstantiated SUBSEP i
     Dependencies[gii] = instantiate(dep, newArgs)
     DependenciesLineNo[gii] = DependenciesLineNo[gi]
+    delete DependencyArgsNR[gi]
 #    DependencyArgsCnt[gii] = 0
   }
 
-    IDepth--
+#    IDepth--
   return goalNameInstantiated
 }
 function instantiateGoalName(goal, args,   res,cnt,i) {
