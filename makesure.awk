@@ -20,9 +20,6 @@ BEGIN {
   delete Dependencies       # name,depI -> dep goal
   delete DependenciesLineNo # name,depI -> line no.
   delete DependenciesCnt    # name      -> dep cnt
-#  delete DependencyArgsCnt  # name,depI -> args cnt
-#  delete DependencyArgs     # name,depI,argI -> val
-#  delete DependencyArgsType # name,depI,argI -> str|var
   delete DependencyArgsNR   # name,depI  -> NR only when it's @depends_on with @args
   delete Doc       # name -> doc str
   delete ReachedIf # name -> condition line
@@ -317,14 +314,8 @@ function registerDependsOn(goalName,   i,dep,x,y) {
   for (i = 2; i <= NF; i++) {
     dep = $i
     if ("@args" == dep) {
-      if (i != 3) {
+      if (i != 3)
         addError("@args only allowed at position 3")
-      }
-#      while (++i <= NF) {
-#        x = goalName SUBSEP DependenciesCnt[goalName] - 1
-#        DependencyArgs[y = x SUBSEP DependencyArgsCnt[x]++] = $i
-#        DependencyArgsType[y] = "u" == Quotes[i] ? "var" : "str"
-#      }
       DependencyArgsNR[goalName,DependenciesCnt[goalName]-1] = NR
       break
     } else
@@ -665,36 +656,24 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
   for (i = 0; i < DependenciesCnt[goal]; i++) {
     dep = Dependencies[gi = goal SUBSEP i]
 
-#    argsCnt = +DependencyArgsCnt[gi]
-
     argsCnt = 0
-#    print "gi="gi
     if (gi in DependencyArgsNR) {
       delete a
       # already should not fails syntax - we don't check result code
       parseCli_2(Lines[DependencyArgsNR[gi]],args,Vars,a)
-#      print "$$ "Lines[DependencyArgsNR[gi]]
-      #    print "## "(a[-7]-3)", "argsCnt
-#          dbgAS("a",a)
 
       argsCnt = a[-7]-3 # TODO comment
     }
 
-#    print "#"dep"# "argsCnt","GoalParamsCnt[dep]
     # we do not report wrong args count for unknown deps
-    if (dep in GoalsByName && argsCnt != GoalParamsCnt[dep]) {
-#      print ">>>err"
-      addErrorDedup("wrong args count for '" dep "'", DependenciesLineNo[gi])}
+    if (dep in GoalsByName && argsCnt != GoalParamsCnt[dep])
+      addErrorDedup("wrong args count for '" dep "'", DependenciesLineNo[gi])
 
     #    indent(IDepth); print ">dep=" dep ", argsCnt[" gi "]=" argsCnt
 
     for (j = 0; j < argsCnt; j++) {
-#      depArg = DependencyArgs[gi, j]
-#      depArgType = DependencyArgsType[gi, j]
       depArg = a[j+3]
       depArgType = "u" == a[j+3,"quote"] ? "var" : "str"
-#      print "### "(a[j+3])", "depArg
-#      print "### "(a[j+3,"quote"])", "depArgType
 
       #      indent(IDepth); print ">>@ " depArg " " depArgType
 
@@ -708,16 +687,11 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     }
 
     gii = goalNameInstantiated SUBSEP i
-#    print "gii="gii
-#    dbgA("newArgs",newArgs)
     Dependencies[gii] = instantiate(dep, newArgs)
     DependenciesLineNo[gii] = DependenciesLineNo[gi]
-#    print "del for '"gi"'"
-#    delete DependencyArgsNR[gi]
-#    DependencyArgsCnt[gii] = 0
   }
 
-#    IDepth--
+  #  IDepth--
   return goalNameInstantiated
 }
 function instantiateGoalName(goal, args,   res,cnt,i) {
