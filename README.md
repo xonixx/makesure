@@ -406,8 +406,6 @@ Note, you can reference the `@define`-ed variables in the arguments of the param
 @depends_on parameterized_goal @args "$HELLO world" # interpolated inside string
 ```
 
-You can also rely on parameterized goals [parameters interpolation](https://github.com/xonixx/makesure/issues/153).
-
 Having the above in `Makesurefile` will produce next output when ran with `./makesure goal1`:
 ```
   goal 'parameterized_goal@hello' ...
@@ -416,6 +414,8 @@ ARG=hello
 ARG=hello world
   goal 'goal1' [empty].
 ```
+
+You can also rely on parameterized goals [parameters interpolation](https://github.com/xonixx/makesure/issues/153).
 
 Please find a more real-world example [here](https://github.com/xonixx/fhtagn/blob/e7161f92731c13b5afbc09c7d738c1ff4882906f/Makesurefile#L70).
 
