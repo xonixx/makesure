@@ -1,0 +1,8 @@
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/29_glob_plus_pg.sh -l
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/29_glob_plus_pg.sh g1
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/29_glob_plus_pg.sh g2
+
+$ cd "$MYDIR"; ./$MAKESURE -f tests/29_glob_plus_pg.sh g3
