@@ -1,8 +1,8 @@
 
-$ cd "$MYDIR"; ./$MAKESURE -v | awk -v "v=$NEXT_VERSION" '{ sub(v,"XXX") } 1'
+$ ./$MAKESURE -v | awk -v "v=$NEXT_VERSION" '{ sub(v,"XXX") } 1'
 | XXX
 
-$ cd "$MYDIR"; ./$MAKESURE --version | awk -v "v=$NEXT_VERSION" '{ sub(v,"XXX") } 1'
+$ ./$MAKESURE --version | awk -v "v=$NEXT_VERSION" '{ sub(v,"XXX") } 1'
 | XXX
 
 $ cd "$MYDIR/tests/emptydir"; ../../$MAKESURE -v | awk -v "v=$NEXT_VERSION" '{ sub(v,"XXX") } 1'
@@ -25,7 +25,7 @@ $ cd "$MYDIR/tests/emptydir"; ../../$MAKESURE -h | awk -v "v=$NEXT_VERSION" '{ s
 |  -h,--help       print help and exit
 |  -U,--selfupdate update makesure to latest version
 
-$ cd "$MYDIR"; ./$MAKESURE -f non-existent-file
+$ ./$MAKESURE -f non-existent-file
 @ makesure file not found: non-existent-file
 ? 1
 
@@ -33,6 +33,6 @@ $ cd "$MYDIR/tests/emptydir"; ../../$MAKESURE
 @ makesure file not found: Makesurefile
 ? 1
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/dir
+$ ./$MAKESURE -f tests/dir
 |   goal 'default' ...
 | test

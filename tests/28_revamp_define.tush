@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh -l
+$ ./$MAKESURE -f tests/28_revamp_define_1.sh -l
 | Available goals:
 |   g1
 |   g2
@@ -17,17 +17,17 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh -l
 |   pg2@Str
 |   'pg@the Value'
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g1
+$ ./$MAKESURE -f tests/28_revamp_define_1.sh g1
 |   goal 'pg@Value' ...
 | A=Value
 |   goal 'g1' [empty].
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g2
+$ ./$MAKESURE -f tests/28_revamp_define_1.sh g2
 |   goal 'pg@Str1' ...
 | A=Str1
 |   goal 'g2' [empty].
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g3
+$ ./$MAKESURE -f tests/28_revamp_define_1.sh g3
 |   goal 'pg@Str1' ...
 | A=Str1
 |   goal 'pg@Value' ...
@@ -37,7 +37,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g3
 |   goal 'pg2@Str1' [empty].
 |   goal 'g3' [empty].
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g4
+$ ./$MAKESURE -f tests/28_revamp_define_1.sh g4
 |   goal 'pg@Value' ...
 | A=Value
 |   goal 'pg@Str' ...
@@ -45,7 +45,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g4
 |   goal 'pg2@Value' [empty].
 |   goal 'g4' [empty].
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g5
+$ ./$MAKESURE -f tests/28_revamp_define_1.sh g5
 |   goal 'pg@Value' ...
 | A=Value
 |   goal 'pg@Str' ...
@@ -53,7 +53,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g5
 |   goal 'pg2@Value' [empty].
 |   goal 'g5' [empty].
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g6
+$ ./$MAKESURE -f tests/28_revamp_define_1.sh g6
 |   goal 'pg@Str' ...
 | A=Str
 |   goal 'pg@Value' ...
@@ -61,17 +61,17 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g6
 |   goal 'pg2@Str' [empty].
 |   goal 'g6' [empty].
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g7
+$ ./$MAKESURE -f tests/28_revamp_define_1.sh g7
 |   goal 'pg@the Value' ...
 | A=the Value
 |   goal 'g7' [empty].
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_1.sh g8
+$ ./$MAKESURE -f tests/28_revamp_define_1.sh g8
 |   goal 'g8' ...
 | 1.2.3 email@example.com default\}$"
 
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_2_err_quoting.sh -l
+$ ./$MAKESURE -f tests/28_revamp_define_2_err_quoting.sh -l
 @ Wrong quoting: sh:
 @ tests/28_revamp_define_2_err_quoting.sh:6: @shell "sh"
 @ Wrong quoting: tracing:
@@ -104,13 +104,13 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_2_err_quoting.sh -l
 @ tests/28_revamp_define_2_err_quoting.sh:30: @depends_on pg "@args" 'value'
 ? 1
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_3_issue152.sh -l
+$ ./$MAKESURE -f tests/28_revamp_define_3_issue152.sh -l
 | Available goals:
 |   g
 |   pg@aaa
 |   pg@bbb
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_4_interpolation_including_pg_params.sh g
+$ ./$MAKESURE -f tests/28_revamp_define_4_interpolation_including_pg_params.sh g
 |   goal 'pg1@hello world' ...
 | hello world
 |   goal 'pg@world' [empty].

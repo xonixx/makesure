@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_spaces.sh -la
+$ ./$MAKESURE -f tests/21_parsing_spaces.sh -la
 | Available goals:
 |   $'21_parsing \'.txt'
 |   '21_parsing 1.txt'
@@ -16,35 +16,35 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_spaces.sh -la
 |   test3
 |   test4
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_spaces.sh test2
+$ ./$MAKESURE -f tests/21_parsing_spaces.sh test2
 |   goal '21_parsing 2.txt' ...
 | 21_parsing 2.txt
 | 2
 |   goal 'test2' [empty].
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_spaces.sh test3
+$ ./$MAKESURE -f tests/21_parsing_spaces.sh test3
 |   goal 'g1@21_parsing 2.txt' ...
 | 21_parsing 2.txt
 | 2
 |   goal 'test3' [empty].
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_spaces.sh test4
+$ ./$MAKESURE -f tests/21_parsing_spaces.sh test4
 |   goal 'g2@21_parsing 2.txt' ...
 | 21_parsing 2.txt
 | 2
 |   goal 'test4' [empty].
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_comments.sh -la
+$ ./$MAKESURE -f tests/21_parsing_comments.sh -la
 | Available goals:
 |   goal_with_comment : doc with comment
 |   test1             : doc   with   comment
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_comments.sh test1
+$ ./$MAKESURE -f tests/21_parsing_comments.sh test1
 |   goal 'goal_with_comment' ...
 | goal_with_comment
 |   goal 'test1' [empty].
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_quoting.sh -l
+$ ./$MAKESURE -f tests/21_parsing_quoting.sh -l
 | Available goals:
 |   no_space              : no_space
 |   'name with spaces'    : name with spaces
@@ -54,19 +54,19 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_quoting.sh -l
 |   'goal&c'
 |   default
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_quoting.sh -d
+$ ./$MAKESURE -f tests/21_parsing_quoting.sh -d
 | Resolved goals to reach for 'default':
 |   no_space
 |   'name with spaces'
 |   $'name with \' quote'
 
-$ cd "$MYDIR"; bash -c "./$MAKESURE -f tests/21_parsing_quoting.sh -d default $'name with \' quote' 'goal|a'"
+$ bash -c "./$MAKESURE -f tests/21_parsing_quoting.sh -d default $'name with \' quote' 'goal|a'"
 | Resolved goals to reach for 'default' $'name with \' quote' 'goal|a':
 |   no_space
 |   'name with spaces'
 |   $'name with \' quote'
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_quoting.sh
+$ ./$MAKESURE -f tests/21_parsing_quoting.sh
 |   goal 'no_space' ...
 | no_space
 |   goal 'name with spaces' ...
@@ -78,12 +78,12 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_quoting.sh
 |   goal 'goal&c' [empty].
 |   goal 'default' [empty].
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_err1.sh
+$ ./$MAKESURE -f tests/21_parsing_err1.sh
 @ Syntax error: unterminated argument:
 @ tests/21_parsing_err1.sh:3: @goal 'goal name
 ? 1
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/21_parsing_err2.sh
+$ ./$MAKESURE -f tests/21_parsing_err2.sh
 @ Syntax error: wrong unquoted: 'doc'text':
 @ tests/21_parsing_err2.sh:4: @doc doc'text
 ? 1

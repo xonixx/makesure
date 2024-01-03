@@ -1,11 +1,11 @@
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/8_options_timing.sh | sed 's#took .*$#took X#g ; s#total time .*$#total time X#g'
+$ ./$MAKESURE -f tests/8_options_timing.sh | sed 's#took .*$#took X#g ; s#total time .*$#total time X#g'
 |   goal 'default' ...
 | test
 |   goal 'default' took X
 |   total time X
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/8_options_timing.sh empty_goal | sed 's#took .*$#took X#g ; s#total time .*$#total time X#g'
+$ ./$MAKESURE -f tests/8_options_timing.sh empty_goal | sed 's#took .*$#took X#g ; s#total time .*$#total time X#g'
 |   goal 'reached_goal' [already satisfied].
 |   goal 'not_reached_goal_1' ...
 | should show 1
@@ -16,14 +16,14 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/8_options_timing.sh empty_goal | sed 's#took
 |   goal 'empty_goal' [empty].
 |   total time X
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/8_options_timing_silent.sh
+$ ./$MAKESURE -f tests/8_options_timing_silent.sh
 | test
 
-$ cd "$MYDIR"; ./$MAKESURE -t -f tests/8_timing.sh | sed 's#took .*$#took X#g ; s#total time .*$#total time X#g'
+$ ./$MAKESURE -t -f tests/8_timing.sh | sed 's#took .*$#took X#g ; s#total time .*$#total time X#g'
 |   goal 'default' ...
 | test
 |   goal 'default' took X
 |   total time X
 
-$ cd "$MYDIR"; ./$MAKESURE -t -s -f tests/8_timing.sh
+$ ./$MAKESURE -t -s -f tests/8_timing.sh
 | test
