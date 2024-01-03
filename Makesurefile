@@ -83,6 +83,10 @@
     fi
   }
 
+@goal tested
+@doc 'runs all *.tush tests (stop at 1st error)'
+@depends_on 'tests/*.tush'
+
 @goal fhtagn @params EXE_NAME
 @doc 'runs all *.tush tests'
 @depends_on fhtagn_installed
@@ -95,8 +99,7 @@
   [[ "$OSTYPE" == "linux-gnu"* ]] && [[ -d /dev/shm ]] && export TMPDIR="/dev/shm"
   MAKESURE=makesure_dev ALL=1 "$FHTAGN" tests/*.tush
 
-@goal tested @glob 'tests/*.tush'
-@doc 'runs all *.tush tests (stop at 1st error)'
+@goal @glob 'tests/*.tush' @private
 @depends_on prepared4tests
 @use_lib testing
   MAKESURE=makesure_dev \
