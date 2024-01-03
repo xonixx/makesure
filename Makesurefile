@@ -83,12 +83,6 @@
     fi
   }
 
-# The idea of having this here (not using a named glob goal) is to be able
-# to run `./makesure tests/test.tush` instead of `./makesure tested@tests/test.tush`
-@goal tested
-@doc 'runs all *.tush tests (stop at 1st error)'
-@depends_on 'tests/*.tush'
-
 @goal fhtagn @params EXE_NAME
 @doc 'runs all *.tush tests'
 @depends_on fhtagn_installed
@@ -100,6 +94,12 @@
   [[ $EXE_NAME == "gawk"* ]] && export MAKESURE_AWKLIBPATH="$(pwd)/soft/${EXE_NAME}_libs"
   [[ "$OSTYPE" == "linux-gnu"* ]] && [[ -d /dev/shm ]] && export TMPDIR="/dev/shm"
   MAKESURE=makesure_dev ALL=1 "$FHTAGN" tests/*.tush
+
+# The idea of having this here (not using a named glob goal) is to be able
+# to run `./makesure tests/test.tush` instead of `./makesure tested@tests/test.tush`
+@goal tested
+@doc 'runs all *.tush tests (stop at 1st error)'
+@depends_on 'tests/*.tush'
 
 @goal @glob 'tests/*.tush' @private
 @depends_on prepared4tests
@@ -121,7 +121,6 @@
 
   MAKESURE_AWK="$(pwd)/soft/$GOAWK" \
   MAKESURE_AWK_OPTS="-covermode=set -coverprofile=$COVERPROFILE -coverappend" \
-  MAKESURE=makesure_dev \
     ./makesure tested
 
 @goal coverage
