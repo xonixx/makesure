@@ -17,12 +17,10 @@ BEGIN {
   delete Code          # name -> body
   delete Vars            # k -> "val"
   delete DefineOverrides # k -> ""
-  delete Dependencies       # name,i -> dep goal
-  delete DependenciesLineNo # name,i -> line no.
-  delete DependenciesCnt    # name   -> dep cnt
-  delete DependencyArgsCnt  # name,i -> args cnt
-  delete DependencyArgs     # name,depI,argI -> val
-  delete DependencyArgsType # name,depI,argI -> str|var
+  delete Dependencies       # name,depI -> dep goal
+  delete DependenciesLineNo # name,depI -> line no.
+  delete DependenciesCnt    # name      -> dep cnt
+  delete DependencyArgsNR   # name,depI  -> NR only when it's @depends_on with @args
   delete Doc       # name -> doc str
   delete ReachedIf # name -> condition line
   GlobCnt = 0         # count of files for glob
@@ -33,6 +31,7 @@ BEGIN {
   delete UseLibLineNo# name -> line no.
   delete GoalToLib # goal name -> lib name
   delete Quotes    # NF -> quote of field ("'"|"$"|"u"|"\"")
+  delete EMPTY
   Mode = "prelude" # prelude|define|goal|goal_glob|lib
   srand()
   prepareArgs()
@@ -42,17 +41,11 @@ BEGIN {
 }
 
 function makesure(   i) {
-  while (getline > 0) { # 1st pass - defines
+  while (getline > 0) {
     Lines[NR] = $0
-    if ("@define" == $1 && reparseCli()) handleDefine()
-    _reset()
-  }
-  Mode = "prelude"
-  for (i = 1; i in Lines; i++) { # 2nd pass - all the rest
-    $0 = Lines[NR = i]
-    if ($1 ~ /^@/ && "@reached_if" != $1 && "@define" != $1 && !reparseCli()) continue
+    if ($1 ~ /^@/ && "@reached_if" != $1 && !reparseCli()) continue
     if ("@options" == $1) handleOptions()
-    else if ("@define" == $1) { Mode = "define" }
+    else if ("@define" == $1) handleDefine()
     else if ("@shell" == $1) handleShell()
     else if ("@goal" == $1) { if ("@glob" == $2 || "@glob" == $3) handleGoalGlob(); else handleGoal() }
     else if ("@doc" == $1) handleDoc()
@@ -62,13 +55,10 @@ function makesure(   i) {
     else if ("@use_lib" == $1) handleUseLib()
     else if ($1 ~ /^@/) addError("Unknown directive: " $1)
     else handleCodeLine($0)
-    _reset()
+    for (i = 1; i < 10; i++) $i = "" # only for macos 10.15 awk version 20070501
   }
   doWork()
   realExit(0)
-}
-function _reset(   j) {
-  for (j = 1; j < 10; j++) $j = "" # only for macos 10.15 awk version 20070501
 }
 
 function prepareArgs(   i,arg) {
@@ -315,16 +305,10 @@ function registerDependsOn(goalName,   i,dep,x,y) {
   for (i = 2; i <= NF; i++) {
     dep = $i
     if ("@args" == dep) {
-      if (i != 3) {
+      if (i != 3)
         addError("@args only allowed at position 3")
-        break
-      }
-      while (++i <= NF) {
-        x = goalName SUBSEP DependenciesCnt[goalName] - 1
-        y = x SUBSEP DependencyArgsCnt[x]++
-        DependencyArgs[y] = $i
-        DependencyArgsType[y] = "u" == Quotes[i] ? "var" : "str"
-      }
+      DependencyArgsNR[goalName, DependenciesCnt[goalName] - 1] = NR
+      break
     } else
       registerDependency(goalName, dep)
   }
@@ -634,10 +618,11 @@ function instantiateGoals(   i,l,goalName) {
 #
 # args: { F => "file1" }
 #
-function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,gi,gii,argsCode) { # -> goalNameInstantiated
+function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,gi,gii,argsCode,reparsed) { # -> goalNameInstantiated
+  if (goal in Instantiated) return goal
   #  indent(IDepth++); print "instantiating " goal " { " renderArgs(args) "} ..."
 
-  goalNameInstantiated = instantiateGoalName(goal, args)
+  Instantiated[goalNameInstantiated = instantiateGoalName(goal, args)]
 
   if (goalNameInstantiated != goal) {
     if (!(goalNameInstantiated in GoalsByName))
@@ -660,7 +645,17 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
 
   for (i = 0; i < DependenciesCnt[goal]; i++) {
     dep = Dependencies[gi = goal SUBSEP i]
-    argsCnt = +DependencyArgsCnt[gi]
+
+    argsCnt = 0
+    if (gi in DependencyArgsNR) {
+      delete reparsed
+      # The idea behind deferring this reparsing to instantiation is to be able to reference both @define vars and PG
+      # params in PG arg string interpolation.
+      # Already should not fails syntax (checked earlier) - we don't check result code.
+      parseCli_2(Lines[DependencyArgsNR[gi]], args, Vars, reparsed)
+
+      argsCnt = reparsed[-7] - 3 # -7 holds len. Subtracting 3, because args start after `@depends_on pg @args`
+    }
 
     # we do not report wrong args count for unknown deps
     if (dep in GoalsByName && argsCnt != GoalParamsCnt[dep])
@@ -669,8 +664,8 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     #    indent(IDepth); print ">dep=" dep ", argsCnt[" gi "]=" argsCnt
 
     for (j = 0; j < argsCnt; j++) {
-      depArg = DependencyArgs[gi, j]
-      depArgType = DependencyArgsType[gi, j]
+      depArg = reparsed[j + 3]
+      depArgType = "u" == reparsed[j + 3, "quote"] ? "var" : "str"
 
       #      indent(IDepth); print ">>@ " depArg " " depArgType
 
@@ -686,7 +681,6 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     gii = goalNameInstantiated SUBSEP i
     Dependencies[gii] = instantiate(dep, newArgs)
     DependenciesLineNo[gii] = DependenciesLineNo[gi]
-    DependencyArgsCnt[gii] = 0
   }
 
   #  IDepth--
@@ -825,7 +819,7 @@ function swap(data, i, j,   temp) {
 ## res[-7] = res len
 ## res - 0-based
 ## returns error if any
-function parseCli_2(line, vars, res,   pos,c,c1,isDoll,q,var,inDef,defVal,val,w,i) {
+function parseCli_2(line, vars, vars2, res,   pos,c,c1,isDoll,q,var,inDef,defVal,val,w,i) {
   for (pos = 1; ;) {
     while ((c = substr(line, pos, 1)) == " " || c == "\t") pos++ # consume spaces
     if (c == "#" || c == "")
@@ -870,7 +864,7 @@ function parseCli_2(line, vars, res,   pos,c,c1,isDoll,q,var,inDef,defVal,val,w,
             #            print "var="var
             if (var !~ /^[_A-Za-z][_A-Za-z0-9]*$/)
               return "wrong var: '" var "'"
-            w = (w) ((val = var in vars ? vars[var] : ENVIRON[var]) != "" ? val : defVal)
+            w = (w) ((val = var in vars ? vars[var] : var in vars2 ? vars2[var] : ENVIRON[var]) != "" ? val : defVal)
             continue
           }
           w = w c
@@ -894,7 +888,7 @@ function parseCli_2(line, vars, res,   pos,c,c1,isDoll,q,var,inDef,defVal,val,w,
   }
 }
 function reparseCli(   res,i,err) {
-  err = parseCli_2($0, Vars, res)
+  err = parseCli_2($0, Vars, EMPTY, res)
   if (err) {
     addError("Syntax error: " err)
     return 0
