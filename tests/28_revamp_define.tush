@@ -111,7 +111,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_3_issue152.sh -l
 |   pg@bbb
 
 $ cd "$MYDIR"; ./$MAKESURE -f tests/28_revamp_define_4_interpolation_including_pg_params.sh g
-|   goal 'pg1@hello ' ...
+|   goal 'pg1@hello world' ...
 | hello world
 |   goal 'pg@world' [empty].
 |   goal 'g' [empty].

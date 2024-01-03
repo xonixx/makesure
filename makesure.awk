@@ -637,9 +637,11 @@ function instantiateGoals(   i,l,goalName) {
 # args: { F => "file1" }
 #
 function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,gi,gii,argsCode,a) { # -> goalNameInstantiated
+  if (goal in Instantiated) return goal
 #  indent(IDepth++); print "instantiating " goal " { " renderArgs(args) "} ..."
 
   goalNameInstantiated = instantiateGoalName(goal, args)
+  Instantiated[goalNameInstantiated]
 
   if (goalNameInstantiated != goal) {
     if (!(goalNameInstantiated in GoalsByName))
@@ -666,9 +668,10 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
 #    argsCnt = +DependencyArgsCnt[gi]
 
     argsCnt = 0
+#    print "gi="gi
     if (gi in DependencyArgsNR) {
-      # already should not fails syntax - we don't check result code
       delete a
+      # already should not fails syntax - we don't check result code
       parseCli_2(Lines[DependencyArgsNR[gi]],args,Vars,a)
 #      print "$$ "Lines[DependencyArgsNR[gi]]
       #    print "## "(a[-7]-3)", "argsCnt
@@ -677,10 +680,11 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
       argsCnt = a[-7]-3 # TODO comment
     }
 
-#    print "## "argsCnt","GoalParamsCnt[dep]
+#    print "#"dep"# "argsCnt","GoalParamsCnt[dep]
     # we do not report wrong args count for unknown deps
-    if (dep in GoalsByName && argsCnt != GoalParamsCnt[dep])
-      addErrorDedup("wrong args count for '" dep "'", DependenciesLineNo[gi])
+    if (dep in GoalsByName && argsCnt != GoalParamsCnt[dep]) {
+#      print ">>>err"
+      addErrorDedup("wrong args count for '" dep "'", DependenciesLineNo[gi])}
 
     #    indent(IDepth); print ">dep=" dep ", argsCnt[" gi "]=" argsCnt
 
@@ -704,9 +708,12 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     }
 
     gii = goalNameInstantiated SUBSEP i
+#    print "gii="gii
+#    dbgA("newArgs",newArgs)
     Dependencies[gii] = instantiate(dep, newArgs)
     DependenciesLineNo[gii] = DependenciesLineNo[gi]
-    delete DependencyArgsNR[gi]
+#    print "del for '"gi"'"
+#    delete DependencyArgsNR[gi]
 #    DependencyArgsCnt[gii] = 0
   }
 
