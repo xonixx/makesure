@@ -30,7 +30,6 @@ BEGIN {
   delete Lib       # name -> code
   delete UseLibLineNo# name -> line no.
   delete GoalToLib # goal name -> lib name
-  delete Quotes    # NF -> quote of field ("'"|"$"|"u"|"\"")
   delete EMPTY
   Mode = "prelude" # prelude|define|goal|goal_glob|lib
   srand()
@@ -894,13 +893,11 @@ function reparseCli(   res,i,err) {
     return 0
   }
   $0 = "" # only for macos 10.15 awk version 20070501
-  for (i = NF = 0; i in res; i++) {
+  for (i = NF = 0; i in res; i++)
     $(++NF) = res[i]
-    Quotes[NF] = res[i, "quote"]
-  }
   # validation according to https://github.com/xonixx/makesure/issues/141
   for (i = 2; i <= NF; i++)
-    if ("\"" == Quotes[i] && !("@define" == $1 && 3 == i || "@depends_on" == $1 && "@args" == $3 && i > 3)) {
+    if ("\"" == res[i - 1, "quote"] && !("@define" == $1 && 3 == i || "@depends_on" == $1 && "@args" == $3 && i > 3)) {
       addError("Wrong quoting: " $i)
       return 0
     }
