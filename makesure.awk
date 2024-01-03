@@ -41,17 +41,11 @@ BEGIN {
 }
 
 function makesure(   i) {
-  while (getline > 0) { # 1st pass - defines
+  while (getline > 0) {
     Lines[NR] = $0
-    if ("@define" == $1 && reparseCli()) handleDefine()
-    _reset()
-  }
-  Mode = "prelude"
-  for (i = 1; i in Lines; i++) { # 2nd pass - all the rest
-    $0 = Lines[NR = i]
-    if ($1 ~ /^@/ && "@reached_if" != $1 && "@define" != $1 && !reparseCli()) continue
+    if ($1 ~ /^@/ && "@reached_if" != $1 && !reparseCli()) continue
     if ("@options" == $1) handleOptions()
-    else if ("@define" == $1) { Mode = "define" }
+    else if ("@define" == $1) handleDefine()
     else if ("@shell" == $1) handleShell()
     else if ("@goal" == $1) { if ("@glob" == $2 || "@glob" == $3) handleGoalGlob(); else handleGoal() }
     else if ("@doc" == $1) handleDoc()
@@ -61,13 +55,10 @@ function makesure(   i) {
     else if ("@use_lib" == $1) handleUseLib()
     else if ($1 ~ /^@/) addError("Unknown directive: " $1)
     else handleCodeLine($0)
-    _reset()
+    for (i = 1; i < 10; i++) $i = "" # only for macos 10.15 awk version 20070501
   }
   doWork()
   realExit(0)
-}
-function _reset(   j) {
-  for (j = 1; j < 10; j++) $j = "" # only for macos 10.15 awk version 20070501
 }
 
 function prepareArgs(   i,arg) {
