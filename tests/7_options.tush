@@ -1,20 +1,20 @@
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/7_options_silent.sh
+$ ./$MAKESURE -f tests/7_options_silent.sh
 | ccc
 | bbb
 | aaa
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/7_options_invalid.sh
+$ ./$MAKESURE -f tests/7_options_invalid.sh
 @ Option 'invalid' is not supported:
 @ tests/7_options_invalid.sh:2: @options invalid
 ? 1
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/7_options_in_goal.sh
+$ ./$MAKESURE -f tests/7_options_in_goal.sh
 @ Only use @options in prelude:
 @ tests/7_options_in_goal.sh:3: @options tracing
 ? 1
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/7_options_tracing.sh   2>&1 | awk -f tests/unify_tracing_output.awk
+$ ./$MAKESURE -f tests/7_options_tracing.sh   2>&1 | awk -f tests/unify_tracing_output.awk
 |   goal 'default' ...
 | test
 @ + : default

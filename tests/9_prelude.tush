@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/9_prelude.sh a
+$ ./$MAKESURE -f tests/9_prelude.sh a
 |   goal 'c' [already satisfied].
 |   goal 'd' ...
 | d
@@ -8,17 +8,17 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/9_prelude.sh a
 |   goal 'a' ...
 | a
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/9_prelude_doc.sh
+$ ./$MAKESURE -f tests/9_prelude_doc.sh
 @ Only use @doc in @goal:
 @ tests/9_prelude_doc.sh:2: @doc Doc in prelude
 ? 1
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/9_prelude_depends_on.sh
+$ ./$MAKESURE -f tests/9_prelude_depends_on.sh
 @ Only use @depends_on in @goal:
 @ tests/9_prelude_depends_on.sh:2: @depends_on g1
 ? 1
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/9_prelude_reached_if.sh
+$ ./$MAKESURE -f tests/9_prelude_reached_if.sh
 @ Only use @reached_if in @goal:
 @ tests/9_prelude_reached_if.sh:2: @reached_if aaa
 ? 1

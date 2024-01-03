@@ -1,29 +1,29 @@
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/25_lazy_reached_if_loop.sh a
+$ ./$MAKESURE -f tests/25_lazy_reached_if_loop.sh a
 @ There is a loop in goal dependencies via a -> b
 ? 1
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/25_lazy_reached_if_loop.sh b
+$ ./$MAKESURE -f tests/25_lazy_reached_if_loop.sh b
 @ There is a loop in goal dependencies via a -> b
 ? 1
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/25_lazy_reached_if.sh a
+$ ./$MAKESURE -f tests/25_lazy_reached_if.sh a
 | reached_if@a
 | reached_if@b
 |   goal 'b' [already satisfied].
 |   goal 'a' ...
 | a
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/25_lazy_reached_if.sh b
+$ ./$MAKESURE -f tests/25_lazy_reached_if.sh b
 | reached_if@b
 |   goal 'b' [already satisfied].
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/25_lazy_reached_if.sh c
+$ ./$MAKESURE -f tests/25_lazy_reached_if.sh c
 | reached_if@c
 |   goal 'c' ...
 | c
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/25_lazy_reached_if.sh d
+$ ./$MAKESURE -f tests/25_lazy_reached_if.sh d
 |   goal 'd' ...
 | d
 

@@ -1,4 +1,4 @@
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/3_loop.sh a
+$ ./$MAKESURE -f tests/3_loop.sh a
 @ There is a loop in goal dependencies via a -> c
 ? 1

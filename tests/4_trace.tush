@@ -1,47 +1,12 @@
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh
+$ ./$MAKESURE -f tests/4_trace.sh
 |   goal 'goal2' [already satisfied].
 |   goal 'goal1' ...
 | goal1
 |   goal 'default' ...
 | A=aaa
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh -x         2>&1 | awk -f tests/unify_tracing_output.awk
-|   goal 'goal2' [already satisfied].
-|   goal 'goal1' ...
-| goal1
-|   goal 'default' ...
-| A=aaa
-@ + : default@reached_if
-@ + MYDIR=/some/path/tests
-@ + export MYDIR
-@ + cd /some/path/tests
-@ + A=aaa
-@ + export A
-@ + [[ 1 -eq 2 ]]
-@ + : goal2@reached_if
-@ + MYDIR=/some/path/tests
-@ + export MYDIR
-@ + cd /some/path/tests
-@ + A=aaa
-@ + export A
-@ + true
-@ + : goal1
-@ + MYDIR=/some/path/tests
-@ + export MYDIR
-@ + cd /some/path/tests
-@ + A=aaa
-@ + export A
-@ + echo goal1
-@ + : default
-@ + MYDIR=/some/path/tests
-@ + export MYDIR
-@ + cd /some/path/tests
-@ + A=aaa
-@ + export A
-@ + echo A=aaa
-
-$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh --tracing  2>&1 | awk -f tests/unify_tracing_output.awk
+$ ./$MAKESURE -f tests/4_trace.sh -x         2>&1 | awk -f tests/unify_tracing_output.awk
 |   goal 'goal2' [already satisfied].
 |   goal 'goal1' ...
 | goal1
@@ -76,15 +41,50 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace.sh --tracing  2>&1 | awk -f tests/un
 @ + export A
 @ + echo A=aaa
 
+$ ./$MAKESURE -f tests/4_trace.sh --tracing  2>&1 | awk -f tests/unify_tracing_output.awk
+|   goal 'goal2' [already satisfied].
+|   goal 'goal1' ...
+| goal1
+|   goal 'default' ...
+| A=aaa
+@ + : default@reached_if
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + [[ 1 -eq 2 ]]
+@ + : goal2@reached_if
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + true
+@ + : goal1
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + echo goal1
+@ + : default
+@ + MYDIR=/some/path/tests
+@ + export MYDIR
+@ + cd /some/path/tests
+@ + A=aaa
+@ + export A
+@ + echo A=aaa
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace_shell_sh.sh
+
+$ ./$MAKESURE -f tests/4_trace_shell_sh.sh
 |   goal 'goal2' [already satisfied].
 |   goal 'goal1' ...
 | goal1
 |   goal 'default' ...
 | A=aaa
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace_shell_sh.sh -x         2>&1 | awk -f tests/unify_tracing_output.awk
+$ ./$MAKESURE -f tests/4_trace_shell_sh.sh -x         2>&1 | awk -f tests/unify_tracing_output.awk
 |   goal 'goal2' [already satisfied].
 |   goal 'goal1' ...
 | goal1
@@ -119,7 +119,7 @@ $ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace_shell_sh.sh -x         2>&1 | awk -f
 @ + export A
 @ + echo A=aaa
 
-$ cd "$MYDIR"; ./$MAKESURE -f tests/4_trace_shell_sh.sh --tracing  2>&1 | awk -f tests/unify_tracing_output.awk
+$ ./$MAKESURE -f tests/4_trace_shell_sh.sh --tracing  2>&1 | awk -f tests/unify_tracing_output.awk
 |   goal 'goal2' [already satisfied].
 |   goal 'goal1' ...
 | goal1
