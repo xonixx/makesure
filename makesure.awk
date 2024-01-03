@@ -307,7 +307,7 @@ function registerDependsOn(goalName,   i,dep,x,y) {
     if ("@args" == dep) {
       if (i != 3)
         addError("@args only allowed at position 3")
-      DependencyArgsNR[goalName,DependenciesCnt[goalName]-1] = NR
+      DependencyArgsNR[goalName, DependenciesCnt[goalName] - 1] = NR
       break
     } else
       registerDependency(goalName, dep)
@@ -618,12 +618,11 @@ function instantiateGoals(   i,l,goalName) {
 #
 # args: { F => "file1" }
 #
-function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,gi,gii,argsCode,a) { # -> goalNameInstantiated
+function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,gi,gii,argsCode,reparsed) { # -> goalNameInstantiated
   if (goal in Instantiated) return goal
-#  indent(IDepth++); print "instantiating " goal " { " renderArgs(args) "} ..."
+  #  indent(IDepth++); print "instantiating " goal " { " renderArgs(args) "} ..."
 
-  goalNameInstantiated = instantiateGoalName(goal, args)
-  Instantiated[goalNameInstantiated]
+  Instantiated[goalNameInstantiated = instantiateGoalName(goal, args)]
 
   if (goalNameInstantiated != goal) {
     if (!(goalNameInstantiated in GoalsByName))
@@ -649,11 +648,13 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
 
     argsCnt = 0
     if (gi in DependencyArgsNR) {
-      delete a
-      # already should not fails syntax - we don't check result code
-      parseCli_2(Lines[DependencyArgsNR[gi]],args,Vars,a)
+      delete reparsed
+      # The idea behind deferring this reparsing to instantiation is to be able to reference both @define vars and PG
+      # params in PG arg string interpolation.
+      # Already should not fails syntax (checked earlier) - we don't check result code.
+      parseCli_2(Lines[DependencyArgsNR[gi]], args, Vars, reparsed)
 
-      argsCnt = a[-7]-3 # TODO comment
+      argsCnt = reparsed[-7] - 3 # -7 holds len. Subtracting 3, because args start after `@depends_on pg @args`
     }
 
     # we do not report wrong args count for unknown deps
@@ -663,8 +664,8 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     #    indent(IDepth); print ">dep=" dep ", argsCnt[" gi "]=" argsCnt
 
     for (j = 0; j < argsCnt; j++) {
-      depArg = a[j+3]
-      depArgType = "u" == a[j+3,"quote"] ? "var" : "str"
+      depArg = reparsed[j + 3]
+      depArgType = "u" == reparsed[j + 3, "quote"] ? "var" : "str"
 
       #      indent(IDepth); print ">>@ " depArg " " depArgType
 
