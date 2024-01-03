@@ -83,6 +83,8 @@
     fi
   }
 
+# The idea of having this here (not using a named glob goal) is to be able
+# to run `./makesure tests/test.tush` instead of `./makesure tested@tests/test.tush`
 @goal tested
 @doc 'runs all *.tush tests (stop at 1st error)'
 @depends_on 'tests/*.tush'
