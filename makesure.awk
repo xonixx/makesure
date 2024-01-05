@@ -20,7 +20,7 @@ BEGIN {
   delete Dependencies       # name,depI -> dep goal
   delete DependenciesLineNo # name,depI -> line no.
   delete DependenciesCnt    # name      -> dep cnt
-  delete DependencyArgsNR   # name,depI  -> NR only when it's @depends_on with @args
+  delete DependencyArgsL    # name,depI  -> initial $0, but only when it's @depends_on with @args
   delete Doc       # name -> doc str
   delete ReachedIf # name -> condition line
   GlobCnt = 0         # count of files for glob
@@ -41,7 +41,7 @@ BEGIN {
 
 function makesure(   i) {
   while (getline > 0) {
-    Lines[NR] = $0
+    Lines[NR] = Line0 = $0
     if ($1 ~ /^@/ && "@reached_if" != $1 && !reparseCli()) continue
     if ("@options" == $1) handleOptions()
     else if ("@define" == $1) handleDefine()
@@ -305,7 +305,7 @@ function registerDependsOn(goalName,   i,dep) {
     if ("@args" == (dep = $i)) {
       if (i != 3)
         addError("@args only allowed at position 3")
-      DependencyArgsNR[goalName, DependenciesCnt[goalName] - 1] = NR
+      DependencyArgsL[goalName, DependenciesCnt[goalName] - 1] = Line0
       break
     } else
       registerDependency(goalName, dep)
@@ -645,12 +645,12 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     dep = Dependencies[gi = goal SUBSEP i]
 
     argsCnt = 0
-    if (gi in DependencyArgsNR) {
+    if (gi in DependencyArgsL) {
       delete reparsed
       # The idea behind deferring this reparsing to instantiation is to be able to reference both @define vars and PG
       # params in PG arg string interpolation.
       # Already should not fails syntax (checked earlier) - we don't check result code.
-      parseCli_2(Lines[DependencyArgsNR[gi]], args, Vars, reparsed)
+      parseCli_2(DependencyArgsL[gi], args, Vars, reparsed)
 
       argsCnt = reparsed[-7] - 3 # -7 holds len. Subtracting 3, because args start after `@depends_on pg @args`
     }
