@@ -30,7 +30,6 @@ BEGIN {
   delete Lib       # name -> code
   delete UseLibLineNo# name -> line no.
   delete GoalToLib # goal name -> lib name
-  delete GlobPgParams # TODO
   delete EMPTY
   Mode = "prelude" # prelude|define|goal|goal_glob|lib
   srand()
@@ -243,9 +242,8 @@ function parsePriv() {
   NF--
   return 1 }
 
-function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax,gi,j,l) {
+function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax,gi,j,l,globPgParams) {
   started("goal_glob")
-  delete GlobPgParams
   priv = parsePriv()
   if ("@glob" == (goalName = $2)) {
     goalName = ""; pattern = $(nfMax = 3)
@@ -258,24 +256,24 @@ function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax,
   else {
     if ("@params" == $(nfMax + 1))
       for (i = nfMax + 2; i <= NF; i++)
-        arrPush(GlobPgParams, validateParamName($i))
+        arrPush(globPgParams, validateParamName($i))
     calcGlob(goalName, pattern)
     globAllGoal = goalName ? goalName : pattern
     globSingle = GlobCnt == 1 && globAllGoal == globGoal(0)
     for (i = 0; i < GlobCnt; i++) {
       registerGoal(globSingle ? priv : 1, gi = globGoal(i))
-      for (j = 0; j in GlobPgParams; j++)
-        GoalParams[gi, GoalParamsCnt[gi]++] = GlobPgParams[j]
+      for (j = 0; j in globPgParams; j++)
+        GoalParams[gi, GoalParamsCnt[gi]++] = globPgParams[j]
     } if (!globSingle) { # glob on single file
       registerGoal(priv, globAllGoal)
-      for (j = 0; j in GlobPgParams; j++)
-        GoalParams[globAllGoal, GoalParamsCnt[globAllGoal]++] = GlobPgParams[j]
+      for (j = 0; j in globPgParams; j++)
+        GoalParams[globAllGoal, GoalParamsCnt[globAllGoal]++] = globPgParams[j]
       for (i = 0; i < GlobCnt; i++) {
         registerDependency(globAllGoal, globGoal(i))
-        if (arrLen(GlobPgParams)) {
+        if (arrLen(globPgParams)) {
           l = "@depends_on x @params"
-          for (j = 0; j in GlobPgParams; j++)
-            l = l " " GlobPgParams[j]
+          for (j = 0; j in globPgParams; j++)
+            l = l " " globPgParams[j]
           DependencyArgsL[globAllGoal, i] = l
         }
       }
