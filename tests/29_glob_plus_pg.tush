@@ -1,8 +1,16 @@
 
-$ ./$MAKESURE -f tests/29_glob_plus_pg.sh -l
+$ ./$MAKESURE -f tests/29_glob_plus_pg_1.sh -l
 
-$ ./$MAKESURE -f tests/29_glob_plus_pg.sh g1
+$ ./$MAKESURE -f tests/29_glob_plus_pg_1.sh g1
 
-$ ./$MAKESURE -f tests/29_glob_plus_pg.sh g2
+$ ./$MAKESURE -f tests/29_glob_plus_pg_1.sh g2
 
-$ ./$MAKESURE -f tests/29_glob_plus_pg.sh g3
+$ ./$MAKESURE -f tests/29_glob_plus_pg_1.sh g3
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_2.sh -l
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_2.sh g1
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_2.sh g2
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_2.sh g3

@@ -300,10 +300,9 @@ function handleDependsOn(   i) {
       registerDependsOn(globGoal(i))
 }
 
-function registerDependsOn(goalName,   i,dep,x,y) {
+function registerDependsOn(goalName,   i,dep) {
   for (i = 2; i <= NF; i++) {
-    dep = $i
-    if ("@args" == dep) {
+    if ("@args" == (dep = $i)) {
       if (i != 3)
         addError("@args only allowed at position 3")
       DependencyArgsNR[goalName, DependenciesCnt[goalName] - 1] = NR
