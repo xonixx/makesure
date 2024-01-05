@@ -250,7 +250,7 @@ function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax,
   } else
     pattern = $(nfMax = 4)
   if (NF > nfMax && "@params" != $(nfMax + 1))
-      addError("nothing allowed after glob pattern") # TODO adjust error
+      addError("nothing or @params allowed after glob pattern")
   else if (pattern == "")
     addError("absent glob pattern")
   else {
