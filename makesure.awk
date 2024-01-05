@@ -264,7 +264,8 @@ function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax,
       registerGoal(globSingle ? priv : 1, gi = globGoal(i))
       for (j = 0; j in globPgParams; j++)
         GoalParams[gi, GoalParamsCnt[gi]++] = globPgParams[j]
-    } if (!globSingle) { # glob on single file
+    }
+    if (!globSingle) { # glob on single file
       registerGoal(priv, globAllGoal)
       for (j = 0; j in globPgParams; j++)
         GoalParams[globAllGoal, GoalParamsCnt[globAllGoal]++] = globPgParams[j]
