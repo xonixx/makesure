@@ -1,0 +1,11 @@
+
+$ ./$MAKESURE -f tests/30_errors_when_glob.sh
+@ Multiple @doc not allowed for a goal:
+@ tests/30_errors_when_glob.sh:7: @doc 'bbb'
+@ Multiple @reached_if not allowed for a goal:
+@ tests/30_errors_when_glob.sh:9: @reached_if true
+@ You can only use one @lib in a @goal:
+@ tests/30_errors_when_glob.sh:11: @use_lib
+@ @args only allowed at position 3:
+@ tests/30_errors_when_glob.sh:12: @depends_on @args
+? 1
