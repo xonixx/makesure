@@ -297,7 +297,7 @@ function handleDoc(   i) {
 
 function registerDoc(goalName) {
   if (goalName in Doc)
-    addError("Multiple " $1 " not allowed for a goal")
+    addError("Multiple @doc not allowed for a goal")
   $1 = ""
   Doc[goalName] = trim($0)
 }
@@ -348,7 +348,7 @@ function makeGlobVarsCode(i) {
 
 function registerReachedIf(goalName, preScript) {
   if (goalName in ReachedIf)
-    addError("Multiple " $1 " not allowed for a goal")
+    addError("Multiple @reached_if not allowed for a goal")
 
   trimDirective()
   ReachedIf[goalName] = preScript trim($0)
@@ -509,8 +509,12 @@ function realExit(code) {
   # place here any cleanup if needed
   exit code
 }
-function addError(err, n) { if (!n) n = NR; Error = addL(Error, err ":\n" ARGV[1] ":" n ": " Lines[n]) }
-function addErrorDedup(err, n) { if ((err, n) in AddedErrors) return; AddedErrors[err, n]; addError(err, n) }
+function addError(err, n) {
+  if ((err, n ? n : (n = NR)) in AddedErrors)
+    return
+  AddedErrors[err, n] # dedup
+  Error = addL(Error, err ":\n" ARGV[1] ":" n ": " Lines[n])
+}
 function die(msg,    out) {
   out = "cat 1>&2" # trick to write from awk to stderr
   print msg | out
@@ -672,7 +676,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
 
     # we do not report wrong args count for unknown deps
     if (dep in GoalsByName && argsCnt != GoalParamsCnt[dep])
-      addErrorDedup("wrong args count for '" dep "'", DependenciesLineNo[gi])
+      addError("wrong args count for '" dep "'", DependenciesLineNo[gi])
 
     #    indent(IDepth); print ">dep=" dep ", argsCnt[" gi "]=" argsCnt
 
@@ -687,7 +691,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
           depArg : \
           depArgType == "var" ? \
             (depArg in args ? args[depArg] : \
-             depArg in Vars ? Vars[depArg] : addErrorDedup("wrong arg '" depArg "'", DependenciesLineNo[gi])) : \
+             depArg in Vars ? Vars[depArg] : addError("wrong arg '" depArg "'", DependenciesLineNo[gi])) : \
             die("wrong depArgType: " depArgType)
     }
 
