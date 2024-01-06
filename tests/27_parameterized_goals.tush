@@ -136,7 +136,7 @@ $ ./$MAKESURE -f tests/27_parameterized_goals_6_loop_err2.sh a
 ? 1
 
 $ ./$MAKESURE -f tests/27_parameterized_goals_5_ok.sh a
-|   goal 'b@' ...
+|   goal 'b' ...
 |  world from b
 |   goal 'a' [empty].
 

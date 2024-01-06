@@ -250,7 +250,7 @@ function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax,
   } else
     pattern = $(nfMax = 4)
   if (NF > nfMax && "@params" != $(nfMax + 1))
-      addError("nothing or @params allowed after glob pattern")
+    addError("nothing or @params allowed after glob pattern")
   else if (pattern == "")
     addError("absent glob pattern")
   else {
@@ -627,7 +627,7 @@ function instantiateGoals(   i,l,goalName) {
       instantiate(goalName)
     # should not be possible to list or invoke (non-instantiated) parameterized goals, so let's remove them
   for (goalName in GoalsByName)
-    if (GoalParamsCnt[goalName] > 0) {
+    if (!(goalName in Instantiated)) {
       arrDel(GoalNames, goalName)
       delete GoalsByName[goalName]
     }
@@ -637,7 +637,7 @@ function instantiateGoals(   i,l,goalName) {
 #
 function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,gi,gii,argsCode,reparsed) { # -> goalNameInstantiated
   if (goal in Instantiated) return goal
-  #  indent(IDepth++); print "instantiating " goal " { " renderArgs(args) "} ..."
+    indent(IDepth++); print "instantiating " goal " { " renderArgs(args) "} ..."
 
   Instantiated[goalNameInstantiated = instantiateGoalName(goal, args)]
 
@@ -678,13 +678,13 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     if (dep in GoalsByName && argsCnt != GoalParamsCnt[dep])
       addError("wrong args count for '" dep "'", DependenciesLineNo[gi])
 
-    #    indent(IDepth); print ">dep=" dep ", argsCnt[" gi "]=" argsCnt
+        indent(IDepth); print ">dep=" dep ", argsCnt[" gi "]=" argsCnt
 
     for (j = 0; j < argsCnt; j++) {
       depArg = reparsed[j + 3]
       depArgType = "u" == reparsed[j + 3, "quote"] ? "var" : "str"
 
-      #      indent(IDepth); print ">>@ " depArg " " depArgType
+            indent(IDepth); print ">>@ " depArg " " depArgType
 
       newArgs[GoalParams[dep, j]] = \
         depArgType == "str" ? \
@@ -696,19 +696,24 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     }
 
     gii = goalNameInstantiated SUBSEP i
+    dbgA("Instantiated",Instantiated)
     Dependencies[gii] = instantiate(dep, newArgs)
     DependenciesLineNo[gii] = DependenciesLineNo[gi]
   }
 
-  #  IDepth--
+    IDepth--
   return goalNameInstantiated
 }
-function instantiateGoalName(goal, args,   res,cnt,i) {
+function instantiateGoalName(goal, args,   res,cnt,i,a) {
   if ((cnt = GoalParamsCnt[goal]) == 0) return goal
   res = goal
   for (i = 0; i < cnt; i++)
-    res = res "@" args[GoalParams[goal, i]]
-  #  print "@@ " res
+    if (a = args[GoalParams[goal, i]])
+      res = res "@" a
+#      res = res "@" args[GoalParams[goal, i]]
+    #  print "@@ " res
+  print "---instantiateGoalName "goal" -> "res
+#  dbgA("args",args)
   return res
 }
 

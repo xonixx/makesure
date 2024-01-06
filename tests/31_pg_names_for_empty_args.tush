@@ -1,0 +1,39 @@
+
+$ ./$MAKESURE -f tests/31_pg_names_for_empty_args.sh -la
+| Available goals:
+|   g1
+|   'glob_test/*.txt@@'
+|   glob_test/1.txt@@
+|   glob_test/2.txt@@
+|   'glob_test/*.txt@p@'
+|   glob_test/1.txt@p@
+|   glob_test/2.txt@p@
+|   'glob_test/*.txt@@q'
+|   glob_test/1.txt@@q
+|   glob_test/2.txt@@q
+|   'glob_test/*.txt@p@q'
+|   glob_test/1.txt@p@q
+|   glob_test/2.txt@p@q
+
+$ ./$MAKESURE -f tests/31_pg_names_for_empty_args.sh g1
+|   goal 'glob_test/1.txt@@' ...
+| glob_test/1.txt  .
+|   goal 'glob_test/2.txt@@' ...
+| glob_test/2.txt  .
+|   goal 'glob_test/*.txt@@' [empty].
+|   goal 'glob_test/1.txt@p@' ...
+| glob_test/1.txt p .
+|   goal 'glob_test/2.txt@p@' ...
+| glob_test/2.txt p .
+|   goal 'glob_test/*.txt@p@' [empty].
+|   goal 'glob_test/1.txt@@q' ...
+| glob_test/1.txt  q.
+|   goal 'glob_test/2.txt@@q' ...
+| glob_test/2.txt  q.
+|   goal 'glob_test/*.txt@@q' [empty].
+|   goal 'glob_test/1.txt@p@q' ...
+| glob_test/1.txt p q.
+|   goal 'glob_test/2.txt@p@q' ...
+| glob_test/2.txt p q.
+|   goal 'glob_test/*.txt@p@q' [empty].
+|   goal 'g1' [empty].
