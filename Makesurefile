@@ -64,6 +64,13 @@
   awk_ver 'MAKESURE_AWK' "$MAKESURE_AWK"
   bash --version| head -n 1
 
+@goal debug_pg @params AWK MAKESURE_AWK @private
+@doc 'shows software versions'
+@use_lib awk_ver
+  awk_ver 'AWK' "$AWK"
+  awk_ver 'MAKESURE_AWK' "$MAKESURE_AWK"
+  bash --version| head -n 1
+
 @goal prepared4tests @private
 @depends_on fhtagn_installed debug
 
@@ -99,11 +106,15 @@
 # to run `./makesure tests/test.tush` instead of `./makesure tested@tests/test.tush`
 @goal tested
 @doc 'runs all *.tush tests (stop at 1st error)'
-@depends_on 'tests/*.tush'
+@depends_on 'tests/*.tush' @args '' ''
 
-@goal @glob 'tests/*.tush' @private
-@depends_on prepared4tests
+@goal @glob 'tests/*.tush' @params MAKESURE_AWK MAKESURE_AWK_OPTS @private
+@depends_on fhtagn_installed
+@depends_on debug_pg @args "$AWK" MAKESURE_AWK
 @use_lib testing
+  [[ -n $MAKESURE_AWK ]] && MAKESURE_AWK="$(realpath $MAKESURE_AWK)"
+  export MAKESURE_AWK
+  export MAKESURE_AWK_OPTS
   MAKESURE=makesure_dev \
     run_tush_file "$ITEM"
 
@@ -114,14 +125,14 @@
   MAKESURE=makesure_candidate \
     run_tush_file "$ITEM"
 
-@define COVERPROFILE "/tmp/cov.txt"
+@define COVERPROFILE '/tmp/cov.txt'
+
+@goal file_removed @params F
+  rm -f "$F"
 
 @goal _cover_profile_prepared @private
-  rm -f "$COVERPROFILE"
-
-  MAKESURE_AWK="$(pwd)/soft/$GOAWK" \
-  MAKESURE_AWK_OPTS="-covermode=set -coverprofile=$COVERPROFILE -coverappend" \
-    ./makesure tested
+@depends_on file_removed @args COVERPROFILE
+@depends_on 'tests/*.tush' @args "./soft/$GOAWK" "-covermode=set -coverprofile=$COVERPROFILE -coverappend"
 
 @goal coverage
 @doc 'prepares code coverage report'
