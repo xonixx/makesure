@@ -127,7 +127,7 @@
 
 @define COVERPROFILE '/tmp/cov.txt'
 
-@goal file_removed @params F
+@goal file_removed @params F @private
   rm -f "$F"
 
 @goal _cover_profile_prepared @private

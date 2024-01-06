@@ -1,3 +1,8 @@
+## v0.9.22
+- Main theme of this release is allowing glob goals to be parameterized [#155](https://github.com/xonixx/makesure/issues/155)
+- Support interpolation including parameterized goal params [#153](https://github.com/xonixx/makesure/issues/153)
+- Fixes and improvements.
+
 ## v0.9.21
 - Main theme of this release is revamping `@define` [#140](https://github.com/xonixx/makesure/issues/140)
 - Ability to reference `@define`-d variables in parameterized dependencies [#139](https://github.com/xonixx/makesure/issues/139)
