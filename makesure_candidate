@@ -1,6 +1,6 @@
 #!/bin/sh
 if command -v gawk >/dev/null;then makesure_awk='gawk -ltime -v Gawk=1';makesure_pre='';else makesure_awk=awk;makesure_pre='function gettimeofday(){}';fi
-exec $makesure_awk -v "Version=0.9.21" -v "Prog=$0" "$makesure_pre"'
+exec $makesure_awk -v "Version=0.9.22" -v "Prog=$0" "$makesure_pre"'
 BEGIN {
  Shell="bash"
  SupportedShells["bash"]
@@ -18,8 +18,8 @@ BEGIN {
  makesure()}
 function makesure(i){
  while(getline>0){
-  Lines[NR]=$0
-  if($1~/^@/&&"@reached_if"!=$1)if(reparseCli()<0)continue
+  Lines[NR]=Line0=$0
+  if($1~/^@/&&"@reached_if"!=$1&&!reparseCli())continue
   if("@options"==$1)handleOptions()
   else if("@define"==$1)handleDefine()
   else if("@shell"==$1)handleShell()
@@ -172,27 +172,39 @@ function parsePriv(){
  $NF=""
  NF--
  return 1}
-function handleGoalGlob(goalName,globAllGoal,globSingle,priv,i,pattern,nfMax){
+function handleGoalGlob(goalName,globAllGoal,globSingle,priv,i,pattern,nfMax,gi,j,l,globPgParams){
  started("goal_glob")
  priv=parsePriv()
  if("@glob"==(goalName=$2)){
   goalName="";pattern=$(nfMax=3)
  }else
   pattern=$(nfMax=4)
- if(NF>nfMax)
-  addError("nothing allowed after glob pattern")
+ if(NF>nfMax&&"@params"!=$(nfMax+1))
+   addError("nothing or @params allowed after glob pattern")
  else if(pattern=="")
   addError("absent glob pattern")
  else {
+  if("@params"==$(nfMax+1))
+   for(i=nfMax+2;i<=NF;i++)
+    arrPush(globPgParams,validateParamName($i))
   calcGlob(goalName,pattern)
   globAllGoal=goalName?goalName:pattern
   globSingle=GlobCnt==1&&globAllGoal==globGoal(0)
-  for(i=0;i<GlobCnt;i++)
-   registerGoal(globSingle?priv:1,globGoal(i))
+  for(i=0;i<GlobCnt;i++){
+   registerGoal(globSingle?priv:1,gi=globGoal(i))
+   for(j=0;j in globPgParams;j++)
+    GoalParams[gi,GoalParamsCnt[gi]++]=globPgParams[j]}
   if(!globSingle){
    registerGoal(priv,globAllGoal)
-   for(i=0;i<GlobCnt;i++)
-    registerDependency(globAllGoal,globGoal(i))}}}
+   for(j=0;j in globPgParams;j++)
+    GoalParams[globAllGoal,GoalParamsCnt[globAllGoal]++]=globPgParams[j]
+   for(i=0;i<GlobCnt;i++){
+    registerDependency(globAllGoal,globGoal(i))
+    if(arrLen(globPgParams)){
+     l="@depends_on x @params"
+     for(j=0;j in globPgParams;j++)
+      l=l" "globPgParams[j]
+     DependencyArgsL[globAllGoal,i]=l}}}}}
 function handleDoc(i){
  checkGoalOnly()
  if("goal"==Mode)
@@ -204,7 +216,7 @@ function handleDoc(i){
    registerDoc(globGoal(i))}}
 function registerDoc(goalName){
  if(goalName in Doc)
-  addError("Multiple "$1" not allowed for a goal")
+  addError("Multiple @doc not allowed for a goal")
  $1=""
  Doc[goalName]=trim($0)}
 function handleDependsOn(i){
@@ -216,18 +228,13 @@ function handleDependsOn(i){
  else
   for(i=0;i<GlobCnt;i++)
    registerDependsOn(globGoal(i))}
-function registerDependsOn(goalName,i,dep,x,y){
+function registerDependsOn(goalName,i,dep){
  for(i=2;i<=NF;i++){
-  dep=$i
-  if("@args"==dep){
-   if(i!=3){
+  if("@args"==(dep=$i)){
+   if(i!=3)
     addError("@args only allowed at position 3")
-    break}
-   while(++i<=NF){
-    x=goalName SUBSEP DependenciesCnt[goalName]-1
-    y=x SUBSEP DependencyArgsCnt[x]++
-    DependencyArgs[y]=$i
-    DependencyArgsType[y]="u"==Quotes[i]?"var":"str"}
+   DependencyArgsL[goalName,DependenciesCnt[goalName]-1]=Line0
+   break
   }else
    registerDependency(goalName,dep)}}
 function registerDependency(goalName,depGoalName,x){
@@ -244,7 +251,7 @@ function makeGlobVarsCode(i){
  return"ITEM="quoteArg(GlobFiles[i])";INDEX="i";TOTAL="GlobCnt";"}
 function registerReachedIf(goalName,preScript){
  if(goalName in ReachedIf)
-  addError("Multiple "$1" not allowed for a goal")
+  addError("Multiple @reached_if not allowed for a goal")
  trimDirective()
  ReachedIf[goalName]=preScript trim($0)}
 function trimDirective(){
@@ -354,8 +361,11 @@ function currentGoalName(){return arrLast(GoalNames)}
 function currentLibName(){return arrLast(LibNames)}
 function realExit(code){
  exit code}
-function addError(err,n){if(!n)n=NR;Error=addL(Error,err":\n"ARGV[1]":"n": "Lines[n])}
-function addErrorDedup(err,n){if((err,n)in AddedErrors)return;AddedErrors[err,n];addError(err,n)}
+function addError(err,n){
+ if((err,n?n:(n=NR))in AddedErrors)
+  return
+ AddedErrors[err,n]
+ Error=addL(Error,err":\n"ARGV[1]":"n": "Lines[n])}
 function die(msg,out){
  out="cat 1>&2"
  print msg|out
@@ -430,8 +440,9 @@ function instantiateGoals(i,l,goalName){
   if(GoalParamsCnt[goalName]>0){
    arrDel(GoalNames,goalName)
    delete GoalsByName[goalName]}}
-function instantiate(goal,args,newArgs,i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,gi,gii,argsCode){
- goalNameInstantiated=instantiateGoalName(goal,args)
+function instantiate(goal,args,newArgs,i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt,gi,gii,argsCode,reparsed){
+ if(goal in Instantiated)return goal
+ Instantiated[goalNameInstantiated=instantiateGoalName(goal,args)]
  if(goalNameInstantiated!=goal){
   if(!(goalNameInstantiated in GoalsByName))
    arrPush(GoalNames,goalNameInstantiated)
@@ -449,23 +460,26 @@ function instantiate(goal,args,newArgs,i,j,depArg,depArgType,dep,goalNameInstant
    ReachedIf[goalNameInstantiated]=argsCode"\n"ReachedIf[goalNameInstantiated]}
  for(i=0;i<DependenciesCnt[goal];i++){
   dep=Dependencies[gi=goal SUBSEP i]
-  argsCnt=+DependencyArgsCnt[gi]
+  argsCnt=0
+  if(gi in DependencyArgsL){
+   delete reparsed
+   parseCli_2(DependencyArgsL[gi],args,Vars,reparsed)
+   argsCnt=reparsed[-7]-3}
   if(dep in GoalsByName&&argsCnt!=GoalParamsCnt[dep])
-   addErrorDedup("wrong args count for '\''"dep"'\''",DependenciesLineNo[gi])
+   addError("wrong args count for '\''"dep"'\''",DependenciesLineNo[gi])
   for(j=0;j<argsCnt;j++){
-   depArg=DependencyArgs[gi,j]
-   depArgType=DependencyArgsType[gi,j]
+   depArg=reparsed[j+3]
+   depArgType="u"==reparsed[j+3,"quote"]?"var":"str"
    newArgs[GoalParams[dep,j]]=\
     depArgType=="str"?\
      depArg : \
      depArgType=="var"?\
       (depArg in args?args[depArg]:\
-       depArg in Vars?Vars[depArg]:addErrorDedup("wrong arg '\''"depArg"'\''",DependenciesLineNo[gi])):\
+       depArg in Vars?Vars[depArg]:addError("wrong arg '\''"depArg"'\''",DependenciesLineNo[gi])):\
       die("wrong depArgType: "depArgType)}
   gii=goalNameInstantiated SUBSEP i
   Dependencies[gii]=instantiate(dep,newArgs)
-  DependenciesLineNo[gii]=DependenciesLineNo[gi]
-  DependencyArgsCnt[gii]=0}
+  DependenciesLineNo[gii]=DependenciesLineNo[gi]}
  return goalNameInstantiated}
 function instantiateGoalName(goal,args,res,cnt,i){
  if((cnt=GoalParamsCnt[goal])==0)return goal
@@ -549,19 +563,19 @@ function _digit(c){return c>="0"&&c<="9"}
 function quicksort(data,left,right,i,last){
  if(left>=right)
   return
- quicksortSwap(data,left,int((left+right)/2))
+ swap(data,left,int((left+right)/2))
  last=left
  for(i=left+1;i<=right;i++)
   if(natOrder(data[i],data[left],1,1)<0)
-   quicksortSwap(data,++last,i)
- quicksortSwap(data,left,last)
+   swap(data,++last,i)
+ swap(data,left,last)
  quicksort(data,left,last-1)
  quicksort(data,last+1,right)}
-function quicksortSwap(data,i,j,temp){
+function swap(data,i,j,temp){
  temp=data[i]
  data[i]=data[j]
  data[j]=temp}
-function parseCli_2(line,vars,res,pos,c,c1,isDoll,q,var,inDef,defVal,val,w,i){
+function parseCli_2(line,vars,vars2,res,pos,c,c1,isDoll,q,var,inDef,defVal,val,w,i){
  for(pos=1;;){
   while((c=substr(line,pos,1))==" "||c=="\t")pos++
   if(c=="#"||c=="")
@@ -601,7 +615,7 @@ function parseCli_2(line,vars,res,pos,c,c1,isDoll,q,var,inDef,defVal,val,w,i){
         var=var c
       if(var !~ /^[_A-Za-z][_A-Za-z0-9]*$/)
        return"wrong var: '\''"var"'\''"
-      w=(w)((val=var in vars?vars[var]:ENVIRON[var])!=""?val:defVal)
+      w=(w)((val=var in vars?vars[var]:var in vars2?vars2[var]:ENVIRON[var])!=""?val:defVal)
       continue}
      w=w c}
     res[i=+res[-7]++,"quote"]=isDoll?"$":q
@@ -617,19 +631,18 @@ function parseCli_2(line,vars,res,pos,c,c1,isDoll,q,var,inDef,defVal,val,w,i){
     res[i=+res[-7]++,"quote"]="u"
     res[i]=w}}}}
 function reparseCli(res,i,err){
- err=parseCli_2($0,Vars,res)
+ err=parseCli_2($0,Vars,EMPTY,res)
  if(err){
   addError("Syntax error: "err)
-  return -1}
+  return 0}
  $0=""
- for(i=NF=0;i in res;i++){
+ for(i=NF=0;i in res;i++)
   $(++NF)=res[i]
-  Quotes[NF]=res[i,"quote"]}
  for(i=2;i<=NF;i++)
-  if("\""==Quotes[i]&&!("@define"==$1&&3==i||"@depends_on"==$1&&"@args"==$3&&i>3)){
+  if("\""==res[i-1,"quote"]&&!("@define"==$1&&3==i||"@depends_on"==$1&&"@args"==$3&&i>3)){
    addError("Wrong quoting: "$i)
-   return -1}
- return 0}
+   return 0}
+ return 1}
 function quote2(s,force){
  if(index(s,"'\''")){
   gsub(/\\/,"\\\\",s)
