@@ -20,7 +20,7 @@ BEGIN {
   delete Dependencies       # name,depI -> dep goal
   delete DependenciesLineNo # name,depI -> line no.
   delete DependenciesCnt    # name      -> dep cnt
-  delete DependencyArgsNR   # name,depI  -> NR only when it's @depends_on with @args
+  delete DependencyArgsL    # name,depI  -> initial $0, but only when it's @depends_on with @args
   delete Doc       # name -> doc str
   delete ReachedIf # name -> condition line
   GlobCnt = 0         # count of files for glob
@@ -41,7 +41,7 @@ BEGIN {
 
 function makesure(   i) {
   while (getline > 0) {
-    Lines[NR] = $0
+    Lines[NR] = Line0 = $0
     if ($1 ~ /^@/ && "@reached_if" != $1 && !reparseCli()) continue
     if ("@options" == $1) handleOptions()
     else if ("@define" == $1) handleDefine()
@@ -242,27 +242,42 @@ function parsePriv() {
   NF--
   return 1 }
 
-function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax) {
+function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax,gi,j,l,globPgParams) {
   started("goal_glob")
   priv = parsePriv()
   if ("@glob" == (goalName = $2)) {
     goalName = ""; pattern = $(nfMax = 3)
   } else
     pattern = $(nfMax = 4)
-  if (NF > nfMax)
-    addError("nothing allowed after glob pattern")
+  if (NF > nfMax && "@params" != $(nfMax + 1))
+      addError("nothing or @params allowed after glob pattern")
   else if (pattern == "")
     addError("absent glob pattern")
   else {
+    if ("@params" == $(nfMax + 1))
+      for (i = nfMax + 2; i <= NF; i++)
+        arrPush(globPgParams, validateParamName($i))
     calcGlob(goalName, pattern)
     globAllGoal = goalName ? goalName : pattern
     globSingle = GlobCnt == 1 && globAllGoal == globGoal(0)
-    for (i = 0; i < GlobCnt; i++)
-      registerGoal(globSingle ? priv : 1, globGoal(i))
+    for (i = 0; i < GlobCnt; i++) {
+      registerGoal(globSingle ? priv : 1, gi = globGoal(i))
+      for (j = 0; j in globPgParams; j++)
+        GoalParams[gi, GoalParamsCnt[gi]++] = globPgParams[j]
+    }
     if (!globSingle) { # glob on single file
       registerGoal(priv, globAllGoal)
-      for (i = 0; i < GlobCnt; i++)
+      for (j = 0; j in globPgParams; j++)
+        GoalParams[globAllGoal, GoalParamsCnt[globAllGoal]++] = globPgParams[j]
+      for (i = 0; i < GlobCnt; i++) {
         registerDependency(globAllGoal, globGoal(i))
+        if (arrLen(globPgParams)) {
+          l = "@depends_on x @params"
+          for (j = 0; j in globPgParams; j++)
+            l = l " " globPgParams[j]
+          DependencyArgsL[globAllGoal, i] = l
+        }
+      }
     }
   }
 }
@@ -300,13 +315,12 @@ function handleDependsOn(   i) {
       registerDependsOn(globGoal(i))
 }
 
-function registerDependsOn(goalName,   i,dep,x,y) {
+function registerDependsOn(goalName,   i,dep) {
   for (i = 2; i <= NF; i++) {
-    dep = $i
-    if ("@args" == dep) {
+    if ("@args" == (dep = $i)) {
       if (i != 3)
         addError("@args only allowed at position 3")
-      DependencyArgsNR[goalName, DependenciesCnt[goalName] - 1] = NR
+      DependencyArgsL[goalName, DependenciesCnt[goalName] - 1] = Line0
       break
     } else
       registerDependency(goalName, dep)
@@ -646,12 +660,12 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     dep = Dependencies[gi = goal SUBSEP i]
 
     argsCnt = 0
-    if (gi in DependencyArgsNR) {
+    if (gi in DependencyArgsL) {
       delete reparsed
       # The idea behind deferring this reparsing to instantiation is to be able to reference both @define vars and PG
       # params in PG arg string interpolation.
       # Already should not fails syntax (checked earlier) - we don't check result code.
-      parseCli_2(Lines[DependencyArgsNR[gi]], args, Vars, reparsed)
+      parseCli_2(DependencyArgsL[gi], args, Vars, reparsed)
 
       argsCnt = reparsed[-7] - 3 # -7 holds len. Subtracting 3, because args start after `@depends_on pg @args`
     }

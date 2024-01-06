@@ -1,0 +1,150 @@
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_1.sh -l
+| Available goals:
+|   g1
+|   g2
+|   g3
+|   gpg@hello
+|   gpg@hi
+|   g3pg@salut
+|   gpg@salut
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_1.sh -la
+| Available goals:
+|   g1
+|   g2
+|   g3
+|   gpg@hello
+|   gpg@glob_test/1.txt@hello
+|   gpg@glob_test/2.txt@hello
+|   gpg@hi
+|   gpg@glob_test/1.txt@hi
+|   gpg@glob_test/2.txt@hi
+|   g3pg@salut
+|   gpg@salut
+|   gpg@glob_test/1.txt@salut
+|   gpg@glob_test/2.txt@salut
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_1.sh g1
+|   goal 'gpg@glob_test/1.txt@hello' ...
+| glob_test/1.txt hello
+|   goal 'gpg@glob_test/2.txt@hello' ...
+| glob_test/2.txt hello
+|   goal 'gpg@hello' [empty].
+|   goal 'g1' [empty].
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_1.sh g2
+|   goal 'gpg@glob_test/1.txt@hello' ...
+| glob_test/1.txt hello
+|   goal 'gpg@glob_test/2.txt@hello' ...
+| glob_test/2.txt hello
+|   goal 'gpg@hello' [empty].
+|   goal 'gpg@glob_test/1.txt@hi' ...
+| glob_test/1.txt hi
+|   goal 'gpg@glob_test/2.txt@hi' ...
+| glob_test/2.txt hi
+|   goal 'gpg@hi' [empty].
+|   goal 'g2' [empty].
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_1.sh g3
+|   goal 'gpg@glob_test/1.txt@salut' ...
+| glob_test/1.txt salut
+|   goal 'gpg@glob_test/2.txt@salut' ...
+| glob_test/2.txt salut
+|   goal 'gpg@salut' [empty].
+|   goal 'g3pg@salut' [empty].
+|   goal 'g3' [empty].
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_2.sh -l
+| Available goals:
+|   g1
+|   g2
+|   g3
+|   'glob_test/*.txt@hello'
+|   'glob_test/*.txt@hi'
+|   g3pg@salut
+|   'glob_test/*.txt@salut'
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_2.sh -la
+| Available goals:
+|   g1
+|   g2
+|   g3
+|   'glob_test/*.txt@hello'
+|   glob_test/1.txt@hello
+|   glob_test/2.txt@hello
+|   'glob_test/*.txt@hi'
+|   glob_test/1.txt@hi
+|   glob_test/2.txt@hi
+|   g3pg@salut
+|   'glob_test/*.txt@salut'
+|   glob_test/1.txt@salut
+|   glob_test/2.txt@salut
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_2.sh g1
+|   goal 'glob_test/1.txt@hello' ...
+| glob_test/1.txt hello
+|   goal 'glob_test/2.txt@hello' ...
+| glob_test/2.txt hello
+|   goal 'glob_test/*.txt@hello' [empty].
+|   goal 'g1' [empty].
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_2.sh g2
+|   goal 'glob_test/1.txt@hello' ...
+| glob_test/1.txt hello
+|   goal 'glob_test/2.txt@hello' ...
+| glob_test/2.txt hello
+|   goal 'glob_test/*.txt@hello' [empty].
+|   goal 'glob_test/1.txt@hi' ...
+| glob_test/1.txt hi
+|   goal 'glob_test/2.txt@hi' ...
+| glob_test/2.txt hi
+|   goal 'glob_test/*.txt@hi' [empty].
+|   goal 'g2' [empty].
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_2.sh g3
+|   goal 'glob_test/1.txt@salut' ...
+| glob_test/1.txt salut
+|   goal 'glob_test/2.txt@salut' ...
+| glob_test/2.txt salut
+|   goal 'glob_test/*.txt@salut' [empty].
+|   goal 'g3pg@salut' [empty].
+|   goal 'g3' [empty].
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_3.sh -l
+| Available goals:
+|   g1
+|   g2
+|   g3
+|   glob_test/1.txt@hello
+|   glob_test/1.txt@hi
+|   g3pg@salut
+|   glob_test/1.txt@salut
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_3.sh -la
+| Available goals:
+|   g1
+|   g2
+|   g3
+|   glob_test/1.txt@hello
+|   glob_test/1.txt@hi
+|   g3pg@salut
+|   glob_test/1.txt@salut
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_3.sh g1
+|   goal 'glob_test/1.txt@hello' ...
+| glob_test/1.txt hello
+|   goal 'g1' [empty].
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_3.sh g2
+|   goal 'glob_test/1.txt@hello' ...
+| glob_test/1.txt hello
+|   goal 'glob_test/1.txt@hi' ...
+| glob_test/1.txt hi
+|   goal 'g2' [empty].
+
+$ ./$MAKESURE -f tests/29_glob_plus_pg_3.sh g3
+|   goal 'glob_test/1.txt@salut' ...
+| glob_test/1.txt salut
+|   goal 'g3pg@salut' [empty].
+|   goal 'g3' [empty].

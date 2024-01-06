@@ -417,6 +417,8 @@ ARG=hello world
 
 You can also rely on parameterized goals [parameters interpolation](https://github.com/xonixx/makesure/issues/153).
 
+Also, it's possible for a `@glob` goal [to be parameterized](https://github.com/xonixx/makesure/issues/155).
+
 Please find a more real-world example [here](https://github.com/xonixx/fhtagn/blob/e7161f92731c13b5afbc09c7d738c1ff4882906f/Makesurefile#L70).
 
 For more technical consideration regarding this feature see [parameterized_goals.md](docs/parameterized_goals.md).

@@ -42,11 +42,11 @@ $ ./$MAKESURE -f tests/12_errors.sh
 @ tests/12_errors.sh:48: @goal @private
 @ nothing allowed after goal name:
 @ tests/12_errors.sh:51: @goal g15 should not have anything after goal name
-@ nothing allowed after glob pattern:
+@ nothing or @params allowed after glob pattern:
 @ tests/12_errors.sh:54: @goal g17 @glob '*.txt' should not have anything after glob pattern
-@ nothing allowed after glob pattern:
+@ nothing or @params allowed after glob pattern:
 @ tests/12_errors.sh:57: @goal @glob '*.txt' should not have anything after glob pattern
-@ nothing allowed after glob pattern:
+@ nothing or @params allowed after glob pattern:
 @ tests/12_errors.sh:58: @goal @glob '*.txt' should_not_have_anything_after_glob_pattern
 @ absent glob pattern:
 @ tests/12_errors.sh:61: @goal @glob     # absent glob pattern
