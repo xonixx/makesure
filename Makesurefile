@@ -4,7 +4,7 @@
 @define NEXT_VERSION   '0.9.22'
 @define GOAWK_VERSION  '1.25.0'
 @define JUST_VERSION   '1.3.0'
-@define FHTAGN_VERSION '382e522'
+@define FHTAGN_VERSION 'v0.1.1'
 @define GOAWK "goawk$GOAWK_VERSION"
 @define JUST "just$JUST_VERSION"
 @define FHTAGN_URL "https://github.com/xonixx/fhtagn/raw/$FHTAGN_VERSION/fhtagn.awk"
