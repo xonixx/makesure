@@ -103,7 +103,7 @@ function handleDefine(){
  if(NF!=3){
   addError("Invalid @define syntax, should be @define VAR_NAME '\''value'\''")
   return}
- if($2 !~ /^[A-Za-z_][A-Za-z0-9_]*$/){
+ if($2!~/^[A-Za-z_][A-Za-z0-9_]*$/){
   addError("Wrong variable name: '\''"$2"'\''")
   return}
  if(!($2 in DefineOverrides))
@@ -143,7 +143,7 @@ function handleGoal(i,goalName){
     GoalParams[goalName,GoalParamsCnt[goalName]++]=validateParamName($i)
   }else if(NF>2)addError("nothing allowed after goal name")}
 function validateParamName(p){
- if(p !~ /^[A-Z_][A-Z0-9_]*$/)addError("@param name should match /^[A-Z_][A-Z0-9_]*$/: '\''"p"'\''")
+ if(p!~/^[A-Z_][A-Z0-9_]*$/)addError("@param name should match /^[A-Z_][A-Z0-9_]*$/: '\''"p"'\''")
  return p}
 function registerGoal(priv,goalName){
  if(""==goalName||"@params"==goalName)
@@ -389,7 +389,7 @@ function shellExec(script,comment,res){
 function getMyDir(makesurefilePath){
  return executeGetLine("cd \"$(dirname "quoteArg(makesurefilePath)")\";pwd")}
 function handleCodeLine(line){
- if(!isCodeAllowed()&&line !~ /^[ \t]*#/&&trim(line)!=""){
+ if(!isCodeAllowed()&&line!~/^[ \t]*#/&&trim(line)!=""){
   if(!ShellInPreludeErrorShown++)
    addError("Shell code is not allowed outside goals/libs")
  }else
@@ -454,7 +454,7 @@ function instantiate(goal,args,newArgs,i,j,depArg,depArgType,dep,goalNameInstant
   copyKey(goal,goalNameInstantiated,ReachedIf)
   copyKey(goal,goalNameInstantiated,GoalToLib)
   for(i in args)
-   argsCode=addL(argsCode,i"="quoteArg(args[i]))
+   argsCode=addL(argsCode,i"="quoteArg(args[i])";export "i)
   CodePre[goalNameInstantiated]=addL(CodePre[goalNameInstantiated],argsCode)
   if(goalNameInstantiated in ReachedIf)
    ReachedIf[goalNameInstantiated]=argsCode"\n"ReachedIf[goalNameInstantiated]}
@@ -613,7 +613,7 @@ function parseCli_2(line,vars,vars2,res,pos,c,c1,isDoll,q,var,inDef,defVal,val,w
       }else
        for(;(c=substr(line,pos+1,1))~/[_A-Za-z0-9]/;pos++)
         var=var c
-      if(var !~ /^[_A-Za-z][_A-Za-z0-9]*$/)
+      if(var!~/^[_A-Za-z][_A-Za-z0-9]*$/)
        return"wrong var: '\''"var"'\''"
       w=(w)((val=var in vars?vars[var]:var in vars2?vars2[var]:ENVIRON[var])!=""?val:defVal)
       continue}
@@ -626,7 +626,7 @@ function parseCli_2(line,vars,vars2,res,pos,c,c1,isDoll,q,var,inDef,defVal,val,w
     w=c
     while((c=substr(line,++pos,1))!=""&&c!=" "&&c!="\t"){
      w=w c}
-    if(w !~ /^[_A-Za-z0-9@.]+$/)
+    if(w!~/^[_A-Za-z0-9@.]+$/)
      return"wrong unquoted: '\''"w"'\''"
     res[i=+res[-7]++,"quote"]="u"
     res[i]=w}}}}
