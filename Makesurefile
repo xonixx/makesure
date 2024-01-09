@@ -78,8 +78,6 @@
   run_tush_file() {
     local f="$1"
 
-    export NEXT_VERSION
-
     [[ "$OSTYPE" == "linux-gnu"* ]] && [[ -d /dev/shm ]] && export TMPDIR="/dev/shm"
     if "$FHTAGN" "$f"
     then
