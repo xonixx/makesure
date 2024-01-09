@@ -254,3 +254,9 @@ $ ./$MAKESURE -f tests/27_parameterized_goals_12_lib.sh a
 |   goal 'b@hello' ...
 | in lib W=hello
 |   goal 'a' [empty].
+
+$ ./$MAKESURE -f tests/27_parameterized_goals_13_priority.sh a
+|   goal 'pg@Value' ...
+| P=Value
+| in child: P=Value
+|   goal 'a' [empty].
