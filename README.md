@@ -393,6 +393,8 @@ Processing file2...
 
 You can also take a look at an [example from a real project](https://github.com/xonixx/intellij-awk/blob/68bd7c5eaa5fefbd7eaa9f5f5a4b77b69dcd8779/Makesurefile#L126).
 
+Note, the goal's body parameter values will appear as environment variables (as if defined via `export`).
+
 Note, you can reference the `@define`-ed variables in the arguments of the parameterized goals:
 
 ```shell
