@@ -653,7 +653,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
     copyKey(goal, goalNameInstantiated, GoalToLib)
 
     for (i in args)
-      argsCode = addL(argsCode, i "=" quoteArg(args[i]))
+      argsCode = addL(argsCode, i "=" quoteArg(args[i]) ";export " i)
 
     CodePre[goalNameInstantiated] = addL(CodePre[goalNameInstantiated], argsCode)
     if (goalNameInstantiated in ReachedIf)
