@@ -22,7 +22,7 @@
 @lib "lib_name"
 
 @goal gg1 "@glob" '*.tush'
-@goal gg2 @glob   "*.tush"
+@goal gg2 @glob   "*.tush" # now OK (since #165)
 
 @goal pg "@params" P
 

@@ -250,7 +250,7 @@ function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax,
   } else
     pattern = $(nfMax = 4)
   if (NF > nfMax && "@params" != $(nfMax + 1))
-      addError("nothing or @params allowed after glob pattern")
+    addError("nothing or @params allowed after glob pattern")
   else if (pattern == "")
     addError("absent glob pattern")
   else {
@@ -915,7 +915,9 @@ function reparseCli(   res,i,err) {
     $(++NF) = res[i]
   # validation according to https://github.com/xonixx/makesure/issues/141
   for (i = 2; i <= NF; i++)
-    if ("\"" == res[i - 1, "quote"] && !("@define" == $1 && 3 == i || "@depends_on" == $1 && "@args" == $3 && i > 3)) {
+    if ("\"" == res[i - 1, "quote"] && !("@define" == $1 && 3 == i ||
+    "@depends_on" == $1 && "@args" == $3 && i > 3 ||
+    "@goal" == $1 && "@glob" == $(i - 1))) {
       addError("Wrong quoting: " $i)
       return 0
     }

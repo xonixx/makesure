@@ -94,8 +94,6 @@ $ ./$MAKESURE -f tests/28_revamp_define_2_err_quoting.sh -l
 @ tests/28_revamp_define_2_err_quoting.sh:22: @lib "lib_name"
 @ Wrong quoting: @glob:
 @ tests/28_revamp_define_2_err_quoting.sh:24: @goal gg1 "@glob" '*.tush'
-@ Wrong quoting: *.tush:
-@ tests/28_revamp_define_2_err_quoting.sh:25: @goal gg2 @glob   "*.tush"
 @ Wrong quoting: @params:
 @ tests/28_revamp_define_2_err_quoting.sh:27: @goal pg "@params" P
 @ Wrong quoting: P:
