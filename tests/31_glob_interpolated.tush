@@ -1,0 +1,6 @@
+
+$ ./$MAKESURE -f tests/31_glob_interpolated.sh g1
+
+$ ./$MAKESURE -f tests/31_glob_interpolated.sh g2
+
+$ ./$MAKESURE -f tests/31_glob_interpolated.sh g3
