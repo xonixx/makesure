@@ -1,0 +1,21 @@
+
+$ ./$MAKESURE -f tests/31_glob_interpolated.sh g1
+|   goal 'g1@glob_test/1.txt' ...
+| glob_test/1.txt
+|   goal 'g1@glob_test/2.txt' ...
+| glob_test/2.txt
+|   goal 'g1' [empty].
+
+$ ./$MAKESURE -f tests/31_glob_interpolated.sh g2
+|   goal 'g2@glob_test/1.txt' ...
+| glob_test/1.txt
+|   goal 'g2@glob_test/2.txt' ...
+| glob_test/2.txt
+|   goal 'g2' [empty].
+
+$ ./$MAKESURE -f tests/31_glob_interpolated.sh g3
+|   goal 'g3@glob_test/1.txt' ...
+| glob_test/1.txt
+|   goal 'g3@glob_test/2.txt' ...
+| glob_test/2.txt
+|   goal 'g3' [empty].

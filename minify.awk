@@ -21,7 +21,7 @@ function minifyLine(   l,subs) {
   gsub(/ \/ /, "/")
   gsub(/ \* /, "*")
   gsub(/ \+ /, "+")
-  gsub(/ \|\| /, "||")
+  gsub(/ \|\| */, "||")
   gsub(/ \| /, "|")
   if (/ \? /) gsub(/ : /, ":")
   gsub(/ \? /, "?")
