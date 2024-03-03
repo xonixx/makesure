@@ -1,8 +1,7 @@
 BEGIN {
-  OUTDIR = "book"
-  SUMMARY = OUTDIR "/SUMMARY.md"
+  BOOK = "book"
+  SUMMARY = BOOK "/SUMMARY.md"
   printf "" > SUMMARY
-  N = 0
   H = 0
   Title = ""
   Content = ""
@@ -16,16 +15,16 @@ BEGIN {
 
 function handleTitle(h,   md,indent,fname) {
   if (Title) {
-    N++
     fname = Title
     gsub(/ /, "_", fname)
-    md = (N < 10 ? "0" : "") N "_" fname ".md"
+    md = fname ".md"
     print "generating: " md "..."
-    print Content > OUTDIR "/" md
+    print "# " Title > BOOK "/" md
+    print Content >> BOOK "/" md
     indent = H - 2
     if (indent < 0)
       indent = 0
-    printf "%" (indent * 4) "s%s[%s](%s)\n", "", 1 == H ? "" : "-", Title, md >> SUMMARY
+    printf "%" (indent * 4) "s%s[%s](%s)\n", "", 1 == H ? "" : "- ", Title, md >> SUMMARY
   }
   H = h
   Title = trim(substr($0, h + 1))
