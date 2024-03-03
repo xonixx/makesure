@@ -703,6 +703,8 @@ Developed in [xonixx/intellij-awk](https://github.com/xonixx/intellij-awk).
 
 ## Articles
 
+- [Makesure vs Just command runners on examples](https://maximullaris.com/makesure-vs-just.html) (December 2023)
+- [makesure v0.9.21 – what’s new?](https://maximullaris.com/revamp_define.html) (October 2023)
 - [Adding parameterized goals to makesure](https://maximullaris.com/parameterized_goals.html) (March 2023)
 - [makesure vs make](https://maximullaris.com/makesure-vs-make.html) (March 2023)
 - [makesure – make with a human face](https://maximullaris.com/makesure.html) (February 2023)
