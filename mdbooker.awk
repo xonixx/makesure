@@ -2,6 +2,7 @@ BEGIN {
   OUTDIR = "book"
   SUMMARY = OUTDIR "/SUMMARY.md"
   printf "" > SUMMARY
+  N = 0
   H = 0
   Title = ""
   Content = ""
@@ -15,13 +16,14 @@ BEGIN {
 
 function handleTitle(h,   md) {
   if (Title) {
-    md = Title ".md"
+    N++
+    md = (N < 10 ? "0": "") N "_" Title ".md"
     print "generating: " md "..."
-    print Content > md
+    print Content > OUTDIR "/" md
     printf "%" ((H - 1) * 4) "s%s[%s](%s)\n", "", 1 == H ? "" : "-", Title, md >> SUMMARY
   }
   H = h
-  Title = trim(substr($0, h))
+  Title = trim(substr($0, h+1))
   Content = ""
 }
 

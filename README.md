@@ -694,7 +694,7 @@ echo 'Please reopen the shell to activate completion.'
 
 Find some contributor instructions in [DEVELOPER.md](docs/DEVELOPER.md).
 
-#### AWK
+### AWK
 
 The core of this tool is implemented in [AWK](https://en.wikipedia.org/wiki/AWK).
 Almost all major implementations of AWK will work. Tested and officially supported are [Gawk](https://www.gnu.org/software/gawk/), [BWK](https://github.com/onetrueawk/awk), [mawk](https://invisible-island.net/mawk/). This means that the default AWK implementation in your OS will work.
