@@ -14,16 +14,21 @@ BEGIN {
 /^#### / { print "error: ####"; exit 1 }
 { Content = Content $0 "\n"; next }
 
-function handleTitle(h,   md) {
+function handleTitle(h,   md,indent,fname) {
   if (Title) {
     N++
-    md = (N < 10 ? "0": "") N "_" Title ".md"
+    fname = Title
+    gsub(/ /, "_", fname)
+    md = (N < 10 ? "0" : "") N "_" fname ".md"
     print "generating: " md "..."
     print Content > OUTDIR "/" md
-    printf "%" ((H - 1) * 4) "s%s[%s](%s)\n", "", 1 == H ? "" : "-", Title, md >> SUMMARY
+    indent = H - 2
+    if (indent < 0)
+      indent = 0
+    printf "%" (indent * 4) "s%s[%s](%s)\n", "", 1 == H ? "" : "-", Title, md >> SUMMARY
   }
   H = h
-  Title = trim(substr($0, h+1))
+  Title = trim(substr($0, h + 1))
   Content = ""
 }
 
