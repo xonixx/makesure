@@ -11,7 +11,8 @@ BEGIN {
 /^# /    { handleTitle(1); next }
 /^## /   { handleTitle(2); next }
 /^### /  { handleTitle(3); next }
-/^#### / { print "error: ####"; exit 1 }
+/^#### / { handleTitle(4); next }
+/^#####/ { print "error: #####"; exit 1 }
 { Content = Content $0 "\n"; next }
 
 function handleTitle(h,   md,indent,dir,i,path) {
