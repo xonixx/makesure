@@ -5,6 +5,7 @@ BEGIN {
   H = 0
   Title = ""
   Content = ""
+  delete PathElements
 }
 
 /^# /    { handleTitle(1); next }
@@ -13,24 +14,28 @@ BEGIN {
 /^#### / { print "error: ####"; exit 1 }
 { Content = Content $0 "\n"; next }
 
-function handleTitle(h,   md,indent,fname) {
+function handleTitle(h,   md,indent,dir,i,path) {
   if (Title) {
-    fname = Title
-    gsub(/ /, "_", fname)
-    md = fname ".md"
-    print "generating: " md "..."
-    print "# " Title > BOOK "/" md
-    print Content >> BOOK "/" md
+    md = fname(Title) ".md"
+    dir = ""
+    for (i=2; i<H; i++) {
+      dir = dir (dir ? "/" : "") fname(PathElements[i])
+    }
+    path = dir (dir ? "/" : "") md
+    print "generating: " path "..."
+    if (dir) system("mkdir -p '" BOOK "/" dir "'")
+    print "# " Title > BOOK "/" path
+    print Content >> BOOK "/" path
     indent = H - 2
     if (indent < 0)
       indent = 0
-    printf "%" (indent * 4) "s%s[%s](%s)\n", "", 1 == H ? "" : "- ", Title, md >> SUMMARY
+    printf "%" (indent * 4) "s%s[%s](%s)\n", "", 1 == H ? "" : "- ", Title, path >> SUMMARY
   }
-  H = h
-  Title = trim(substr($0, h + 1))
+  PathElements[H = h] = Title = trim(substr($0, h + 1))
   Content = ""
 }
 
 END { handleTitle(-1) }
 
+function fname(s) { gsub(/ /, "_", s); return s }
 function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s }
