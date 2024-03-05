@@ -711,19 +711,19 @@ Developed in [xonixx/intellij-awk](https://github.com/xonixx/intellij-awk).
 
 ## Similar tools
 
-- **just** https://github.com/casey/just `Rust`
+- **just** [https://github.com/casey/just](https://github.com/casey/just) `Rust`
   - just is a handy way to save and run project-specific commands
-- **Taskfile** https://github.com/adriancooney/Taskfile `Bash`
+- **Taskfile** [https://github.com/adriancooney/Taskfile](https://github.com/adriancooney/Taskfile) `Bash`
   - A Taskfile is a bash \[...] script that follows a specific format \[...], sits in the root of your project \[...] and contains the tasks to build your project.
-- **Task** https://github.com/go-task/task `Go`
+- **Task** [https://github.com/go-task/task](https://github.com/go-task/task) `Go`
   - Task is a task runner / build tool that aims to be simpler and easier to use than, for example, GNU Make.
-- **mmake** https://github.com/tj/mmake `Go`
+- **mmake** [https://github.com/tj/mmake](https://github.com/tj/mmake) `Go`
   - Modern Make is a small program which wraps `make` to provide additional functionality
-- **Robo** https://github.com/tj/robo `Go`
+- **Robo** [https://github.com/tj/robo](https://github.com/tj/robo) `Go`
   - Simple Go / YAML-based task runner for the team
-- **haku** https://github.com/VladimirMarkelov/haku `Rust` 
+- **haku** [https://github.com/VladimirMarkelov/haku](https://github.com/VladimirMarkelov/haku) `Rust` 
   - A task/command runner inspired by 'make'
-- **Invoke-Build** https://github.com/nightroman/Invoke-Build `PowerShell`
+- **Invoke-Build** [https://github.com/nightroman/Invoke-Build](https://github.com/nightroman/Invoke-Build) `PowerShell`
   - Build Automation in PowerShell
-- **make** https://www.gnu.org/software/make/ `C`
+- **make** [https://www.gnu.org/software/make/](https://www.gnu.org/software/make/) `C`
   - \[...] a tool which controls the generation of executables and other non-source files of a program from the program's source files.
