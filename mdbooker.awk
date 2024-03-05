@@ -1,10 +1,7 @@
 BEGIN {
-  BOOK = "book"
-  SUMMARY = BOOK "/SUMMARY.md"
-  printf "" > SUMMARY
+  printf "" > (SUMMARY = (BOOK = "book/") "SUMMARY.md")
   H = 0
-  Title = ""
-  Content = ""
+  Title = Content = ""
   delete PathElements
 }
 
@@ -17,18 +14,14 @@ BEGIN {
 
 function handleTitle(h,   md,indent,dir,i,path) {
   if (Title) {
-    md = fname(Title) ".md"
-    dir = ""
-    for (i=2; i<H; i++) {
+    for (i = 2; i < H; i++)
       dir = dir (dir ? "/" : "") fname(PathElements[i])
-    }
-    path = dir (dir ? "/" : "") md
-    print "generating: " path "..."
-    if (dir) system("mkdir -p '" BOOK "/" dir "'")
-    print "# " Title > BOOK "/" path
-    print Content >> BOOK "/" path
-    indent = H - 2
-    if (indent < 0)
+    print "generating: " (path = dir (dir ? "/" : "") (md = fname(Title) ".md")) "..."
+    if (dir)
+      system("mkdir -p '" BOOK dir "'")
+    print "# " Title > BOOK path
+    print Content >> BOOK path
+    if ((indent = H - 2) < 0)
       indent = 0
     printf "%" (indent * 4) "s%s[%s](%s)\n", "", 1 == H ? "" : "- ", Title, path >> SUMMARY
   }
