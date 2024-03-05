@@ -5,11 +5,7 @@ BEGIN {
   delete PathElements
 }
 
-/^# /    { handleTitle(1); next }
-/^## /   { handleTitle(2); next }
-/^### /  { handleTitle(3); next }
-/^#### / { handleTitle(4); next }
-/^#####/ { print "error: #####"; exit 1 }
+match($0, /^#+/) { handleTitle(RLENGTH); next }
 { Content = Content "\n" $0; next }
 
 function handleTitle(h,   md,indent,dir,i,path) {
