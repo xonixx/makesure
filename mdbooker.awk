@@ -11,11 +11,11 @@ BEGIN {
 
 match($0, /^#+/) { handleTitle(RLENGTH, 1) }
 
-function handleTitle(h,pass,   md,indent,dir,i,path) {
+function handleTitle(h,pass,   indent,dir,i,path) {
   if (Title) {
     for (i = 2; i < H; i++)
       dir = dir (dir ? "-" : "") fname(PathElements[i])
-    path = dir (dir ? "-" : "") (md = fname(Title) ".md")
+    path = dir (dir ? "-" : "") fname(Title) ".md"
     if (pass == 1) {
       Link2Path[linkify(Title)] = path
     } else {
