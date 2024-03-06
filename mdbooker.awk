@@ -11,10 +11,8 @@ match($0, /^#+/) { handleTitle(RLENGTH); next }
 function handleTitle(h,   md,indent,dir,i,path) {
   if (Title) {
     for (i = 2; i < H; i++)
-      dir = dir (dir ? "/" : "") fname(PathElements[i])
-    print "generating: " (path = dir (dir ? "/" : "") (md = fname(Title) ".md")) "..."
-    if (dir)
-      system("mkdir -p '" BOOK dir "'")
+      dir = dir (dir ? "-" : "") fname(PathElements[i])
+    print "generating: " (path = dir (dir ? "-" : "") (md = fname(Title) ".md")) "..."
     print Content > BOOK path
     if ((indent = H - 2) < 0)
       indent = 0
