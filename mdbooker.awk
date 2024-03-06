@@ -28,10 +28,15 @@ function handleTitle(h,pass,   md,indent,dir,i,path) {
 
 END { handleTitle(-1, 1); pass2() }
 
-function pass2() {
+function pass2(   l) {
+  Title = Content = ""
   while (getline < FILENAME > 0) {
     if (match($0, /^#+/)) { handleTitle(RLENGTH, 2) }
-    else { Content = Content "\n" $0 }
+    else {
+      if (match(l = $0, /]\(#[^)]+\)/))
+        l = substr(l, 1, RSTART - 1) "](" Link2Path[substr(l, RSTART + 3, RLENGTH - 4)] ")" substr(l, RSTART + RLENGTH)
+      Content = Content "\n" l
+    }
   }
   handleTitle(-1, 2)
 }
