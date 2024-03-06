@@ -1,5 +1,7 @@
 BEGIN {
-  Base = ENVIRON["BASE"]
+  Repo = ENVIRON["REPO"]
+  LinkBase = "https://github.com/" Repo "/blob/main/"
+  RawBase = "https://github.com/" Repo "/raw/main/"
   printf "" > (SUMMARY = (BOOK = "book/") "SUMMARY.md")
   H = 0
   Title = Content = ""
@@ -36,12 +38,14 @@ function pass2(   l,f,t) {
       handleTitle(RLENGTH, 2)
     else {
       if (match(l = $0, /]\(#[^)]+\)/)) {
-        print "  fix link: #" (f = substr(l, RSTART + 3, RLENGTH - 4)) " -> " (t = Link2Path[f])
+        print "  fix #link: #" (f = substr(l, RSTART + 3, RLENGTH - 4)) " -> " (t = Link2Path[f])
         l = substr(l, 1, RSTART - 1) "](" t ")" substr(l, RSTART + RLENGTH)
-      } else if (match(l,/]\([^)]+\)/) && (f = substr(l, RSTART + 2, RLENGTH - 3)) !~ /https?:/) {
-        print "  fix link: " f " -> " (t = Base f)
+      } else if (match(l, /]\([^)]+\)/) && (f = substr(l, RSTART + 2, RLENGTH - 3)) !~ /https?:/) {
+        if (l ~ /!\[/)
+          print "  fix image link: " f " -> " (t = RawBase f)
+        else
+          print "  fix relative link: " f " -> " (t = LinkBase f)
         l = substr(l, 1, RSTART - 1) "](" t ")" substr(l, RSTART + RLENGTH)
-        print ">>" l
       }
       Content = Content "\n" l
     }
