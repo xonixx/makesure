@@ -16,9 +16,9 @@ function handleTitle(h,pass,   indent,dir,i,path) {
     for (i = 2; i < H; i++)
       dir = dir (dir ? "-" : "") fname(PathElements[i])
     path = dir (dir ? "-" : "") fname(Title) ".md"
-    if (pass == 1) {
+    if (pass == 1)
       Link2Path[linkify(Title)] = path
-    } else {
+    else {
       print "generating: " path "..."
       print Content > BOOK path
       if ((indent = H - 2) < 0)
