@@ -20,8 +20,8 @@ function handleTitle(h,pass,   indent,dir,i,path) {
     if (pass == 1) {
       Link2Path[linkify(Title)] = path
       if (H > 2)
-        ContentLinks[PathElements[H - 1]] = ContentLinks[PathElements[H - 1]] Title "\n"
-    }else {
+        ContentLinks[PathElements[H - 1]] = ContentLinks[PathElements[H - 1]] "- [" Title "](" path ")\n"
+    } else {
       print "generating: " path "..."
       if (!(Content = trim(Content))) {
         Content = ContentLinks[Title]
