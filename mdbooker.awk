@@ -29,7 +29,7 @@ function handleTitle(h,pass,   indent,dir,i,path) {
   Content = "# " (Title = PathElements[H = h] = trim(substr($0, h + 1)))
 }
 
-END { handleTitle(-1, 1); pass2() }
+END { handleTitle(0, 1); pass2() }
 
 function pass2(   l,f,t) {
   Title = Content = ""
@@ -50,7 +50,7 @@ function pass2(   l,f,t) {
       Content = Content "\n" l
     }
   }
-  handleTitle(-1, 2)
+  handleTitle(0, 2)
 }
 
 function linkify(t) { t = tolower(t); gsub(/ /, "-", t); gsub(/[^-a-z0-9_]/, "", t); return t }
