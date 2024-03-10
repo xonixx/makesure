@@ -29,4 +29,4 @@
   echo >&2 stderr
   exit 123
 
-
+@goal good-name # should not cause error

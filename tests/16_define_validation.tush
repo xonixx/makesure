@@ -29,6 +29,7 @@ $ ./$MAKESURE -f tests/16_define_validation_pass.sh
 | EC1=eee
 | KC1=aaabbbcc'ca b  ceee
 | LC1=aaabbb bbbcc'c  cc'ca b  ceee eee
+| IL5=a-b
 
 $ ./$MAKESURE -f tests/16_define_validation_error.sh
 @ Invalid @define syntax, should be @define VAR_NAME 'value':
@@ -81,8 +82,6 @@ $ ./$MAKESURE -f tests/16_define_validation_error.sh
 @ tests/16_define_validation_error.sh:30: @define IL3 a&&b
 @ Syntax error: wrong unquoted: 'a!b':
 @ tests/16_define_validation_error.sh:31: @define IL4 a!b
-@ Syntax error: wrong unquoted: 'a-b':
-@ tests/16_define_validation_error.sh:32: @define IL5 a-b
 @ Syntax error: wrong unquoted: 'a+b':
 @ tests/16_define_validation_error.sh:33: @define IL6 a+b
 @ Syntax error: wrong unquoted: 'a;;;b':
@@ -91,7 +90,7 @@ $ ./$MAKESURE -f tests/16_define_validation_error.sh
 @ tests/16_define_validation_error.sh:36: @define 0wrong_name 123
 @ Syntax error: wrong unquoted: 'wrong,name':
 @ tests/16_define_validation_error.sh:37: @define wrong,name 123
-@ Syntax error: wrong unquoted: 'wrong-name':
+@ Wrong variable name: 'wrong-name':
 @ tests/16_define_validation_error.sh:38: @define wrong-name 123
 ? 1
 

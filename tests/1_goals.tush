@@ -25,12 +25,13 @@ $ ./$MAKESURE -f tests/1_goals.sh --silent
 $ ./$MAKESURE -f tests/1_goals.sh -l
 | Available goals:
 |   default
-|   aaa     : Documenatation for aaa
-|   bbb     : Documenatation for bbb
+|   aaa       : Documenatation for aaa
+|   bbb       : Documenatation for bbb
 |   ccc
 |   ddd
 |   fail
 |   fail123
+|   good-name
 
 $ ./$MAKESURE -f tests/1_goals.sh -d
 | Resolved goals to reach for 'default':

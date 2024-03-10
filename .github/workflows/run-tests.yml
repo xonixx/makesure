@@ -74,7 +74,8 @@ jobs:
       - name: "run tests"
         run: |
           # TODO understand if this step can be cached
-          brew install gawk
+          HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 \
+            brew install gawk
           
           PATH="/usr/local/opt/gawk/libexec/gnubin:$PATH" \
             ./makesure
