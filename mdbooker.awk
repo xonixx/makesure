@@ -12,7 +12,8 @@ BEGIN {
 
 match($0, /^#+/) { handleTitle(RLENGTH, 1) }
 
-function handleTitle(h,pass,   indent,dir,i,path) {
+function handleTitle(h,pass,   indent,dir,i,path,title) {
+  title = trim(substr($0, h + 1))
   if (Title) {
     for (i = 2; i < H; i++)
       dir = dir (dir ? "-" : "") fname(PathElements[i])
@@ -32,9 +33,10 @@ function handleTitle(h,pass,   indent,dir,i,path) {
         indent = 0
       printf "%" (indent * 4) "s%s[%s](%s)\n", "", 1 == H ? "" : "- ", Title, path >> SUMMARY
     }
-  }
+  } else
+    print Content > BOOK fname(title) ".md" # pre-content
   Content = ""
-  Title = PathElements[H = h] = trim(substr($0, h + 1))
+  Title = PathElements[H = h] = title
 }
 
 END { handleTitle(0, 1); for (k in ContentLinks) print k "->" ContentLinks[k] ; pass2() }
