@@ -494,3 +494,9 @@ do
       print gensub(/#([0-9]+)/,"[\\0](https://github.com/xonixx/makesure/issues/\\1)", "g")
     }'
 done
+
+@goal deploy_site
+  HOST='xonix@server.maximullaris.com'
+  DEST="$HOST":/var/www/makesure
+
+  rsync -aP build/ "$DEST/"
