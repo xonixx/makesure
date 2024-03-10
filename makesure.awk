@@ -896,7 +896,7 @@ function parseCli_2(line, vars, vars2, res,   pos,c,c1,isDoll,q,var,inDef,defVal
         while ((c = substr(line, ++pos, 1)) != "" && c != " " && c != "\t") { # whitespace denotes the end of arg
           w = w c
         }
-        if (w !~ /^[_A-Za-z0-9@.]+$/)
+        if (w !~ /^[-_A-Za-z0-9@.]+$/)
           return "wrong unquoted: '" w "'"
         res[i = +res[-7]++, "quote"] = "u"
         res[i] = w

@@ -31,9 +31,10 @@
 @define KC1 $'aaabbbcc\'ca b  ceee'      # some comment
 @define LC1 "$A$B$C$D$E"                 # other comment
 
+@define IL5 a-b
+
 @goal default
-  for x in EMPTY EMPTY1 EMPTY2 EMPTY3 _a123 good__NaMe_ A B B1 B2 C C1 D D1 D2 E F K L AC1 AC2 BC1 BC2 CC1 DC1 EC1 KC1 LC1
-#  for x in EMPTY1 EMPTY2 EMPTY3 _a123 good__NaMe_ A B B1 B2 C C1 D D1 D2 E F K L AC1 AC2 BC1 BC2 CC1 DC1 EC1 KC1 LC1
+  for x in EMPTY EMPTY1 EMPTY2 EMPTY3 _a123 good__NaMe_ A B B1 B2 C C1 D D1 D2 E F K L AC1 AC2 BC1 BC2 CC1 DC1 EC1 KC1 LC1 IL5
   do
     printf '%-3s=%s\n' "$x" "${!x}"
   done
