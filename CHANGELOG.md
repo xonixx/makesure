@@ -1,3 +1,8 @@
+## v0.9.23
+
+- Allow glob to be interpolated string to facilitate reuse [#165](https://github.com/xonixx/makesure/issues/165)
+- Minor improvements and fixes.
+
 ## v0.9.22
 - Main theme of this release is allowing glob goals to be parameterized [#155](https://github.com/xonixx/makesure/issues/155)
 - Support interpolation including parameterized goal params [#153](https://github.com/xonixx/makesure/issues/153)
