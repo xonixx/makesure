@@ -1,6 +1,6 @@
 #!/bin/sh
 if command -v gawk >/dev/null;then makesure_awk='gawk -ltime -v Gawk=1';makesure_pre='';else makesure_awk=awk;makesure_pre='function gettimeofday(){}';fi
-exec $makesure_awk -v "Version=0.9.22" -v "Prog=$0" "$makesure_pre"'
+exec $makesure_awk -v "Version=0.9.23" -v "Prog=$0" "$makesure_pre"'
 BEGIN {
  Shell="bash"
  SupportedShells["bash"]
@@ -626,7 +626,7 @@ function parseCli_2(line,vars,vars2,res,pos,c,c1,isDoll,q,var,inDef,defVal,val,w
     w=c
     while((c=substr(line,++pos,1))!=""&&c!=" "&&c!="\t"){
      w=w c}
-    if(w!~/^[_A-Za-z0-9@.]+$/)
+    if(w!~/^[-_A-Za-z0-9@.]+$/)
      return"wrong unquoted: '\''"w"'\''"
     res[i=+res[-7]++,"quote"]="u"
     res[i]=w}}}}
