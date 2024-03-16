@@ -522,7 +522,18 @@ done
 @depends_on mdbook_installed
 @depends_on mdbook-linkcheck_installed
 
+@define MDBOOK "./soft/mdbook_$MDBOOK_VERSION"
+
 @goal mdbook_installed @private
-  URL="https://github.com/rust-lang/mdBook/releases/download/$MDBOOK_VERSION/mdbook-$MDBOOK_VERSION-x86_64-unknown-linux-musl.tar.gz"
+@reached_if [[ -e "$MDBOOK" ]]
+@use_lib dl
+  F="mdbook-$MDBOOK_VERSION-x86_64-unknown-linux-musl.tar.gz"
+  URL="https://github.com/rust-lang/mdBook/releases/download/$MDBOOK_VERSION/$F"
+  ( cd /tmp
+  download "$URL" "$F"
+  tar -xzvf "$F" mdbook )
+  mv /tmp/mdbook "$MDBOOK"
+  "$MDBOOK" --version
+  rm "/tmp/$F"
 
 @goal mdbook-linkcheck_installed @private
