@@ -519,6 +519,12 @@ done
 
   rsync -aP build/ "$DEST/"
 
+@goal site_compile
+@depends_on site_soft_installed
+  rm -rf book; mkdir book; awk -f mdbooker.awk README.md
+  "$MDBOOK" build
+  "$MDBOOK_LINKCHECK" -s # check broken links
+
 @goal site_soft_installed @private
 @depends_on mdbook_installed
 @depends_on mdbook-linkcheck_installed
