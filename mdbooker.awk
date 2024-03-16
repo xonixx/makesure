@@ -39,7 +39,7 @@ function handleTitle(h,pass,   indent,dir,i,path,title) {
   Title = PathElements[H = h] = title
 }
 
-END { handleTitle(0, 1); for (k in ContentLinks) print k "->" ContentLinks[k] ; pass2() }
+END { handleTitle(0, 1); pass2() }
 
 function pass2(   l,f,t) {
   Title = Content = ""
