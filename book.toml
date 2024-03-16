@@ -1,6 +1,5 @@
 [book]
-#language = "en"
-#src = "src"
+language = "en"
 src = "book"
 title = "Makesure Manual"
 
