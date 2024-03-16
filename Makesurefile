@@ -7,10 +7,10 @@
 @define FHTAGN_VERSION 'v0.1.1'           # https://github.com/xonixx/fhtagn/releases
 @define MDBOOK_VERSION 'v0.4.37'          # https://github.com/rust-lang/mdBook/releases
 @define MDBOOK_LINKCHECK_VERSION 'v0.7.7' # https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases
+@define MDBOOKER_VERSION '11572b1'        # https://github.com/xonixx/mdbooker/releases
 
 @define GOAWK "goawk$GOAWK_VERSION"
 @define JUST "just$JUST_VERSION"
-@define FHTAGN_URL "https://github.com/xonixx/fhtagn/raw/$FHTAGN_VERSION/fhtagn.awk"
 @define REPO 'xonixx/makesure'
 @define AWK "${AWK:-awk}"
 
@@ -34,19 +34,15 @@
 @reached_if [[ -d "soft" ]]
   mkdir soft
 
+@define FHTAGN_URL "https://github.com/xonixx/fhtagn/raw/$FHTAGN_VERSION/fhtagn.awk"
 @define FHTAGN "./soft/fhtagn$FHTAGN_VERSION.awk"
 
 @goal fhtagn_installed @private
 @depends_on soft_folder_created
 @reached_if [[ -x "$FHTAGN" ]]
 @use_lib dl
-  if download "$FHTAGN_URL" "$FHTAGN"
-  then
-    chmod +x "$FHTAGN"
-  else
-    echo "can't dl fhtagn"
-    exit 2
-  fi
+  download "$FHTAGN_URL" "$FHTAGN"
+  chmod +x "$FHTAGN"
 
 @goal cleaned_soft
 @doc 'rm soft folder'
@@ -521,16 +517,27 @@ done
 
 @goal site_compile
 @depends_on site_soft_installed
-  rm -rf book; mkdir book; awk -f mdbooker.awk README.md
+  rm -rf book; mkdir book; awk -f "$MDBOOKER" README.md
   "$MDBOOK" build
   "$MDBOOK_LINKCHECK" -s # check broken links
 
 @goal site_soft_installed @private
 @depends_on mdbook_installed
 @depends_on mdbook-linkcheck_installed
+@depends_on mdbooker_installed
 
+@define MDBOOKER "./soft/mdbooker_$MDBOOKER_VERSION.awk"
 @define MDBOOK "./soft/mdbook_$MDBOOK_VERSION"
 @define MDBOOK_LINKCHECK "./soft/mdbook-linkcheck_$MDBOOK_LINKCHECK_VERSION"
+
+@define MDBOOKER_URL "https://github.com/xonixx/mdbooker/raw/$MDBOOKER_VERSION/mdbooker.awk"
+
+@goal mdbooker_installed @private
+@depends_on soft_folder_created
+@reached_if [[ -x "$MDBOOKER" ]]
+@use_lib dl
+  download "$MDBOOKER_URL" "$MDBOOKER"
+  chmod +x "$MDBOOKER"
 
 @goal mdbook_installed @private
 @reached_if [[ -x "$MDBOOK" ]]
