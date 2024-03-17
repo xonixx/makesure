@@ -1,0 +1,13 @@
+[book]
+language = "en"
+src = "book"
+title = "Makesure Manual"
+
+[build]
+build-dir = "build"
+
+[output.html]
+git-repository-url = "https://github.com/xonixx/makesure"
+#site-url = "/"
+
+#[output.linkcheck]

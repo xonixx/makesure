@@ -221,7 +221,7 @@ Example:
 
 ### @goal
 
-<ins>Syntax #1:</ins>
+#### Simple goal
 ```
 @goal goal_name [ @private ]
 ```
@@ -254,7 +254,7 @@ Invoking `./makesure` without arguments will attempt to call the goal named `def
   echo "I'm default goal"
 ```
 
-<ins>Syntax #2:</ins>
+#### Glob goal
 ```
 @goal [ goal_name ] @glob <glob pattern> [ @private ]
 ```
@@ -320,16 +320,16 @@ to be able to run each test individually (`./makesure test2.js` for example) and
 
 In case if you need to glob the files with spaces in their names, please check the [naming rules section](#naming-rules) below.
 
-### Parameterized goals
+#### Parameterized goal
 
 Make code easier to reuse.
 
 <ins>Declaration syntax (using `@params`):</ins>
-```shell
+```sh
 @goal goal_name @params A B C
 ```
 <ins>Usage syntax (using `@args`):</ins>
-```shell
+```sh
 @goal other_goal @params PARAM
 @depends_on goal_name @args 'value1' 'value 2' PARAM
 ```
@@ -338,7 +338,7 @@ The idea of using two complementary keywords `@params` + `@args` was inspired by
 
 Example:
 
-```shell
+```sh
 @goal file_downloaded @params FILE_NAME
   echo "Downloading $FILE_NAME..."
   
@@ -397,7 +397,7 @@ Note, the goal's body parameter values will appear as environment variables (as 
 
 Note, you can reference the `@define`-ed variables in the arguments of the parameterized goals:
 
-```shell
+```sh
 @define HELLO 'hello'
 
 @goal parameterized_goal @params ARG
@@ -424,6 +424,45 @@ Also, it's possible for a `@glob` goal [to be parameterized](https://github.com/
 Please find a more real-world example [here](https://github.com/xonixx/fhtagn/blob/e7161f92731c13b5afbc09c7d738c1ff4882906f/Makesurefile#L70).
 
 For more technical consideration regarding this feature see [parameterized_goals.md](docs/parameterized_goals.md).
+
+#### Naming rules
+
+It's *recommended* that you name your goals using alphanumeric chars + underscore.
+
+However, it's possible to name a goal any way you want provided that you apply proper escaping:
+
+```sh
+@goal 'name with spaces' # all chars between '' have literal meaning, same as in shell, ' itself is not allowed in it
+
+@goal $'name that contains \' single quote' # if you need to have ' in a string, use dollar-strings and escape it
+
+@goal usual_name  
+```
+
+Now `./makesure -l` gives:
+```
+Available goals:
+  'name with spaces'
+  $'name that contains \' single quote'
+  usual_name
+```
+
+Note, how goal names are already escaped in output. This is to make it easier for you to call it directly:
+```sh
+./makesure $'name that contains \' single quote'
+```
+
+Same naming rules apply to other directives (like `@doc`).
+
+Usually you won't need this escaping tricks often, but they can be especially in use for `@glob` goals if the relevant files have spaces in them:
+
+```sh
+@goal @glob 'file\ with\ spaces*.txt'
+@goal other
+  @depends_on 'file with spaces1.txt'
+```
+
+More info on this topic is covered in the [issue](https://github.com/xonixx/makesure/issues/63).
 
 ### @doc
 
@@ -614,49 +653,10 @@ Only valid: inside `@goal`.
 
 Only single `@use_lib` per goal is allowed.
 
-### Naming rules
-
-It's *recommended* that you name your goals using alphanumeric chars + underscore. 
-
-However, it's possible to name a goal any way you want provided that you apply proper escaping:
-
-```sh
-@goal 'name with spaces' # all chars between '' have literal meaning, same as in shell, ' itself is not allowed in it
-
-@goal $'name that contains \' single quote' # if you need to have ' in a string, use dollar-strings and escape it
-
-@goal usual_name  
-```
-
-Now `./makesure -l` gives:
-```
-Available goals:
-  'name with spaces'
-  $'name that contains \' single quote'
-  usual_name
-```
-
-Note, how goal names are already escaped in output. This is to make it easier for you to call it directly:
-```sh
-./makesure $'name that contains \' single quote'
-```
-
-Same naming rules apply to other directives (like `@doc`).
-
-Usually you won't need this escaping tricks often, but they can be especially in use for `@glob` goals if the relevant files have spaces in them:
-
-```sh
-@goal @glob 'file\ with\ spaces*.txt'
-@goal other
-  @depends_on 'file with spaces1.txt'
-```
-
-More info on this topic is covered in the [issue](https://github.com/xonixx/makesure/issues/63).
-  
 ## Bash completion
         
 Install Bash completion for `./makesure` locally
-```shell
+```sh
 [[ ! -f ~/.bash_completion ]] && touch ~/.bash_completion
 grep makesure ~/.bash_completion >/dev/null || echo '. ~/.makesure_completion.bash' >> ~/.bash_completion
 curl "https://raw.githubusercontent.com/xonixx/makesure/main/completion.bash?token=$(date +%s)" -o ~/.makesure_completion.bash  
@@ -694,7 +694,7 @@ echo 'Please reopen the shell to activate completion.'
 
 Find some contributor instructions in [DEVELOPER.md](docs/DEVELOPER.md).
 
-#### AWK
+### AWK
 
 The core of this tool is implemented in [AWK](https://en.wikipedia.org/wiki/AWK).
 Almost all major implementations of AWK will work. Tested and officially supported are [Gawk](https://www.gnu.org/software/gawk/), [BWK](https://github.com/onetrueawk/awk), [mawk](https://invisible-island.net/mawk/). This means that the default AWK implementation in your OS will work.
@@ -711,19 +711,19 @@ Developed in [xonixx/intellij-awk](https://github.com/xonixx/intellij-awk).
 
 ## Similar tools
 
-- **just** https://github.com/casey/just `Rust`
+- **just** [https://github.com/casey/just](https://github.com/casey/just) `Rust`
   - just is a handy way to save and run project-specific commands
-- **Taskfile** https://github.com/adriancooney/Taskfile `Bash`
+- **Taskfile** [https://github.com/adriancooney/Taskfile](https://github.com/adriancooney/Taskfile) `Bash`
   - A Taskfile is a bash \[...] script that follows a specific format \[...], sits in the root of your project \[...] and contains the tasks to build your project.
-- **Task** https://github.com/go-task/task `Go`
+- **Task** [https://github.com/go-task/task](https://github.com/go-task/task) `Go`
   - Task is a task runner / build tool that aims to be simpler and easier to use than, for example, GNU Make.
-- **mmake** https://github.com/tj/mmake `Go`
+- **mmake** [https://github.com/tj/mmake](https://github.com/tj/mmake) `Go`
   - Modern Make is a small program which wraps `make` to provide additional functionality
-- **Robo** https://github.com/tj/robo `Go`
+- **Robo** [https://github.com/tj/robo](https://github.com/tj/robo) `Go`
   - Simple Go / YAML-based task runner for the team
-- **haku** https://github.com/VladimirMarkelov/haku `Rust` 
+- **haku** [https://github.com/VladimirMarkelov/haku](https://github.com/VladimirMarkelov/haku) `Rust` 
   - A task/command runner inspired by 'make'
-- **Invoke-Build** https://github.com/nightroman/Invoke-Build `PowerShell`
+- **Invoke-Build** [https://github.com/nightroman/Invoke-Build](https://github.com/nightroman/Invoke-Build) `PowerShell`
   - Build Automation in PowerShell
-- **make** https://www.gnu.org/software/make/ `C`
+- **make** [https://www.gnu.org/software/make/](https://www.gnu.org/software/make/) `C`
   - \[...] a tool which controls the generation of executables and other non-source files of a program from the program's source files.

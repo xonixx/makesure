@@ -2,44 +2,52 @@
 @options timing
 
 @define NEXT_VERSION   '0.9.23'
-@define GOAWK_VERSION  '1.25.0'
-@define JUST_VERSION   '1.3.0'
-@define FHTAGN_VERSION 'v0.1.1'
+@define GOAWK_VERSION  '1.25.0'           # https://github.com/benhoyt/goawk/releases
+@define JUST_VERSION   '1.3.0'            # https://github.com/casey/just/releases
+@define FHTAGN_VERSION 'v0.1.1'           # https://github.com/xonixx/fhtagn/releases
+@define MDBOOK_VERSION 'v0.4.37'          # https://github.com/rust-lang/mdBook/releases
+@define MDBOOK_LINKCHECK_VERSION 'v0.7.7' # https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases
+@define MDBOOKER_VERSION '11572b1'        # https://github.com/xonixx/mdbooker/releases
+
 @define GOAWK "goawk$GOAWK_VERSION"
 @define JUST "just$JUST_VERSION"
-@define FHTAGN_URL "https://github.com/xonixx/fhtagn/raw/$FHTAGN_VERSION/fhtagn.awk"
 @define REPO 'xonixx/makesure'
 @define AWK "${AWK:-awk}"
+
+@lib dl
+  download() {
+    local url="$1"
+    local file="$2"
+
+    if command -v wget >/dev/null
+    then
+      wget "$url" -O"$file"
+    elif command -v curl >/dev/null
+    then
+      curl -L "$url" -o "$file"
+    else
+      false
+    fi
+  }
 
 @goal soft_folder_created @private
 @reached_if [[ -d "soft" ]]
   mkdir soft
 
+@define FHTAGN_URL "https://github.com/xonixx/fhtagn/raw/$FHTAGN_VERSION/fhtagn.awk"
 @define FHTAGN "./soft/fhtagn$FHTAGN_VERSION.awk"
 
 @goal fhtagn_installed @private
 @depends_on soft_folder_created
 @reached_if [[ -x "$FHTAGN" ]]
-  if command -v wget >/dev/null
-  then
-    wget "$FHTAGN_URL" -O"$FHTAGN"
-  elif command -v curl >/dev/null
-  then
-    curl -L "$FHTAGN_URL" -o "$FHTAGN"
-  else
-    echo "can't dl fhtagn"
-    exit 2
-  fi
+@use_lib dl
+  download "$FHTAGN_URL" "$FHTAGN"
   chmod +x "$FHTAGN"
 
-@goal cleaned @private
-
-@goal cleaned_soft @private
+@goal cleaned_soft
+@doc 'rm soft folder'
 @reached_if [[ ! -d "soft" ]]
   rm -r "soft"
-
-@goal cleaned_all @private
-@depends_on cleaned cleaned_soft
 
 @lib awk_ver
   awk_ver() {
@@ -237,13 +245,14 @@
 @goal installed_bwk @private
 @reached_if [[ -f soft/bwk ]]
 @depends_on soft_folder_created
+@use_lib dl
   echo
   echo "Fetching BWK..."
   echo
 
   cd "soft"
 
-  wget https://github.com/onetrueawk/awk/archive/refs/heads/master.tar.gz -Obwk.tar.gz
+  download https://github.com/onetrueawk/awk/archive/refs/heads/master.tar.gz bwk.tar.gz
   tar xzvf bwk.tar.gz
   rm bwk.tar.gz
 
@@ -296,6 +305,7 @@
 @goal installed_gawk @params VERSION EXE_NAME @private
 @reached_if [[ -f soft/"$EXE_NAME" ]]
 @depends_on soft_folder_created
+@use_lib dl
     echo
     echo "Fetching Gawk-$VERSION..."
     echo
@@ -315,7 +325,7 @@
 #      dlFolder="gawk-$VERSION"
 #      tarOpts="xvf"
 #    fi
-    wget "$dlUrl"
+    download "$dlUrl" "$G"
     tar "${tarOpts:-xzvf}" "$G"
     rm "$G"
 
@@ -358,13 +368,15 @@
 
 @goal installed_busybox @private
 @reached_if [[ -x ./soft/busybox ]]
-  wget 'https://busybox.net/downloads/binaries/1.31.0-i686-uclibc/busybox' -O ./soft/busybox
+@use_lib dl
+  download 'https://busybox.net/downloads/binaries/1.31.0-i686-uclibc/busybox' ./soft/busybox
   chmod +x ./soft/busybox
   echo "Installed: $(./soft/busybox | head -n 1)"
 
 @goal installed_goawk @private
 @reached_if [[ -f soft/$GOAWK ]]
 @depends_on soft_folder_created
+@use_lib dl
   echo
   echo "Fetching GoAWK $GOAWK_VERSION ..."
   echo
@@ -381,7 +393,7 @@
   fi
 
   F=goawk_v${GOAWK_VERSION}_${os}_amd64.tar.gz
-  wget "https://github.com/benhoyt/goawk/releases/download/v$GOAWK_VERSION/$F"
+  download "https://github.com/benhoyt/goawk/releases/download/v$GOAWK_VERSION/$F" "$F"
   tar xzvf "$F" goawk
   rm "$F"
 
@@ -418,6 +430,7 @@
 @goal installed_just @private
 @reached_if [[ -f "soft/$JUST" ]]
 @depends_on soft_folder_created
+@use_lib dl
   echo
   echo "Fetching Just $JUST_VERSION ..."
   echo
@@ -425,7 +438,7 @@
   cd "soft"
 
   F=just-$JUST_VERSION-x86_64-unknown-linux-musl.tar.gz
-  wget "https://github.com/casey/just/releases/download/$JUST_VERSION/$F"
+  download "https://github.com/casey/just/releases/download/$JUST_VERSION/$F" "$F"
   tar xzvf "$F" just
   mv just "$JUST"
   rm "$F"
@@ -494,3 +507,59 @@ do
       print gensub(/#([0-9]+)/,"[\\0](https://github.com/xonixx/makesure/issues/\\1)", "g")
     }'
 done
+
+# === Documentation site ===
+@goal deploy_site
+  HOST='xonix@server.maximullaris.com'
+  DEST="$HOST":/var/www/makesure
+
+  rsync -aP build/ "$DEST/"
+
+@goal site_compile
+@depends_on site_soft_installed
+  rm -rf book; mkdir book; awk -f "$MDBOOKER" README.md
+  "$MDBOOK" build
+  "$MDBOOK_LINKCHECK" -s # check broken links
+
+@goal site_soft_installed @private
+@depends_on mdbook_installed
+@depends_on mdbook-linkcheck_installed
+@depends_on mdbooker_installed
+
+@define MDBOOKER "./soft/mdbooker_$MDBOOKER_VERSION.awk"
+@define MDBOOK "./soft/mdbook_$MDBOOK_VERSION"
+@define MDBOOK_LINKCHECK "./soft/mdbook-linkcheck_$MDBOOK_LINKCHECK_VERSION"
+
+@define MDBOOKER_URL "https://github.com/xonixx/mdbooker/raw/$MDBOOKER_VERSION/mdbooker.awk"
+
+@goal mdbooker_installed @private
+@depends_on soft_folder_created
+@reached_if [[ -x "$MDBOOKER" ]]
+@use_lib dl
+  download "$MDBOOKER_URL" "$MDBOOKER"
+  chmod +x "$MDBOOKER"
+
+@goal mdbook_installed @private
+@reached_if [[ -x "$MDBOOK" ]]
+@use_lib dl
+  F="mdbook-$MDBOOK_VERSION-x86_64-unknown-linux-musl.tar.gz"
+  URL="https://github.com/rust-lang/mdBook/releases/download/$MDBOOK_VERSION/$F"
+  ( cd /tmp
+  download "$URL" "$F"
+  tar -xzvf "$F" mdbook )
+  mv /tmp/mdbook "$MDBOOK"
+  "$MDBOOK" --version
+  rm "/tmp/$F"
+
+@goal mdbook-linkcheck_installed @private
+@reached_if [[ -x "$MDBOOK_LINKCHECK" ]]
+@use_lib dl
+  F="mdbook-linkcheck.x86_64-unknown-linux-gnu.zip"
+  URL="https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases/download/$MDBOOK_LINKCHECK_VERSION/$F"
+  ( cd /tmp
+  download "$URL" "$F"
+  unzip -p "$F" mdbook-linkcheck >mdbook-linkcheck )
+  mv /tmp/mdbook-linkcheck "$MDBOOK_LINKCHECK"
+  chmod +x "$MDBOOK_LINKCHECK"
+  "$MDBOOK_LINKCHECK" --version
+  rm "/tmp/$F"
