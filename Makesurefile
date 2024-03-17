@@ -216,12 +216,12 @@
 @depends_on fhtagn @args 'bwk'
 
 @goal tested_mawk133 @private
-@depends_on installed_mawk133
-@depends_on fhtagn @args 'mawk133'
+@depends_on installed_mawk @args '1.3.3' 'mawk-1.3.3-20090920.tgz'
+@depends_on fhtagn @args 'mawk1.3.3'
 
 @goal tested_mawk134 @private
-@depends_on installed_mawk134
-@depends_on fhtagn @args 'mawk134'
+@depends_on installed_mawk @args '1.3.4' 'mawk-1.3.4-20200120.tgz'
+@depends_on fhtagn @args 'mawk1.3.4'
 
 @goal tested_all_gawks
 @doc 'tests with all Gawk-s'
@@ -270,37 +270,34 @@
   ./bwk --version
   rm -r awk-master
 
-@lib mawk
-  install_mawk() {
-    local version="$1"
-    local tgz="$2"
+@goal installed_mawk @params VERSION TGZ @private
+@reached_if [[ -f "soft/mawk$VERSION" ]]
+@depends_on soft_folder_created
+@use_lib dl
+  echo
+  echo "Fetching Mawk $VERSION..."
+  echo
 
-    local exeName="mawk${version//./}"
+  cd "soft"
 
-    echo
-    echo "Fetching Mawk $version..."
-    echo
+  download "https://invisible-island.net/archives/mawk/$TGZ" "$TGZ"
+  tar xzvf "$TGZ"
+  rm "$TGZ"
 
-    cd "soft"
+  echo
+  echo "Compile Mawk $VERSION..."
+  echo
 
-    wget "https://invisible-island.net/archives/mawk/$tgz"
-    tar xzvf "$tgz"
-    rm "$tgz"
+  cd mawk-"$VERSION"-*
 
-    echo
-    echo "Compile Mawk $version..."
-    echo
+  ./configure && make
 
-    cd mawk-"$version"-*
+  exeName="mawk$VERSION"
+  mv mawk ../$exeName
 
-    ./configure && make
-
-    mv mawk ../$exeName
-
-    cd ..
-    ./$exeName -W version
-    rm -r mawk-"$version"-*
-  }
+  cd ..
+  ./$exeName -W version
+  rm -r mawk-"$VERSION"-*
 
 @goal installed_gawk @params VERSION EXE_NAME @private
 @reached_if [[ -f soft/"$EXE_NAME" ]]
@@ -346,25 +343,6 @@
     cd ..
     ./$EXE_NAME --version
     rm -r "$dlFolder"
-
-@goal installed_mawk133 @private
-@reached_if [[ -f soft/mawk133 ]]
-@depends_on soft_folder_created
-@use_lib mawk
-    if   [[ "$OSTYPE" == "linux-gnu"* ]]; then
-      install_mawk 1.3.3 'mawk-1.3.3-20080909.tgz' # this one doesn't compile on macos
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
-      install_mawk 1.3.3 'mawk-1.3.3-20090920.tgz'
-    else
-      >&2 echo "Unknown OS"
-      exit 1
-    fi
-
-@goal installed_mawk134 @private
-@reached_if [[ -f soft/mawk134 ]]
-@depends_on soft_folder_created
-@use_lib mawk
-  install_mawk 1.3.4 'mawk-1.3.4-20200120.tgz'
 
 @goal installed_busybox @private
 @reached_if [[ -x ./soft/busybox ]]
