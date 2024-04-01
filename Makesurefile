@@ -100,7 +100,15 @@
 @doc 'runs all *.tush tests'
 @depends_on fhtagn_installed
 @use_lib awk_ver
-  [[ $EXE_NAME == 'awk' ]] && MAKESURE_AWK="/usr/bin/awk" || MAKESURE_AWK="$(pwd)/soft/${EXE_NAME}"
+  if [[ $EXE_NAME == 'awk' ]]
+  then
+    MAKESURE_AWK="/usr/bin/awk"
+  elif [[ $EXE_NAME == '/'* ]]
+  then
+    MAKESURE_AWK="$EXE_NAME"
+  else
+    MAKESURE_AWK="$(pwd)/soft/${EXE_NAME}"
+  fi
   export MAKESURE_AWK
 #  [[ ! -e $MAKESURE_AWK ]] && echo "not found: $MAKESURE_AWK" && exit 1
   awk_ver 'MAKESURE_AWK' "$MAKESURE_AWK"
@@ -241,6 +249,10 @@
 @reached_if [[ "$OSTYPE" != "linux-gnu"* ]] # only test busybox awk on linux
 @depends_on installed_busybox
 @depends_on fhtagn @args 'busybox awk'
+
+@goal tested_wak @private
+#@depends_on installed_busybox TODO
+@depends_on fhtagn @args '/home/xonix/soft/wak/exe/wak'
 
 @goal installed_bwk @private
 @reached_if [[ -f soft/bwk ]]
