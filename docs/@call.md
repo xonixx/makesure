@@ -18,7 +18,7 @@ For consistency with `@depends_on` and for better declarativity let's use `@call
 @depends_on c
 ```
 
-We could but the execution model would be this (`@depends_on` go first):
+We could but the execution model would be this (`@depends_on` goes first):
 ```shell
 @goal a
 @depends_on c
@@ -35,7 +35,9 @@ Answer: No, should result in error in the first iteration.
   echo 'a body'
 ```
 
-Should be relatively easy.  
+Should be relatively easy. Don't see any good reason against.
+
+Answer: yes.
 
 ## Do we allow `@calls goal_name @args 'arg'`?
 
@@ -80,6 +82,20 @@ desugars to
 Do we need `--file 'path/to/Makesurefile'`?
 
 No. Even if we run `./makesure path/to/Makesurefile` path resolution is relative to the `Makesurefile` location, so internal makesure invocation now doesn't need explicit Makesurefile reference. But let's add a test for this case.
+
+Are there other options to passthrough ([Usage](https://makesure.dev/Usage.html))?
+
+Yes:
+
+```
+ -s,--silent     silent mode - only output what goals output
+ -t,--timing     display execution times for goals and total
+ -x,--tracing    enable tracing in bash/sh via `set -x`
+```
+
+For `-s` and `-x` it's easy - just replicate.
+
+For `-t` it's trickier, probably we need to find a way to suppress the total time for called goals.
 
 ## the `@define` inheritance
 
