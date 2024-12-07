@@ -1,5 +1,7 @@
 
 # @calls
+
+Why do we need new directive? See [issue 171](https://github.com/xonixx/makesure/issues/171).
        
 ## Naming: `@call` vs `@calls`
 
