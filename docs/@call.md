@@ -1,15 +1,20 @@
 
-# @call
+# @calls
        
 ## Naming: `@call` vs `@calls`
 
-TODO
+For consistency with `@depends_on` and for better declarativity let's use `@calls`:
 
-## Do we allow both `@call` and `@depends_on` on the same level?
+```shell
+@goal a
+@calls b
+```
+
+## Do we allow both `@calls` and `@depends_on` on the same level?
                           
 ```shell
 @goal a
-@call b
+@calls b
 @depends_on c
 ```
 
@@ -22,17 +27,17 @@ We could but the execution model would be this (`@depends_on` go first):
 
 Answer: No, should result in error in the first iteration.
 
-## Do we allow both `@call` and non-empty goal body?
+## Do we allow both `@calls` and non-empty goal body?
 
 ```shell
 @goal a
-@call b
+@calls b
   echo 'a body'
 ```
 
 Should be relatively easy.  
 
-## Do we allow `@call goal_name @args 'arg'`?
+## Do we allow `@calls goal_name @args 'arg'`?
 
 Let's allow. The goal will be instantiated the same way as for `@depends_on`
 
@@ -43,7 +48,7 @@ What about
  echo "pg1: $P1 $P2"
 
 @goal pg @params A
-@call pg1 @args A "A=$A"
+@calls pg1 @args A "A=$A"
 ```
 
 Answer: interpolation rules should apply the same as for `@depends_on`, i.e. all works as expected.
@@ -56,13 +61,13 @@ Maybe, but let's do the easiest for the first iteration
 
 In the first iteration let's not generate a subtree. 
 
-## `@call` operational semantics
+## `@calls` operational semantics
 
 Let's implement the simplest strategy of passthrough to `./makesure` invocation
 
 ```shell
 @goal a
-@call b
+@calls b
 ```
 
 desugars to
@@ -83,18 +88,18 @@ Since we implement this in terms of running the external `./makesure` we need to
 ```shell
 @define A 'a'
 
-@define a1
+@goal a1
   echo "a1: $A"
   
-@define a2
+@goal a2
   echo "a2: $A"
   
-@define b
-@call a1 
-@call a2 
+@goal b
+@calls a1 
+@calls a2 
 
-@define c
-@call a1 a2 
+@goal c
+@calls a1 a2 
 ```
 
 desugars to 
@@ -102,17 +107,17 @@ desugars to
 ```shell
 @define A 'a'
 
-@define a1
+@goal a1
   echo "a1: $A"
   
-@define a2
+@goal a2
   echo "a2: $A"
   
-@define b
+@goal b
   "$MAKESURE" --define A="$A" a1
   "$MAKESURE" --define A="$A" a2
   
-@define c
+@goal c
   "$MAKESURE" --define A="$A" a1
   "$MAKESURE" --define A="$A" a2
 ```
