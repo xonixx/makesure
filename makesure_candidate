@@ -493,20 +493,28 @@ function currentTimeMillis(res){
  res=executeGetLine("date +%s%3N")
  sub(/%?3N/,"000",res)
  return +res}
-function selfUpdate(url,tmp,err,newVer){
- url="https://raw.githubusercontent.com/xonixx/makesure/main/makesure?token="rand()
+function selfUpdate(tmp,err,newVer,line,sha){
  tmp=executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX")
- err=dl(url,tmp)
- if(!err&&!ok("chmod +x "tmp))err="can'\''t chmod +x "tmp
+ err=dl("https://api.github.com/repos/xonixx/makesure/commits?per_page=1",tmp)
  if(!err){
-  newVer=executeGetLine(tmp" -v")
-  if(Version!=newVer){
-   if(!ok("cp "tmp" "quoteArg(Prog)))
-    err="can'\''t overwrite "Prog
-   else print"updated "Version" -> "newVer
-  }else print"you have latest version "Version" installed"}
+  while(getline line<tmp){
+   if(line~/"sha":/){
+    if(match(line=substr(line,index(line,"\"sha\":")+6),/"[a-z0-9]+"/))
+     sha=substr(line,RSTART+1,RLENGTH-2)
+    break}}
+  if(!sha)err="unable to get the latest commit"
+  if(!err){
+   err=dl("https://raw.githubusercontent.com/xonixx/makesure/"sha"/makesure",tmp)
+   if(!err&&!ok("chmod +x "tmp))err="can'\''t chmod +x "tmp
+   if(!err){
+    newVer=executeGetLine(tmp" -v")
+    if(Version!=newVer){
+     if(!ok("cp "tmp" "quoteArg(Prog)))
+      err="can'\''t overwrite "Prog
+     else print"updated "Version" -> "newVer
+    }else print"you have latest version "Version" installed"}}}
  rm(tmp)
- if(err)die(err)}
+ if(err)die(err"\nPlease use manual update: https://makesure.dev/Installation.html")}
 function renderDuration(deltaMillis,\
  deltaSec,deltaMin,deltaHr,deltaDay,dayS,hrS,minS,secS,secSI,res){
  deltaSec=deltaMillis/1000
