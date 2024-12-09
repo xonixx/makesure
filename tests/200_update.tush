@@ -5,6 +5,7 @@ $ ./$MAKESURE -f tests/200_update.sh test_err
 | XXX
 |   goal 'test_err' failed
 @ wget/curl not found
+@ Please use manual update: https://makesure.dev/Installation.html
 ? 1
 
 $ ./$MAKESURE -f tests/200_update.sh test_wget | awk '{ sub(/[0-9][0-9.]+/,"YYY") } 1'
