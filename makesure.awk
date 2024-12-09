@@ -720,18 +720,32 @@ function currentTimeMillis(   res) {
   return +res
 }
 
-function selfUpdate(   url, tmp, err, newVer) {
-  url = "https://raw.githubusercontent.com/xonixx/makesure/main/makesure?token=" rand()
+function selfUpdate(   tmp, err, newVer,line,sha) {
   tmp = executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX")
-  err = dl(url, tmp)
-  if (!err && !ok("chmod +x " tmp)) err = "can't chmod +x " tmp
+  # first get the last commit hash
+  err = dl("https://api.github.com/repos/xonixx/makesure/commits?per_page=1", tmp)
   if (!err) {
-    newVer = executeGetLine(tmp " -v")
-    if (Version != newVer) {
-      if (!ok("cp " tmp " " quoteArg(Prog)))
-        err = "can't overwrite " Prog
-      else print "updated " Version " -> " newVer
-    } else print "you have latest version " Version " installed"
+    while (getline line < tmp) {
+      if (line ~ /"sha":/) {
+        if (match(line = substr(line, index(line, "\"sha\":") + 6), /"[a-z0-9]+"/))
+          sha = substr(line, RSTART + 1, RLENGTH - 2)
+        if (!sha) err = "unable to get the latest commit"
+        break
+      }
+    }
+    if (!err) {
+      # now download the latest executable
+      err = dl("https://raw.githubusercontent.com/xonixx/makesure/" sha "/makesure", tmp)
+      if (!err && !ok("chmod +x " tmp)) err = "can't chmod +x " tmp
+      if (!err) {
+        newVer = executeGetLine(tmp " -v")
+        if (Version != newVer) {
+          if (!ok("cp " tmp " " quoteArg(Prog)))
+            err = "can't overwrite " Prog
+          else print "updated " Version " -> " newVer
+        } else print "you have latest version " Version " installed"
+      }
+    }
   }
   rm(tmp)
   if (err) die(err)
