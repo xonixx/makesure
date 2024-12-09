@@ -748,7 +748,7 @@ function selfUpdate(   tmp, err, newVer,line,sha) {
     }
   }
   rm(tmp)
-  if (err) die(err)
+  if (err) die(err "\nPlease use manual update: https://makesure.dev/Installation.html")
 }
 
 function renderDuration(deltaMillis,\
