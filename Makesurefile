@@ -181,7 +181,10 @@
 
 @goal README.md @private
 @doc 'compiles release version of README.md'
-  $AWK '
+  $AWK -v NEXT_VERSION="$NEXT_VERSION" '
+    {
+      gsub(/raw\.githubusercontent\.com\/xonixx\/makesure\/[^\/]+\//, "raw.githubusercontent.com/xonixx/makesure/v" NEXT_VERSION "/")
+    }
     /^\$ \.\/makesure -h$/ { print; stop=1; system("./makesure -h") }
     /^```$/ { stop=0 }
     !stop' README.md > README.md.1
