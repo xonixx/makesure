@@ -729,10 +729,10 @@ function selfUpdate(   tmp, err, newVer,line,sha) {
       if (line ~ /"sha":/) {
         if (match(line = substr(line, index(line, "\"sha\":") + 6), /"[a-z0-9]+"/))
           sha = substr(line, RSTART + 1, RLENGTH - 2)
-        if (!sha) err = "unable to get the latest commit"
         break
       }
     }
+    if (!sha) err = "unable to get the latest commit"
     if (!err) {
       # now download the latest executable
       err = dl("https://raw.githubusercontent.com/xonixx/makesure/" sha "/makesure", tmp)
