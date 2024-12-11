@@ -18,7 +18,7 @@ jobs:
         id: cache-soft
         with:
           path: soft
-          key: ${{ matrix.os }}-${{ hashFiles('Makesurefile') }}-soft--all-2
+          key: ${{ matrix.os }}-${{ hashFiles('Makesurefile') }}
 
       - name: "run tests"
         run: |
@@ -69,7 +69,7 @@ jobs:
         id: cache-soft
         with:
           path: soft
-          key: ${{ matrix.os }}-soft--macos-gawk
+          key: ${{ matrix.os }}-${{ hashFiles('Makesurefile') }}
 
       - name: "run tests"
         run: |
@@ -93,7 +93,7 @@ jobs:
         id: cache-soft
         with:
           path: soft
-          key: ${{ matrix.os }}-soft--win
+          key: ${{ matrix.os }}-${{ hashFiles('Makesurefile') }}
 
       - name: "run tests"
         run: |
