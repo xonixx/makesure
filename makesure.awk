@@ -720,21 +720,21 @@ function currentTimeMillis(   res) {
   return +res
 }
 
-function selfUpdate(   tmp, err, newVer,line,ver) {
+function selfUpdate(   tmp, err, newVer,line,sha) {
   tmp = executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX")
-  # first get the last release version
-  err = dl("https://github.com/xonixx/makesure/releases", tmp)
+  # first get the last commit hash
+  err = dl("https://github.com/xonixx/makesure/commits/main", tmp)
   if (!err) {
     while (getline line < tmp) {
-      if (match(line, /\/xonixx\/makesure\/releases\/tag\/v[0-9.]+/)) {
-        ver = substr(line = substr(line, RSTART, RLENGTH), index(line, "/v") + 1) # v0.9.23
+      if (match(line, /\/xonixx\/makesure\/commits\/[0-9a-z]+/)) {
+        sha = substr(line = substr(line, RSTART, RLENGTH), 25)
         break
       }
     }
-    if (!ver) err = "unable to get the latest release"
+    if (!sha) err = "unable to get the latest commit"
     if (!err) {
       # now download the latest executable
-      err = dl("https://raw.githubusercontent.com/xonixx/makesure/" ver "/makesure", tmp)
+      err = dl("https://raw.githubusercontent.com/xonixx/makesure/" sha "/makesure", tmp)
       if (!err && !ok("chmod +x " tmp)) err = "can't chmod +x " tmp
       if (!err) {
         newVer = executeGetLine(tmp " -v")
