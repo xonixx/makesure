@@ -731,7 +731,10 @@ function selfUpdate(   tmp, err, newVer,line,sha) {
         break
       }
     }
-    if (!sha) err = "unable to get the latest commit"
+    if (!sha) {err = "unable to get the latest commit"
+      print "DEBUG>>>"
+      system("cat "tmp)
+    }
     if (!err) {
       # now download the latest executable
       err = dl("https://raw.githubusercontent.com/xonixx/makesure/" sha "/makesure", tmp)
