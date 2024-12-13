@@ -726,7 +726,7 @@ function selfUpdate(   tmp, err, newVer,line,sha) {
   err = dl("https://github.com/xonixx/makesure/commits/main", tmp)
   if (!err) {
     while (getline line < tmp) {
-      if (match(line, /\/xonixx\/makesure\/commits\/[0-9a-z]+/)) {
+      if (match(line, /\/xonixx\/makesure\/commit\/[0-9a-z]+/)) {
         sha = substr(line = substr(line, RSTART, RLENGTH), 25)
         break
       }

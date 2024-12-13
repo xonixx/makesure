@@ -41,7 +41,9 @@
     export PATH="$D"
     export NEXT_VERSION=XXX
     "$D/$MAKESURE" --version
+    echo 'selfupdate 1'
     "$D/$MAKESURE" --selfupdate
+    echo 'selfupdate 2'
     "$D/$MAKESURE" --selfupdate
     "$D/$MAKESURE" --version
     rm -r "$D"
@@ -74,6 +76,7 @@ exec awk -v CURL="'$(command -v curl)$'" -v a1="$1" -v a2="$2" -v a3="$3" \'
 BEGIN {
 sub(/-q/,"-s",a1)
 sub(/-O/,"-o",a3)
+#print(CURL " " a1 " " a2 " " a3)
 system(CURL " " a1 " " a2 " " a3)
 }\'
 ' > "$D/$cmd"

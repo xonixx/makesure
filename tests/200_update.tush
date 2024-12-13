@@ -3,6 +3,7 @@ $ ./$MAKESURE -f tests/200_update.sh test_err
 |   goal 'makesure_prepared' ...
 |   goal 'test_err' ...
 | XXX
+| selfupdate 1
 |   goal 'test_err' failed
 @ wget/curl not found
 @ Please use manual update: https://makesure.dev/Installation.html
@@ -13,9 +14,11 @@ $ ./$MAKESURE -f tests/200_update.sh test_wget | awk '{ sub(/[0-9][0-9.]+/,"YYY"
 |   goal 'wget_prepared' ...
 |   goal 'test_wget' ...
 | XXX
+| selfupdate 1
 | running wget
 | running wget
 | updated XXX -> YYY
+| selfupdate 2
 | running wget
 | running wget
 | you have latest version YYY installed
@@ -26,9 +29,11 @@ $ ./$MAKESURE -f tests/200_update.sh test_curl | awk '{ sub(/[0-9][0-9.]+/,"YYY"
 |   goal 'curl_prepared' ...
 |   goal 'test_curl' ...
 | XXX
+| selfupdate 1
 | running curl
 | running curl
 | updated XXX -> YYY
+| selfupdate 2
 | running curl
 | running curl
 | you have latest version YYY installed
