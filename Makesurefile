@@ -2,7 +2,7 @@
 @options timing
 
 @define NEXT_VERSION   '0.9.23'
-@define GOAWK_VERSION  '1.25.0'           # https://github.com/benhoyt/goawk/releases
+@define GOAWK_VERSION  '1.29.1'           # https://github.com/benhoyt/goawk/releases
 @define JUST_VERSION   '1.3.0'            # https://github.com/casey/just/releases
 @define FHTAGN_VERSION 'v0.2.0'           # https://github.com/xonixx/fhtagn/releases
 @define MDBOOK_VERSION 'v0.4.37'          # https://github.com/rust-lang/mdBook/releases
