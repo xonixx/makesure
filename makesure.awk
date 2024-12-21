@@ -719,37 +719,43 @@ function currentTimeMillis(   res) {
   sub(/%?3N/, "000", res) # if date doesn't support %N (macos?) just use second-precision
   return +res
 }
-
-function selfUpdate(   tmp, err, newVer,line,sha) {
-  tmp = executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX")
-  # first get the last commit hash
-  err = dl("https://github.com/xonixx/makesure/commits/main", tmp)
-  if (!err) {
-    while (getline line < tmp) {
-      if (match(line, /\/xonixx\/makesure\/commit\/[0-9a-z]+/)) {
-        sha = substr(line = substr(line, RSTART, RLENGTH), 25)
-        break
-      }
+function incVersion(ver,   arr) {
+  split(ver, arr, ".")
+  arr[3]++
+  return arr[1]"."arr[2]"."arr[3]
+}
+function selfUpdate(   tmp, err, newVer,line,good,i,found) {
+  # Idea: We know current version v0.9.X. We will try next version v0.9.(X+1), v0.9.(X+2), etc. till it's not 404
+  good = (tmp = executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX"))"_good"
+  newVer = Version
+  for (; ;) {
+    if (i++ == 10) { # try max 10 versions up to prevent a possibility of infinite loop
+      err = "infinite loop"
+      break
     }
-    if (!sha) {err = "unable to get the latest commit"
-      print "DEBUG>>>"
-      system("cat "tmp)
+    # probe next version
+    newVer = incVersion(newVer)
+    if (err = dl("https://raw.githubusercontent.com/xonixx/makesure/v" newVer "/makesure", tmp))
+      break
+    if ((getline line < tmp) <= 0) {
+      err = "can't check the dl result"
+      break
     }
-    if (!err) {
-      # now download the latest executable
-      err = dl("https://raw.githubusercontent.com/xonixx/makesure/" sha "/makesure", tmp)
-      if (!err && !ok("chmod +x " tmp)) err = "can't chmod +x " tmp
-      if (!err) {
-        newVer = executeGetLine(tmp " -v")
-        if (Version != newVer) {
-          if (!ok("cp " tmp " " quoteArg(Prog)))
-            err = "can't overwrite " Prog
-          else print "updated " Version " -> " newVer
-        } else print "you have latest version " Version " installed"
-      }
+    if (line ~ /^404/) {
+      if (found) {
+        if (!err && !ok("chmod +x " good)) err = "can't chmod +x " good
+        if (!err) print "updated " Version " -> " executeGetLine(good " -v")
+      } else print "you have latest version " Version " installed"
+      break
+    }
+    found = 1
+    if (!ok("cp " tmp " " good)) {
+      err = "can't cp"
+      break
     }
   }
   rm(tmp)
+  if (found) rm(good)
   if (err) die(err "\nPlease use manual update: https://makesure.dev/Installation.html")
 }
 
@@ -799,10 +805,10 @@ function executeGetLine(script,   res) {
   return res
 }
 function closeErr(script) { if (close(script) != 0) die("Error executing: " script) }
-function dl(url, dest,    verbose) {
+function dl(url, dest,    verbose,exCode) {
   verbose = "VERBOSE" in ENVIRON
   if (commandExists("wget")) {
-    if (!ok("wget " (verbose ? "" : "-q") " " quoteArg(url) " -O" quoteArg(dest)))
+    if (!(exCode = system("wget " (verbose ? "" : "-q") " " quoteArg(url) " -O" quoteArg(dest) " --content-on-error")) || 8 == exCode) # 404 gives 8, but it's OK for us since we need the content
       return "error with wget"
   } else if (commandExists("curl")) {
     if (!ok("curl " (verbose ? "" : "-s") " " quoteArg(url) " -o " quoteArg(dest)))
