@@ -808,8 +808,8 @@ function closeErr(script) { if (close(script) != 0) die("Error executing: " scri
 function dl(url, dest,    verbose,exCode) {
   verbose = "VERBOSE" in ENVIRON
   if (commandExists("wget")) {
-    if (!(exCode = system("wget " (verbose ? "" : "-q") " " quoteArg(url) " -O" quoteArg(dest) " --content-on-error")) || 8 == exCode) # 404 gives 8, but it's OK for us since we need the content
-      return "error with wget"
+    if ((exCode = system("wget " (verbose ? "" : "-q") " " quoteArg(url) " -O" quoteArg(dest) " --content-on-error")) != 0 && exCode != 8) # 404 gives 8, but it's OK for us since we need the content
+      return "error with wget: " exCode
   } else if (commandExists("curl")) {
     if (!ok("curl " (verbose ? "" : "-s") " " quoteArg(url) " -o " quoteArg(dest)))
       return "error with curl"
