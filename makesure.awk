@@ -742,11 +742,16 @@ function selfUpdate(   tmp, err, newVer,line,good,i,found) {
       err = "can't check the dl result"
       break
     }
-    print "LINE: " line
     if (line ~ /^404/) {
       if (found) {
         if (!err && !ok("chmod +x " good)) err = "can't chmod +x " good
-        if (!err) print "updated " Version " -> " executeGetLine(good " -v")
+        if (!err) {
+          newVer = executeGetLine(good " -v")
+          if (!ok("cp " good " " quoteArg(Prog)))
+            err = "can't overwrite " Prog
+          else
+            print "updated " Version " -> " newVer
+        }
       } else print "you have latest version " Version " installed"
       break
     }
