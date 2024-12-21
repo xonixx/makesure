@@ -737,10 +737,12 @@ function selfUpdate(   tmp, err, newVer,line,good,i,found) {
     newVer = incVersion(newVer)
     if (err = dl("https://raw.githubusercontent.com/xonixx/makesure/v" newVer "/makesure", tmp))
       break
+    close(tmp)
     if ((getline line < tmp) <= 0) {
       err = "can't check the dl result"
       break
     }
+    print "LINE: " line
     if (line ~ /^404/) {
       if (found) {
         if (!err && !ok("chmod +x " good)) err = "can't chmod +x " good
