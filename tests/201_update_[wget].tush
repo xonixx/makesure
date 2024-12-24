@@ -1,0 +1,14 @@
+
+$ ./$MAKESURE -f tests/200_update.sh test_wget | awk '{ gsub(/[0-9][0-9.]+/,"VER") } 1'
+|   goal 'env_prepared' ...
+|   goal 'wget_prepared' ...
+|   goal 'test_wget' ...
+| VER
+| selfupdate 1
+| running wget
+| running wget
+| updated VER -> VER
+| selfupdate 2
+| running wget
+| you have latest version VER installed
+| VER

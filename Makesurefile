@@ -87,7 +87,11 @@
     local f="$1"
 
     [[ "$OSTYPE" == "linux-gnu"* ]] && [[ -d /dev/shm ]] && export TMPDIR="/dev/shm"
-    if "$FHTAGN" "$f"
+
+    if [[ "$f" == *"[wget]"* ]] && ! command -v wget >/dev/null
+    then
+      echo "TESTS SKIPPED: $f"
+    elif "$FHTAGN" "$f"
     then
       echo "TESTS PASSED : $f"
     else
