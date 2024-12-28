@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-20.04, ubuntu-22.04, macos-11, macos-12, macos-13 ]
+        os: [ ubuntu-20.04, ubuntu-22.04, ubuntu-24.04, macos-13, macos-14, macos-15 ]
     steps:
       - uses: actions/checkout@v3
 
@@ -18,7 +18,7 @@ jobs:
         id: cache-soft
         with:
           path: soft
-          key: ${{ matrix.os }}-${{ hashFiles('Makesurefile') }}-soft--all-2
+          key: ${{ matrix.os }}-${{ hashFiles('Makesurefile') }}
 
       - name: "run tests"
         run: |
@@ -27,16 +27,16 @@ jobs:
   # https://github.com/cross-platform-actions/action
   # https://github.com/marketplace/actions/cross-platform-action
   freebsd:
-    runs-on: macos-12
+    runs-on: ubuntu-latest
     name: "Tests on FreeBSD"
     steps:
-      - uses: actions/checkout@v3
-      - name: Tests in FreeBSD
+      - uses: actions/checkout@v4
+      - name: 'Tests in FreeBSD'
         id: test
-        uses: cross-platform-actions/action@v0.21.0
+        uses: cross-platform-actions/action@v0.26.0
         with:
           operating_system: freebsd
-          version: '13.2'
+          version: '14.2'
           shell: sh
           run: |
             sudo pkg install -y curl
@@ -61,7 +61,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ macos-11, macos-12, macos-13 ]
+        os: [ macos-13, macos-14, macos-15 ]
     steps:
       - uses: actions/checkout@v3
 
@@ -69,7 +69,7 @@ jobs:
         id: cache-soft
         with:
           path: soft
-          key: ${{ matrix.os }}-soft--macos-gawk
+          key: ${{ matrix.os }}-${{ hashFiles('Makesurefile') }}
 
       - name: "run tests"
         run: |
@@ -85,7 +85,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-2019, windows-2022 ]
+        os: [ windows-2019, windows-2022, windows-2025 ]
     steps:
       - uses: actions/checkout@v3
 
@@ -93,7 +93,7 @@ jobs:
         id: cache-soft
         with:
           path: soft
-          key: ${{ matrix.os }}-soft--win
+          key: ${{ matrix.os }}-${{ hashFiles('Makesurefile') }}
 
       - name: "run tests"
         run: |

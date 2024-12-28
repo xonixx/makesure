@@ -1,30 +1,24 @@
 
-$ ./$MAKESURE -f tests/200_update.sh test_err
-|   goal 'makesure_prepared' ...
+$ { ./$MAKESURE -f tests/200_update.sh test_err; echo 'exit_code '$?; } | awk '/^exit_code/ { exit $2 } { gsub(/[0-9][0-9.]+/,"VER") } 1'
+|   goal 'env_prepared' ...
 |   goal 'test_err' ...
-| XXX
+| VER
+| selfupdate 1
 |   goal 'test_err' failed
 @ wget/curl not found
+@ Please use manual update: https://makesure.dev/Installation.html
 ? 1
 
-$ ./$MAKESURE -f tests/200_update.sh test_wget | awk '{ sub(/[0-9][0-9.]+/,"YYY") } 1'
-|   goal 'makesure_prepared' ...
-|   goal 'wget_prepared' ...
-|   goal 'test_wget' ...
-| XXX
-| running wget
-| updated XXX -> YYY
-| running wget
-| you have latest version YYY installed
-| YYY
-
-$ ./$MAKESURE -f tests/200_update.sh test_curl | awk '{ sub(/[0-9][0-9.]+/,"YYY") } 1'
-|   goal 'makesure_prepared' ...
+$ ./$MAKESURE -f tests/200_update.sh test_curl | awk '{ gsub(/[0-9][0-9.]+/,"VER") } 1'
+|   goal 'env_prepared' ...
 |   goal 'curl_prepared' ...
 |   goal 'test_curl' ...
-| XXX
+| VER
+| selfupdate 1
 | running curl
-| updated XXX -> YYY
 | running curl
-| you have latest version YYY installed
-| YYY
+| updated VER -> VER
+| selfupdate 2
+| running curl
+| you have latest version VER installed
+| VER
