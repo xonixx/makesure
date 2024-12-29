@@ -34,6 +34,7 @@ BEGIN {
   Mode = "prelude" # prelude|define|goal|goal_glob|lib
   srand()
   prepareArgs()
+  ProgAbs = "" # absolute path to makesure executable
   MyDirScript = "MYDIR=" quoteArg(getMyDir(ARGV[1])) ";export MYDIR;cd \"$MYDIR\""
   Error = ""
   makesure()
@@ -52,6 +53,7 @@ function makesure(   i) {
     else if ("@reached_if" == $1) handleReachedIf()
     else if ("@lib" == $1) handleLib()
     else if ("@use_lib" == $1) handleUseLib()
+    else if ("@calls" == $1) handleCalls()
     else if ($1 ~ /^@/) addError("Unknown directive: " $1)
     else handleCodeLine($0)
     for (i = 1; i < 10; i++) $i = "" # only for macos 10.15 awk version 20070501
@@ -183,6 +185,25 @@ function handleUseLib(   i) {
   else
     for (i = 0; i < GlobCnt; i++)
       registerUseLib(globGoal(i))
+}
+
+function handleCalls(   i) {
+  checkGoalOnly()
+
+  if (NF < 2)
+    addError("Provide at least one dependency")
+
+  if ("goal" == Mode)
+    processCalls()
+#  else  TODO
+#    for (i = 0; i < GlobCnt; i++)
+#      registerDependsOn(globGoal(i))
+}
+
+function processCalls(   i) {
+  for (i = 2; i <= NF; i++)
+      addCodeLine(quoteArg(ProgAbs) " " quoteArg($i))
+#      addCodeLine("echo " quoteArg(ProgAbs) " " quoteArg($i))
 }
 
 function registerUseLib(goalName) {
@@ -549,8 +570,12 @@ function shellExec(script, comment,   res) {
   return res
 }
 
-function getMyDir(makesurefilePath) {
-  return executeGetLine("cd \"$(dirname " quoteArg(makesurefilePath) ")\";pwd")
+function getMyDir(makesurefilePath,   script,res,p) {
+  script = "echo \"$(cd \"$(dirname "(p=quoteArg(Prog))")\" && pwd)/$(basename "p")\";cd \"$(dirname " quoteArg(makesurefilePath) ")\";pwd"
+  script | getline ProgAbs
+  script | getline res
+  closeErr(script)
+  return res
 }
 
 function handleCodeLine(line) {
@@ -952,6 +977,7 @@ function reparseCli(   res,i,err) {
     }
   return 1
 }
+# bash-friendly (non-POSIX-compatible) quoting
 function quote2(s,force) {
   if (index(s, "'")) {
     gsub(/\\/, "\\\\", s)
@@ -978,6 +1004,7 @@ function commandExists(cmd) { return ok("command -v " cmd " >/dev/null") }
 function ok(cmd) { return system(cmd) == 0 }
 function isFile(path) { return ok("test -f " quoteArg(path)) }
 function rm(f) { system("rm " quoteArg(f)) }
+# POSIX-compatible quoting
 function quoteArg(a) { gsub("'", "'\\''", a); return "'" a "'" }
 function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s }
 function copyKey(keySrc,keyDst,arr) { if (keySrc in arr) arr[keyDst] = arr[keySrc] }

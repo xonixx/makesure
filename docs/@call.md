@@ -83,7 +83,9 @@ desugars to
 
 Do we need `--file 'path/to/Makesurefile'`?
 
-No. Even if we run `./makesure path/to/Makesurefile` path resolution is relative to the `Makesurefile` location, so internal makesure invocation now doesn't need explicit Makesurefile reference. But let's add a test for this case.
+~~No. Even if we run `./makesure -f path/to/Makesurefile` path resolution is relative to the `Makesurefile` location, so internal makesure invocation now doesn't need explicit Makesurefile reference. But let's add a test for this case.~~
+
+Yes, we must add `--file` because it can be `./makesure -f path/to/anyname`.  
 
 Are there other options to passthrough ([Usage](https://makesure.dev/Usage.html))?
 
