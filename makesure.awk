@@ -35,6 +35,7 @@ BEGIN {
   srand()
   prepareArgs()
   ProgAbs = "" # absolute path to makesure executable
+  MakesurefileAbs = "" # absolute path to Makesurefile being called
   MyDirScript = "MYDIR=" quoteArg(getMyDir(ARGV[1])) ";export MYDIR;cd \"$MYDIR\""
   Error = ""
   makesure()
@@ -201,9 +202,11 @@ function handleCalls(   i) {
 }
 
 function processCalls(   i) {
-  for (i = 2; i <= NF; i++)
-      addCodeLine(quoteArg(ProgAbs) " " quoteArg($i))
-#      addCodeLine("echo " quoteArg(ProgAbs) " " quoteArg($i))
+  for (i = 2; i <= NF; i++) {
+    #        addCodeLine("pwd; echo " quoteArg(ProgAbs) " --file " quoteArg(MakesurefileAbs)  " " quoteArg($i))
+#        addCodeLine("echo " quoteArg(ProgAbs) " --file " quoteArg(MakesurefileAbs)  " " quoteArg($i))
+    addCodeLine(quoteArg(ProgAbs) " --file " quoteArg(MakesurefileAbs)  " " quoteArg($i))
+  }
 }
 
 function registerUseLib(goalName) {
@@ -570,12 +573,14 @@ function shellExec(script, comment,   res) {
   return res
 }
 
-function getMyDir(makesurefilePath,   script,res,p) {
-  script = "echo \"$(cd \"$(dirname "(p=quoteArg(Prog))")\" && pwd)/$(basename "p")\";cd \"$(dirname " quoteArg(makesurefilePath) ")\";pwd"
+function getMyDir(makesurefilePath,   script,myDir,p,m,baseName) {
+  script = "echo \"$(basename "(m=quoteArg(makesurefilePath))")\";echo \"$(cd \"$(dirname "(p=quoteArg(Prog))")\" && pwd)/$(basename "p")\";cd \"$(dirname " m ")\";pwd"
+  script | getline baseName
   script | getline ProgAbs
-  script | getline res
+  script | getline myDir
   closeErr(script)
-  return res
+  MakesurefileAbs = myDir "/" baseName
+  return myDir
 }
 
 function handleCodeLine(line) {
