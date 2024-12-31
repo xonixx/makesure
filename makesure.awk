@@ -36,7 +36,7 @@ BEGIN {
   prepareArgs()
   ProgAbs = "" # absolute path to makesure executable
   MakesurefileAbs = "" # absolute path to Makesurefile being called
-  MyDirScript = "MYDIR=" quoteArg(getMyDir(ARGV[1])) ";export MYDIR;cd \"$MYDIR\""
+  MyDirScript = "cd " quoteArg(getMyDir(ARGV[1]))
   Error = ""
   makesure()
 }
