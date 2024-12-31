@@ -34,7 +34,7 @@ BEGIN {
   Mode = "prelude" # prelude|define|goal|goal_glob|lib
   srand()
   prepareArgs()
-  MyDirScript = "MYDIR=" quoteArg(getMyDir(ARGV[1])) ";export MYDIR;cd \"$MYDIR\""
+  MyDirScript = "cd " quoteArg(getMyDir(ARGV[1]))
   Error = ""
   makesure()
 }

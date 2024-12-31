@@ -26,7 +26,7 @@
 
 @lib
   function prepare_makesure() {
-    awk -v X="$(cd "$MYDIR/.."; pwd)" '/AWK_DIR=/{ $0 = "AWK_DIR=" X } 1' "../$MAKESURE" > "$D/$MAKESURE"
+    awk -v X="$(cd ..; pwd)" '/AWK_DIR=/{ $0 = "AWK_DIR=" X } 1' "../$MAKESURE" > "$D/$MAKESURE"
     chmod +x "$D/$MAKESURE"
   }
   function run_selfupdate() {

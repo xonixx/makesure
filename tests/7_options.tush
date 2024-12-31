@@ -18,7 +18,5 @@ $ ./$MAKESURE -f tests/7_options_tracing.sh   2>&1 | awk -f tests/unify_tracing_
 |   goal 'default' ...
 | test
 @ + : default
-@ + MYDIR=/some/path/tests
-@ + export MYDIR
 @ + cd /some/path/tests
 @ + echo test
