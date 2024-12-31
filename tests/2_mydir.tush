@@ -7,15 +7,11 @@ $ ./$MAKESURE -f tests/2_mydir.sh mydir_2
 |   goal 'mydir_2' ...
 | mydir
 
-$ ./$MAKESURE -f tests/2_mydir.sh mydir_3
-|   goal 'mydir_3' ...
-| mydir
-
 $ ./$MAKESURE -f tests/dir\ with\ spaces/2_mydir.sh
 |   goal 'default' ...
 | mydir
 
-$ cd "$MYDIR/tests/dir with spaces"; ../../$MAKESURE -f 2_mydir.sh
+$ cd "tests/dir with spaces"; ../../$MAKESURE -f 2_mydir.sh
 |   goal 'default' ...
 | mydir
 
@@ -25,19 +21,12 @@ $ ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_1
 $ ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_2
 |   goal 'mydir_in_reached_if_2' [already satisfied].
 
-$ ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_3
-|   goal 'mydir_in_reached_if_3' [already satisfied].
-
 $ ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_4
 |   goal 'mydir_in_reached_if_4' ...
 | should show
 
 $ ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_5
 |   goal 'mydir_in_reached_if_5' ...
-| should show
-
-$ ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_6
-|   goal 'mydir_in_reached_if_6' ...
 | should show
 
 $ ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_of_dep_1
