@@ -18,3 +18,7 @@ $ ./$MAKESURE -f tests/32_calls.sh a
 |   goal 'b' ...
 | b body
 | a body
+
+$ touch /tmp/x ; ./$MAKESURE -f tests/32_calls.sh x-updated -s
+| running x-deleted
+| running x-created

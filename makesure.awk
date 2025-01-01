@@ -205,7 +205,7 @@ function processCalls(   i) {
   for (i = 2; i <= NF; i++) {
     #        addCodeLine("pwd; echo " quoteArg(ProgAbs) " --file " quoteArg(MakesurefileAbs)  " " quoteArg($i))
 #        addCodeLine("echo " quoteArg(ProgAbs) " --file " quoteArg(MakesurefileAbs)  " " quoteArg($i))
-    addCodeLine(quoteArg(ProgAbs) " --file " quoteArg(MakesurefileAbs)  " " quoteArg($i))
+    addCodeLine(quoteArg(ProgAbs) ("silent" in Options ? " --silent" : "") " --file " quoteArg(MakesurefileAbs)  " " quoteArg($i))
   }
 }
 
