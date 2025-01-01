@@ -13,3 +13,13 @@
 @goal 'x-updated'
 @calls 'x-deleted'
 @calls 'x-created'
+
+@goal 'x-updated-1'
+@calls 'x-deleted' 'x-created'
+
+@goal a
+@calls b
+  echo 'a body'
+
+@goal b
+  echo 'b body'
