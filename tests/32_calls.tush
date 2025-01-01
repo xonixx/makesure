@@ -34,3 +34,27 @@ $ touch /tmp/x ; ./$MAKESURE -f tests/32_calls.sh x-updated --timing | sed 's#to
 |   goal 'x-updated' took X
 |   total time X
 
+$ touch /tmp/x ; ./$MAKESURE -f tests/32_calls.sh x-updated --tracing  2>&1 | awk -f tests/unify_tracing_output.awk
+|   goal 'x-updated' ...
+|   goal 'x-deleted' ...
+| running x-deleted
+|   goal 'x-created' ...
+| running x-created
+@ + : x-updated
+@ + cd /some/path/tests
+@ + /some/path/makesure_dev --tracing --file /some/path/tests/32_calls.sh x-deleted
+@ + : x-deleted@reached_if
+@ + cd /some/path/tests
+@ + test -e /tmp/x
+@ + : x-deleted
+@ + cd /some/path/tests
+@ + echo 'running x-deleted'
+@ + rm /tmp/x
+@ + /some/path/makesure_dev --tracing --file /some/path/tests/32_calls.sh x-created
+@ + : x-created@reached_if
+@ + cd /some/path/tests
+@ + test -f /tmp/x
+@ + : x-created
+@ + cd /some/path/tests
+@ + echo 'running x-created'
+@ + touch /tmp/x

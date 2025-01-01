@@ -205,7 +205,11 @@ function handleCalls(   i) {
 
 function processCalls(   i) {
   for (i = 2; i <= NF; i++)
-    addCodeLine(quoteArg(ProgAbs) ("silent" in Options ? " --silent" : "") ("timing" in Options ? " --timing --timing-skip-total" : "") " --file " quoteArg(MakesurefileAbs) " " quoteArg($i))
+    addCodeLine(quoteArg(ProgAbs)\
+      ("silent" in Options ? " --silent" : "")\
+      ("timing" in Options ? " --timing --timing-skip-total" : "")\
+      ("tracing" in Options ? " --tracing" : "")\
+      " --file " quoteArg(MakesurefileAbs) " " quoteArg($i))
 }
 
 function registerUseLib(goalName) {
