@@ -115,6 +115,8 @@ function prepareArgs(   i,arg) {
     Options["tracing"]
   if ("-t" in Args || "--timing" in Args)
     Options["timing"]
+  if ("--timing-skip-total" in Args)
+    Options["timing-skip-total"]
 }
 
 function splitKV(arg, kv,   n) {
@@ -202,11 +204,8 @@ function handleCalls(   i) {
 }
 
 function processCalls(   i) {
-  for (i = 2; i <= NF; i++) {
-    #        addCodeLine("pwd; echo " quoteArg(ProgAbs) " --file " quoteArg(MakesurefileAbs)  " " quoteArg($i))
-#        addCodeLine("echo " quoteArg(ProgAbs) " --file " quoteArg(MakesurefileAbs)  " " quoteArg($i))
-    addCodeLine(quoteArg(ProgAbs) ("silent" in Options ? " --silent" : "") " --file " quoteArg(MakesurefileAbs)  " " quoteArg($i))
-  }
+  for (i = 2; i <= NF; i++)
+    addCodeLine(quoteArg(ProgAbs) ("silent" in Options ? " --silent" : "") ("timing" in Options ? " --timing --timing-skip-total" : "") " --file " quoteArg(MakesurefileAbs) " " quoteArg($i))
 }
 
 function registerUseLib(goalName) {
@@ -492,7 +491,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
         if (exitCode != 0)
           break
       }
-      if (timingOn())
+      if (timingOn() && !("timing-skip-total" in Options))
         print "  total time " renderDuration((t2 ? t2 : currentTimeMillis()) - t0)
       if (exitCode != 0)
         realExit(exitCode)

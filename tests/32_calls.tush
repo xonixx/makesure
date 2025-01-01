@@ -19,6 +19,18 @@ $ ./$MAKESURE -f tests/32_calls.sh a
 | b body
 | a body
 
-$ touch /tmp/x ; ./$MAKESURE -f tests/32_calls.sh x-updated -s
+$ touch /tmp/x ; ./$MAKESURE -f tests/32_calls.sh x-updated --silent
 | running x-deleted
 | running x-created
+
+$ touch /tmp/x ; ./$MAKESURE -f tests/32_calls.sh x-updated --timing | sed 's#took .*$#took X#g ; s#total time .*$#total time X#g'
+|   goal 'x-updated' ...
+|   goal 'x-deleted' ...
+| running x-deleted
+|   goal 'x-deleted' took X
+|   goal 'x-created' ...
+| running x-created
+|   goal 'x-created' took X
+|   goal 'x-updated' took X
+|   total time X
+
