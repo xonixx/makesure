@@ -185,22 +185,18 @@ function handleUseLib(   i) {
 
   if ("goal" == Mode)
     registerUseLib(currentGoalName())
-  else
+  else # glob
     for (i = 0; i < GlobCnt; i++)
       registerUseLib(globGoal(i))
 }
 
-function handleCalls(   i) {
+function handleCalls() {
   checkGoalOnly()
 
   if (NF < 2)
     addError("Provide at least one dependency")
 
-  if ("goal" == Mode)
-    processCalls()
-#  else  TODO
-#    for (i = 0; i < GlobCnt; i++)
-#      registerDependsOn(globGoal(i))
+  processCalls()
 }
 
 function processCalls(   i) {
@@ -577,7 +573,7 @@ function shellExec(script, comment,   res) {
 }
 
 function getMyDir(makesurefilePath,   script,myDir,p,m,baseName) {
-  script = "echo \"$(basename "(m=quoteArg(makesurefilePath))")\";echo \"$(cd \"$(dirname "(p=quoteArg(Prog))")\" && pwd)/$(basename "p")\";cd \"$(dirname " m ")\";pwd"
+  script = "echo \"$(basename "(m = quoteArg(makesurefilePath))")\";echo \"$(cd \"$(dirname "(p = quoteArg(Prog))")\" && pwd)/$(basename "p")\";cd \"$(dirname " m ")\";pwd"
   script | getline baseName
   script | getline ProgAbs
   script | getline myDir

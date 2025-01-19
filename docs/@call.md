@@ -3,7 +3,7 @@
 
 Why do we need new directive? See [issue 171](https://github.com/xonixx/makesure/issues/171).
        
-## Naming: `@call` vs `@calls`
+## [x] Naming: `@call` vs `@calls`
 
 For consistency with `@depends_on` and for better declarativity let's use `@calls`:
 
@@ -12,7 +12,7 @@ For consistency with `@depends_on` and for better declarativity let's use `@call
 @calls b
 ```
 
-## Do we allow both `@calls` and `@depends_on` on the same level?
+## [ ] Do we allow both `@calls` and `@depends_on` on the same level?
                           
 ```shell
 @goal a
@@ -29,7 +29,7 @@ We could but the execution model would be this (`@depends_on` goes first):
 
 Answer: No, should result in error in the first iteration.
 
-## Do we allow both `@calls` and non-empty goal body?
+## [x] Do we allow both `@calls` and non-empty goal body?
 
 ```shell
 @goal a
@@ -41,7 +41,7 @@ Should be relatively easy. Don't see any good reason against.
 
 Answer: yes.
 
-## Do we allow `@calls goal_name @args 'arg'`?
+## [ ] Do we allow `@calls goal_name @args 'arg'`?
 
 Let's allow. The goal will be instantiated the same way as for `@depends_on`
 
@@ -61,11 +61,11 @@ Answer: interpolation rules should apply the same as for `@depends_on`, i.e. all
 
 Maybe, but let's do the easiest for the first iteration
 
-## How do we output the dependency tree (`-d`,`--resolved`)
+## [ ] How do we output the dependency tree (`-d`,`--resolved`)
 
 In the first iteration let's not generate a subtree. 
 
-## `@calls` operational semantics
+## [x] `@calls` operational semantics
 
 Let's implement the simplest strategy of passthrough to `./makesure` invocation
 
@@ -102,7 +102,7 @@ For `-s` and `-x` it's easy - just replicate.
 For `-t` it's trickier, probably we need to find a way to suppress the total time for called goals. 
 - **Solution.** Let's use a special internal `--timing-skip-total` CLI option
 
-## the `@define` inheritance
+## [ ] the `@define` inheritance
 
 Since we implement this in terms of running the external `./makesure` we need to repeat the variables passed via `-D`.
 
