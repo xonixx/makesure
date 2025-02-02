@@ -20,6 +20,16 @@ For consistency with `@depends_on` and for better declarativity let's use `@call
 @depends_on c
 ```
 
+## [ ] Detect loops
+
+```shell
+@goal a
+@calls b
+
+@goal b
+@depends_on a
+```
+
 We could but the execution model would be this (`@depends_on` goes first):
 ```shell
 @goal a

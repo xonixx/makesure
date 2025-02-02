@@ -190,24 +190,6 @@ function handleUseLib(   i) {
       registerUseLib(globGoal(i))
 }
 
-function handleCalls() {
-  checkGoalOnly()
-
-  if (NF < 2)
-    addError("Provide at least one dependency")
-
-  processCalls()
-}
-
-function processCalls(   i) {
-  for (i = 2; i <= NF; i++)
-    addCodeLine(quoteArg(ProgAbs)\
-      ("silent" in Options ? " --silent" : "")\
-      ("timing" in Options ? " --timing --timing-skip-total" : "")\
-      ("tracing" in Options ? " --tracing" : "")\
-      " --file " quoteArg(MakesurefileAbs) " " quoteArg($i))
-}
-
 function registerUseLib(goalName) {
   if (goalName in GoalToLib)
     addError("You can only use one @lib in a @goal")
@@ -355,6 +337,24 @@ function registerDependency(goalName, depGoalName,   x) {
   DependenciesLineNo[x] = NR
 }
 
+function handleCalls() {
+  checkGoalOnly()
+
+  if (NF < 2)
+    addError("Provide at least one dependency")
+
+  processCalls()
+}
+
+function processCalls(   i) {
+  for (i = 2; i <= NF; i++)
+    addCodeLine(quoteArg(ProgAbs)\
+      ("silent" in Options ? " --silent" : "")\
+      ("timing" in Options ? " --timing --timing-skip-total" : "")\
+      ("tracing" in Options ? " --tracing" : "")\
+      " --file " quoteArg(MakesurefileAbs) " " quoteArg($i))
+}
+
 function handleReachedIf(   i) {
   checkGoalOnly()
 
@@ -381,6 +381,7 @@ function trimDirective() {
   sub(/^[ \t]*@[a-z_]+/, "")
 }
 
+# cheks for unknown dependencies / libs
 function checkBeforeRun(   i,j,dep,depCnt,goalName) {
   for (i = 0; i in GoalNames; i++) {
     depCnt = DependenciesCnt[goalName = GoalNames[i]]

@@ -74,5 +74,6 @@ $ ./$MAKESURE -f tests/32_calls.sh gg
 | b body
 |   goal 'gg' [empty].
 
-#$ ./$MAKESURE -f tests/32_calls.sh c
+=== parameterized goals ===
+$ ./$MAKESURE -f tests/32_calls.sh c
 
