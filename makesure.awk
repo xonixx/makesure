@@ -10,27 +10,27 @@ BEGIN {
   delete ArgGoals # invoked goals
   delete Options
   delete GoalNames     # list
-  delete GoalsByName   # name -> private
-  delete GoalParamsCnt # name -> params cnt
-  delete GoalParams    # name,paramI -> param name
-  delete CodePre       # name -> pre-body (should also go before lib)
-  delete Code          # name -> body
+  delete GoalsByName   # g -> private
+  delete GoalParamsCnt # g -> params cnt
+  delete GoalParams    # g,paramI -> param name
+  delete CodePre       # g -> pre-body (should also go before lib)
+  delete Code          # g -> body
   delete Vars            # k  -> "val"
   delete DefineOverrides # k  -> ""
-  delete Dependencies       # name,depI -> dep goal
-  delete DependencyType     # name,depI -> type (D=@depend_on|C=@calls)
-  delete DependenciesLineNo # name,depI -> line no.
-  delete DependenciesCnt    # name      -> dep cnt
-  delete DependencyArgsL    # name,depI -> initial $0, but only when it's @depends_on with @args
-  delete Doc       # name -> doc str
-  delete ReachedIf # name -> condition line
+  delete Dependencies       # g,depI -> dep goal
+  delete DependencyType     # g,depI -> type (D=@depend_on|C=@calls)
+  delete DependenciesLineNo # g,depI -> line no.
+  delete DependenciesCnt    # g      -> dep cnt
+  delete DependencyArgsL    # g,depI -> initial $0, but only when it's @depends_on with @args
+  delete Doc       # g -> doc str
+  delete ReachedIf # g -> condition line
   GlobCnt = 0      # count of files for glob
   GlobGoalName = ""
   delete GlobFiles # list
   delete LibNames  # list
-  delete Lib       # name -> code
-  delete UseLibLineNo# name -> line no.
-  delete GoalToLib # goal name -> lib name
+  delete Lib         # g -> code
+  delete UseLibLineNo# g -> line no.
+  delete GoalToLib   # g -> lib name
   delete EMPTY
   Mode = "prelude" # prelude|define|goal|goal_glob|lib
   srand()
@@ -339,22 +339,55 @@ function registerDependency(goalName, depGoalName, depType,   x) {
   DependenciesLineNo[x] = NR
 }
 
-#function handleCalls() {
-#  checkGoalOnly()
-#
-#  if (NF < 2)
-#    addError("Provide at least one dependency")
-#
-#  processCalls()
-#}
+# replaces all C-dependencies (@calls) by the code line to invoke makesure
+function prepareCalls(   g,cnt,i,x,toDel) {
+#  print "before"; printDepsTree("x-updated")
+  delete toDel
+  for (g in DependenciesCnt) {
+    cnt = DependenciesCnt[g]
+    for (i = 0; i < cnt; i++) {
+      x = g SUBSEP i
+      if ("C" == DependencyType[x]) {
+        toDel[x]
+        processCalls(g, Dependencies[x])
+      }
+    }
+  }
+  deleteCallDeps(toDel)
+#  print "after"; printDepsTree("x-updated")
+}
 
-function processCalls(   i) {
-  for (i = 2; i <= NF; i++)
-    addCodeLine(quoteArg(ProgAbs)\
+function deleteCallDeps(toDell,   g,cnt,newCnt,i,x,newX) {
+  # not only we need to delete the index, but also to re-number
+  for (g in DependenciesCnt) {
+    cnt = DependenciesCnt[g]
+    newCnt = 0
+    for (i = 0; i < cnt; i++) {
+      x = g SUBSEP i
+      if (x in toDell) {
+        delete Dependencies[x]
+        delete DependenciesLineNo[x]
+        delete DependencyType[x]
+        delete DependencyArgsL[x]
+      } else {
+        newX = g SUBSEP newCnt++
+        Dependencies[newX] = Dependencies[x]
+        DependenciesLineNo[newX] = DependenciesLineNo[x]
+        DependencyType[newX] = DependencyType[x]
+        DependencyArgsL[newX] = DependencyArgsL[x]
+      }
+    }
+    DependenciesCnt[g] = newCnt
+  }
+}
+
+function processCalls(goal, calledGoal) {
+  # add makesure invocation as the 1st line of code
+  Code[goal] = quoteArg(ProgAbs)\
       ("silent" in Options ? " --silent" : "")\
       ("timing" in Options ? " --timing --timing-skip-total" : "")\
       ("tracing" in Options ? " --tracing" : "")\
-      " --file " quoteArg(MakesurefileAbs) " " quoteArg($i))
+      " --file " quoteArg(MakesurefileAbs) " " quoteArg(calledGoal) "\n" Code[goal]
 }
 
 function handleReachedIf(   i) {
@@ -421,6 +454,8 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
   if (arrLen(GoalNames)) topologicalSort(0, GoalNames)
 
   instantiateGoals()
+
+  prepareCalls()
 
   if (Error)
     die(Error)
