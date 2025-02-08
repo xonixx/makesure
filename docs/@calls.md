@@ -20,7 +20,7 @@ For consistency with `@depends_on` and for better declarativity let's use `@call
 @depends_on c
 ```
 
-## [ ] Detect loops
+## [x] Detect loops
 
 ```shell
 @goal a

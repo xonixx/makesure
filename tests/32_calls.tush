@@ -1,4 +1,9 @@
 
+=== loop detection ===
+$ ./$MAKESURE -f tests/32_calls_loop.sh a
+@ There is a loop in goal dependencies via a -> c
+? 1
+
 $ touch /tmp/x ; ./$MAKESURE -f tests/32_calls.sh x-updated
 |   goal 'x-updated' ...
 |   goal 'x-deleted' ...

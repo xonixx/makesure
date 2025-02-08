@@ -15,15 +15,16 @@ BEGIN {
   delete GoalParams    # name,paramI -> param name
   delete CodePre       # name -> pre-body (should also go before lib)
   delete Code          # name -> body
-  delete Vars            # k -> "val"
-  delete DefineOverrides # k -> ""
+  delete Vars            # k  -> "val"
+  delete DefineOverrides # k  -> ""
   delete Dependencies       # name,depI -> dep goal
+  delete DependencyType     # name,depI -> type (D=@depend_on|C=@calls)
   delete DependenciesLineNo # name,depI -> line no.
   delete DependenciesCnt    # name      -> dep cnt
-  delete DependencyArgsL    # name,depI  -> initial $0, but only when it's @depends_on with @args
+  delete DependencyArgsL    # name,depI -> initial $0, but only when it's @depends_on with @args
   delete Doc       # name -> doc str
   delete ReachedIf # name -> condition line
-  GlobCnt = 0         # count of files for glob
+  GlobCnt = 0      # count of files for glob
   GlobGoalName = ""
   delete GlobFiles # list
   delete LibNames  # list
@@ -50,11 +51,11 @@ function makesure(   i) {
     else if ("@shell" == $1) handleShell()
     else if ("@goal" == $1) { if ("@glob" == $2 || "@glob" == $3) handleGoalGlob(); else handleGoal() }
     else if ("@doc" == $1) handleDoc()
-    else if ("@depends_on" == $1) handleDependsOn()
+    else if ("@depends_on" == $1) handleDependsOn("D")
+    else if ("@calls" == $1) handleDependsOn("C")
     else if ("@reached_if" == $1) handleReachedIf()
     else if ("@lib" == $1) handleLib()
     else if ("@use_lib" == $1) handleUseLib()
-    else if ("@calls" == $1) handleCalls()
     else if ($1 ~ /^@/) addError("Unknown directive: " $1)
     else handleCodeLine($0)
     for (i = 1; i < 10; i++) $i = "" # only for macos 10.15 awk version 20070501
@@ -275,7 +276,7 @@ function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax,
       for (j = 0; j in globPgParams; j++)
         GoalParams[globAllGoal, GoalParamsCnt[globAllGoal]++] = globPgParams[j]
       for (i = 0; i < GlobCnt; i++) {
-        registerDependency(globAllGoal, globGoal(i))
+        registerDependency(globAllGoal, globGoal(i), "D")
         if (arrLen(globPgParams)) {
           l = "@depends_on x @params"
           for (j = 0; j in globPgParams; j++)
@@ -307,44 +308,45 @@ function registerDoc(goalName) {
   Doc[goalName] = trim($0)
 }
 
-function handleDependsOn(   i) {
+function handleDependsOn(depType,   i) {
   checkGoalOnly()
 
   if (NF < 2)
     addError("Provide at least one dependency")
 
   if ("goal" == Mode)
-    registerDependsOn(currentGoalName())
+    registerDependsOn(currentGoalName(), depType)
   else
     for (i = 0; i < GlobCnt; i++)
-      registerDependsOn(globGoal(i))
+      registerDependsOn(globGoal(i), depType)
 }
 
-function registerDependsOn(goalName,   i,dep) {
+function registerDependsOn(goalName,depType,   i,dep) {
   for (i = 2; i <= NF; i++) {
-    if ("@args" == (dep = $i)) {
+    if ("@args" == (dep = $i)) { # TODO
       if (i != 3)
         addError("@args only allowed at position 3")
       DependencyArgsL[goalName, DependenciesCnt[goalName] - 1] = Line0
       break
     } else
-      registerDependency(goalName, dep)
+      registerDependency(goalName, dep, depType)
   }
 }
 
-function registerDependency(goalName, depGoalName,   x) {
+function registerDependency(goalName, depGoalName, depType,   x) {
   Dependencies[x = goalName SUBSEP DependenciesCnt[goalName]++] = depGoalName
+  DependencyType[x] = depType
   DependenciesLineNo[x] = NR
 }
 
-function handleCalls() {
-  checkGoalOnly()
-
-  if (NF < 2)
-    addError("Provide at least one dependency")
-
-  processCalls()
-}
+#function handleCalls() {
+#  checkGoalOnly()
+#
+#  if (NF < 2)
+#    addError("Provide at least one dependency")
+#
+#  processCalls()
+#}
 
 function processCalls(   i) {
   for (i = 2; i <= NF; i++)
