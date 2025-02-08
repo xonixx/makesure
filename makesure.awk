@@ -340,25 +340,25 @@ function registerDependency(goalName, depGoalName, depType,   x) {
 }
 
 # replaces all C-dependencies (@calls) by the code line to invoke makesure
-function prepareCalls(   g,cnt,i,x,toDel) {
-#  print "before"; printDepsTree("x-updated")
+function prepareCalls(   g,cnt,i,x,toDel,codeCalls) {
   delete toDel
   for (g in DependenciesCnt) {
     cnt = DependenciesCnt[g]
+    codeCalls = ""
     for (i = 0; i < cnt; i++) {
       x = g SUBSEP i
       if ("C" == DependencyType[x]) {
         toDel[x]
-        processCalls(g, Dependencies[x])
+        codeCalls = addL(codeCalls, renderCalls(Dependencies[x]))
       }
     }
+    Code[g] = addL(codeCalls,Code[g])
   }
   deleteCallDeps(toDel)
-#  print "after"; printDepsTree("x-updated")
 }
 
+# not only we need to delete the index, but also to re-number
 function deleteCallDeps(toDell,   g,cnt,newCnt,i,x,newX) {
-  # not only we need to delete the index, but also to re-number
   for (g in DependenciesCnt) {
     cnt = DependenciesCnt[g]
     newCnt = 0
@@ -381,13 +381,13 @@ function deleteCallDeps(toDell,   g,cnt,newCnt,i,x,newX) {
   }
 }
 
-function processCalls(goal, calledGoal) {
-  # add makesure invocation as the 1st line of code
-  Code[goal] = quoteArg(ProgAbs)\
+# renders the makesure invocation line of code
+function renderCalls(calledGoal) {
+  return quoteArg(ProgAbs)\
       ("silent" in Options ? " --silent" : "")\
       ("timing" in Options ? " --timing --timing-skip-total" : "")\
       ("tracing" in Options ? " --tracing" : "")\
-      " --file " quoteArg(MakesurefileAbs) " " quoteArg(calledGoal) "\n" Code[goal]
+      " --file " quoteArg(MakesurefileAbs) " " quoteArg(calledGoal)
 }
 
 function handleReachedIf(   i) {
