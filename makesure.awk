@@ -323,7 +323,7 @@ function handleDependsOn(depType,   i) {
 
 function registerDependsOn(goalName,depType,   i,dep) {
   for (i = 2; i <= NF; i++) {
-    if ("@args" == (dep = $i)) { # TODO
+    if ("@args" == (dep = $i)) {
       if (i != 3)
         addError("@args only allowed at position 3")
       DependencyArgsL[goalName, DependenciesCnt[goalName] - 1] = Line0

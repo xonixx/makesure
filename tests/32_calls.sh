@@ -26,9 +26,3 @@
 
 @goal gg @glob '11_goal_glob*.txt'
 @calls b
-
-@goal pg @params A B
-  echo "pg body: $A $B"
-
-@goal c
-@calls pg @args 'a_val' 'b_val'

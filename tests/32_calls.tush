@@ -80,7 +80,9 @@ $ ./$MAKESURE -f tests/32_calls.sh gg
 |   goal 'gg' [empty].
 
 === parameterized goals ===
-$ ./$MAKESURE -f tests/32_calls.sh c
+$ ./$MAKESURE -f tests/32_calls_pg.sh c
 |   goal 'c' ...
+|   goal 'pg@a_val@b_val' ...
+| pg body: a_val b_val
 |   goal 'pg@a_val@b_val' ...
 | pg body: a_val b_val
