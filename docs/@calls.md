@@ -51,7 +51,7 @@ Should be relatively easy. Don't see any good reason against.
 
 Answer: yes.
 
-## [ ] Do we allow `@calls goal_name @args 'arg'`?
+## [x] Do we allow `@calls goal_name @args 'arg'`?
 
 Let's allow. The goal will be instantiated the same way as for `@depends_on`
 
