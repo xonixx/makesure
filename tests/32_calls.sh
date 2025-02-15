@@ -26,3 +26,11 @@
 
 @goal gg @glob '11_goal_glob*.txt'
 @calls b
+
+@goal a1
+  echo 'A1'
+@goal a2
+  echo 'A2'
+
+@goal aa
+@calls a1 a2
