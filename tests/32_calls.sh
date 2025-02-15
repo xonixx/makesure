@@ -34,3 +34,11 @@
 
 @goal aa
 @calls a1 a2
+
+@goal g1
+  echo 'g1'
+@goal g2
+  echo 'g2'
+@goal ggg
+@calls g1 g1
+@depends_on g2

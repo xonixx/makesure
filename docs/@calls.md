@@ -12,13 +12,15 @@ For consistency with `@depends_on` and for better declarativity let's use `@call
 @calls b
 ```
 
-## [ ] Do we allow both `@calls` and `@depends_on` on the same level?
+## [x] Do we allow both `@calls` and `@depends_on` on the same level?
                           
 ```shell
 @goal a
 @calls b
 @depends_on c
 ```
+
+Answer: yes, why not. But we need to make clear in the docs the semantics. Dependencies will run BEFORE calls.
 
 ## [x] Detect loops
 
