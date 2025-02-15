@@ -346,8 +346,7 @@ function prepareCalls(   g,cnt,i,x,toDel,codeCalls) {
     cnt = DependenciesCnt[g]
     codeCalls = ""
     for (i = 0; i < cnt; i++) {
-      x = g SUBSEP i
-      if ("C" == DependencyType[x]) {
+      if ("C" == DependencyType[x = g SUBSEP i]) {
         toDel[x]
         codeCalls = addL(codeCalls, renderCalls(Dependencies[x]))
       }
@@ -363,15 +362,13 @@ function deleteCallDeps(toDell,   g,cnt,newCnt,i,x,newX) {
     cnt = DependenciesCnt[g]
     newCnt = 0
     for (i = 0; i < cnt; i++) {
-      x = g SUBSEP i
-      if (x in toDell) {
+      if ((x = g SUBSEP i) in toDell) {
         delete Dependencies[x]
         delete DependenciesLineNo[x]
         delete DependencyType[x]
         delete DependencyArgsL[x]
       } else {
-        newX = g SUBSEP newCnt++
-        Dependencies[newX] = Dependencies[x]
+        Dependencies[newX = g SUBSEP newCnt++] = Dependencies[x]
         DependenciesLineNo[newX] = DependenciesLineNo[x]
         DependencyType[newX] = DependencyType[x]
         DependencyArgsL[newX] = DependencyArgsL[x]
