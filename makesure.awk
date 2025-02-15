@@ -15,8 +15,8 @@ BEGIN {
   delete GoalParams    # g,paramI -> param name
   delete CodePre       # g -> pre-body (should also go before lib)
   delete Code          # g -> body
-  delete Vars            # k  -> "val"
-  delete DefineOverrides # k  -> ""
+  delete Vars            # k  -> "val" // @define
+  delete DefineOverrides # k  -> ""    // what is passed via --define
   delete Dependencies       # g,depI -> dep goal
   delete DependencyType     # g,depI -> type (D=@depend_on|C=@calls)
   delete DependenciesLineNo # g,depI -> line no.
@@ -382,12 +382,14 @@ function deleteCallDeps(toDell,   g,cnt,newCnt,i,x,newX) {
 }
 
 # renders the makesure invocation line of code
-function renderCalls(calledGoal) {
+function renderCalls(calledGoal,   k,defines) {
+  for (k in Vars)
+    defines = defines " --define " k "=" quoteArg(Vars[k])
   return quoteArg(ProgAbs)\
       ("silent" in Options ? " --silent" : "")\
       ("timing" in Options ? " --timing --timing-skip-total" : "")\
       ("tracing" in Options ? " --tracing" : "")\
-      " --file " quoteArg(MakesurefileAbs) " " quoteArg(calledGoal)
+      " --file " quoteArg(MakesurefileAbs) " " quoteArg(calledGoal) defines
 }
 
 function handleReachedIf(   i) {

@@ -112,7 +112,7 @@ For `-s` and `-x` it's easy - just replicate.
 For `-t` it's trickier, probably we need to find a way to suppress the total time for called goals. 
 - **Solution.** Let's use a special internal `--timing-skip-total` CLI option
 
-## [ ] the `@define` inheritance
+## [x] the `@define` inheritance
 
 Since we implement this in terms of running the external `./makesure` we need to repeat the variables passed via `-D`.
 
