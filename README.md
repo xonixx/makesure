@@ -568,6 +568,86 @@ Running `./makesure a` will show
 There is a loop in goal dependencies via a -> c
 ```
 
+### @calls
+
+Only valid: inside `@goal`.
+                 
+Syntax:
+```
+@calls goal1 [ goal2 [ goal3 [...] ] ]
+```
+Imperative (non-declarative) counterpart of [@depends_on](#depends_on).
+
+The need for `@calls` may not be obvious, but the use-case is presented [here](https://github.com/xonixx/makesure/issues/171). 
+
+Differences to `@depends_on`:
+- `@calls` doesn't favor run-once semantics
+- `@calls` defers the `@reached_if` processing of a goal being called to the invocation time (`@depens_on` calculates all `@reached_if` conditions at start) 
+
+Operationally `@calls` desugars to a nested `makesure` invocation:
+
+```shell
+@goal a
+  echo a
+  
+@goal b
+@calls a
+```
+desugars to 
+```shell
+@goal a
+  echo a
+  
+@goal b
+  ./makesure a # actual command passes other arguments (for --file, --define, etc.)
+```
+
+Example `Makesurefile`:
+
+```sh
+@goal a
+  echo a
+  
+@goal b
+@calls a
+@calls a
+```
+
+Running `./makesure b` will show
+ 
+```
+  goal 'b' ...
+  goal 'a' ...
+a
+  goal 'a' ...
+a
+```
+
+You can declare multiple `@calls` targets for a goal:
+
+```sh
+@goal a
+@calls b c d
+```
+
+Circular dependency (both `@depends_on` and `@calls` considered) will cause an error:
+
+```sh
+@goal a
+@depends_on b
+
+@goal b
+@calls c
+
+@goal c
+@calls a
+```
+
+Running `./makesure a` will show
+```
+There is a loop in goal dependencies via a -> c
+```
+
 ### @reached_if
 
 Only valid: inside `@goal`.
