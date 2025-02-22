@@ -648,6 +648,43 @@ Running `./makesure a` will show
 There is a loop in goal dependencies via a -> c
 ```
 
+You can use `@calls` to invoke a [parameterized goal](#parameterized-goal):
+
+```shell
+@goal hello @params WHO
+  echo "Hello $WHO!"
+
+@goal a
+@calls hello @args 'world'
+@calls hello @args 'hacker'
+```
+
+Running `./makesure a` will show
+```
+  goal 'a' ...
+  goal 'hello@world' ...
+Hello world!
+  goal 'hello@hacker' ...
+Hello hacker!
+```
+
+You can mix `@calls` and `@depends_on` but please note, that _depended-on_ goal will be invoked before the _called_ one.
+So this is valid:
+
+```shell
+@goal a
+@calls b
+@depends_on c
+```
+but you better write it as:
+```shell
+@goal a
+@depends_on c
+@calls b
+```
+ 
+You can find more information on how the directive interacts with the other directives in [docs/@calls.md](docs/@calls.md).
+
 ### @reached_if
 
 Only valid: inside `@goal`.

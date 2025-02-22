@@ -20,6 +20,13 @@ For consistency with `@depends_on` and for better declarativity let's use `@call
 @depends_on c
 ```
 
+We could but the execution model would be this (`@depends_on` goes first):
+```shell
+@goal a
+@depends_on c
+"$MAKESURE" b
+```
+
 Answer: yes, why not. But we need to make clear in the docs the semantics. Dependencies will run BEFORE calls.
 
 ## [x] Detect loops
@@ -31,15 +38,6 @@ Answer: yes, why not. But we need to make clear in the docs the semantics. Depen
 @goal b
 @depends_on a
 ```
-
-We could but the execution model would be this (`@depends_on` goes first):
-```shell
-@goal a
-@depends_on c
-"$MAKESURE" b
-```
-
-Answer: No, should result in error in the first iteration.
 
 ## [x] Do we allow both `@calls` and non-empty goal body?
 
