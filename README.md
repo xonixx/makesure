@@ -578,7 +578,7 @@ Syntax:
 ```
 Imperative (non-declarative) counterpart of [@depends_on](#depends_on).
 
-The need for `@calls` may not be obvious, but the use-case is presented [here](https://github.com/xonixx/makesure/issues/171). 
+The need for `@calls` may be not obvious, but the use-case is presented [here](https://github.com/xonixx/makesure/issues/171). 
 
 Differences to `@depends_on`:
 - `@calls` doesn't favor run-once semantics
@@ -683,7 +683,7 @@ but you better write it as:
 @calls b
 ```
  
-You can find more information on how the directive interacts with the other directives in [docs/@calls.md](docs/@calls.md).
+You can find more information on how the directive interacts with the other directives in [@calls.md](docs/@calls.md).
 
 ### @reached_if
 
