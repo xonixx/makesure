@@ -73,7 +73,7 @@ Answer: interpolation rules should apply the same as for `@depends_on`, i.e. all
 
 Maybe, but let's do the easiest for the first iteration
 
-## [ ] How do we output the dependency tree (`-d`,`--resolved`)
+## [x] How do we output the dependency tree (`-d`,`--resolved`)
 
 In the first iteration let's not generate a subtree. 
 

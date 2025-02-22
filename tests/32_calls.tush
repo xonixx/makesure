@@ -115,4 +115,11 @@ $ ./$MAKESURE -f tests/32_calls.sh ggg
 |   goal 'g1' ...
 | g1
 
+=== --resolved ===
+it was decided we don't display any information for the @calls for now
+
+$ ./$MAKESURE -f tests/32_calls.sh ggg --resolved
+| Resolved goals to reach for 'ggg':
+|   g2
+|   ggg
 
