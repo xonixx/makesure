@@ -123,3 +123,15 @@ $ ./$MAKESURE -f tests/32_calls.sh ggg --resolved
 |   g2
 |   ggg
 
+=== invalid scenarios ===
+$ ./$MAKESURE -f tests/32_calls_invalid_usage.sh -l
+@ Only use @calls in @goal:
+@ tests/32_calls_invalid_usage.sh:2: @calls a
+@ Only use @calls in @goal:
+@ tests/32_calls_invalid_usage.sh:11: @calls a
+@ Goal 'b' has unknown dependency 'undefined':
+@ tests/32_calls_invalid_usage.sh:8: @calls undefined
+? 1
+
+
+
