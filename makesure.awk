@@ -10,30 +10,33 @@ BEGIN {
   delete ArgGoals # invoked goals
   delete Options
   delete GoalNames     # list
-  delete GoalsByName   # name -> private
-  delete GoalParamsCnt # name -> params cnt
-  delete GoalParams    # name,paramI -> param name
-  delete CodePre       # name -> pre-body (should also go before lib)
-  delete Code          # name -> body
-  delete Vars            # k -> "val"
-  delete DefineOverrides # k -> ""
-  delete Dependencies       # name,depI -> dep goal
-  delete DependenciesLineNo # name,depI -> line no.
-  delete DependenciesCnt    # name      -> dep cnt
-  delete DependencyArgsL    # name,depI  -> initial $0, but only when it's @depends_on with @args
-  delete Doc       # name -> doc str
-  delete ReachedIf # name -> condition line
-  GlobCnt = 0         # count of files for glob
+  delete GoalsByName   # g -> private
+  delete GoalParamsCnt # g -> params cnt
+  delete GoalParams    # g,paramI -> param name
+  delete CodePre       # g -> pre-body (should also go before lib)
+  delete Code          # g -> body
+  delete Vars            # k  -> "val" // @define
+  delete DefineOverrides # k  -> ""    // what is passed via --define
+  delete Dependencies       # g,depI -> dep goal
+  delete DependencyType     # g,depI -> type (D=@depend_on|C=@calls)
+  delete DependenciesLineNo # g,depI -> line no.
+  delete DependenciesCnt    # g      -> dep cnt
+  delete DependencyArgsL    # g,depI -> initial $0, but only when it's @depends_on with @args
+  delete Doc       # g -> doc str
+  delete ReachedIf # g -> condition line
+  GlobCnt = 0      # count of files for glob
   GlobGoalName = ""
   delete GlobFiles # list
   delete LibNames  # list
-  delete Lib       # name -> code
-  delete UseLibLineNo# name -> line no.
-  delete GoalToLib # goal name -> lib name
+  delete Lib         # g -> code
+  delete UseLibLineNo# g -> line no.
+  delete GoalToLib   # g -> lib name
   delete EMPTY
   Mode = "prelude" # prelude|define|goal|goal_glob|lib
   srand()
   prepareArgs()
+  ProgAbs = "" # absolute path to makesure executable
+  MakesurefileAbs = "" # absolute path to Makesurefile being called
   MyDirScript = "cd " quoteArg(getMyDir(ARGV[1]))
   Error = ""
   makesure()
@@ -48,7 +51,8 @@ function makesure(   i) {
     else if ("@shell" == $1) handleShell()
     else if ("@goal" == $1) { if ("@glob" == $2 || "@glob" == $3) handleGoalGlob(); else handleGoal() }
     else if ("@doc" == $1) handleDoc()
-    else if ("@depends_on" == $1) handleDependsOn()
+    else if ("@depends_on" == $1) handleDependsOn("D")
+    else if ("@calls" == $1) handleDependsOn("C")
     else if ("@reached_if" == $1) handleReachedIf()
     else if ("@lib" == $1) handleLib()
     else if ("@use_lib" == $1) handleUseLib()
@@ -112,6 +116,8 @@ function prepareArgs(   i,arg) {
     Options["tracing"]
   if ("-t" in Args || "--timing" in Args)
     Options["timing"]
+  if ("--timing-skip-total" in Args)
+    Options["timing-skip-total"]
 }
 
 function splitKV(arg, kv,   n) {
@@ -180,7 +186,7 @@ function handleUseLib(   i) {
 
   if ("goal" == Mode)
     registerUseLib(currentGoalName())
-  else
+  else # glob
     for (i = 0; i < GlobCnt; i++)
       registerUseLib(globGoal(i))
 }
@@ -270,7 +276,7 @@ function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax,
       for (j = 0; j in globPgParams; j++)
         GoalParams[globAllGoal, GoalParamsCnt[globAllGoal]++] = globPgParams[j]
       for (i = 0; i < GlobCnt; i++) {
-        registerDependency(globAllGoal, globGoal(i))
+        registerDependency(globAllGoal, globGoal(i), "D")
         if (arrLen(globPgParams)) {
           l = "@depends_on x @params"
           for (j = 0; j in globPgParams; j++)
@@ -302,20 +308,20 @@ function registerDoc(goalName) {
   Doc[goalName] = trim($0)
 }
 
-function handleDependsOn(   i) {
+function handleDependsOn(depType,   i) {
   checkGoalOnly()
 
   if (NF < 2)
     addError("Provide at least one dependency")
 
   if ("goal" == Mode)
-    registerDependsOn(currentGoalName())
+    registerDependsOn(currentGoalName(), depType)
   else
     for (i = 0; i < GlobCnt; i++)
-      registerDependsOn(globGoal(i))
+      registerDependsOn(globGoal(i), depType)
 }
 
-function registerDependsOn(goalName,   i,dep) {
+function registerDependsOn(goalName,depType,   i,dep) {
   for (i = 2; i <= NF; i++) {
     if ("@args" == (dep = $i)) {
       if (i != 3)
@@ -323,13 +329,64 @@ function registerDependsOn(goalName,   i,dep) {
       DependencyArgsL[goalName, DependenciesCnt[goalName] - 1] = Line0
       break
     } else
-      registerDependency(goalName, dep)
+      registerDependency(goalName, dep, depType)
   }
 }
 
-function registerDependency(goalName, depGoalName,   x) {
+function registerDependency(goalName, depGoalName, depType,   x) {
   Dependencies[x = goalName SUBSEP DependenciesCnt[goalName]++] = depGoalName
+  DependencyType[x] = depType
   DependenciesLineNo[x] = NR
+}
+
+# replaces all C-dependencies (@calls) by the code line to invoke makesure
+function prepareCalls(   g,cnt,i,x,toDel,codeCalls) {
+  delete toDel
+  for (g in DependenciesCnt) {
+    cnt = DependenciesCnt[g]
+    codeCalls = ""
+    for (i = 0; i < cnt; i++) {
+      if ("C" == DependencyType[x = g SUBSEP i]) {
+        toDel[x]
+        codeCalls = addL(codeCalls, renderCalls(Dependencies[x]))
+      }
+    }
+    Code[g] = addL(codeCalls,Code[g])
+  }
+  deleteCallDeps(toDel)
+}
+
+# not only we need to delete the index, but also to re-number
+function deleteCallDeps(toDell,   g,cnt,newCnt,i,x,newX) {
+  for (g in DependenciesCnt) {
+    cnt = DependenciesCnt[g]
+    newCnt = 0
+    for (i = 0; i < cnt; i++) {
+      if ((x = g SUBSEP i) in toDell) {
+        delete Dependencies[x]
+        delete DependenciesLineNo[x]
+        delete DependencyType[x]
+        delete DependencyArgsL[x]
+      } else {
+        Dependencies[newX = g SUBSEP newCnt++] = Dependencies[x]
+        DependenciesLineNo[newX] = DependenciesLineNo[x]
+        DependencyType[newX] = DependencyType[x]
+        DependencyArgsL[newX] = DependencyArgsL[x]
+      }
+    }
+    DependenciesCnt[g] = newCnt
+  }
+}
+
+# renders the makesure invocation line of code
+function renderCalls(calledGoal,   k,defines) {
+  for (k in Vars)
+    defines = defines " --define " k "=" quoteArg(Vars[k])
+  return quoteArg(ProgAbs)\
+      ("silent" in Options ? " --silent" : "")\
+      ("timing" in Options ? " --timing --timing-skip-total" : "")\
+      ("tracing" in Options ? " --tracing" : "")\
+      " --file " quoteArg(MakesurefileAbs) " " quoteArg(calledGoal) defines
 }
 
 function handleReachedIf(   i) {
@@ -358,6 +415,7 @@ function trimDirective() {
   sub(/^[ \t]*@[a-z_]+/, "")
 }
 
+# cheks for unknown dependencies / libs
 function checkBeforeRun(   i,j,dep,depCnt,goalName) {
   for (i = 0; i in GoalNames; i++) {
     depCnt = DependenciesCnt[goalName = GoalNames[i]]
@@ -395,6 +453,8 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
   if (arrLen(GoalNames)) topologicalSort(0, GoalNames)
 
   instantiateGoals()
+
+  prepareCalls()
 
   if (Error)
     die(Error)
@@ -468,7 +528,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode, t0,t1,t2, goalTimed, list) {
         if (exitCode != 0)
           break
       }
-      if (timingOn())
+      if (timingOn() && !("timing-skip-total" in Options))
         print "  total time " renderDuration((t2 ? t2 : currentTimeMillis()) - t0)
       if (exitCode != 0)
         realExit(exitCode)
@@ -549,8 +609,14 @@ function shellExec(script, comment,   res) {
   return res
 }
 
-function getMyDir(makesurefilePath) {
-  return executeGetLine("cd \"$(dirname " quoteArg(makesurefilePath) ")\";pwd")
+function getMyDir(makesurefilePath,   script,myDir,p,m,baseName) {
+  script = "echo \"$(basename "(m = quoteArg(makesurefilePath))")\";echo \"$(cd \"$(dirname "(p = quoteArg(Prog))")\" && pwd)/$(basename "p")\";cd \"$(dirname " m ")\";pwd"
+  script | getline baseName
+  script | getline ProgAbs
+  script | getline myDir
+  closeErr(script)
+  MakesurefileAbs = myDir "/" baseName
+  return myDir
 }
 
 function handleCodeLine(line) {
@@ -952,6 +1018,7 @@ function reparseCli(   res,i,err) {
     }
   return 1
 }
+# bash-friendly (non-POSIX-compatible) quoting
 function quote2(s,force) {
   if (index(s, "'")) {
     gsub(/\\/, "\\\\", s)
@@ -978,6 +1045,7 @@ function commandExists(cmd) { return ok("command -v " cmd " >/dev/null") }
 function ok(cmd) { return system(cmd) == 0 }
 function isFile(path) { return ok("test -f " quoteArg(path)) }
 function rm(f) { system("rm " quoteArg(f)) }
+# POSIX-compatible quoting
 function quoteArg(a) { gsub("'", "'\\''", a); return "'" a "'" }
 function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s }
 function copyKey(keySrc,keyDst,arr) { if (keySrc in arr) arr[keyDst] = arr[keySrc] }
