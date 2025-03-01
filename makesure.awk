@@ -33,6 +33,7 @@ BEGIN {
   delete GoalToLib   # g -> lib name
   delete EMPTY
   Mode = "prelude" # prelude|define|goal|goal_glob|lib
+  CodeStarted = 0  # first non-blank and non-comment code line went for a goal
   srand()
   prepareArgs()
   ProgAbs = "" # absolute path to makesure executable
@@ -201,6 +202,7 @@ function registerUseLib(goalName) {
 
 function handleGoal(   i,goalName) {
   started("goal")
+  CodeStarted = 0
   if (registerGoal(parsePriv(), goalName = $2))
     if ("@params" == $3) {
       if (3 == NF) addError("missing parameters")
@@ -250,6 +252,7 @@ function parsePriv() {
 
 function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax,gi,j,l,globPgParams) {
   started("goal_glob")
+  CodeStarted = 0
   priv = parsePriv()
   if ("@glob" == (goalName = $2)) {
     goalName = ""; pattern = $(nfMax = 3)
@@ -561,7 +564,7 @@ function topologicalSort(includeReachedIf,requestedGoals,result,reachedGoals,   
 function isCodeAllowed() { return "goal" == Mode || "goal_glob" == Mode || "lib" == Mode }
 function isPrelude() { return "prelude" == Mode }
 function checkPreludeOnly() { if (!isPrelude()) addError("Only use " $1 " in prelude") }
-function checkGoalOnly() { if ("goal" != Mode && "goal_glob" != Mode) addError("Only use " $1 " in @goal") }
+function checkGoalOnly() { if ("goal" != Mode && "goal_glob" != Mode || CodeStarted) addError("Only use " $1 " in @goal") }
 function currentGoalName() { return arrLast(GoalNames) }
 function currentLibName() { return arrLast(LibNames) }
 
@@ -623,8 +626,10 @@ function handleCodeLine(line) {
   if (!isCodeAllowed() && line !~ /^[ \t]*#/ && trim(line) != "") {
     if (!ShellInPreludeErrorShown++)
       addError("Shell code is not allowed outside goals/libs")
-  } else
+  } else {
     addCodeLine(line)
+    CodeStarted = CodeStarted || (line = trim(line)) != "" && line !~ /^#/
+  }
 }
 
 function addCodeLine(line,   goalName, name, i) {
