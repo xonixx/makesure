@@ -1,2 +1,11 @@
 
-$ ./$MAKESURE -f tests/33_issue_183_directives_order.sh -l
+$ ./$MAKESURE -f tests/33_issue_183_directives_order_ok.sh b
+|   goal 'a' ...
+| a
+|   goal 'b' ...
+| b
+
+$ ./$MAKESURE -f tests/33_issue_183_directives_order.sh b
+@ Only use @depends_on in @goal:
+@ tests/33_issue_183_directives_order.sh:6: @depends_on a # should be disallowed in this position
+? 1
