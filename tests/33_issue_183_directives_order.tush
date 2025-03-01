@@ -8,4 +8,8 @@ $ ./$MAKESURE -f tests/33_issue_183_directives_order_ok.sh b
 $ ./$MAKESURE -f tests/33_issue_183_directives_order.sh b
 @ Only use @depends_on in @goal:
 @ tests/33_issue_183_directives_order.sh:6: @depends_on a # should be disallowed in this position
+@ Only use @reached_if in @goal:
+@ tests/33_issue_183_directives_order.sh:12: @reached_if true # should be disallowed in this position
+@ Only use @doc in @goal:
+@ tests/33_issue_183_directives_order.sh:17: @doc 'doc' # should be disallowed in this position
 ? 1

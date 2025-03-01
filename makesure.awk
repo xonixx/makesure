@@ -628,7 +628,7 @@ function handleCodeLine(line) {
       addError("Shell code is not allowed outside goals/libs")
   } else {
     addCodeLine(line)
-    CodeStarted = (line = trim(line)) != "" && line !~ /^#/
+    CodeStarted = CodeStarted || (line = trim(line)) != "" && line !~ /^#/
   }
 }
 
