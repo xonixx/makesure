@@ -344,7 +344,6 @@ function registerDependency(goalName, depGoalName, depType,   x) {
 
 # replaces all C-dependencies (@calls) by the code line to invoke makesure
 function prepareCalls(   g,cnt,i,x,toDel,codeCalls) {
-  delete toDel
   for (g in DependenciesCnt) {
     cnt = DependenciesCnt[g]
     codeCalls = ""

@@ -250,7 +250,6 @@ function registerDependency(goalName,depGoalName,depType,x){
  DependencyType[x]=depType
  DependenciesLineNo[x]=NR}
 function prepareCalls(g,cnt,i,x,toDel,codeCalls){
- delete toDel
  for(g in DependenciesCnt){
   cnt=DependenciesCnt[g]
   codeCalls=""
