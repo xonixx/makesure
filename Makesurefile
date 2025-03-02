@@ -205,7 +205,8 @@
     # We use `makesure_awk`, not `AWK` because otherwise it clashes with `AWK` set for tests.
     # The same we can't just use `A` because it can clash with external config variable that user might want to use.
     # Since in Posix sh there is no way to declare local var, let's just make names more specific.
-    echo "if command -v gawk >/dev/null;then makesure_awk='gawk -ltime -v Gawk=1';makesure_pre='';else makesure_awk=awk;makesure_pre='function gettimeofday(){}';fi"
+    # We exclude Gawk 5.2.x for now (https://github.com/xonixx/makesure/issues/173)
+    echo "if command -v gawk >/dev/null && gawk 'BEGIN { exit PROCINFO[\"version\"] ~ /^5\.2/ }';then makesure_awk='gawk -ltime -v Gawk=1';makesure_pre='';else makesure_awk=awk;makesure_pre='function gettimeofday(){}';fi"
     echo 'exec $makesure_awk -v "Version='$NEXT_VERSION'" -v "Prog=$0" "$makesure_pre"'\'
     $AWK -f minify.awk makesure.awk
     echo \'' Makesurefile "$@"'
