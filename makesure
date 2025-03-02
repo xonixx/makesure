@@ -1,6 +1,6 @@
 #!/bin/sh
-if command -v gawk >/dev/null;then makesure_awk='gawk -ltime -v Gawk=1';makesure_pre='';else makesure_awk=awk;makesure_pre='function gettimeofday(){}';fi
-exec $makesure_awk -v "Version=0.9.23" -v "Prog=$0" "$makesure_pre"'
+if command -v gawk >/dev/null && gawk 'BEGIN { exit PROCINFO["version"] ~ /^5\.2/ }';then makesure_awk='gawk -ltime -v Gawk=1';makesure_pre='';else makesure_awk=awk;makesure_pre='function gettimeofday(){}';fi
+exec $makesure_awk -v "Version=0.9.24" -v "Prog=$0" "$makesure_pre"'
 BEGIN {
  Shell="bash"
  SupportedShells["bash"]
@@ -11,9 +11,12 @@ BEGIN {
  GlobCnt=0
  GlobGoalName=""
  Mode="prelude"
+ CodeStarted=0
  srand()
  prepareArgs()
- MyDirScript="MYDIR="quoteArg(getMyDir(ARGV[1]))";export MYDIR;cd \"$MYDIR\""
+ ProgAbs=""
+ MakesurefileAbs=""
+ MyDirScript="cd "quoteArg(getMyDir(ARGV[1]))
  Error=""
  makesure()}
 function makesure(i){
@@ -25,7 +28,8 @@ function makesure(i){
   else if("@shell"==$1)handleShell()
   else if("@goal"==$1){if("@glob"==$2||"@glob"==$3)handleGoalGlob();else handleGoal()}
   else if("@doc"==$1)handleDoc()
-  else if("@depends_on"==$1)handleDependsOn()
+  else if("@depends_on"==$1)handleDependsOn("D")
+  else if("@calls"==$1)handleDependsOn("C")
   else if("@reached_if"==$1)handleReachedIf()
   else if("@lib"==$1)handleLib()
   else if("@use_lib"==$1)handleUseLib()
@@ -81,7 +85,9 @@ function prepareArgs(i,arg){
  if("-x"in Args||"--tracing"in Args)
   Options["tracing"]
  if("-t"in Args||"--timing"in Args)
-  Options["timing"]}
+  Options["timing"]
+ if("--timing-skip-total"in Args)
+  Options["timing-skip-total"]}
 function splitKV(arg,kv,n){
  n=index(arg,"=")
  kv[0]=trim(substr(arg,1,n-1))
@@ -136,6 +142,7 @@ function registerUseLib(goalName){
  UseLibLineNo[goalName]=NR}
 function handleGoal(i,goalName){
  started("goal")
+ CodeStarted=0
  if(registerGoal(parsePriv(),goalName=$2))
   if("@params"==$3){
    if(3==NF)addError("missing parameters")
@@ -174,6 +181,7 @@ function parsePriv(){
  return 1}
 function handleGoalGlob(goalName,globAllGoal,globSingle,priv,i,pattern,nfMax,gi,j,l,globPgParams){
  started("goal_glob")
+ CodeStarted=0
  priv=parsePriv()
  if("@glob"==(goalName=$2)){
   goalName="";pattern=$(nfMax=3)
@@ -199,7 +207,7 @@ function handleGoalGlob(goalName,globAllGoal,globSingle,priv,i,pattern,nfMax,gi,
    for(j=0;j in globPgParams;j++)
     GoalParams[globAllGoal,GoalParamsCnt[globAllGoal]++]=globPgParams[j]
    for(i=0;i<GlobCnt;i++){
-    registerDependency(globAllGoal,globGoal(i))
+    registerDependency(globAllGoal,globGoal(i),"D")
     if(arrLen(globPgParams)){
      l="@depends_on x @params"
      for(j=0;j in globPgParams;j++)
@@ -219,16 +227,16 @@ function registerDoc(goalName){
   addError("Multiple @doc not allowed for a goal")
  $1=""
  Doc[goalName]=trim($0)}
-function handleDependsOn(i){
+function handleDependsOn(depType,i){
  checkGoalOnly()
  if(NF<2)
   addError("Provide at least one dependency")
  if("goal"==Mode)
-  registerDependsOn(currentGoalName())
+  registerDependsOn(currentGoalName(),depType)
  else
   for(i=0;i<GlobCnt;i++)
-   registerDependsOn(globGoal(i))}
-function registerDependsOn(goalName,i,dep){
+   registerDependsOn(globGoal(i),depType)}
+function registerDependsOn(goalName,depType,i,dep){
  for(i=2;i<=NF;i++){
   if("@args"==(dep=$i)){
    if(i!=3)
@@ -236,10 +244,46 @@ function registerDependsOn(goalName,i,dep){
    DependencyArgsL[goalName,DependenciesCnt[goalName]-1]=Line0
    break
   }else
-   registerDependency(goalName,dep)}}
-function registerDependency(goalName,depGoalName,x){
+   registerDependency(goalName,dep,depType)}}
+function registerDependency(goalName,depGoalName,depType,x){
  Dependencies[x=goalName SUBSEP DependenciesCnt[goalName]++]=depGoalName
+ DependencyType[x]=depType
  DependenciesLineNo[x]=NR}
+function prepareCalls(g,cnt,i,x,toDel,codeCalls){
+ delete toDel
+ for(g in DependenciesCnt){
+  cnt=DependenciesCnt[g]
+  codeCalls=""
+  for(i=0;i<cnt;i++){
+   if("C"==DependencyType[x=g SUBSEP i]){
+    toDel[x]
+    codeCalls=addL(codeCalls,renderCalls(Dependencies[x]))}}
+  Code[g]=addL(codeCalls,Code[g])}
+ deleteCallDeps(toDel)}
+function deleteCallDeps(toDell,g,cnt,newCnt,i,x,newX){
+ for(g in DependenciesCnt){
+  cnt=DependenciesCnt[g]
+  newCnt=0
+  for(i=0;i<cnt;i++){
+   if((x=g SUBSEP i)in toDell){
+    delete Dependencies[x]
+    delete DependenciesLineNo[x]
+    delete DependencyType[x]
+    delete DependencyArgsL[x]
+   }else {
+    Dependencies[newX=g SUBSEP newCnt++]=Dependencies[x]
+    DependenciesLineNo[newX]=DependenciesLineNo[x]
+    DependencyType[newX]=DependencyType[x]
+    DependencyArgsL[newX]=DependencyArgsL[x]}}
+  DependenciesCnt[g]=newCnt}}
+function renderCalls(calledGoal,k,defines){
+ for(k in Vars)
+  defines=defines" --define "k"="quoteArg(Vars[k])
+ return quoteArg(ProgAbs)\
+   ("silent"in Options?" --silent":"")\
+   ("timing"in Options?" --timing --timing-skip-total":"")\
+   ("tracing"in Options?" --tracing":"")\
+" --file "quoteArg(MakesurefileAbs)" "quoteArg(calledGoal)defines}
 function handleReachedIf(i){
  checkGoalOnly()
  if("goal"==Mode)
@@ -276,6 +320,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode,t0,t1,t2,goalTimed,list){
  checkBeforeRun()
  if(arrLen(GoalNames))topologicalSort(0,GoalNames)
  instantiateGoals()
+ prepareCalls()
  if(Error)
   die(Error)
  list="-l"in Args||"--list"in Args
@@ -335,7 +380,7 @@ body,goalBody,goalBodies,resolvedGoals,exitCode,t0,t1,t2,goalTimed,list){
      print"  goal "quote2(goalName,1)" took "renderDuration(t2-t1)}
     if(exitCode!=0)
      break}
-   if(timingOn())
+   if(timingOn()&&!("timing-skip-total"in Options))
     print"  total time "renderDuration((t2?t2:currentTimeMillis())-t0)
    if(exitCode!=0)
     realExit(exitCode)}}}
@@ -356,7 +401,7 @@ function topologicalSort(includeReachedIf,requestedGoals,result,reachedGoals,i,j
 function isCodeAllowed(){return"goal"==Mode||"goal_glob"==Mode||"lib"==Mode}
 function isPrelude(){return"prelude"==Mode}
 function checkPreludeOnly(){if(!isPrelude())addError("Only use "$1" in prelude")}
-function checkGoalOnly(){if("goal"!=Mode&&"goal_glob"!=Mode)addError("Only use "$1" in @goal")}
+function checkGoalOnly(){if("goal"!=Mode&&"goal_glob"!=Mode||CodeStarted)addError("Only use "$1" in @goal")}
 function currentGoalName(){return arrLast(GoalNames)}
 function currentLibName(){return arrLast(LibNames)}
 function realExit(code){
@@ -386,14 +431,21 @@ function shellExec(script,comment,res){
  script="trap '\''exit 7'\'' INT;"script
  res=system(script)
  return res}
-function getMyDir(makesurefilePath){
- return executeGetLine("cd \"$(dirname "quoteArg(makesurefilePath)")\";pwd")}
+function getMyDir(makesurefilePath,script,myDir,p,m,baseName){
+ script="echo \"$(basename "(m=quoteArg(makesurefilePath))")\";echo \"$(cd \"$(dirname "(p=quoteArg(Prog))")\"&&pwd)/$(basename "p")\";cd \"$(dirname "m")\";pwd"
+ script|getline baseName
+ script|getline ProgAbs
+ script|getline myDir
+ closeErr(script)
+ MakesurefileAbs=myDir"/"baseName
+ return myDir}
 function handleCodeLine(line){
  if(!isCodeAllowed()&&line!~/^[ \t]*#/&&trim(line)!=""){
   if(!ShellInPreludeErrorShown++)
    addError("Shell code is not allowed outside goals/libs")
- }else
-  addCodeLine(line)}
+ }else {
+  addCodeLine(line)
+  CodeStarted=CodeStarted||(line=trim(line))!=""&&line!~/^#/}}
 function addCodeLine(line,goalName,name,i){
  if("lib"==Mode){
   name=currentLibName()
@@ -493,26 +545,41 @@ function currentTimeMillis(res){
  res=executeGetLine("date +%s%3N")
  sub(/%?3N/,"000",res)
  return +res}
-function selfUpdate(tmp,err,newVer,line,sha){
- tmp=executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX")
- err=dl("https://github.com/xonixx/makesure/commits/main",tmp)
- if(!err){
-  while(getline line<tmp){
-   if(match(line,/\/xonixx\/makesure\/commit\/[0-9a-z]+/)){
-    sha=substr(line=substr(line,RSTART,RLENGTH),25)
-    break}}
-  if(!sha)err="unable to get the latest commit"
-  if(!err){
-   err=dl("https://raw.githubusercontent.com/xonixx/makesure/"sha"/makesure",tmp)
-   if(!err&&!ok("chmod +x "tmp))err="can'\''t chmod +x "tmp
-   if(!err){
-    newVer=executeGetLine(tmp" -v")
-    if(Version!=newVer){
-     if(!ok("cp "tmp" "quoteArg(Prog)))
+function incVersion(ver,arr){
+ split(ver,arr,".")
+ arr[3]++
+ return arr[1]"."arr[2]"."arr[3]}
+function selfUpdate(tmp,err,newVer,line,good,i,found){
+ good=(tmp=executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX"))"_good"
+ newVer=Version
+ for(;;){
+  if(i++==10){
+   err="infinite loop"
+   break}
+  newVer=incVersion(newVer)
+  if(err=dl("https://raw.githubusercontent.com/xonixx/makesure/v"newVer"/makesure",tmp))
+   break
+  close(tmp)
+  if((getline line<tmp)<=0){
+   err="can'\''t check the dl result"
+   break}
+  if(line~/^404/){
+   if(found){
+    if(!err&&!ok("chmod +x "good))err="can'\''t chmod +x "good
+    if(!err){
+     newVer=executeGetLine(good" -v")
+     if(!ok("cp "good" "quoteArg(Prog)))
       err="can'\''t overwrite "Prog
-     else print"updated "Version" -> "newVer
-    }else print"you have latest version "Version" installed"}}}
+     else
+      print"updated "Version" -> "newVer}
+   }else print"you have latest version "Version" installed"
+   break}
+  found=1
+  if(!ok("cp "tmp" "good)){
+   err="can'\''t cp"
+   break}}
  rm(tmp)
+ if(found)rm(good)
  if(err)die(err"\nPlease use manual update: https://makesure.dev/Installation.html")}
 function renderDuration(deltaMillis,\
  deltaSec,deltaMin,deltaHr,deltaDay,dayS,hrS,minS,secS,secSI,res){
@@ -548,11 +615,11 @@ function executeGetLine(script,res){
  closeErr(script)
  return res}
 function closeErr(script){if(close(script)!=0)die("Error executing: "script)}
-function dl(url,dest,verbose){
+function dl(url,dest,verbose,exCode){
  verbose="VERBOSE"in ENVIRON
  if(commandExists("wget")){
-  if(!ok("wget "(verbose?"":"-q")" "quoteArg(url)" -O"quoteArg(dest)))
-   return"error with wget"
+  if((exCode=system("wget "(verbose?"":"-q")" "quoteArg(url)" -O"quoteArg(dest)" --content-on-error"))!=0&&exCode!=8)
+   return"error with wget: "exCode
  }else if(commandExists("curl")){
   if(!ok("curl "(verbose?"":"-s")" "quoteArg(url)" -o "quoteArg(dest)))
    return"error with curl"

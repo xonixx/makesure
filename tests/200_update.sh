@@ -26,21 +26,26 @@
 
 @lib
   function prepare_makesure() {
-    awk -v X="$(cd ..; pwd)" '/AWK_DIR=/{ $0 = "AWK_DIR=" X } 1' "../$MAKESURE" > "$D/$MAKESURE"
+    local ver="$1"
+    awk -v X="$(cd ..; pwd)" \
+        -v ver="$ver" \
+     '
+     { gsub(/-v "Version=[^"]+"/, "-v \"Version="ver"\"") }
+     /AWK_DIR=/{ $0 = "AWK_DIR=" X } 1
+     ' "../$MAKESURE" > "$D/$MAKESURE"
+#    cat "$D/$MAKESURE"
     chmod +x "$D/$MAKESURE"
   }
   function run_selfupdate() {
     export PATH="$D"
 
-    prepare_makesure
-    export NEXT_VERSION=0.9.22 # TODO calc by subtracting 1
+    prepare_makesure 0.9.22 # TODO calc by subtracting 1
     "$D/$MAKESURE" --version
     echo 'selfupdate 1'
     "$D/$MAKESURE" --selfupdate
 
     local latestVersion="$("$D/$MAKESURE" --version)"
-    prepare_makesure
-    export NEXT_VERSION="$latestVersion"
+    prepare_makesure "$latestVersion"
     echo 'selfupdate 2'
     "$D/$MAKESURE" --selfupdate
     "$D/$MAKESURE" --version

@@ -6,7 +6,8 @@ in_begin && $1 ~ /^delete/{ next }
 { minifyLine() }
 
 function minifyLine(   l,subs) {
-  if (!/"#"/ && !/\*#\// && !/\*\(#/) gsub("[ \t\r\n]*#.*$", "")
+  # not: "#" | #/
+  if (!/"#"/ && !/#\//) gsub("[ \t\r\n]*#.*$", "")
   gsub(/ == /, "==")
   gsub(/ = /, "=")
   gsub(/ != /, "!=")

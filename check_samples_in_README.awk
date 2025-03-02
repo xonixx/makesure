@@ -53,8 +53,10 @@ function fixSample() {
     Sample = "@goal g\n" Sample
   } else if (Sample ~ /@depends_on goal_name @args/) {
     Sample = "@goal goal_name @params A B C\n" Sample
-  } else if (Sample ~ /@depends_on goal1 goal2 goal3/) {
+  } else if (Sample ~ /@(depends_on|calls) goal1 goal2 goal3/) {
     Sample = "@goal goal1\n@goal goal2\n@goal goal3\n@goal goal\n" Sample
+  } else if (Sample ~ /@calls b/) {
+    Sample = "@goal b\n@goal c\n@goal d\n" Sample
   }
 }
 
