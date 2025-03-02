@@ -1,3 +1,9 @@
+## v0.9.24
+
+- Implemented [@calls](https://makesure.dev/Directives-@calls.html) directive [#171](https://github.com/xonixx/makesure/issues/171)
+- Fix `--selfupdate` [#174](https://github.com/xonixx/makesure/issues/174)
+- Fixes and improvements.
+
 ## v0.9.23
 
 - Allow glob to be interpolated string to facilitate reuse [#165](https://github.com/xonixx/makesure/issues/165)

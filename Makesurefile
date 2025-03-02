@@ -508,12 +508,14 @@ done
 
 # === Documentation site ===
 @goal deploy_site
+@doc 'deploys makesure.dev'
   HOST='xonix@server.maximullaris.com'
   DEST="$HOST":/var/www/makesure
 
   rsync -aP build/ "$DEST/"
 
 @goal site_compile
+@doc 'compiles makesure mdbook'
 @depends_on site_soft_installed
   rm -rf book; mkdir book; awk -f "$MDBOOKER" README.md
   "$MDBOOK" build
