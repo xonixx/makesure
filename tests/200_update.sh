@@ -39,7 +39,7 @@
   function run_selfupdate() {
     export PATH="$D"
 
-    prepare_makesure 0.9.22 # TODO calc by subtracting 1
+    prepare_makesure 0.9.23 # TODO calc by subtracting 1
     "$D/$MAKESURE" --version
     echo 'selfupdate 1'
     "$D/$MAKESURE" --selfupdate
