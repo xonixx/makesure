@@ -102,7 +102,8 @@ function prepareArgs(   i,arg) {
     print Version
     realExit(0)
   } else if ("-U" in Args || "--selfupdate" in Args) {
-    selfUpdate()
+    if (err = selfUpdate())
+      die(err "\nPlease use manual update: https://makesure.dev/Installation.html")
     realExit(0)
   }
   if (!isFile(ARGV[1])) {
@@ -789,51 +790,37 @@ function currentTimeMillis(   res) {
   sub(/%?3N/, "000", res) # if date doesn't support %N (macos?) just use second-precision
   return +res
 }
-function incVersion(ver,   arr) {
-  split(ver, arr, ".")
-  arr[3]++
-  return arr[1]"."arr[2]"."arr[3]
+function selfUpdate(   err,tmp) {
+  tmp = executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX")
+  err = _selfUpdate(tmp)
+  rm(tmp)
+  return err
 }
-function selfUpdate(   tmp, err, newVer,line,good,i,found) {
-  # Idea: We know current version v0.9.X. We will try next version v0.9.(X+1), v0.9.(X+2), etc. till it's not 404
-  good = (tmp = executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX"))"_good"
-  newVer = Version
-  for (; ;) {
-    if (i++ == 10) { # try max 10 versions up to prevent a possibility of infinite loop
-      err = "infinite loop"
-      break
-    }
-    # probe next version
-    newVer = incVersion(newVer)
-    if (err = dl("https://raw.githubusercontent.com/xonixx/makesure/v" newVer "/makesure", tmp))
-      break
-    close(tmp)
-    if ((getline line < tmp) <= 0) {
-      err = "can't check the dl result"
-      break
-    }
-    if (line ~ /^404/) {
-      if (found) {
-        if (!err && !ok("chmod +x " good)) err = "can't chmod +x " good
-        if (!err) {
-          newVer = executeGetLine(good " -v")
-          if (!ok("cp " good " " quoteArg(Prog)))
-            err = "can't overwrite " Prog
-          else
-            print "updated " Version " -> " newVer
-        }
-      } else print "you have latest version " Version " installed"
-      break
-    }
-    found = 1
-    if (!ok("cp " tmp " " good)) {
-      err = "can't cp"
+function _selfUpdate(tmp,   err,newVer,line) {
+  if (err = dl("https://api.github.com/repos/xonixx/makesure/releases/latest", tmp))
+    return "failed to retrieve the latest version: " err
+  while (getline line < tmp) {
+    if (match(line, /"tag_name": *"/) && match(line = substr(line, RSTART+RLENGTH), /[^"]+/)) {
+      newVer = substr(line, RSTART+1, RLENGTH-1) # +1 strips the v tag prefix
       break
     }
   }
-  rm(tmp)
-  if (found) rm(good)
-  if (err) die(err "\nPlease use manual update: https://makesure.dev/Installation.html")
+  close(tmp)
+  if (!newVer)
+    return "failed to parse the latest version"
+  if (newVer == Version) {
+    print "you have latest version " Version " installed"
+    return
+  }
+  # reuse the file used for storing the API response
+  if (err = dl("https://raw.githubusercontent.com/xonixx/makesure/v" newVer "/makesure", tmp))
+    return "failed to download the latest version: " err
+  if (!ok("chmod +x " tmp))
+    return "can't chmod +x " tmp
+  if (!ok("cp " tmp " " quoteArg(Prog)))
+    return "can't overwrite " Prog
+  else
+    print "updated " Version " -> " newVer
 }
 
 function renderDuration(deltaMillis,\
@@ -885,10 +872,10 @@ function closeErr(script) { if (close(script) != 0) die("Error executing: " scri
 function dl(url, dest,    verbose,exCode) {
   verbose = "VERBOSE" in ENVIRON
   if (commandExists("wget")) {
-    if ((exCode = system("wget " (verbose ? "" : "-q") " " quoteArg(url) " -O" quoteArg(dest) " --content-on-error")) != 0 && exCode != 8) # 404 gives 8, but it's OK for us since we need the content
+    if ((exCode = system("wget " (verbose ? "" : "-q") " " quoteArg(url) " -O" quoteArg(dest) " --content-on-error")) != 0)
       return "error with wget: " exCode
   } else if (commandExists("curl")) {
-    if (!ok("curl " (verbose ? "" : "-s") " " quoteArg(url) " -o " quoteArg(dest)))
+    if (!ok("curl " (verbose ? "" : "-s") " " quoteArg(url) " -o " quoteArg(dest) " --fail-with-body"))
       return "error with curl"
   } else return "wget/curl not found"
 }

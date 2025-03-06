@@ -5,7 +5,7 @@ $ { ./$MAKESURE -f tests/200_update.sh test_err; echo 'exit_code '$?; } | awk '/
 | VER
 | selfupdate 1
 |   goal 'test_err' failed
-@ wget/curl not found
+@ failed to retrieve the latest version: wget/curl not found
 @ Please use manual update: https://makesure.dev/Installation.html
 ? 1
 
