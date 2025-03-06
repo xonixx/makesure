@@ -586,7 +586,7 @@ Differences to `@depends_on`:
 
 Operationally `@calls` desugars to a nested `makesure` invocation:
 
-```shell
+```sh
 @goal a
   echo a
   
@@ -594,7 +594,7 @@ Operationally `@calls` desugars to a nested `makesure` invocation:
 @calls a
 ```
 desugars to 
-```shell
+```sh
 @goal a
   echo a
   
@@ -650,7 +650,7 @@ There is a loop in goal dependencies via a -> c
 
 You can use `@calls` to invoke a [parameterized goal](#parameterized-goal):
 
-```shell
+```sh
 @goal hello @params WHO
   echo "Hello $WHO!"
 
@@ -671,13 +671,13 @@ Hello hacker!
 You can mix `@calls` and `@depends_on` but please note, that _depended-on_ goal will be invoked before the _called_ one.
 So this is valid:
 
-```shell
+```sh
 @goal a
 @calls b
 @depends_on c
 ```
 but you better write it as:
-```shell
+```sh
 @goal a
 @depends_on c
 @calls b
