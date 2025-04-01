@@ -507,7 +507,7 @@ do
 done
 
 # === Documentation site ===
-@goal deploy_site
+@goal site_deploy
 @doc 'deploys makesure.dev'
   HOST='xonix@server.maximullaris.com'
   DEST="$HOST":/var/www/makesure
@@ -518,8 +518,15 @@ done
 @doc 'compiles makesure mdbook'
 @depends_on site_soft_installed
   rm -rf book; mkdir book; awk -f "$MDBOOKER" README.md
+  {
+    echo '# Changelog'
+    cat CHANGELOG.md
+  } > book/CHANGELOG.md
+  echo '- [Changelog](CHANGELOG.md)' >> book/SUMMARY.md
   "$MDBOOK" build
   "$MDBOOK_LINKCHECK" -s # check broken links
+  echo "--- Result: ---"
+  echo "$(pwd)/build/index.html"
 
 @goal site_soft_installed @private
 @depends_on mdbook_installed
