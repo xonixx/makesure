@@ -41,4 +41,4 @@ NR>1 { sub(/^ +/,"",$1); print $1 }
 ')" -- "$cur"))
 }
 
-complete -F _makesure_completions -o bashdefault -o default ./makesure ../makesure
+complete -F _makesure_completions -o bashdefault -o default makesure
