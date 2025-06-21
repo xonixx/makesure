@@ -22,7 +22,8 @@ _makesure_completions() {
       fi
   done
 
-  COMPREPLY=($(compgen -W "$(./makesure --file "$makesurefile" -la | awk -F: '
+  local exe="${COMP_WORDS[0]}"
+  COMPREPLY=($(compgen -W "$("$exe" --file "$makesurefile" -la | awk -F: '
 BEGIN {
   print "-f --file"
   print "-l --list"
@@ -40,4 +41,4 @@ NR>1 { sub(/^ +/,"",$1); print $1 }
 ')" -- "$cur"))
 }
 
-complete -F _makesure_completions -o bashdefault -o default ./makesure
+complete -F _makesure_completions -o bashdefault -o default ./makesure ../makesure

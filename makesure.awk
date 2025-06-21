@@ -353,7 +353,7 @@ function prepareCalls(   g,cnt,i,x,toDel,codeCalls) {
         codeCalls = addL(codeCalls, renderCalls(Dependencies[x]))
       }
     }
-    Code[g] = addL(codeCalls,Code[g])
+    Code[g] = addL(codeCalls, Code[g])
   }
   deleteCallDeps(toDel)
 }
@@ -798,7 +798,7 @@ function selfUpdate(   tmp, err, newVer,line,good,i,found) {
   # Idea: We know current version v0.9.X. We will try next version v0.9.(X+1), v0.9.(X+2), etc. till it's not 404
   good = (tmp = executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX"))"_good"
   newVer = Version
-  for (; ;) {
+  for (;;) {
     if (i++ == 10) { # try max 10 versions up to prevent a possibility of infinite loop
       err = "infinite loop"
       break
@@ -936,7 +936,7 @@ function swap(data, i, j,   temp) {
 ## res - 0-based
 ## returns error if any
 function parseCli_2(line, vars, vars2, res,   pos,c,c1,isDoll,q,var,inDef,defVal,val,w,i) {
-  for (pos = 1; ;) {
+  for (pos = 1;;) {
     while ((c = substr(line, pos, 1)) == " " || c == "\t") pos++ # consume spaces
     if (c == "#" || c == "")
       return

@@ -9,7 +9,7 @@ jobs:
     name: "Tests *nix / all awks"
     runs-on: ${{ matrix.os }}
     strategy:
-      matrix:
+      matrix: # https://github.com/actions/runner-images
         os: [ ubuntu-20.04, ubuntu-22.04, ubuntu-24.04, macos-13, macos-14, macos-15 ]
     steps:
       - uses: actions/checkout@v3
