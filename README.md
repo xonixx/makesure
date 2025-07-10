@@ -7,7 +7,7 @@
 
 Simple task/command runner inspired by `make` with declarative goals and dependencies.
 
-The simplest way to think of this tool is to have a way to have "shortcuts" (aka goals) to some pieces of scripts. This way allows to call them easily without the need to call long shell one-liners instead.
+The simplest way to think of this tool is to have a way to have "shortcuts" (aka goals) to some pieces of scripts. This way allows calling them easily without the need to call long shell one-liners instead.
 
 Example `Makesurefile`:
 
@@ -37,7 +37,7 @@ Now to run the whole build you just issue `./makesure` command in a folder with 
 
 You can as well call single goal explicitly, example `./makesure built`. 
 
-Also pay attention to `@reached_if` directive. This one allows skipping goal if it's already satisfied. This allows to speedup subsequent executions.
+Also pay attention to `@reached_if` directive. This one allows skipping goal if it's already satisfied. This allows speeding up subsequent executions.
 
 By default, all scripts inside goals are executed with `bash`. If you want to use `sh` just add `@shell sh` directive at start of the `Makesurefile`.  
 
@@ -45,9 +45,9 @@ By default, all scripts inside goals are executed with `bash`. If you want to us
 
 - [Zero-install](#installation)
 - [Very portable](#os)
-- Very simple, only bare minimum of truly needed features. You don’t need to learn a whole new programming language to use the tool! Literally it’s goals + dependencies + handful of directives + bash/shell.
+- Very simple, only bare minimum of truly necessary features. You don’t need to learn a whole new programming language to use the tool! Literally it’s goals + dependencies + handful of directives + bash/shell.
 - Much saner and simpler `make` analog.
-- A bunch of useful built-in facilities: timing the goal's execution, listing goals in a build file, a [means](#reached_if) to speed-up repeated builds.
+- A bunch of useful built-in facilities: timing the goal's execution, listing goals in a build file, a [means](#reached_if) to speed up repeated builds.
 - The syntax of a build file is also a [valid bash/shell](Makesurefile) (though semantics is different). This can to some extent be in use for editing in IDE.
 
 ## Usage
@@ -110,10 +110,10 @@ Updates `makesure` executable to latest available version in-place:
 - Build file uses [directives](#directives).
 - Build file consists of a set of goals.
 - A [goal](#goal) is a labeled piece of shell.
-- A goal can declare [dependencies](#depends_on) on other goals. During execution each referenced dependency will run only once despite the number of occurrences in dependency tree. Dependencies will run in proper sequence according to the inferred topological order. Dependency loops will be reported as error.
+- A goal can declare [dependencies](#depends_on) on other goals. During execution each referenced dependency will run only once despite the number of occurrences in a dependency tree. Dependencies will run in proper sequence according to the inferred topological order. Dependency loops will be reported as error.
 - Goal bodies are executed in separate shell invocations. It means, you can’t easily pass variables from one goal to another. This is done on purpose to enforce declarative style.
 - By default, goals are run with `bash`. You can change to `sh` with `@shell sh` directive specified before all goals.
-- For convenience in all shell invocations the current directory is automatically set to the one of `Makesurefile`. Typically, this is the root of the project. This allows using relative paths without bothering of the way the build is run.
+- For convenience in all shell invocations the current directory is automatically set to the one of `Makesurefile`. Typically, this is the root of the project. This allows using relative paths without bothering about the way the build is run.
 - Goal can declare `@reached_if` directive ([link](#reached_if)). This allows skipping goal execution if it's already satisfied.
 
 ## Directives
@@ -127,7 +127,7 @@ Valid options: `timing`, `tracing`, `silent`
 ```
 @options timing
 ```
-Will measure and log each goal execution time + total time.
+Will measure and log each goal execution time and total time.
 
 Example `Makesurefile`:
 ```sh
@@ -183,7 +183,7 @@ This directive is valid [in any place](tests/24_define_everywhere.sh) in `Makesu
 
 Variable defined with `@define` can be overridden with a variable passed in invocation via `-D` parameter. 
 
-Overall the precedence for variables resolution is (higher priority top):
+Overall, the precedence for variable resolution is (higher priority top):
 
 - `./makesure -D VAR=1`
 - `@define VAR 2` in `Makesurefile`
@@ -197,7 +197,7 @@ The precedence priorities are designed like this on purpose, to prevent accident
 @define VAR2 "${VAR_NAME:-default_value}"  # if need the default value when not set  
 ```
 
-This allows to use environment variables `VAR`, `ENV_VAR`, and `VAR_NAME` to set the value of `VAR`, `VAR1` and `VAR2`. 
+This allows using environment variables `VAR`, `ENV_VAR`, and `VAR_NAME` to set the value of `VAR`, `VAR1` and `VAR2`. 
 
 Please note, the parser of `makesure` is somewhat stricter here than shell's one:
 ```sh
@@ -303,11 +303,11 @@ as equivalent for
 @depends_on b.txt 
 ```
 
-So essentially one glob goal declaration expands to multiple goal declarations based on files present in project that match the glob pattern. Shell glob expansion mechanism applies. 
+So essentially, one glob goal declaration expands to multiple goal declarations based on files present in a project that match the glob pattern. Shell glob expansion mechanism applies. 
 
 The useful use case here would be to represent a set of test files as a set of goals. The example could be found in the project's own [build file](https://github.com/xonixx/makesure/blob/3be738d771bf855b5a6d3cd08cbc38dc977bed76/Makesurefile#L91).
 
-Why this may be useful? Imagine in your nodejs application you have `test1.js`, `test2.js`, `test3.js`.
+Why may this be useful? Imagine in your Node.js application you have `test1.js`, `test2.js`, `test3.js`.
 Now you can use this `Makesurefile`
 
 ```sh
@@ -423,7 +423,7 @@ Also, it's possible for a `@glob` goal [to be parameterized](https://github.com/
 
 Please find a more real-world example [here](https://github.com/xonixx/fhtagn/blob/e7161f92731c13b5afbc09c7d738c1ff4882906f/Makesurefile#L70).
 
-For more technical consideration regarding this feature see [parameterized_goals.md](docs/parameterized_goals.md).
+For more technical consideration regarding this feature, see [parameterized_goals.md](docs/parameterized_goals.md).
 
 #### Naming rules
 
@@ -447,7 +447,7 @@ Available goals:
   usual_name
 ```
 
-Note, how goal names are already escaped in output. This is to make it easier for you to call it directly:
+Note how goal names are already escaped in output. This is to make it easier for you to call it directly:
 ```sh
 ./makesure $'name that contains \' single quote'
 ```
@@ -498,7 +498,7 @@ Syntax:
 ```
 @depends_on goal1 [ goal2 [ goal3 [...] ] ]
 ```
-Declares a dependency on other goal. 
+Declares a dependency on another goal. 
 
 Example `Makesurefile`:
 
@@ -683,7 +683,7 @@ but you better write it as:
 @calls b
 ```
  
-You can find more information on how the directive interacts with the other directives in [@calls.md](docs/@calls.md).
+You can find more information on how the directive interacts with other directives in [@calls.md](docs/@calls.md).
 
 ### @reached_if
 
@@ -694,7 +694,7 @@ Syntax:
 @reached_if <condition>
 ```
 
-Allows skipping goal execution if it's already satisfied. This allows to speedup subsequent executions. Only one per goal allowed. The goal will be considered fulfilled (and thus will not run) if `condition` executed as a shell script returns exit code `0`. Any `condition` evaluation is done only once.
+Allows skipping goal execution if it's already satisfied. This allows speeding up subsequent executions. Only one per goal allowed. The goal will be considered fulfilled (and thus will not run) if `condition` executed as a shell script returns exit code `0`. Any `condition` evaluation is done only once.
 
 Example `Makesurefile`:
 
@@ -727,7 +727,7 @@ Syntax:
 @lib [ lib_name ]
 ```
 
-Helps with code reuse. Occasionally you need to run similar code in multiple goals. The most obvious approach would be to place a code into `shared.sh` and invoke it in both goals. The downside is that now you need an additional file(s) and the build file is no more self-contained. `@lib` to the resque!
+Helps with code reuse. Occasionally, you need to run similar code in multiple goals. The most obvious approach would be to place a code into `shared.sh` and invoke it in both goals. The downside is that now you need an additional file(s) and the build file is no more self-contained. `@lib` to the resque!
 
 The usage is simple:
 
@@ -787,7 +787,7 @@ echo 'Please reopen the shell to activate completion.'
 - There should be one way to do the thing.
 - Overall [Zen of Python](https://www.python.org/dev/peps/pep-0020/#the-zen-of-python).
 - Think hard before adding new feature. Think of a damage it could cause used improperly. Think of cognitive complexity it introduces. Only add a feature generic enough to cover lots of useful cases instead of just some corner cases. Let's better have a list of recipes for the latter.
-- Do not introduce unjustified complexity. User should not be forced to learn a whole new programming language to work with a tool. Instead, the tool is based on limited set of simple concepts, like goals + dependencies + handful of directives + familiar shell language (bash/sh).
+- Do not introduce unjustified complexity. User should not be forced to learn a whole new programming language to work with a tool. Instead, the tool is based on a limited set of simple concepts, like goals + dependencies + handful of directives + familiar shell language (bash/sh).
 - [Worse is better](https://en.wikipedia.org/wiki/Worse_is_better).
 - [Principle of least surprise](https://en.wikipedia.org/wiki/Principle_of_least_astonishment).
 - Tests coverage is a must.
