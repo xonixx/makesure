@@ -1,0 +1,21 @@
+
+$ ./$MAKESURE -f tests/34_glob_except.sh -l
+| Available goals:
+
+$ ./$MAKESURE -f tests/34_glob_except.sh -la
+| Available goals:
+
+$ ./$MAKESURE -f tests/34_glob_except.sh -d '11_goal_glob*.txt'
+| Resolved goals to reach for '34_glob_except*.txt':
+
+$ ./$MAKESURE -f tests/34_glob_except.sh '11_goal_glob*.txt'
+
+$ ./$MAKESURE -f tests/34_glob_except.sh test1
+
+$ ./$MAKESURE -f tests/34_glob_except.sh test2
+
+$ ./$MAKESURE -f tests/34_glob_except.sh glob_goal_name
+
+$ ./$MAKESURE -f tests/34_glob_except.sh glob_goal_name2
+
+$ ./$MAKESURE -f tests/34_glob_except.sh glob_goal_name3
