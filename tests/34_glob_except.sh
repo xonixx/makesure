@@ -6,7 +6,6 @@
 
 @goal test1
 @depends_on 11_goal_glob_1.txt
-@depends_on 11_goal_glob_2.txt
 @depends_on 11_goal_glob_3.txt
 
 @goal test2

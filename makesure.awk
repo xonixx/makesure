@@ -228,17 +228,29 @@ function registerGoal(priv, goalName) { # -> 1 if no errors, otherwise 0
   }
 }
 
-function globGoal(i) { return (GlobGoalName ? GlobGoalName "@" : "") GlobFiles[i] }
-function calcGlob(goalName, pattern,   script, file) {
-  GlobCnt = 0
-  GlobGoalName = goalName
-  delete GlobFiles
+function globScript(pattern,   script) {
   script = MyDirScript ";for f in " pattern ";do test -e \"$f\"&&echo \"$f\"||:;done"
   if ("sh" != Shell)
     script = Shell " -c " quoteArg(script)
+  return script
+}
+function globGoal(i) { return (GlobGoalName ? GlobGoalName "@" : "") GlobFiles[i] }
+function calcGlob(goalName, pattern, exceptPattern,   script, file,except) {
+  if (exceptPattern) {
+    script = globScript(exceptPattern)
+    while ((script | getline file) > 0)
+      except[file] = 1
+    closeErr(script)
+  }
+  GlobCnt = 0
+  GlobGoalName = goalName
+  delete GlobFiles
+  script = globScript(pattern)
   while ((script | getline file) > 0) {
-    GlobCnt++
-    arrPush(GlobFiles, file)
+    if (!except[file]) {
+      GlobCnt++
+      arrPush(GlobFiles, file)
+    }
   }
   closeErr(script)
   quicksort(GlobFiles, 0, arrLen(GlobFiles) - 1)
@@ -250,7 +262,7 @@ function parsePriv() {
   NF--
   return 1 }
 
-function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax,gi,j,l,globPgParams) {
+function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax,gi,j,l,globPgParams,exceptPattern) {
   started("goal_glob")
   CodeStarted = 0
   priv = parsePriv()
@@ -258,15 +270,19 @@ function handleGoalGlob(   goalName,globAllGoal,globSingle,priv,i,pattern,nfMax,
     goalName = ""; pattern = $(nfMax = 3)
   } else
     pattern = $(nfMax = 4)
-  if (NF > nfMax && "@params" != $(nfMax + 1))
-    addError("nothing or @params allowed after glob pattern")
+
+  if ("@except" == $(nfMax + 1))
+    exceptPattern = $(nfMax += 2)
+
+  if (NF > nfMax && "@params" != $(nfMax + 1) && "@except" != $(nfMax + 1))
+    addError("nothing or @params or @except allowed after glob pattern")
   else if (pattern == "")
     addError("absent glob pattern")
   else {
     if ("@params" == $(nfMax + 1))
       for (i = nfMax + 2; i <= NF; i++)
         arrPush(globPgParams, validateParamName($i))
-    calcGlob(goalName, pattern)
+    calcGlob(goalName, pattern, exceptPattern)
     globAllGoal = goalName ? goalName : pattern
     globSingle = GlobCnt == 1 && globAllGoal == globGoal(0)
     for (i = 0; i < GlobCnt; i++) {

@@ -1,21 +1,85 @@
 
 $ ./$MAKESURE -f tests/34_glob_except.sh -l
 | Available goals:
+|   '11_goal_glob*.txt' : test goal_glob
+|   test1
+|   test2
+|   glob_goal_name
+|   glob_goal_name2
+|   glob_goal_name3
 
 $ ./$MAKESURE -f tests/34_glob_except.sh -la
 | Available goals:
+|   11_goal_glob_1.txt  : test goal_glob
+|   11_goal_glob_3.txt  : test goal_glob
+|   11_goal_glob_10.txt : test goal_glob
+|   '11_goal_glob*.txt' : test goal_glob
+|   test1
+|   test2
+|   glob_goal_name@11_goal_glob_2.txt
+|   glob_goal_name@11_goal_glob_3.txt
+|   glob_goal_name@11_goal_glob_10.txt
+|   glob_goal_name
+|   glob_goal_name2@11_goal_glob_3.txt
+|   glob_goal_name2@11_goal_glob_10.txt
+|   glob_goal_name2
+|   glob_goal_name3@11_goal_glob_3.txt
+|   glob_goal_name3@11_goal_glob_10.txt
+|   glob_goal_name3
 
 $ ./$MAKESURE -f tests/34_glob_except.sh -d '11_goal_glob*.txt'
-| Resolved goals to reach for '34_glob_except*.txt':
+| Resolved goals to reach for '11_goal_glob*.txt':
+|   11_goal_glob_1.txt
+|   11_goal_glob_3.txt
+|   11_goal_glob_10.txt
 
 $ ./$MAKESURE -f tests/34_glob_except.sh '11_goal_glob*.txt'
+|   goal '11_goal_glob_1.txt' ...
+| 11_goal_glob_1.txt :: 0 :: 3
+| content 111
+|   goal '11_goal_glob_3.txt' ...
+| 11_goal_glob_3.txt :: 1 :: 3
+| content 333
+|   goal '11_goal_glob_10.txt' ...
+| 11_goal_glob_10.txt :: 2 :: 3
+| content 101010
+|   goal '11_goal_glob*.txt' [empty].
 
 $ ./$MAKESURE -f tests/34_glob_except.sh test1
+|   goal '11_goal_glob_1.txt' ...
+| 11_goal_glob_1.txt :: 0 :: 3
+| content 111
+|   goal '11_goal_glob_3.txt' ...
+| 11_goal_glob_3.txt :: 1 :: 3
+| content 333
+|   goal 'test1' [empty].
 
 $ ./$MAKESURE -f tests/34_glob_except.sh test2
+|   goal 'glob_goal_name@11_goal_glob_2.txt' ...
+| glob_goal_name ::: 11_goal_glob_2.txt :: 0 :: 3
+|   goal 'glob_goal_name@11_goal_glob_3.txt' ...
+| glob_goal_name ::: 11_goal_glob_3.txt :: 1 :: 3
+|   goal 'test2' [empty].
 
 $ ./$MAKESURE -f tests/34_glob_except.sh glob_goal_name
+|   goal 'glob_goal_name@11_goal_glob_2.txt' ...
+| glob_goal_name ::: 11_goal_glob_2.txt :: 0 :: 3
+|   goal 'glob_goal_name@11_goal_glob_3.txt' ...
+| glob_goal_name ::: 11_goal_glob_3.txt :: 1 :: 3
+|   goal 'glob_goal_name@11_goal_glob_10.txt' ...
+| glob_goal_name ::: 11_goal_glob_10.txt :: 2 :: 3
+|   goal 'glob_goal_name' [empty].
 
 $ ./$MAKESURE -f tests/34_glob_except.sh glob_goal_name2
+|   goal 'glob_goal_name2@11_goal_glob_3.txt' ...
+| glob_goal_name ::: 11_goal_glob_3.txt :: 0 :: 2
+|   goal 'glob_goal_name2@11_goal_glob_10.txt' ...
+| glob_goal_name ::: 11_goal_glob_10.txt :: 1 :: 2
+|   goal 'glob_goal_name2' [empty].
 
 $ ./$MAKESURE -f tests/34_glob_except.sh glob_goal_name3
+|   goal 'glob_goal_name3@11_goal_glob_3.txt' ...
+| glob_goal_name ::: 11_goal_glob_3.txt :: 0 :: 2
+|   goal 'glob_goal_name3@11_goal_glob_10.txt' ...
+| glob_goal_name ::: 11_goal_glob_10.txt :: 1 :: 2
+|   goal 'glob_goal_name3' [empty].
