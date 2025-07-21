@@ -24,7 +24,7 @@
 @goal b
   echo 'b body'
 
-@goal gg @glob '11_goal_glob*.txt'
+@goal gg @glob 'glob/file*.txt'
 @calls b
 
 @goal a1
