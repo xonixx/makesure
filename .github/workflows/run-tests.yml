@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix: # https://github.com/actions/runner-images
-        os: [ ubuntu-20.04, ubuntu-22.04, ubuntu-24.04, macos-13, macos-14, macos-15 ]
+        os: [ ubuntu-22.04, ubuntu-24.04, macos-13, macos-14, macos-15 ]
     steps:
       - uses: actions/checkout@v3
 
@@ -85,7 +85,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ windows-2019, windows-2022, windows-2025 ]
+        os: [ windows-2022, windows-2025 ]
     steps:
       - uses: actions/checkout@v3
 
