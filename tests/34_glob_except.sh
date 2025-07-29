@@ -20,3 +20,6 @@
 
 @goal glob_goal_name3 @glob 'glob/file*.txt' @except 'glob/file_1.txt glob/file_2.txt'
   echo "glob_goal_name ::: $ITEM :: $INDEX :: $TOTAL"
+
+@goal empty_glob @glob '*.txt' @except '*.txt'
+  echo 'XXX'

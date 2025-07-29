@@ -7,6 +7,7 @@ $ ./$MAKESURE -f tests/34_glob_except.sh -l
 |   glob_goal_name
 |   glob_goal_name2
 |   glob_goal_name3
+|   empty_glob
 
 $ ./$MAKESURE -f tests/34_glob_except.sh -la
 | Available goals:
@@ -26,6 +27,7 @@ $ ./$MAKESURE -f tests/34_glob_except.sh -la
 |   glob_goal_name3@glob/file_3.txt
 |   glob_goal_name3@glob/file_10.txt
 |   glob_goal_name3
+|   empty_glob
 
 $ ./$MAKESURE -f tests/34_glob_except.sh -d 'glob/file*.txt'
 | Resolved goals to reach for 'glob/file*.txt':
@@ -83,3 +85,6 @@ $ ./$MAKESURE -f tests/34_glob_except.sh glob_goal_name3
 |   goal 'glob_goal_name3@glob/file_10.txt' ...
 | glob_goal_name ::: glob/file_10.txt :: 1 :: 2
 |   goal 'glob_goal_name3' [empty].
+
+$ ./$MAKESURE -f tests/34_glob_except.sh empty_glob
+|   goal 'empty_glob' [empty].
