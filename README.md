@@ -256,7 +256,7 @@ Invoking `./makesure` without arguments will attempt to call the goal named `def
 
 #### Glob goal
 ```
-@goal [ goal_name ] @glob <glob pattern> [ @private ]
+@goal [ goal_name ] @glob <glob pattern> [ @except <except pattern> ] [ @private ]
 ```
 
 This one is easy to illustrate with an example:
@@ -319,6 +319,14 @@ Now you can use this `Makesurefile`
 to be able to run each test individually (`./makesure test2.js` for example) and all together (`./makesure 'test*.js'`).
 
 In case if you need to glob the files with spaces in their names, please check the [naming rules section](#naming-rules) below.
+
+`@except` modifier can be useful to exclude some files from the `@glob` coverage. Example:
+
+```sh
+@goal process @glob '*.txt' @except '*_processed.txt'
+  echo "processing $ITEM..."
+  mv "$ITEM" "${ITEM%.txt}_processed.txt"
+```
 
 #### Parameterized goal
 
