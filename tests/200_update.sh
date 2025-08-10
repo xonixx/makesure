@@ -39,7 +39,11 @@
   function run_selfupdate() {
     export PATH="$D"
 
-    prepare_makesure 0.9.23 # TODO calc by subtracting 1
+    local prevVer=$(../makesure -v)
+    # calc by subtracting 1
+    prevVer=$(awk -v prevVer="$prevVer" 'BEGIN { split(prevVer,parts,"."); print parts[1]"."parts[2]"."(--parts[3]) }')
+
+    prepare_makesure "$prevVer"
     "$D/$MAKESURE" --version
     echo 'selfupdate 1'
     "$D/$MAKESURE" --selfupdate
