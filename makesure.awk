@@ -618,7 +618,7 @@ function shellExec(script, comment,   res) {
 
   # This is hard to unit-test properly.
   # The issue with Ctrl-C only happens with Gawk 4.1.3.
-  # The manual test exists via `expect -f tests/manual_ctrl_c.expect.txt`
+  # The manual test exists via `expect -f tests/manual_ctrl_c.expect.tcl`
   script = "trap 'exit 7' INT;" script
 
   #print script
