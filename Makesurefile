@@ -8,6 +8,7 @@
 @define MDBOOK_VERSION 'v0.4.37'          # https://github.com/rust-lang/mdBook/releases
 @define MDBOOK_LINKCHECK_VERSION 'v0.7.7' # https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases
 @define MDBOOKER_VERSION '11572b1'        # https://github.com/xonixx/mdbooker/releases
+@define GAWK_LAST_VERSION '5.3.2'         # https://cgit.git.savannah.gnu.org/cgit/gawk.git
 
 @define GOAWK "goawk$GOAWK_VERSION"
 @define JUST "just$JUST_VERSION"
@@ -243,7 +244,7 @@
 @doc 'tests with all Gawk-s'
 @depends_on tested_gawk @args '5.1.1' 'gawk511'
 @depends_on tested_gawk @args '5.2.2' 'gawk522'
-@depends_on tested_gawk @args '5.3.0' 'gawk530'
+@depends_on tested_gawk @args "$GAWK_LAST_VERSION" "gawk$GAWK_LAST_VERSION"
 
 @goal tested_gawk @params VERSION EXE_NAME @private
 @depends_on installed_gawk @args VERSION EXE_NAME
