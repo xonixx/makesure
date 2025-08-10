@@ -1,3 +1,7 @@
+## v0.9.25
+
+- Implemented `@except` option for `@glob` directive [#189](https://github.com/xonixx/makesure/issues/189)
+
 ## v0.9.24
 
 - Implemented [@calls](https://makesure.dev/Directives-@calls.html) directive [#171](https://github.com/xonixx/makesure/issues/171)
