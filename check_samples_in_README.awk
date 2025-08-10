@@ -21,6 +21,7 @@ function fixLine() {
   sub(/\[ @private \]/,"@private")
   sub(/\[ goal_name \]/,"goal_name")
   sub(/\[ lib_name \]/,"lib_name")
+  sub(/\[ @except <except pattern> \]/,"@except '*.txt'")
   sub("<glob pattern>","'*.*'")
   sub("<condition>","true")
   sub(/\[ goal2 \[ goal3.+]/,"goal2 goal3\n")
