@@ -24,3 +24,14 @@ $ ./$MAKESURE -f tests/35_glob_depends_on.sh b2
 | a glob_test/2.txt
 | b2 glob_test/2.txt
 |   goal 'b2' [empty].
+
+$ ./$MAKESURE -f tests/35_glob_depends_on.sh b3
+|   goal 'glob_test/1.txt' ...
+| noname glob_test/1.txt
+|   goal 'b3@glob_test/1.txt' ...
+| b3 glob_test/1.txt
+|   goal 'glob_test/2.txt' ...
+| noname glob_test/2.txt
+|   goal 'b3@glob_test/2.txt' ...
+| b3 glob_test/2.txt
+|   goal 'b3' [empty].

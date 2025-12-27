@@ -10,3 +10,10 @@
 @calls a @item
 @calls a @item
   echo "b2 $ITEM"
+
+@goal @glob 'glob_test/*.txt'
+  echo "noname $ITEM"
+
+@goal b3 @glob 'glob_test/*.txt'
+@depends_on @item
+  echo "b3 $ITEM"
