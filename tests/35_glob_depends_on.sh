@@ -17,3 +17,8 @@
 @goal b3 @glob 'glob_test/*.txt'
 @depends_on @item
   echo "b3 $ITEM"
+
+@goal c @glob 'glob_test/*.txt'
+@depends_on b @item
+  echo "c $ITEM"
+
