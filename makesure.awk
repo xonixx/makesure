@@ -337,10 +337,14 @@ function handleDependsOn(depType,   i) {
     registerDependsOn(currentGoalName(), depType)
   else
     for (i = 0; i < GlobCnt; i++)
-      registerDependsOn(globGoal(i), depType)
+      registerDependsOn(globGoal(i), depType, GlobFiles[i])
 }
 
-function registerDependsOn(goalName,depType,   i,dep) {
+function registerDependsOn(goalName,depType,globFile,   i,dep) {
+  if ("@item" == $3) { # @depends_on g_name @item
+    registerDependency(goalName, $2 "@" globFile, depType)
+    return
+  }
   for (i = 2; i <= NF; i++) {
     if ("@args" == (dep = $i)) {
       if (i != 3)

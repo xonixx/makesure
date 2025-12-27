@@ -87,7 +87,7 @@ chmod +x makesure && echo "makesure $(./makesure -v) installed"
 
 ### Update
 
-Updates `makesure` executable to latest available version in-place:
+Updates `makesure` executable to the latest available version in-place:
 
 ```sh
 ./makesure -U
