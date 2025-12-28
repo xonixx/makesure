@@ -342,11 +342,12 @@ function handleDependsOn(depType,   i) {
 
 function registerDependsOn(goalName,depType,globFile,   i,dep) {
   # TODO validation
-  if ("@item" == $2) { # @depends_on @item
-    registerDependency(goalName, globFile, depType)
-    return
-  } else if ("@item" == $3) { # @depends_on g_name @item
-    registerDependency(goalName, $2 "@" globFile, depType)
+  if ("@item" == $2) { # @depends_on @item [a b c]
+    if (2 == NF) # @depends_on @item
+      registerDependency(goalName, globFile, depType)
+    else
+      for (i = 3; i <= NF; i++)
+        registerDependency(goalName, $i "@" globFile, depType)
     return
   }
   for (i = 2; i <= NF; i++) {
