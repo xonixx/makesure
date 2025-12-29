@@ -342,11 +342,14 @@ function handleDependsOn(depType,   i) {
 
 function registerDependsOn(goalName,depType,globFile,   i,dep) {
   if ("@item" == $2) { # @depends_on @item [a b c]
-    if (2 == NF) # @depends_on @item
-      registerDependency(goalName, globFile, depType)
+    if (!globFile)
+      addError("Only use @item inside @goal @glob")
     else
-      for (i = 3; i <= NF; i++)
-        registerDependency(goalName, $i "@" globFile, depType)
+      if (2 == NF) # @depends_on @item
+        registerDependency(goalName, globFile, depType)
+      else
+        for (i = 3; i <= NF; i++)
+          registerDependency(goalName, $i "@" globFile, depType)
     return
   }
   for (i = 2; i <= NF; i++) {

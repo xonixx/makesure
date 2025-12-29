@@ -6,4 +6,5 @@
 @depends_on @item a # not all deps are covered by a
   echo "b $ITEM"
 
-
+@goal notglob
+@depends_on @item a
