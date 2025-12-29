@@ -328,6 +328,30 @@ In case if you need to glob the files with spaces in their names, please check t
   mv "$ITEM" "${ITEM%.txt}_processed.txt"
 ```
 
+You can make one glob goal depend on another glob goal using `@depends_on @item [glob_goal1 glob_goal2 ...]` syntax:
+
+```sh
+@goal processed @glob 'files/*'
+  echo "processing $ITEM..."
+
+@goal uploaded @glob 'files/*'
+@depends_on @item processed
+  echo "uploading $ITEM..."
+```
+
+Running `./makesure uploaded` will show:
+```
+  goal 'processed@files/1.csv' ...
+processing files/1.csv...
+  goal 'uploaded@files/1.csv' ...
+uploading files/1.csv...
+  goal 'processed@files/2.csv' ...
+processing files/2.csv...
+  goal 'uploaded@files/2.csv' ...
+uploading files/2.csv...
+  goal 'uploaded' [empty].
+```
+
 #### Parameterized goal
 
 Make code easier to reuse.
