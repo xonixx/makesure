@@ -80,3 +80,8 @@ $ ./$MAKESURE -f tests/35_glob_depends_on.sh e
 |   goal 'e@glob_test/2.txt' ...
 | e glob_test/2.txt
 |   goal 'e' [empty].
+
+$ ./$MAKESURE -f tests/35_glob_depends_on_err.sh b
+@ Goal 'b@glob_test/2.txt' has unknown dependency 'a@glob_test/2.txt':
+@ tests/35_glob_depends_on_err.sh:6: @depends_on @item a # not all deps are covered by a
+? 1
