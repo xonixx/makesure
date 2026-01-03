@@ -1,3 +1,7 @@
+## v0.9.26
+
+- Implement dependency on glob goals [#172](https://github.com/xonixx/makesure/issues/172)
+
 ## v0.9.25
 
 - Implemented `@except` option for `@glob` directive [#189](https://github.com/xonixx/makesure/issues/189)
