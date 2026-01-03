@@ -319,6 +319,8 @@ Now you can use this `Makesurefile`
 to be able to run each test individually (`./makesure test2.js` for example) and all together (`./makesure 'test*.js'`).
 
 In case if you need to glob the files with spaces in their names, please check the [naming rules section](#naming-rules) below.
+        
+#### Glob exclusions
 
 `@except` modifier can be useful to exclude some files from the `@glob` coverage. Example:
 
@@ -327,8 +329,14 @@ In case if you need to glob the files with spaces in their names, please check t
   echo "processing $ITEM..."
   mv "$ITEM" "${ITEM%.txt}_processed.txt"
 ```
+     
+#### Depending on other glob goals
 
-You can make one glob goal depend on another glob goal using `@depends_on @item [glob_goal1 glob_goal2 ...]` syntax:
+You can make one glob goal depend on another glob goal using `@depends_on @item [glob_goal1 glob_goal2 ...]` syntax.
+
+This way the dependency goal will be invoked for the same implicit `$ITEM`.
+
+Example:
 
 ```sh
 @goal processed @glob 'files/*'
