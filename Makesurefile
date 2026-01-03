@@ -331,7 +331,7 @@
     cd "soft"
 
     G=gawk-$VERSION.tar.gz
-    dlUrl="http://git.savannah.gnu.org/cgit/gawk.git/snapshot/$G"
+    dlUrl="https://ftp.gnu.org/gnu/gawk/$G"
     dlFolder="gawk-$VERSION"
 #    if [[ $VERSION == '5.1.1' ]]
 #    then
