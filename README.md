@@ -54,7 +54,7 @@ By default, all scripts inside goals are executed with `bash`. If you want to us
 
 ```
 $ ./makesure -h
-makesure ver. 0.9.25
+makesure ver. 0.9.26
 Usage: makesure [options...] [-f buildfile] [goals...]
  -f,--file buildfile
                  set buildfile to use (default Makesurefile)
@@ -76,12 +76,12 @@ Usage: makesure [options...] [-f buildfile] [goals...]
 Since `makesure` is a tiny utility represented by a single file, the recommended installation strategy is to keep it local to a project where it's used (this means in code repository). Not only this eliminates the need for repetitive installation for every dev on a project, but also allows using separate `makesure` version per project and update only as needed.
 
 ```sh
-wget "https://raw.githubusercontent.com/xonixx/makesure/v0.9.25/makesure" -Omakesure && \
+wget "https://raw.githubusercontent.com/xonixx/makesure/v0.9.26/makesure" -Omakesure && \
 chmod +x makesure && echo "makesure $(./makesure -v) installed"
 ```
 or
 ```sh
-curl "https://raw.githubusercontent.com/xonixx/makesure/v0.9.25/makesure" -o makesure && \
+curl "https://raw.githubusercontent.com/xonixx/makesure/v0.9.26/makesure" -o makesure && \
 chmod +x makesure && echo "makesure $(./makesure -v) installed"
 ```
 
@@ -816,7 +816,7 @@ Install Bash completion for `./makesure` locally
 ```sh
 [[ ! -f ~/.bash_completion ]] && touch ~/.bash_completion
 grep makesure ~/.bash_completion >/dev/null || echo '. ~/.makesure_completion.bash' >> ~/.bash_completion
-curl "https://raw.githubusercontent.com/xonixx/makesure/v0.9.25/completion.bash" -o ~/.makesure_completion.bash  
+curl "https://raw.githubusercontent.com/xonixx/makesure/v0.9.26/completion.bash" -o ~/.makesure_completion.bash  
 echo 'Please reopen the shell to activate completion.'
 ```
 

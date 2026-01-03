@@ -1,6 +1,6 @@
 #!/bin/sh
 if command -v gawk >/dev/null && gawk 'BEGIN { exit PROCINFO["version"] ~ /^5\.2/ }';then makesure_awk='gawk -ltime -v Gawk=1';makesure_pre='';else makesure_awk=awk;makesure_pre='function gettimeofday(){}';fi
-exec $makesure_awk -v "Version=0.9.25" -v "Prog=$0" "$makesure_pre"'
+exec $makesure_awk -v "Version=0.9.26" -v "Prog=$0" "$makesure_pre"'
 BEGIN {
  Shell="bash"
  SupportedShells["bash"]
@@ -246,8 +246,18 @@ function handleDependsOn(depType,i){
   registerDependsOn(currentGoalName(),depType)
  else
   for(i=0;i<GlobCnt;i++)
-   registerDependsOn(globGoal(i),depType)}
-function registerDependsOn(goalName,depType,i,dep){
+   registerDependsOn(globGoal(i),depType,GlobFiles[i])}
+function registerDependsOn(goalName,depType,globFile,i,dep){
+ if("@item"==$2){
+  if(!globFile)
+   addError("Only use @item inside @goal @glob")
+  else
+   if(2==NF)
+    registerDependency(goalName,globFile,depType)
+   else
+    for(i=3;i<=NF;i++)
+     registerDependency(goalName,$i"@"globFile,depType)
+  return}
  for(i=2;i<=NF;i++){
   if("@args"==(dep=$i)){
    if(i!=3)
