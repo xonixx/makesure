@@ -1,47 +1,47 @@
 
-$ ./$MAKESURE -f tests/18_vars_priority.sh
+$ ./{{MAKESURE}} -f tests/18_vars_priority.sh
 |   goal 'default' ...
 | A=
 | V=V_prelude
 | in child: A=
 | in child: V=V_prelude
 
-$ A=A_env ./$MAKESURE -f tests/18_vars_priority.sh
+$ A=A_env ./{{MAKESURE}} -f tests/18_vars_priority.sh
 |   goal 'default' ...
 | A=A_env
 | V=V_prelude
 | in child: A=A_env
 | in child: V=V_prelude
 
-$ V=V_env ./$MAKESURE -f tests/18_vars_priority.sh
+$ V=V_env ./{{MAKESURE}} -f tests/18_vars_priority.sh
 |   goal 'default' ...
 | A=
 | V=V_prelude
 | in child: A=
 | in child: V=V_prelude
 
-$ ./$MAKESURE -f tests/18_vars_priority.sh -D V=V_D
+$ ./{{MAKESURE}} -f tests/18_vars_priority.sh -D V=V_D
 |   goal 'default' ...
 | A=
 | V=V_D
 | in child: A=
 | in child: V=V_D
 
-$ V=V_env ./$MAKESURE -f tests/18_vars_priority.sh -D V=V_D
+$ V=V_env ./{{MAKESURE}} -f tests/18_vars_priority.sh -D V=V_D
 |   goal 'default' ...
 | A=
 | V=V_D
 | in child: A=
 | in child: V=V_D
 
-$ ./$MAKESURE -f tests/18_vars_priority.sh g
+$ ./{{MAKESURE}} -f tests/18_vars_priority.sh g
 |   goal 'g' ...
 | E=defaultVal
 
-$ E=fromEnv ./$MAKESURE -f tests/18_vars_priority.sh g
+$ E=fromEnv ./{{MAKESURE}} -f tests/18_vars_priority.sh g
 |   goal 'g' ...
 | E=fromEnv
 
-$ E=fromEnv ./$MAKESURE -f tests/18_vars_priority.sh -D E=fromD g
+$ E=fromEnv ./{{MAKESURE}} -f tests/18_vars_priority.sh -D E=fromD g
 |   goal 'g' ...
 | E=fromD

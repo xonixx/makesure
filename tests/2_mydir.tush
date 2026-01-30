@@ -1,40 +1,40 @@
 
-$ ./$MAKESURE -f tests/2_mydir.sh mydir_1
+$ ./{{MAKESURE}} -f tests/2_mydir.sh mydir_1
 |   goal 'mydir_1' ...
 | mydir
 
-$ ./$MAKESURE -f tests/2_mydir.sh mydir_2
+$ ./{{MAKESURE}} -f tests/2_mydir.sh mydir_2
 |   goal 'mydir_2' ...
 | mydir
 
-$ ./$MAKESURE -f tests/dir\ with\ spaces/2_mydir.sh
+$ ./{{MAKESURE}} -f tests/dir\ with\ spaces/2_mydir.sh
 |   goal 'default' ...
 | mydir
 
-$ cd "tests/dir with spaces"; ../../$MAKESURE -f 2_mydir.sh
+$ cd "tests/dir with spaces"; ../../{{MAKESURE}} -f 2_mydir.sh
 |   goal 'default' ...
 | mydir
 
-$ ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_1
+$ ./{{MAKESURE}} -f tests/2_mydir.sh mydir_in_reached_if_1
 |   goal 'mydir_in_reached_if_1' [already satisfied].
 
-$ ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_2
+$ ./{{MAKESURE}} -f tests/2_mydir.sh mydir_in_reached_if_2
 |   goal 'mydir_in_reached_if_2' [already satisfied].
 
-$ ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_4
+$ ./{{MAKESURE}} -f tests/2_mydir.sh mydir_in_reached_if_4
 |   goal 'mydir_in_reached_if_4' ...
 | should show
 
-$ ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_5
+$ ./{{MAKESURE}} -f tests/2_mydir.sh mydir_in_reached_if_5
 |   goal 'mydir_in_reached_if_5' ...
 | should show
 
-$ ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_of_dep_1
+$ ./{{MAKESURE}} -f tests/2_mydir.sh mydir_in_reached_if_of_dep_1
 |   goal 'dep_1' [already satisfied].
 |   goal 'mydir_in_reached_if_of_dep_1' ...
 | should show
 
-$ ./$MAKESURE -f tests/2_mydir.sh mydir_in_reached_if_of_dep_2
+$ ./{{MAKESURE}} -f tests/2_mydir.sh mydir_in_reached_if_of_dep_2
 |   goal 'dep_3' ...
 | dep_3
 |   goal 'dep_2' ...

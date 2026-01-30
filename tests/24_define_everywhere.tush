@@ -1,11 +1,11 @@
 
-$ ./$MAKESURE -f tests/24_define_everywhere.sh
+$ ./{{MAKESURE}} -f tests/24_define_everywhere.sh
 |   goal 'default' ...
 | a
 | ab
 | abc
 
-$ ./$MAKESURE -f tests/24_define_everywhere.sh -D B=bbb
+$ ./{{MAKESURE}} -f tests/24_define_everywhere.sh -D B=bbb
 |   goal 'default' ...
 | a
 | bbb

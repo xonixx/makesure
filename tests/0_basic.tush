@@ -1,14 +1,14 @@
 
-$ ./$MAKESURE -v | awk -v "v=$NEXT_VERSION" '{ sub(v,"XXX") } 1'
+$ ./{{MAKESURE}} -v | awk -v "v=$NEXT_VERSION" '{ sub(v,"XXX") } 1'
 | XXX
 
-$ ./$MAKESURE --version | awk -v "v=$NEXT_VERSION" '{ sub(v,"XXX") } 1'
+$ ./{{MAKESURE}} --version | awk -v "v=$NEXT_VERSION" '{ sub(v,"XXX") } 1'
 | XXX
 
-$ cd "tests/emptydir"; ../../$MAKESURE -v | awk -v "v=$NEXT_VERSION" '{ sub(v,"XXX") } 1'
+$ cd "tests/emptydir"; ../../{{MAKESURE}} -v | awk -v "v=$NEXT_VERSION" '{ sub(v,"XXX") } 1'
 | XXX
 
-$ cd "tests/emptydir"; ../../$MAKESURE -h | awk -v "v=$NEXT_VERSION" '{ sub(v,"XXX") } 1'
+$ cd "tests/emptydir"; ../../{{MAKESURE}} -h | awk -v "v=$NEXT_VERSION" '{ sub(v,"XXX") } 1'
 | makesure ver. XXX
 | Usage: makesure [options...] [-f buildfile] [goals...]
 |  -f,--file buildfile
@@ -25,14 +25,14 @@ $ cd "tests/emptydir"; ../../$MAKESURE -h | awk -v "v=$NEXT_VERSION" '{ sub(v,"X
 |  -h,--help       print help and exit
 |  -U,--selfupdate update makesure to latest version
 
-$ ./$MAKESURE -f non-existent-file
+$ ./{{MAKESURE}} -f non-existent-file
 @ makesure file not found: non-existent-file
 ? 1
 
-$ cd "tests/emptydir"; ../../$MAKESURE
+$ cd "tests/emptydir"; ../../{{MAKESURE}}
 @ makesure file not found: Makesurefile
 ? 1
 
-$ ./$MAKESURE -f tests/dir
+$ ./{{MAKESURE}} -f tests/dir
 |   goal 'default' ...
 | test

@@ -1,33 +1,33 @@
 
-$ ./$MAKESURE -f tests/6_reached_if.sh
+$ ./{{MAKESURE}} -f tests/6_reached_if.sh
 |   goal 'bbb' [already satisfied].
 |   goal 'aaa' ...
 | aaa
 |   goal 'default' [empty].
 
-$ ./$MAKESURE -f tests/6_reached_if.sh -d
+$ ./{{MAKESURE}} -f tests/6_reached_if.sh -d
 | Resolved goals to reach for 'default':
 |   aaa
 
-$ ./$MAKESURE -f tests/6_reached_if.sh --resolved bbb
+$ ./{{MAKESURE}} -f tests/6_reached_if.sh --resolved bbb
 | Resolved goals to reach for 'bbb':
 
-$ ./$MAKESURE -f tests/6_reached_if_issue_113.sh g1
+$ ./{{MAKESURE}} -f tests/6_reached_if_issue_113.sh g1
 |   goal 'g1' [already satisfied].
 
-$ ./$MAKESURE -f tests/6_reached_if_issue_113.sh g2
+$ ./{{MAKESURE}} -f tests/6_reached_if_issue_113.sh g2
 |   goal 'g2' ...
 | must show
 
-$ ./$MAKESURE -f tests/6_reached_if_issue_142.sh g
+$ ./{{MAKESURE}} -f tests/6_reached_if_issue_142.sh g
 | a     b
 |   goal 'g' [already satisfied].
 
-$ ./$MAKESURE -f tests/6_reached_if_issue_142.sh g1
+$ ./{{MAKESURE}} -f tests/6_reached_if_issue_142.sh g1
 | a     b
 |   goal 'g1' [already satisfied].
 
-$ ./$MAKESURE -f tests/6_reached_if_issue_142.sh g2
+$ ./{{MAKESURE}} -f tests/6_reached_if_issue_142.sh g2
 | a     b
 |   goal 'g2' [already satisfied].
 
