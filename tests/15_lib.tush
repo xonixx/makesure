@@ -1,28 +1,28 @@
 
 
-$ ./$MAKESURE -f tests/15_lib.sh -l
+$ ./{{MAKESURE}} -f tests/15_lib.sh -l
 | Available goals:
 |   g1
 |   g2
 |   g3
 |   g4
 
-$ ./$MAKESURE -f tests/15_lib.sh g1
+$ ./{{MAKESURE}} -f tests/15_lib.sh g1
 |   goal 'g1' ...
 | Hello World
 
-$ ./$MAKESURE -f tests/15_lib.sh g2
+$ ./{{MAKESURE}} -f tests/15_lib.sh g2
 |   goal 'g2' ...
 | Hello lib_name World
 
-$ ./$MAKESURE -f tests/15_lib.sh g3
+$ ./{{MAKESURE}} -f tests/15_lib.sh g3
 |   goal 'g3' [already satisfied].
 
-$ ./$MAKESURE -f tests/15_lib.sh g4
+$ ./{{MAKESURE}} -f tests/15_lib.sh g4
 |   goal 'g4' ...
 | Should see this
 
-$ ./$MAKESURE -f tests/15_lib_unknown.sh g3
+$ ./{{MAKESURE}} -f tests/15_lib_unknown.sh g3
 @ Goal 'g3' uses unknown lib 'unknown':
 @ tests/15_lib_unknown.sh:3: @use_lib unknown
 ? 1

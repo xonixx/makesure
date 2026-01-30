@@ -1,5 +1,5 @@
 
-$ ./$MAKESURE -f tests/23_bash_glob.sh g1
+$ ./{{MAKESURE}} -f tests/23_bash_glob.sh g1
 |   goal 'g1@1_goals.tush' ...
 | 0 -> 1_goals.tush
 |   goal 'g1@2_mydir.tush' ...

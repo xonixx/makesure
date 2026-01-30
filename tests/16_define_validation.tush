@@ -1,5 +1,5 @@
 
-$ ./$MAKESURE -f tests/16_define_validation_pass.sh
+$ ./{{MAKESURE}} -f tests/16_define_validation_pass.sh
 |   goal 'default' ...
 | EMPTY=
 | EMPTY1=
@@ -31,7 +31,7 @@ $ ./$MAKESURE -f tests/16_define_validation_pass.sh
 | LC1=aaabbb bbbcc'c  cc'ca b  ceee eee
 | IL5=a-b
 
-$ ./$MAKESURE -f tests/16_define_validation_error.sh
+$ ./{{MAKESURE}} -f tests/16_define_validation_error.sh
 @ Invalid @define syntax, should be @define VAR_NAME 'value':
 @ tests/16_define_validation_error.sh:2: @define echo
 @ Syntax error: wrong unquoted: 'echo;':

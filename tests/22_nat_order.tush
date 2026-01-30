@@ -1,5 +1,5 @@
 
-$ ./$MAKESURE -f tests/22_nat_order.sh nat_order_test
+$ ./{{MAKESURE}} -f tests/22_nat_order.sh nat_order_test
 | 0_basic.tush
 | 1_goals.tush
 | 2_mydir.tush
@@ -23,7 +23,7 @@ $ ./$MAKESURE -f tests/22_nat_order.sh nat_order_test
 | 20_list_goals.tush
 | 21_parsing.tush
 
-$ ./$MAKESURE -f tests/22_nat_order nat_order_test
+$ ./{{MAKESURE}} -f tests/22_nat_order nat_order_test
 | ../0_basic.tush
 | ../1_goals.tush
 | ../2_mydir.tush

@@ -1,5 +1,5 @@
 
-$ ./$MAKESURE -f tests/1_goals.sh
+$ ./{{MAKESURE}} -f tests/1_goals.sh
 |   goal 'ddd' ...
 | ddd
 |   goal 'ccc' ...
@@ -10,19 +10,19 @@ $ ./$MAKESURE -f tests/1_goals.sh
 | aaa
 |   goal 'default' [empty].
 
-$ ./$MAKESURE -f tests/1_goals.sh -s
+$ ./{{MAKESURE}} -f tests/1_goals.sh -s
 | ddd
 | ccc
 | bbb
 | aaa
 
-$ ./$MAKESURE -f tests/1_goals.sh --silent
+$ ./{{MAKESURE}} -f tests/1_goals.sh --silent
 | ddd
 | ccc
 | bbb
 | aaa
 
-$ ./$MAKESURE -f tests/1_goals.sh -l
+$ ./{{MAKESURE}} -f tests/1_goals.sh -l
 | Available goals:
 |   default
 |   aaa       : Documenatation for aaa
@@ -33,50 +33,50 @@ $ ./$MAKESURE -f tests/1_goals.sh -l
 |   fail123
 |   good-name
 
-$ ./$MAKESURE -f tests/1_goals.sh -d
+$ ./{{MAKESURE}} -f tests/1_goals.sh -d
 | Resolved goals to reach for 'default':
 |   ddd
 |   ccc
 |   bbb
 |   aaa
 
-$ ./$MAKESURE -f tests/1_goals.sh fail
+$ ./{{MAKESURE}} -f tests/1_goals.sh fail
 |   goal 'fail' ...
 | stdout
 |   goal 'fail' failed
 @ stderr
 ? 1
 
-$ ./$MAKESURE -f tests/1_goals.sh fail123
+$ ./{{MAKESURE}} -f tests/1_goals.sh fail123
 |   goal 'fail123' ...
 | stdout
 |   goal 'fail123' failed
 @ stderr
 ? 123
 
-$ ./$MAKESURE -f tests/1_goals_unknown.sh
+$ ./{{MAKESURE}} -f tests/1_goals_unknown.sh
 @ Goal 'a' has unknown dependency 'unknown':
 @ tests/1_goals_unknown.sh:3:   @depends_on unknown
 ? 1
 
-$ ./$MAKESURE -f tests/1_goals.sh zzz
+$ ./{{MAKESURE}} -f tests/1_goals.sh zzz
 @ Goal not found: zzz
 ? 1
 
-$ ./$MAKESURE -f tests/1_goals_already_defined.sh
+$ ./{{MAKESURE}} -f tests/1_goals_already_defined.sh
 @ Goal 'a' is already defined:
 @ tests/1_goals_already_defined.sh:5: @goal a
 ? 1
 
-$ ./$MAKESURE -f tests/1_goals_no_name.sh
+$ ./{{MAKESURE}} -f tests/1_goals_no_name.sh
 @ Goal must have a name:
 @ tests/1_goals_no_name.sh:5: @goal
 ? 1
 
-$ ./$MAKESURE -f tests/1_goals_multi_reached_if.sh
+$ ./{{MAKESURE}} -f tests/1_goals_multi_reached_if.sh
 @ Multiple @reached_if not allowed for a goal:
 @ tests/1_goals_multi_reached_if.sh:4: @reached_if false
 ? 1
 
-$ ./$MAKESURE -f tests/1_empty.sh -l
+$ ./{{MAKESURE}} -f tests/1_empty.sh -l
 | Available goals:

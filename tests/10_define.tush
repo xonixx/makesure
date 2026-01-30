@@ -1,29 +1,29 @@
 
-$ ./$MAKESURE -f tests/10_define.sh testA
+$ ./{{MAKESURE}} -f tests/10_define.sh testA
 |   goal 'testA' ...
 | A=aaa
 
-$ ./$MAKESURE -f tests/10_define.sh testA -D A="val with spaces\"'"
+$ ./{{MAKESURE}} -f tests/10_define.sh testA -D A="val with spaces\"'"
 |   goal 'testA' ...
 | A=val with spaces"'
 
-$ ./$MAKESURE -f tests/10_define.sh testB
+$ ./{{MAKESURE}} -f tests/10_define.sh testB
 |   goal 'testB' ...
 | B=aaabbb
 
-$ ./$MAKESURE -f tests/10_define.sh -D B=xxx testB
+$ ./{{MAKESURE}} -f tests/10_define.sh -D B=xxx testB
 |   goal 'testB' ...
 | B=xxx
 
-$ ./$MAKESURE -f tests/10_define.sh -D A=yyy testB
+$ ./{{MAKESURE}} -f tests/10_define.sh -D A=yyy testB
 |   goal 'testB' ...
 | B=yyybbb
 
-$ ./$MAKESURE -f tests/10_define.sh testC
+$ ./{{MAKESURE}} -f tests/10_define.sh testC
 |   goal 'testC' ...
 | C=
 
-$ ./$MAKESURE -f tests/10_define.sh testABC
+$ ./{{MAKESURE}} -f tests/10_define.sh testABC
 |   goal 'testA' ...
 | A=aaa
 |   goal 'testB' ...
@@ -32,7 +32,7 @@ $ ./$MAKESURE -f tests/10_define.sh testABC
 | C=
 |   goal 'testABC' [empty].
 
-$ ./$MAKESURE -f tests/10_define.sh testABC --define A=111 -D "B=222" --define 'C=333'
+$ ./{{MAKESURE}} -f tests/10_define.sh testABC --define A=111 -D "B=222" --define 'C=333'
 |   goal 'testA' ...
 | A=111
 |   goal 'testB' ...
@@ -41,13 +41,13 @@ $ ./$MAKESURE -f tests/10_define.sh testABC --define A=111 -D "B=222" --define '
 | C=333
 |   goal 'testABC' [empty].
 
-$ ./$MAKESURE -f tests/10_define.sh must_be_reached1
+$ ./{{MAKESURE}} -f tests/10_define.sh must_be_reached1
 |   goal 'must_be_reached1' [already satisfied].
 
-$ ./$MAKESURE -f tests/10_define.sh must_be_reached2
+$ ./{{MAKESURE}} -f tests/10_define.sh must_be_reached2
 |   goal 'must_be_reached2' [already satisfied].
 
-$ ./$MAKESURE -f tests/10_define.sh children_reached_or_not
+$ ./{{MAKESURE}} -f tests/10_define.sh children_reached_or_not
 |   goal 'must_be_reached1' [already satisfied].
 |   goal 'must_be_reached2' [already satisfied].
 |   goal 'other_goal_2' ...
@@ -56,31 +56,31 @@ $ ./$MAKESURE -f tests/10_define.sh children_reached_or_not
 | should show
 |   goal 'children_reached_or_not' [empty].
 
-$ ./$MAKESURE -f tests/10_define.sh is_not_reached
+$ ./{{MAKESURE}} -f tests/10_define.sh is_not_reached
 |   goal 'other_goal_2' ...
 | other goal 2
 |   goal 'is_not_reached' ...
 | should show
 
-$ ./$MAKESURE -f tests/10_define.sh children_reached_or_not -d
+$ ./{{MAKESURE}} -f tests/10_define.sh children_reached_or_not -d
 | Resolved goals to reach for 'children_reached_or_not':
 |   other_goal_2
 |   is_not_reached
 
-$ ./$MAKESURE -f tests/10_define.sh test_commented_define
+$ ./{{MAKESURE}} -f tests/10_define.sh test_commented_define
 |   goal 'test_commented_define' ...
 | in goal: value
 | in child process: value
 
-$ ./$MAKESURE -f tests/10_define.sh echo
+$ ./{{MAKESURE}} -f tests/10_define.sh echo
 |   goal 'echo' ...
 | Hello
 
-$ ./$MAKESURE -f tests/10_define_in_goal.sh
+$ ./{{MAKESURE}} -f tests/10_define_in_goal.sh
 @ Shell code is not allowed outside goals/libs:
 @ tests/10_define_in_goal.sh:4:   echo "$0"
 ? 1
 
-$ ./$MAKESURE -f tests/10_define_issue_142.sh issue142
+$ ./{{MAKESURE}} -f tests/10_define_issue_142.sh issue142
 |   goal 'issue142' ...
 | a     b

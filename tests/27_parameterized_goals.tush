@@ -1,96 +1,96 @@
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_1.sh -l
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_1.sh -l
 | Available goals:
 |   a
 |   b@hello
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_1.sh -la
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_1.sh -la
 | Available goals:
 |   a
 |   b@hello
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_1.sh -d a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_1.sh -d a
 | Resolved goals to reach for 'a':
 |   b@hello
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_1.sh a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_1.sh a
 |   goal 'b@hello' ...
 | hello world
 |   goal 'a' [empty].
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_1_1.sh -l
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_1_1.sh -l
 | Available goals:
 |   e
 |   f
 |   b@hello
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_1_1.sh -d e
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_1_1.sh -d e
 | Resolved goals to reach for 'e':
 |   b@hello
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_1_1.sh e
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_1_1.sh e
 |   goal 'b@hello' ...
 | hello world
 |   goal 'f' [empty].
 |   goal 'e' [empty].
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_2.sh -l
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_2.sh -l
 | Available goals:
 |   a       : doc a
 |   c@hello : doc c
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_2.sh -la
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_2.sh -la
 | Available goals:
 |   a       : doc a
 |   b@hello : doc b
 |   c@hello : doc c
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_2.sh -d a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_2.sh -d a
 | Resolved goals to reach for 'a':
 |   c@hello
 |   b@hello
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_2.sh -d b@hello
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_2.sh -d b@hello
 | Resolved goals to reach for 'b@hello':
 |   c@hello
 |   b@hello
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_2.sh a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_2.sh a
 |   goal 'c@hello' ...
 | hello world from c
 |   goal 'b@hello' ...
 | hello world from b
 |   goal 'a' [empty].
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_2.sh b@hello
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_2.sh b@hello
 |   goal 'c@hello' ...
 | hello world from c
 |   goal 'b@hello' ...
 | hello world from b
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_2.sh c@hello
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_2.sh c@hello
 |   goal 'c@hello' ...
 | hello world from c
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_3.sh -l
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_3.sh -l
 | Available goals:
 |   a
 |   e
 |   f
 |   b@hello
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_3.sh a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_3.sh a
 |   goal 'b@hello' ...
 | hello world
 |   goal 'a' [empty].
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_3.sh e
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_3.sh e
 |   goal 'b@hello' ...
 | hello world
 |   goal 'f' [empty].
 |   goal 'e' [empty].
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_4.sh -l
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_4.sh -l
 | Available goals:
 |   a
 |   e
@@ -100,7 +100,7 @@ $ ./$MAKESURE -f tests/27_parameterized_goals_4.sh -l
 |   'b@hi hi hi'
 |   b@salut
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_4.sh a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_4.sh a
 |   goal 'b@hello' ...
 | hello world
 |   goal 'b@hi' ...
@@ -111,11 +111,11 @@ $ ./$MAKESURE -f tests/27_parameterized_goals_4.sh a
 | salut world
 |   goal 'a' [empty].
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_4.sh 'b@hi hi hi'
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_4.sh 'b@hi hi hi'
 |   goal 'b@hi hi hi' ...
 | hi hi hi world
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_4.sh e
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_4.sh e
 |   goal 'b@hello' ...
 | hello world
 |   goal 'b@hi' ...
@@ -123,60 +123,60 @@ $ ./$MAKESURE -f tests/27_parameterized_goals_4.sh e
 |   goal 'f' [empty].
 |   goal 'e' [empty].
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_6_loop_err1.sh -l
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_6_loop_err1.sh -l
 @ There is a loop in goal dependencies via a -> c
 ? 1
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_6_loop_err1.sh a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_6_loop_err1.sh a
 @ There is a loop in goal dependencies via a -> c
 ? 1
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_6_loop_err2.sh a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_6_loop_err2.sh a
 @ There is a loop in goal dependencies via b -> c
 ? 1
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_5_ok.sh a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_5_ok.sh a
 |   goal 'b@' ...
 |  world from b
 |   goal 'a' [empty].
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_5_err1.sh a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_5_err1.sh a
 @ wrong args count for 'b':
 @ tests/27_parameterized_goals_5_err1.sh:3: @depends_on b @args   # err missing args
 ? 1
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_5_err2.sh a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_5_err2.sh a
 @ wrong args count for 'b':
 @ tests/27_parameterized_goals_5_err2.sh:3: @depends_on b         # err missing args
 ? 1
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_5_err3.sh a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_5_err3.sh a
 @ wrong args count for 'b':
 @ tests/27_parameterized_goals_5_err3.sh:3: @depends_on b @args 'hello' 'hi' # err more args than params
 ? 1
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_7_err1.sh a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_7_err1.sh a
 @ wrong arg 'ARG1':
 @ tests/27_parameterized_goals_7_err1.sh:3: @depends_on b @args ARG1          # err unknown arg
 @ wrong arg 'ARG2':
 @ tests/27_parameterized_goals_7_err1.sh:8: @depends_on c @args ARG2          # err unknown arg
 ? 1
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_8_err1.sh a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_8_err1.sh a
 @ @args only allowed at position 3:
 @ tests/27_parameterized_goals_8_err1.sh:3: @depends_on c c @args 'hello'
 @ @args only allowed at position 3:
 @ tests/27_parameterized_goals_8_err1.sh:4: @depends_on @args 'hi'
 ? 1
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_9.sh -l
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_9.sh -l
 | Available goals:
 |   a
 |   $'greet2@John@\'quoted\''
 |   greet@John
 |   $'greet@\'quoted\''
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_9.sh a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_9.sh a
 |   goal 'greet@John' ...
 | hello John
 |   goal $'greet@\'quoted\'' ...
@@ -184,14 +184,14 @@ $ ./$MAKESURE -f tests/27_parameterized_goals_9.sh a
 |   goal $'greet2@John@\'quoted\'' [empty].
 |   goal 'a' [empty].
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_9.sh 'greet2@John@'\''quoted'\'
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_9.sh 'greet2@John@'\''quoted'\'
 |   goal 'greet@John' ...
 | hello John
 |   goal $'greet@\'quoted\'' ...
 | hello 'quoted'
 |   goal $'greet2@John@\'quoted\'' [empty].
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_10_errors.sh -l
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_10_errors.sh -l
 @ missing parameters:
 @ tests/27_parameterized_goals_10_errors.sh:25: @goal f @params                   # zero params is invalid
 @ missing parameters:
@@ -240,7 +240,7 @@ $ ./$MAKESURE -f tests/27_parameterized_goals_10_errors.sh -l
 @ tests/27_parameterized_goals_10_errors.sh:9: @depends_on e @args 'arg1'       # err args for non-PG
 ? 1
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_11_reached_if.sh a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_11_reached_if.sh a
 |   goal 'b@hi' ...
 | W is hi
 |   goal 'b@hello' [already satisfied].
@@ -248,14 +248,14 @@ $ ./$MAKESURE -f tests/27_parameterized_goals_11_reached_if.sh a
 | W is salut
 |   goal 'a' [empty].
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_12_lib.sh a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_12_lib.sh a
 |   goal 'b@hi' ...
 | in lib W=hi
 |   goal 'b@hello' ...
 | in lib W=hello
 |   goal 'a' [empty].
 
-$ ./$MAKESURE -f tests/27_parameterized_goals_13_priority.sh a
+$ ./{{MAKESURE}} -f tests/27_parameterized_goals_13_priority.sh a
 |   goal 'pg@Value' ...
 | P=Value
 | in child: P=Value

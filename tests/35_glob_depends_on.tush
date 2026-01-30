@@ -1,5 +1,5 @@
 
-$ ./$MAKESURE -f tests/35_glob_depends_on.sh b
+$ ./{{MAKESURE}} -f tests/35_glob_depends_on.sh b
 |   goal 'a@glob_test/1.txt' ...
 | a glob_test/1.txt
 |   goal 'b@glob_test/1.txt' ...
@@ -10,7 +10,7 @@ $ ./$MAKESURE -f tests/35_glob_depends_on.sh b
 | b glob_test/2.txt
 |   goal 'b' [empty].
 
-$ ./$MAKESURE -f tests/35_glob_depends_on.sh b2
+$ ./{{MAKESURE}} -f tests/35_glob_depends_on.sh b2
 |   goal 'b2@glob_test/1.txt' ...
 |   goal 'a@glob_test/1.txt' ...
 | a glob_test/1.txt
@@ -25,7 +25,7 @@ $ ./$MAKESURE -f tests/35_glob_depends_on.sh b2
 | b2 glob_test/2.txt
 |   goal 'b2' [empty].
 
-$ ./$MAKESURE -f tests/35_glob_depends_on.sh b3
+$ ./{{MAKESURE}} -f tests/35_glob_depends_on.sh b3
 |   goal 'glob_test/1.txt' ...
 | noname glob_test/1.txt
 |   goal 'b3@glob_test/1.txt' ...
@@ -36,7 +36,7 @@ $ ./$MAKESURE -f tests/35_glob_depends_on.sh b3
 | b3 glob_test/2.txt
 |   goal 'b3' [empty].
 
-$ ./$MAKESURE -f tests/35_glob_depends_on.sh c
+$ ./{{MAKESURE}} -f tests/35_glob_depends_on.sh c
 |   goal 'a@glob_test/1.txt' ...
 | a glob_test/1.txt
 |   goal 'b@glob_test/1.txt' ...
@@ -51,7 +51,7 @@ $ ./$MAKESURE -f tests/35_glob_depends_on.sh c
 | c glob_test/2.txt
 |   goal 'c' [empty].
 
-$ ./$MAKESURE -f tests/35_glob_depends_on.sh d
+$ ./{{MAKESURE}} -f tests/35_glob_depends_on.sh d
 |   goal 'a@glob_test/1.txt' ...
 | a glob_test/1.txt
 |   goal 'a2@glob_test/1.txt' ...
@@ -66,7 +66,7 @@ $ ./$MAKESURE -f tests/35_glob_depends_on.sh d
 | d glob_test/2.txt
 |   goal 'd' [empty].
 
-$ ./$MAKESURE -f tests/35_glob_depends_on.sh e
+$ ./{{MAKESURE}} -f tests/35_glob_depends_on.sh e
 |   goal 'a@glob_test/1.txt' ...
 | a glob_test/1.txt
 |   goal 'b@glob_test/1.txt' ...
@@ -81,7 +81,7 @@ $ ./$MAKESURE -f tests/35_glob_depends_on.sh e
 | e glob_test/2.txt
 |   goal 'e' [empty].
 
-$ ./$MAKESURE -f tests/35_glob_depends_on_err.sh b
+$ ./{{MAKESURE}} -f tests/35_glob_depends_on_err.sh b
 @ Only use @item inside @goal @glob:
 @ tests/35_glob_depends_on_err.sh:10: @depends_on @item a
 @ Goal 'b@glob_test/2.txt' has unknown dependency 'a@glob_test/2.txt':
