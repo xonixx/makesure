@@ -17,6 +17,7 @@ proc checkCompletion { exe flagPrefix expectedFlag } {
 
 checkCompletion "./makesure" "--sel" "selfupdate"
 checkCompletion "./makesure" "--res" "resolved"
+checkCompletion "./makesure" "--def" "define"
 
 checkCompletion "./makesure" "goal" "goalAaa"
 checkCompletion "./makesure" "wit" "'with  spaces'"

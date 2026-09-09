@@ -22,14 +22,19 @@ _makesure_completions() {
       fi
   done
 
-  local exe="${COMP_WORDS[0]}"
-  COMPREPLY=($(compgen -W "$("$exe" --file "$makesurefile" -la | awk -F: '
+  local exe="${COMP_WORDS[0]}" completion
+  COMPREPLY=()
+  while IFS= read -r completion; do
+    if [[ -n $(compgen -W "$completion" -- "$cur") ]]; then
+      COMPREPLY+=("$completion")
+    fi
+  done < <("$exe" --file "$makesurefile" -la | awk -F: '
 BEGIN {
   print "-f --file"
   print "-l --list"
   print "-la --list-all"
   print "-d --resolved"
-  print "-D"
+  print "-D --define"
   print "-s --silent"
   print "-t --timing"
   print "-x --tracing"
@@ -38,7 +43,7 @@ BEGIN {
   print "-U --selfupdate"
 }
 NR>1 { sub(/^ +/,"",$1); print $1 }
-')" -- "$cur"))
+')
 }
 
 complete -F _makesure_completions -o bashdefault -o default makesure
