@@ -28,7 +28,7 @@ _makesure_completions() {
     if [[ -n $(compgen -W "$completion" -- "$cur") ]]; then
       COMPREPLY+=("$completion")
     fi
-  done < <("$exe" --file "$makesurefile" -la | awk -F: '
+  done < <("$exe" --file "$makesurefile" -la | awk -F' : ' '
 BEGIN {
   print "-f --file"
   print "-l --list"
