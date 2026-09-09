@@ -1,2 +1,6 @@
 
 @goal goalAaa
+
+#@goal 'installed@https://github.com/astral-sh/$uv@'
+
+@goal 'with  spaces'

@@ -19,6 +19,9 @@ checkCompletion "./makesure" "--sel" "selfupdate"
 checkCompletion "./makesure" "--res" "resolved"
 
 checkCompletion "./makesure" "goal" "goalAaa"
+checkCompletion "./makesure" "wit" "'with  spaces'"
+#checkCompletion "./makesure" "installed" "'installed@https://github.com/astral-sh/uv@'"
+
 checkCompletion "./makesure" "-f Makesurefile.txt goal" "goalBbb"
 checkCompletion "./makesure" "--file 'Makesurefile with spaces.txt' goal" "goalCcc"
 checkCompletion "./makesure" "--file Makesurefile\\ with\\ spaces.txt goal" "goalCcc"
