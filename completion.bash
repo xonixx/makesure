@@ -42,7 +42,7 @@ BEGIN {
   print "-h --help"
   print "-U --selfupdate"
 }
-NR>1 { sub(/^ +/,"",$1); print $1 }
+NR>1 { sub(/^ +/,"",$1); sub(/ +$/,"",$1); print $1 }
 ')
 }
 
