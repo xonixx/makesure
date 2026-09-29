@@ -9,6 +9,9 @@
 @define MDBOOK_LINKCHECK_VERSION 'v0.7.7' # https://github.com/Michael-F-Bryan/mdbook-linkcheck/releases
 @define MDBOOKER_VERSION '11572b1'        # https://github.com/xonixx/mdbooker/releases
 @define GAWK_LAST_VERSION '5.4.0'         # https://ftp.gnu.org/gnu/gawk/
+@define JAWK_VERSION      '7.1.01'        # https://github.com/jawkio/jawk/releases
+@define JAWK_FILE         "jawk-$JAWK_VERSION-standalone.jar"
+@define JAWK_URL          "https://github.com/jawkio/jawk/releases/download/v$JAWK_VERSION/$JAWK_FILE"
 
 @define GOAWK "goawk$GOAWK_VERSION"
 @define JUST "just$JUST_VERSION"
@@ -58,6 +61,8 @@
     printf "[%12s] %s: " "$key" "$AWK"
     case "$AWK" in
       *busybox*) $AWK --help 2>&1 | head -n 1
+              ;;
+      java\ *) $AWK --version 2>&1 | head -n 1
               ;;
       *mawk*) "$AWK" -W version 2>&1 | head -n 1
               ;;
@@ -109,7 +114,7 @@
   if [[ $EXE_NAME == 'awk' ]]
   then
     MAKESURE_AWK="/usr/bin/awk"
-  elif [[ $EXE_NAME == '/'* ]]
+  elif [[ $EXE_NAME == '/'* || $EXE_NAME == 'java '* ]]
   then
     MAKESURE_AWK="$EXE_NAME"
   else
@@ -262,6 +267,16 @@
 @goal tested_wak @private
 #@depends_on installed_busybox TODO
 @depends_on fhtagn @args '/home/xonix/soft/wak/exe/wak'
+
+@goal tested_jawk @private
+@depends_on installed_jawk
+@depends_on fhtagn @args "java -jar /home/xonix/proj/makesure/soft/$JAWK_FILE"  # TODO how to not use absolute?
+
+@goal installed_jawk
+@reached_if [[ -f "soft/$JAWK_FILE" ]]
+@depends_on soft_folder_created
+@use_lib dl
+  download "$JAWK_URL" "soft/$JAWK_FILE"
 
 @goal installed_bwk @private
 @reached_if [[ -f soft/bwk ]]
