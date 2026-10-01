@@ -9,16 +9,17 @@ export MAKESURE_AWK="${MAKESURE_AWK:-awk}"
 
 AWK_DIR="$mydir"
 
-if awk 'BEGIN { exit index(ENVIRON["MAKESURE_AWK"],"gawk")>0 ? 0 : 1 }'
-then
-  if [ -n "$MAKESURE_AWKLIBPATH" ]
-  then
-    export AWKLIBPATH="$MAKESURE_AWKLIBPATH"
-  fi
-  exec $MAKESURE_AWK $MAKESURE_AWK_OPTS -v "Version=$NEXT_VERSION" -v "Prog=$0" -v Gawk=1 -l time \
-    -f "$AWK_DIR/dbg.awk" -f "$AWK_DIR/makesure.awk" Makesurefile "$@"
-else
-  exec $MAKESURE_AWK $MAKESURE_AWK_OPTS -v "Version=$NEXT_VERSION" -v "Prog=$0" -f "$AWK_DIR/mawk_ext.awk" \
-    -f "$AWK_DIR/dbg.awk" -f "$AWK_DIR/makesure.awk" Makesurefile "$@"
-fi
-
+case "$MAKESURE_AWK" in
+  *gawk*)
+    if [ -n "$MAKESURE_AWKLIBPATH" ]
+    then
+      export AWKLIBPATH="$MAKESURE_AWKLIBPATH"
+    fi
+    exec $MAKESURE_AWK $MAKESURE_AWK_OPTS -v "Version=$NEXT_VERSION" -v "Prog=$0" -v Gawk=1 -l time \
+      -f "$AWK_DIR/dbg.awk" -f "$AWK_DIR/makesure.awk" Makesurefile "$@"
+    ;;
+  *)
+    exec $MAKESURE_AWK $MAKESURE_AWK_OPTS -v "Version=$NEXT_VERSION" -v "Prog=$0" -f "$AWK_DIR/mawk_ext.awk" \
+      -f "$AWK_DIR/dbg.awk" -f "$AWK_DIR/makesure.awk" Makesurefile "$@"
+    ;;
+esac
