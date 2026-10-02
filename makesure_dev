@@ -1,25 +1,43 @@
 #!/bin/sh
 
-mydir=$(
+set -eu
+
+MYDIR=$(
   cd "$(dirname "$0")"
   pwd
 )
 
-export MAKESURE_AWK="${MAKESURE_AWK:-awk}"
+AWK_CMD="$1"
+shift
+SEP="$1"
+shift
 
-AWK_DIR="$mydir"
+if [ $SEP != '--' ]
+then
+  echo 'missing SEP' >&2
+  exit 2
+fi
+
+case "$AWK_CMD" in
+  '' | awk)
+    MAKESURE_AWK="/usr/bin/awk"
+    ;;
+  /* | 'java '*)
+    MAKESURE_AWK="$AWK_CMD"
+    ;;
+  *)
+    MAKESURE_AWK="$MYDIR/soft/${AWK_CMD}"
+    ;;
+esac
 
 case "$MAKESURE_AWK" in
   *gawk*)
-    if [ -n "$MAKESURE_AWKLIBPATH" ]
-    then
-      export AWKLIBPATH="$MAKESURE_AWKLIBPATH"
-    fi
+    export AWKLIBPATH="$MYDIR/soft/${AWK_CMD}_libs"
     exec $MAKESURE_AWK $MAKESURE_AWK_OPTS -v "Version=$NEXT_VERSION" -v "Prog=$0" -v Gawk=1 -l time \
-      -f "$AWK_DIR/dbg.awk" -f "$AWK_DIR/makesure.awk" Makesurefile "$@"
+      -f "$MYDIR/dbg.awk" -f "$MYDIR/makesure.awk" Makesurefile "$@"
     ;;
   *)
-    exec $MAKESURE_AWK $MAKESURE_AWK_OPTS -v "Version=$NEXT_VERSION" -v "Prog=$0" -f "$AWK_DIR/mawk_ext.awk" \
-      -f "$AWK_DIR/dbg.awk" -f "$AWK_DIR/makesure.awk" Makesurefile "$@"
+    exec $MAKESURE_AWK $MAKESURE_AWK_OPTS -v "Version=$NEXT_VERSION" -v "Prog=$0" -f "$MYDIR/mawk_ext.awk" \
+      -f "$MYDIR/dbg.awk" -f "$MYDIR/makesure.awk" Makesurefile "$@"
     ;;
 esac
