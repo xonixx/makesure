@@ -131,15 +131,15 @@
 # to run `./makesure tests/test.tush` instead of `./makesure tested@tests/test.tush`
 @goal tested
 @doc 'runs all *.tush tests (stop at 1st error)'
-@depends_on 'tests/*.tush' @args '' ''
+@depends_on 'tests/*.tush' @args ''
 
-@goal @glob 'tests/*.tush' @params MAKESURE_AWK MAKESURE_AWK_OPTS @private
+@goal @glob 'tests/*.tush' @params MAKESURE_AWK @private
 @depends_on fhtagn_installed
 @depends_on debug_pg @args "$AWK" MAKESURE_AWK
 @use_lib testing
-  [[ -n $MAKESURE_AWK ]] && MAKESURE_AWK="$(realpath $MAKESURE_AWK)"
-  export MAKESURE_AWK
-  export MAKESURE_AWK_OPTS
+#  [[ -n $MAKESURE_AWK ]] && MAKESURE_AWK="$(realpath $MAKESURE_AWK)"
+#  export MAKESURE_AWK
+#  export MAKESURE_AWK_OPTS
   run_tush_file "$ITEM" "makesure_dev '$MAKESURE_AWK' --"
 
 @goal tested_candidate @glob 'tests/*.tush' @private
@@ -155,7 +155,7 @@
 
 @goal _cover_profile_prepared @private
 @depends_on file_removed @args COVERPROFILE
-@depends_on 'tests/*.tush' @args "./soft/$GOAWK" "-covermode=set -coverprofile=$COVERPROFILE -coverappend"
+@depends_on 'tests/*.tush' @args "$GOAWK:cover"
 
 @goal coverage
 @doc 'prepares code coverage report'

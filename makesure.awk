@@ -444,7 +444,7 @@ function trimDirective() {
   sub(/^[ \t]*@[a-z_]+/, "")
 }
 
-# cheks for unknown dependencies / libs
+# checks for unknown dependencies / libs
 function checkBeforeRun(   i,j,dep,depCnt,goalName) {
   for (i = 0; i in GoalNames; i++) {
     depCnt = DependenciesCnt[goalName = GoalNames[i]]
