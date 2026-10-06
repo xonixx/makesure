@@ -7,15 +7,15 @@ MYDIR=$(
   pwd
 )
 
-AWK_CMD="$1"
-shift
-SEP="$1"
-shift
+# makesure_dev can be called in two ways
+# - `makesure_dev AWK_CMD -- MAKESURE_PARAMS`
+# - `makesure_dev MAKESURE_PARAMS` - to be compatible with @calls invocation
 
-if [ $SEP != '--' ]
+AWK_CMD=''
+if [ "${2-}" = '--' ]
 then
-  echo 'missing SEP' >&2
-  exit 2
+  AWK_CMD="$1"
+  shift 2
 fi
 
 case "$AWK_CMD" in
