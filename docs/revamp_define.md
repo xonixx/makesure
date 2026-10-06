@@ -20,8 +20,8 @@
 - Make sure interpolation keeps working `@define VAR "hello $WORLD"`
 - Make sure run-once semantics is not violated:
   - ```shell
-    @defile HELLO 'Hello'
-    @defile WORLD 'world'
+    @define HELLO 'Hello'
+    @define WORLD 'world'
     
     @goal pg @params P
       echo "$P"                        
@@ -147,7 +147,7 @@ Now this is achieved by
 
 @define VAR="${VAR}"
 
-@goa default
+@goal default
   echo "$VAR"
 ```
 
@@ -162,7 +162,7 @@ This behavior will be preserved.
                     
 Need to come up with the simplest approach to parse and error on wrong quoting of particular word.
 
-Lets define string quoting types:
+Let's define string quoting types:
 
 - `u` for `string`
 - `'` for `'string'`

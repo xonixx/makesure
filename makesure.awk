@@ -18,7 +18,7 @@ BEGIN {
   delete Vars            # k  -> "val" // @define
   delete DefineOverrides # k  -> ""    // what is passed via --define
   delete Dependencies       # g,depI -> dep goal
-  delete DependencyType     # g,depI -> type (D=@depend_on|C=@calls)
+  delete DependencyType     # g,depI -> type (D=@depends_on|C=@calls)
   delete DependenciesLineNo # g,depI -> line no.
   delete DependenciesCnt    # g      -> dep cnt
   delete DependencyArgsL    # g,depI -> initial $0, but only when it's @depends_on with @args
@@ -386,12 +386,12 @@ function prepareCalls(   g,cnt,i,x,toDel,codeCalls) {
 }
 
 # not only we need to delete the index, but also to re-number
-function deleteCallDeps(toDell,   g,cnt,newCnt,i,x,newX) {
+function deleteCallDeps(toDel,   g,cnt,newCnt,i,x,newX) {
   for (g in DependenciesCnt) {
     cnt = DependenciesCnt[g]
     newCnt = 0
     for (i = 0; i < cnt; i++) {
-      if ((x = g SUBSEP i) in toDell) {
+      if ((x = g SUBSEP i) in toDel) {
         delete Dependencies[x]
         delete DependenciesLineNo[x]
         delete DependencyType[x]
@@ -444,7 +444,7 @@ function trimDirective() {
   sub(/^[ \t]*@[a-z_]+/, "")
 }
 
-# cheks for unknown dependencies / libs
+# checks for unknown dependencies / libs
 function checkBeforeRun(   i,j,dep,depCnt,goalName) {
   for (i = 0; i in GoalNames; i++) {
     depCnt = DependenciesCnt[goalName = GoalNames[i]]
@@ -765,7 +765,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
       delete reparsed
       # The idea behind deferring this reparsing to instantiation is to be able to reference both @define vars and PG
       # params in PG arg string interpolation.
-      # Already should not fails syntax (checked earlier) - we don't check result code.
+      # Already should not fail syntax (checked earlier) - we don't check result code.
       parseCli_2(DependencyArgsL[gi], args, Vars, reparsed)
 
       argsCnt = reparsed[-7] - 3 # -7 holds len. Subtracting 3, because args start after `@depends_on pg @args`

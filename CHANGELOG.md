@@ -62,7 +62,7 @@ The main theme for the release was reconsidering the notion of prelude. See the 
 
 ## v.0.9.11
 1. Improved precision of timings on macOS when using Gawk: [#57](https://github.com/xonixx/makesure/issues/57) 
-2. Improved CI setup for runing tests with major Awk implementations: [#58](https://github.com/xonixx/makesure/issues/58) 
+2. Improved CI setup for running tests with major Awk implementations: [#58](https://github.com/xonixx/makesure/issues/58) 
 3. Updates should be more consistent with [#60](https://github.com/xonixx/makesure/issues/60) 
 
 ## v.0.9.10

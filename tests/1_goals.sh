@@ -3,12 +3,12 @@
 @depends_on aaa
 
 @goal aaa
-@doc Documenatation for aaa
+@doc Documentation for aaa
 @depends_on bbb
   echo aaa
 
 @goal bbb
-@doc Documenatation for bbb
+@doc Documentation for bbb
 @depends_on ccc ddd
   echo bbb
 

@@ -622,7 +622,7 @@ The need for `@calls` may be not obvious, but the use-case is presented [here](h
 
 Differences to `@depends_on`:
 - `@calls` doesn't favor run-once semantics
-- `@calls` defers the `@reached_if` processing of a goal being called to the invocation time (`@depens_on` calculates all `@reached_if` conditions at start) 
+- `@calls` defers the `@reached_if` processing of a goal being called to the invocation time (`@depends_on` calculates all `@reached_if` conditions at start) 
 
 Operationally `@calls` desugars to a nested `makesure` invocation:
 
@@ -767,7 +767,7 @@ Syntax:
 @lib [ lib_name ]
 ```
 
-Helps with code reuse. Occasionally, you need to run similar code in multiple goals. The most obvious approach would be to place a code into `shared.sh` and invoke it in both goals. The downside is that now you need an additional file(s) and the build file is no more self-contained. `@lib` to the resque!
+Helps with code reuse. Occasionally, you need to run similar code in multiple goals. The most obvious approach would be to place a code into `shared.sh` and invoke it in both goals. The downside is that now you need an additional file(s) and the build file is no more self-contained. `@lib` to the rescue!
 
 The usage is simple:
 
