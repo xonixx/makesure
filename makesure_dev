@@ -7,6 +7,8 @@ MYDIR=$(
   pwd
 )
 
+VER='0.0.0' # hardcode for dev
+
 # makesure_dev can be called in two ways
 # - `makesure_dev AWK_CMD -- MAKESURE_PARAMS`
 # - `makesure_dev MAKESURE_PARAMS` - to be compatible with @calls invocation
@@ -37,11 +39,11 @@ esac
 case "$MAKESURE_AWK" in
   *gawk*)
     export AWKLIBPATH="$MYDIR/soft/${AWK_CMD}_libs"
-    exec $MAKESURE_AWK -v "Version=$NEXT_VERSION" -v "Prog=$0" -v Gawk=1 -l time \
+    exec $MAKESURE_AWK -v "Version=$VER" -v "Prog=$0" -v Gawk=1 -l time \
       -f "$MYDIR/dbg.awk" -f "$MYDIR/makesure.awk" Makesurefile "$@"
     ;;
   *)
-    exec $MAKESURE_AWK -v "Version=$NEXT_VERSION" -v "Prog=$0" -f "$MYDIR/mawk_ext.awk" \
+    exec $MAKESURE_AWK -v "Version=$VER" -v "Prog=$0" -f "$MYDIR/mawk_ext.awk" \
       -f "$MYDIR/dbg.awk" -f "$MYDIR/makesure.awk" Makesurefile "$@"
     ;;
 esac
