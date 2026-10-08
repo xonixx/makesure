@@ -1,7 +1,7 @@
 
 #@options tracing
 
-@define MAKESURE_AWK "${MAKESURE_AWK:-awk}"
+@define MAKESURE_AWK "${MAKESURE_AWK:-awk}" # XXX Crazy! This comes by implicit export via the PG param in Makesurefile
 @define D            '/tmp/dirXXX with spaces'
 #@define D '/tmp/dirXXX'
 @define MAKESURE_PROG 'DEFINE_ME'
@@ -28,7 +28,7 @@
 @lib
   function prepare_makesure() {
     local ver="$1"
-    awk -v ver="$ver" \
+    /usr/bin/awk -v ver="$ver" \
      '
      { gsub(/-v "Version=[^"]+"/, "-v \"Version="ver"\"") } 1
      ' "../$MAKESURE_PROG" > "$D/$MAKESURE_PROG"
@@ -41,7 +41,7 @@
 
     local prevVer=$(../makesure -v)
     # calc by subtracting 1
-    prevVer=$(awk -v prevVer="$prevVer" 'BEGIN { split(prevVer,parts,"."); print parts[1]"."parts[2]"."(--parts[3]) }')
+    prevVer=$(/usr/bin/awk -v prevVer="$prevVer" 'BEGIN { split(prevVer,parts,"."); print parts[1]"."parts[2]"."(--parts[3]) }')
 
     prepare_makesure "$prevVer"
     "$D/$MAKESURE_PROG" --version

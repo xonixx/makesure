@@ -149,6 +149,7 @@
 @goal coverage
 @doc 'prepares code coverage report'
 @depends_on _cover_profile_prepared
+  sed -i '/\/<cmdline>:/d' "$COVERPROFILE" # TODO fix coverage for selfupdate
   go tool cover -html="$COVERPROFILE"
 
 @goal coverage_badge_updated
