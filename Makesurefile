@@ -115,7 +115,9 @@
 @depends_on fhtagn_installed
 @use_lib awk_ver
   [[ "$OSTYPE" == "linux-gnu"* ]] && [[ -d /dev/shm ]] && export TMPDIR="/dev/shm"
-  ALL=1 "$FHTAGN" tests/*.tush MAKESURE="makesure_dev $EXE_NAME"
+  ALL=1 "$FHTAGN" tests/*.tush \
+    MAKESURE="makesure_dev '$EXE_NAME' --" \
+    MAKESURE_PROG='makesure_dev'
 
 # The idea of having this here (not using a named glob goal) is to be able
 # to run `./makesure tests/test.tush` instead of `./makesure tested@tests/test.tush`
