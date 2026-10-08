@@ -24,7 +24,10 @@ case "$AWK_CMD" in
   '' | awk)
     MAKESURE_AWK="/usr/bin/awk"
     ;;
-  /* | 'java '*)
+  *.jar)
+    MAKESURE_AWK="java -jar $MYDIR/soft/$AWK_CMD"
+    ;;
+  /*) # absolute path
     MAKESURE_AWK="$AWK_CMD"
     ;;
   *:cover)

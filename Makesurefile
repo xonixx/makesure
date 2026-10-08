@@ -125,6 +125,10 @@
 @doc 'runs all *.tush tests (stop at 1st error)'
 @depends_on 'tests/*.tush' @args ''
 
+@goal tested_jawk
+@depends_on installed_jawk
+@depends_on 'tests/*.tush' @args "$JAWK_FILE"
+
 @goal @glob 'tests/*.tush' @params MAKESURE_AWK @private
 @depends_on fhtagn_installed
 @depends_on debug_pg @args "$AWK" MAKESURE_AWK
@@ -258,9 +262,9 @@
 #@depends_on installed_busybox TODO
 @depends_on fhtagn @args '/home/xonix/soft/wak/exe/wak'
 
-@goal tested_jawk @private
-@depends_on installed_jawk
-@depends_on fhtagn @args "java -jar /home/xonix/proj/makesure/soft/$JAWK_FILE"  # TODO how to not use absolute?
+#@goal tested_jawk @private
+#@depends_on installed_jawk
+#@depends_on fhtagn @args "java -jar /home/xonix/proj/makesure/soft/$JAWK_FILE"  # TODO how to not use absolute?
 
 @goal installed_jawk
 @reached_if [[ -f "soft/$JAWK_FILE" ]]
