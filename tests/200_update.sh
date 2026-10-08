@@ -4,6 +4,7 @@
 @define MAKESURE_AWK "${MAKESURE_AWK:-awk}"
 @define D            '/tmp/dirXXX with spaces'
 #@define D '/tmp/dirXXX'
+@define MAKESURE_PROG 'DEFINE_ME'
 
 @goal env_prepared
   [[ -d "$D" ]] && rm -r "$D"
@@ -27,14 +28,13 @@
 @lib
   function prepare_makesure() {
     local ver="$1"
-    awk -v X="$(cd ..; pwd)" \
-        -v ver="$ver" \
+    awk -v ver="$ver" \
      '
-     { gsub(/-v "Version=[^"]+"/, "-v \"Version="ver"\"") }
-     /AWK_DIR=/{ $0 = "AWK_DIR=" X } 1
-     ' "../$MAKESURE" > "$D/$MAKESURE"
-#    cat "$D/$MAKESURE"
-    chmod +x "$D/$MAKESURE"
+     { gsub(/-v "Version=[^"]+"/, "-v \"Version="ver"\"") } 1
+     ' "../$MAKESURE_PROG" > "$D/$MAKESURE_PROG"
+#    cat "$D/$MAKESURE_PROG"
+    chmod +x "$D/$MAKESURE_PROG"
+    cp ../*.awk "$D"
   }
   function run_selfupdate() {
     export PATH="$D"
@@ -44,15 +44,15 @@
     prevVer=$(awk -v prevVer="$prevVer" 'BEGIN { split(prevVer,parts,"."); print parts[1]"."parts[2]"."(--parts[3]) }')
 
     prepare_makesure "$prevVer"
-    "$D/$MAKESURE" --version
+    "$D/$MAKESURE_PROG" --version
     echo 'selfupdate 1'
-    "$D/$MAKESURE" --selfupdate
+    "$D/$MAKESURE_PROG" --selfupdate
 
-    local latestVersion="$("$D/$MAKESURE" --version)"
+    local latestVersion="$("$D/$MAKESURE_PROG" --version)"
     prepare_makesure "$latestVersion"
     echo 'selfupdate 2'
-    "$D/$MAKESURE" --selfupdate
-    "$D/$MAKESURE" --version
+    "$D/$MAKESURE_PROG" --selfupdate
+    "$D/$MAKESURE_PROG" --version
     rm -r "$D"
   }
 

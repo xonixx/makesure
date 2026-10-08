@@ -92,13 +92,16 @@
   run_tush_file() {
     local f="$1"
     local MAKESURE="$2"
+    local OPTS="$3"
 
     [[ "$OSTYPE" == "linux-gnu"* ]] && [[ -d /dev/shm ]] && export TMPDIR="/dev/shm"
 
     if [[ "$f" == *"[wget]"* ]] && ! command -v wget >/dev/null
     then
       echo "TESTS SKIPPED: $f"
-    elif "$FHTAGN" "$f" MAKESURE="$MAKESURE"
+    elif "$FHTAGN" "$f" \
+      MAKESURE="$MAKESURE $OPTS" \
+      MAKESURE_PROG="$MAKESURE"
     then
       echo "TESTS PASSED : $f"
     else
@@ -140,13 +143,13 @@
 #  [[ -n $MAKESURE_AWK ]] && MAKESURE_AWK="$(realpath $MAKESURE_AWK)"
 #  export MAKESURE_AWK
 #  export MAKESURE_AWK_OPTS
-  run_tush_file "$ITEM" "makesure_dev '$MAKESURE_AWK' --"
+  run_tush_file "$ITEM" "makesure_dev" "'$MAKESURE_AWK' --"
 
 @goal tested_candidate @glob 'tests/*.tush' @private
 @depends_on tested
 @depends_on candidate_version_prepared
 @use_lib testing
-  run_tush_file "$ITEM" makesure_candidate
+  run_tush_file "$ITEM" makesure_candidate ''
 
 @define COVERPROFILE '/tmp/cov.txt'
 
