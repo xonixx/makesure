@@ -2,19 +2,19 @@
 $ ./{{MAKESURE}} -f tests/8_options_timing.sh
 |   goal 'default' ...
 | test
-|~  goal 'default' took [0-9]+(\.[0-9]+)? s
-|~  total time [0-9]+(\.[0-9]+)? s
+|~  goal 'default' took [0-9]+([.,][0-9]+)? s
+|~  total time [0-9]+([.,][0-9]+)? s
 
 $ ./{{MAKESURE}} -f tests/8_options_timing.sh empty_goal
 |   goal 'reached_goal' [already satisfied].
 |   goal 'not_reached_goal_1' ...
 | should show 1
-|~  goal 'not_reached_goal_1' took [0-9]+(\.[0-9]+)? s
+|~  goal 'not_reached_goal_1' took [0-9]+([.,][0-9]+)? s
 |   goal 'not_reached_goal_2' ...
 | should show 2
-|~  goal 'not_reached_goal_2' took [0-9]+(\.[0-9]+)? s
+|~  goal 'not_reached_goal_2' took [0-9]+([.,][0-9]+)? s
 |   goal 'empty_goal' [empty].
-|~  total time [0-9]+(\.[0-9]+)? s
+|~  total time [0-9]+([.,][0-9]+)? s
 
 $ ./{{MAKESURE}} -f tests/8_options_timing_silent.sh
 | test
@@ -22,8 +22,8 @@ $ ./{{MAKESURE}} -f tests/8_options_timing_silent.sh
 $ ./{{MAKESURE}} -t -f tests/8_timing.sh
 |   goal 'default' ...
 | test
-|~  goal 'default' took [0-9]+(\.[0-9]+)? s
-|~  total time [0-9]+(\.[0-9]+)? s
+|~  goal 'default' took [0-9]+([.,][0-9]+)? s
+|~  total time [0-9]+([.,][0-9]+)? s
 
 $ ./{{MAKESURE}} -t -s -f tests/8_timing.sh
 | test

@@ -39,12 +39,12 @@ $ touch /tmp/x ; ./{{MAKESURE}} -f tests/32_calls.sh x-updated --timing
 |   goal 'x-updated' ...
 |   goal 'x-deleted' ...
 | running x-deleted
-|~  goal 'x-deleted' took [0-9]+(\.[0-9]+)? s
+|~  goal 'x-deleted' took [0-9]+([.,][0-9]+)? s
 |   goal 'x-created' ...
 | running x-created
-|~  goal 'x-created' took [0-9]+(\.[0-9]+)? s
-|~  goal 'x-updated' took [0-9]+(\.[0-9]+)? s
-|~  total time [0-9]+(\.[0-9]+)? s
+|~  goal 'x-created' took [0-9]+([.,][0-9]+)? s
+|~  goal 'x-updated' took [0-9]+([.,][0-9]+)? s
+|~  total time [0-9]+([.,][0-9]+)? s
 
 $ touch /tmp/x ; ./{{MAKESURE}} -f tests/32_calls.sh x-updated --tracing
 |   goal 'x-updated' ...
