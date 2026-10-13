@@ -14,9 +14,9 @@ $ ./{{MAKESURE}} -f tests/7_options_in_goal.sh
 @ tests/7_options_in_goal.sh:3: @options tracing
 ? 1
 
-$ ./{{MAKESURE}} -f tests/7_options_tracing.sh   2>&1 | awk -f tests/unify_tracing_output.awk
+$ ./{{MAKESURE}} -f tests/7_options_tracing.sh
 |   goal 'default' ...
 | test
 @ + : default
-@ + cd /some/path/tests
+@~\+ cd .+/tests
 @ + echo test

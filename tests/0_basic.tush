@@ -1,15 +1,15 @@
 
-$ ./{{MAKESURE}} -v | awk '{ sub(/[0-9]+\.[0-9]+\.[0-9]+/,"VVV") } 1'
-| VVV
+$ ./{{MAKESURE}} -v
+|~[0-9]+\.[0-9]+\.[0-9]+
 
-$ ./{{MAKESURE}} --version | awk '{ sub(/[0-9]+\.[0-9]+\.[0-9]+/,"VVV") } 1'
-| VVV
+$ ./{{MAKESURE}} --version
+|~[0-9]+\.[0-9]+\.[0-9]+
 
-$ cd "tests/emptydir"; ../../{{MAKESURE}} -v | awk '{ sub(/[0-9]+\.[0-9]+\.[0-9]+/,"VVV") } 1'
-| VVV
+$ cd "tests/emptydir"; ../../{{MAKESURE}} -v
+|~[0-9]+\.[0-9]+\.[0-9]+
 
-$ cd "tests/emptydir"; ../../{{MAKESURE}} -h | awk '{ sub(/[0-9]+\.[0-9]+\.[0-9]+/,"VVV") } 1'
-| makesure ver. VVV
+$ cd "tests/emptydir"; ../../{{MAKESURE}} -h
+|~makesure ver\. [0-9]+\.[0-9]+\.[0-9]+
 | Usage: makesure [options...] [-f buildfile] [goals...]
 |  -f,--file buildfile
 |                  set buildfile to use (default Makesurefile)

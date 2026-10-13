@@ -35,39 +35,39 @@ $ touch /tmp/x ; ./{{MAKESURE}} -f tests/32_calls.sh x-updated --silent
 | running x-deleted
 | running x-created
 
-$ touch /tmp/x ; ./{{MAKESURE}} -f tests/32_calls.sh x-updated --timing | sed 's#took .*$#took X#g ; s#total time .*$#total time X#g'
+$ touch /tmp/x ; ./{{MAKESURE}} -f tests/32_calls.sh x-updated --timing
 |   goal 'x-updated' ...
 |   goal 'x-deleted' ...
 | running x-deleted
-|   goal 'x-deleted' took X
+|~  goal 'x-deleted' took [0-9]+(\.[0-9]+)? s
 |   goal 'x-created' ...
 | running x-created
-|   goal 'x-created' took X
-|   goal 'x-updated' took X
-|   total time X
+|~  goal 'x-created' took [0-9]+(\.[0-9]+)? s
+|~  goal 'x-updated' took [0-9]+(\.[0-9]+)? s
+|~  total time [0-9]+(\.[0-9]+)? s
 
-$ touch /tmp/x ; ./{{MAKESURE}} -f tests/32_calls.sh x-updated --tracing  2>&1 | awk -f tests/unify_tracing_output.awk
+$ touch /tmp/x ; ./{{MAKESURE}} -f tests/32_calls.sh x-updated --tracing
 |   goal 'x-updated' ...
 |   goal 'x-deleted' ...
 | running x-deleted
 |   goal 'x-created' ...
 | running x-created
 @ + : x-updated
-@ + cd /some/path/tests
-@ + /some/path/makesure_dev --tracing --file /some/path/tests/32_calls.sh x-deleted
+@~\+ cd .+/tests
+@~\+ .+/makesure(_dev|_candidate)? --tracing --file .+/tests/32_calls\.sh x-deleted
 @ + : x-deleted@reached_if
-@ + cd /some/path/tests
+@~\+ cd .+/tests
 @ + test -e /tmp/x
 @ + : x-deleted
-@ + cd /some/path/tests
+@~\+ cd .+/tests
 @ + echo 'running x-deleted'
 @ + rm /tmp/x
-@ + /some/path/makesure_dev --tracing --file /some/path/tests/32_calls.sh x-created
+@~\+ .+/makesure(_dev|_candidate)? --tracing --file .+/tests/32_calls\.sh x-created
 @ + : x-created@reached_if
-@ + cd /some/path/tests
+@~\+ cd .+/tests
 @ + test -f /tmp/x
 @ + : x-created
-@ + cd /some/path/tests
+@~\+ cd .+/tests
 @ + echo 'running x-created'
 @ + touch /tmp/x
 
@@ -132,6 +132,5 @@ $ ./{{MAKESURE}} -f tests/32_calls_invalid_usage.sh -l
 @ Goal 'b' has unknown dependency 'undefined':
 @ tests/32_calls_invalid_usage.sh:8: @calls undefined
 ? 1
-
 
 
